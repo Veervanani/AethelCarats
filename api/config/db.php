@@ -12,10 +12,8 @@ function getDatabaseConnection(): PDO {
         return $pdo;
     }
 
-    $host = getenv('DB_HOST') ?: ($_ENV['DB_HOST'] ?? 'localhost');
-    $port = getenv('DB_PORT') ?: ($_ENV['DB_PORT'] ?? '3306');
     $db   = getenv('DB_NAME') ?: ($_ENV['DB_NAME'] ?? 'u657751653_floksyjewel');
-    $user = getenv('DB_USER') ?: ($_ENV['DB_USER'] ?? 'u657751653_floksyjewel');
+    $user = getenv('DB_USER') ?: ($_ENV['DB_USER'] ?? 'u657751653_floksyjewels');
     $pass = getenv('DB_PASSWORD') !== false ? getenv('DB_PASSWORD') : (getenv('DB_PASS') ?: ($_ENV['DB_PASSWORD'] ?? 'FloksyJewel@2026!'));
 
     $options = [
