@@ -29,9 +29,13 @@ function getPayPalCredentials(PDO $pdo): array {
         }
     }
 
-    $clientId     = $settingsMap['paypal_client_id'] ?? ($settingsMap['paypalClientId'] ?? (getenv('PAYPAL_CLIENT_ID') ?: ''));
-    $clientSecret = $settingsMap['paypal_client_secret'] ?? ($settingsMap['paypalClientSecret'] ?? (getenv('PAYPAL_CLIENT_SECRET') ?: ''));
-    $mode         = $settingsMap['paypal_mode'] ?? ($settingsMap['paypalMode'] ?? (getenv('PAYPAL_MODE') ?: 'sandbox'));
+    $defaultClientId = 'BAAqaKN73TPUvj2BG5Fh-G16xs8N0Dvcv0KOK7Nvt1M2jdU4izxVBjhFH7O_Ny_huFK8qD3EsbFmRer70c';
+    $defaultClientSecret = 'ECq63bOo-D4k6XlcuEuaRwdt9TQd5YuZN7bUHMAHbRj0mHW9-iF90wEaTtGo5RSnlItWx6RCBcaXsHWM';
+    $defaultMode = 'live';
+
+    $clientId     = $settingsMap['paypal_client_id'] ?? ($settingsMap['paypalClientId'] ?? (getenv('PAYPAL_CLIENT_ID') ?: $defaultClientId));
+    $clientSecret = $settingsMap['paypal_client_secret'] ?? ($settingsMap['paypalClientSecret'] ?? (getenv('PAYPAL_CLIENT_SECRET') ?: $defaultClientSecret));
+    $mode         = $settingsMap['paypal_mode'] ?? ($settingsMap['paypalMode'] ?? (getenv('PAYPAL_MODE') ?: $defaultMode));
 
     return ['clientId' => trim($clientId), 'clientSecret' => trim($clientSecret), 'mode' => trim($mode)];
 }

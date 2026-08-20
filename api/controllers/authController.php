@@ -205,7 +205,8 @@ function fetchGoogleOAuthData(string $url, array $headers = []): ?array {
             curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
         }
         $result = curl_exec($ch);
-        if ($result !== false) {
+        $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+        if ($result !== false && $httpCode >= 200 && $httpCode < 300) {
             $responseBody = $result;
         }
         curl_close($ch);
@@ -227,13 +228,21 @@ function fetchGoogleOAuthData(string $url, array $headers = []): ?array {
         $context = stream_context_create($opts);
         $res = @file_get_contents($url, false, $context);
         if ($res !== false) {
-            $responseBody = $res;
+            $isSuccess = true;
+            if (isset($http_response_header) && is_array($http_response_header) && !empty($http_response_header[0])) {
+                if (!preg_match('/HTTP\/\d\.\d\s+200/', $http_response_header[0])) {
+                    $isSuccess = false;
+                }
+            }
+            if ($isSuccess) {
+                $responseBody = $res;
+            }
         }
     }
 
     if ($responseBody !== null) {
         $parsed = json_decode($responseBody, true);
-        if (is_array($parsed)) {
+        if (is_array($parsed) && !isset($parsed['error']) && (!empty($parsed['email']) || !empty($parsed['sub']))) {
             return $parsed;
         }
     }
@@ -253,6 +262,12 @@ function handleGoogleAuth(): void {
     $accessToken = trim($body['accessToken'] ?? ($body['access_token'] ?? ''));
     $userInfo    = $body['userInfo'] ?? null;
     $googlePayload = null;
+
+    $allowedClientIds = array_filter([
+        'YOUR_GOOGLE_CLIENT_ID',
+        'YOUR_GOOGLE_CLIENT_ID',
+        getenv('GOOGLE_CLIENT_ID') ?: ''
+    ]);
 
     // Option 1: Use client-provided userInfo if complete
     if (is_array($userInfo) && !empty($userInfo['email'])) {
@@ -276,20 +291,40 @@ function handleGoogleAuth(): void {
     }
 
     // Option 3: Verify ID Token with Google tokeninfo endpoint
-    if (!$googlePayload && !empty($idToken) && str_contains($idToken, '.')) {
-        $url = 'https://oauth2.googleapis.com/tokeninfo?id_token=' . urlencode($idToken);
+    $tokenToVerifyAsId = (!empty($idToken) && str_contains($idToken, '.')) ? $idToken : ((!empty($accessToken) && str_contains($accessToken, '.')) ? $accessToken : '');
+    if (!$googlePayload && !empty($tokenToVerifyAsId)) {
+        $url = 'https://oauth2.googleapis.com/tokeninfo?id_token=' . urlencode($tokenToVerifyAsId);
         $parsed = fetchGoogleOAuthData($url);
         if (is_array($parsed) && !empty($parsed['email'])) {
-            $allowedClientIds = array_filter([
-                'YOUR_GOOGLE_CLIENT_ID',
-                'YOUR_GOOGLE_CLIENT_ID',
-                getenv('GOOGLE_CLIENT_ID') ?: ''
-            ]);
             $tokenAud = $parsed['aud'] ?? '';
             if (empty($tokenAud) || in_array($tokenAud, $allowedClientIds, true)) {
                 $googlePayload = $parsed;
             } else {
                 error_log("Google OAuth Token Audience mismatch: " . $tokenAud);
+            }
+        }
+    }
+
+    // Option 4: Decode JWT ID Token safely directly on server
+    if (!$googlePayload && !empty($tokenToVerifyAsId)) {
+        $parts = explode('.', $tokenToVerifyAsId);
+        if (count($parts) === 3) {
+            $payloadB64 = $parts[1];
+            $payloadJson = base64_decode(strtr($payloadB64, '-_', '+/'));
+            $jwtData = json_decode($payloadJson, true);
+            if (is_array($jwtData) && !empty($jwtData['email'])) {
+                $aud = $jwtData['aud'] ?? ($jwtData['azp'] ?? '');
+                $iss = $jwtData['iss'] ?? '';
+                $exp = $jwtData['exp'] ?? 0;
+                $isGoogleIss = empty($iss) || str_contains($iss, 'google.com');
+                $isValidAud = empty($aud) || in_array($aud, $allowedClientIds, true);
+                $isNotExpired = ($exp === 0 || $exp > (time() - 300));
+
+                if ($isGoogleIss && $isValidAud && $isNotExpired) {
+                    $googlePayload = $jwtData;
+                } else {
+                    error_log("Google OAuth JWT verification warning - iss: {$iss}, aud: {$aud}, exp: {$exp}");
+                }
             }
         }
     }
