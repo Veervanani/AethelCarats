@@ -1,0 +1,479 @@
+import React, { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom';
+import styled from 'styled-components';
+import { BookOpen, ArrowRight, ChevronRight, Calendar, Tag, Sparkles } from 'lucide-react';
+import { api } from '../../services/api';
+import { SafeImage } from '../../components/ui/SafeImage';
+import { WhyFloksyJewelNav } from '../../components/ui/WhyFloksyJewelNav';
+import { RevealContainer } from '../../components/ui/RevealContainer';
+
+interface BlogPost {
+  id: string;
+  slug: string;
+  title: string;
+  category: string;
+  date: string;
+  excerpt: string;
+  image: string;
+  featured?: boolean;
+}
+
+const ARTICLES: BlogPost[] = [
+  {
+    id: 'b1',
+    slug: 'ultimate-guide-to-diamond-4cs',
+    title: 'The Ultimate Guide to Understanding Diamond 4Cs: Carat, Cut, Color & Clarity',
+    category: 'Diamond Education',
+    date: 'August 2026',
+    excerpt: 'Demystifying diamond grading reports. Discover how master gemmologists evaluate diamond brilliance, cut precision, and clarity inclusion grades.',
+    image: '/assets/why-floksy/sustainability-hero.jpg',
+    featured: true,
+  },
+  {
+    id: 'b2',
+    slug: 'natural-vs-lab-grown-diamonds',
+    title: 'Natural vs. Lab-Grown Diamonds: Making an Informed Investment',
+    category: 'Buying Guide',
+    date: 'July 2026',
+    excerpt: 'Comparing chemical structures, environmental impact, certified GIA/IGI reports, and long-term value between earth-mined and lab-grown diamonds.',
+    image: '/assets/why-floksy/price-match-hero.jpg',
+  },
+  {
+    id: 'b3',
+    slug: 'how-to-choose-perfect-engagement-ring-setting',
+    title: 'How to Choose the Perfect Engagement Ring Setting: Solitaire, Halo & Trilogy',
+    category: 'Design & Style',
+    date: 'July 2026',
+    excerpt: 'From classic four-prong solitaire settings to intricate vintage halos, explore how metal choices and claw designs highlight your diamond.',
+    image: '/assets/why-floksy/returns-refunds-hero.jpg',
+  },
+  {
+    id: 'b4',
+    slug: 'caring-for-fine-diamond-jewellery',
+    title: 'Atelier Care: How to Maintain the Brilliance of Your Fine Diamond Ring',
+    category: 'Jewellery Care',
+    date: 'June 2026',
+    excerpt: 'Essential cleaning tips, safe storage advice, and annual inspection protocols to protect your gold and platinum diamond heirlooms.',
+    image: '/assets/why-floksy/lifetime-warranty-hero.jpg',
+  },
+];
+
+const PageWrapper = styled.div`
+  background-color: #f7f6f2;
+  color: #1a1918;
+  min-height: 100vh;
+  padding-bottom: 80px;
+`;
+
+const BreadcrumbsBar = styled.div`
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 24px 24px 0;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.8rem;
+  color: #77736c;
+
+  a {
+    color: #77736c;
+    text-decoration: none;
+    transition: color 0.2s ease;
+
+    &:hover {
+      color: #c9a45c;
+    }
+  }
+
+  span.current {
+    color: #1a1918;
+    font-weight: 500;
+  }
+`;
+
+const HeroSection = styled.section`
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 48px 24px;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 48px;
+  align-items: center;
+
+  @media (max-width: 992px) {
+    grid-template-columns: 1fr;
+    gap: 32px;
+    padding: 32px 24px;
+  }
+
+  .text-side {
+    .eyebrow {
+      font-size: 0.8rem;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: #c9a45c;
+      font-weight: 600;
+      margin-bottom: 12px;
+      display: block;
+    }
+
+    h1 {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 3.2rem;
+      font-weight: 500;
+      color: #1a1918;
+      margin-bottom: 20px;
+      letter-spacing: -0.01em;
+      line-height: 1.1;
+
+      @media (max-width: 768px) {
+        font-size: 2.3rem;
+      }
+    }
+
+    p.subtitle {
+      font-size: 1.05rem;
+      color: #55524d;
+      line-height: 1.7;
+      margin-bottom: 28px;
+    }
+  }
+
+  .image-side {
+    position: relative;
+    border-radius: 4px;
+    overflow: hidden;
+    box-shadow: 0 12px 32px rgba(0, 0, 0, 0.06);
+
+    img {
+      width: 100%;
+      height: 420px;
+      object-fit: cover;
+
+      @media (max-width: 768px) {
+        height: 280px;
+      }
+    }
+  }
+`;
+
+const ContentContainer = styled.main`
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 24px;
+`;
+
+const FeaturedCard = styled.div`
+  background: #fffdf9;
+  border: 1px solid #e8e3d9;
+  border-radius: 4px;
+  overflow: hidden;
+  display: grid;
+  grid-template-columns: 1.2fr 1fr;
+  gap: 32px;
+  margin-bottom: 64px;
+
+  @media (max-width: 992px) {
+    grid-template-columns: 1fr;
+  }
+
+  .img-wrapper {
+    height: 100%;
+    min-height: 340px;
+
+    img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+  }
+
+  .info-wrapper {
+    padding: 40px 40px 40px 0;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+
+    @media (max-width: 992px) {
+      padding: 0 32px 32px;
+    }
+
+    .meta {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      font-size: 0.78rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: #c9a45c;
+      font-weight: 600;
+      margin-bottom: 12px;
+    }
+
+    h2 {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 2.2rem;
+      color: #1a1918;
+      line-height: 1.2;
+      margin-bottom: 16px;
+    }
+
+    p {
+      font-size: 0.95rem;
+      color: #55524d;
+      line-height: 1.6;
+      margin-bottom: 24px;
+    }
+
+    a.read-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      color: #1a1918;
+      font-size: 0.85rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      font-weight: 600;
+      text-decoration: none;
+      transition: color 0.2s ease;
+
+      &:hover {
+        color: #c9a45c;
+      }
+    }
+  }
+`;
+
+const SectionTitle = styled.h2`
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 2.2rem;
+  color: #1a1918;
+  margin-bottom: 32px;
+  text-align: center;
+`;
+
+const ArticleGrid = styled.div`
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 32px;
+
+  @media (max-width: 992px) {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  @media (max-width: 640px) {
+    grid-template-columns: 1fr;
+  }
+`;
+
+const ArticleCard = styled.article`
+  background: #fffdf9;
+  border: 1px solid #e8e3d9;
+  border-radius: 4px;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  transition: transform 0.2s ease, border-color 0.2s ease;
+
+  &:hover {
+    transform: translateY(-4px);
+    border-color: #c9a45c;
+  }
+
+  .card-img {
+    height: 220px;
+    overflow: hidden;
+
+    img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      transition: transform 0.3s ease;
+    }
+  }
+
+  &:hover .card-img img {
+    transform: scale(1.04);
+  }
+
+  .card-body {
+    padding: 24px;
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+
+    .card-meta {
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.75rem;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: #c9a45c;
+      font-weight: 600;
+      margin-bottom: 10px;
+    }
+
+    h3 {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.4rem;
+      color: #1a1918;
+      line-height: 1.3;
+      margin-bottom: 12px;
+    }
+
+    p {
+      font-size: 0.88rem;
+      color: #55524d;
+      line-height: 1.6;
+      margin-bottom: 20px;
+      flex: 1;
+    }
+
+    a.card-link {
+      font-size: 0.8rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      font-weight: 600;
+      color: #1a1918;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      transition: color 0.2s ease;
+
+      &:hover {
+        color: #c9a45c;
+      }
+    }
+  }
+`;
+
+export const BlogPage: React.FC = () => {
+  const [posts, setPosts] = useState<BlogPost[]>(ARTICLES);
+
+  useEffect(() => {
+    // Dynamic SEO Metadata
+    document.title = 'Floksy Jewel Journal | Jewellery & Diamond Insights';
+
+    // Fetch live blog posts from DB API
+    api.getBlogPosts().then((data) => {
+      if (Array.isArray(data) && data.length > 0) {
+        setPosts(data.map((p: any) => ({
+          id: p.id,
+          slug: p.slug,
+          title: p.title,
+          category: 'Editorial',
+          date: new Date(p.publishDate || p.createdAt).toLocaleDateString('en-US', { month: 'long', year: 'numeric' }),
+          excerpt: p.excerpt || '',
+          image: p.featuredImage || '/assets/why-floksy/sustainability-hero.jpg',
+        })));
+      }
+    }).catch(console.error);
+
+    // JSON-LD Structured Data
+    const script = document.createElement('script');
+    script.type = 'application/ld+json';
+    script.innerHTML = JSON.stringify({
+      '@context': 'https://schema.org',
+      '@graph': [
+        {
+          '@type': 'WebPage',
+          '@id': 'https://floksyjewel.com/blog#webpage',
+          'url': 'https://floksyjewel.com/blog',
+          'name': 'The Floksy Jewel Journal | Jewellery & Diamond Editorial',
+          'description': 'Editorial insights and guides on diamonds, fine jewellery craftsmanship, and design.',
+        },
+        {
+          '@type': 'BreadcrumbList',
+          '@id': 'https://floksyjewel.com/blog#breadcrumb',
+          'itemListElement': [
+            { '@type': 'ListItem', 'position': 1, 'name': 'Home', 'item': 'https://floksyjewel.com' },
+            { '@type': 'ListItem', 'position': 2, 'name': 'Journal', 'item': 'https://floksyjewel.com/blog' }
+          ]
+        }
+      ]
+    });
+    document.head.appendChild(script);
+
+    return () => {
+      document.head.removeChild(script);
+    };
+  }, []);
+
+  const featured = posts.find((p) => p.featured) || posts[0];
+  const gridPosts = posts.filter((p) => p.id !== featured.id);
+
+  return (
+    <PageWrapper>
+      <BreadcrumbsBar>
+        <Link to="/">Home</Link>
+        <ChevronRight size={12} />
+        <span className="current">Journal</span>
+      </BreadcrumbsBar>
+
+      <RevealContainer yOffset={35}>
+        <HeroSection>
+          <div className="text-side">
+            <span className="eyebrow">EDITORIAL INSIGHTS & EDUCATION</span>
+            <h1>The Floksy Jewel Journal</h1>
+            <p className="subtitle">
+              Expert diamond guides, high-jewellery craftsmanship stories, and style inspiration curated by our master gemmologists and designers.
+            </p>
+          </div>
+          <div className="image-side">
+            <SafeImage src="/assets/why-floksy/blog-hero.jpg" alt="Floksy Jewel Editorial Jewellery Journal" />
+          </div>
+        </HeroSection>
+      </RevealContainer>
+
+      <ContentContainer>
+        {featured && (
+          <RevealContainer yOffset={35}>
+            <FeaturedCard>
+              <div className="img-wrapper">
+                <SafeImage src={featured.image} alt={featured.title} />
+              </div>
+              <div className="info-wrapper">
+                <div className="meta">
+                  <span>FEATURED STORY</span> • <span>{featured.category}</span>
+                </div>
+                <h2>{featured.title}</h2>
+                <p>{featured.excerpt}</p>
+                <Link to={`/blog/${featured.slug}`} className="read-btn">
+                  READ STORY <ArrowRight size={14} />
+                </Link>
+              </div>
+            </FeaturedCard>
+          </RevealContainer>
+        )}
+
+        <SectionTitle>Latest Stories & Guides</SectionTitle>
+
+        <ArticleGrid>
+          {gridPosts.map((post, idx) => (
+            <RevealContainer key={post.id} staggerIndex={idx} yOffset={25}>
+              <ArticleCard>
+                <div className="card-img">
+                  <SafeImage src={post.image} alt={post.title} />
+                </div>
+                <div className="card-body">
+                  <div className="card-meta">
+                    <span>{post.category}</span>
+                    <span>{post.date}</span>
+                  </div>
+                  <h3>{post.title}</h3>
+                  <p>{post.excerpt}</p>
+                  <Link to={`/blog/${post.slug}`} className="card-link">
+                    READ ARTICLE <ArrowRight size={14} />
+                  </Link>
+                </div>
+              </ArticleCard>
+            </RevealContainer>
+          ))}
+        </ArticleGrid>
+      </ContentContainer>
+
+      <WhyFloksyJewelNav />
+    </PageWrapper>
+  );
+};

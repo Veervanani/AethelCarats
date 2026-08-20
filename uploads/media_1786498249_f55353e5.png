@@ -1,0 +1,20 @@
+<?php
+require_once __DIR__ . '/../api/config/db.php';
+require_once __DIR__ . '/../api/helpers/response.php';
+require_once __DIR__ . '/../api/controllers/cmsController.php';
+
+$_FILES = [
+    'files' => [
+        'name' => ['pic1.png', 'pic2.png'],
+        'type' => ['image/png', 'image/png'],
+        'tmp_name' => [__FILE__, __FILE__],
+        'error' => [0, 0],
+        'size' => [filesize(__FILE__), filesize(__FILE__)]
+    ]
+];
+
+try {
+    handleUploadMedia();
+} catch (Throwable $e) {
+    echo "Upload Error: " . $e->getMessage() . "\n";
+}

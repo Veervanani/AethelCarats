@@ -1,0 +1,33 @@
+steps:
+  # Build production multi-stage container
+  - name: 'gcr.io/cloud-builders/docker'
+    args: ['build', '-t', 'europe-west1-docker.pkg.dev/$PROJECT_ID/cloud-run-source-deploy/floksy-jewel/floksy-jewel:$COMMIT_SHA', '.']
+
+  # Push container image to Artifact Registry
+  - name: 'gcr.io/cloud-builders/docker'
+    args: ['push', 'europe-west1-docker.pkg.dev/$PROJECT_ID/cloud-run-source-deploy/floksy-jewel/floksy-jewel:$COMMIT_SHA']
+
+  # Deploy container image to Cloud Run service
+  - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
+    entrypoint: gcloud
+    args:
+      - 'run'
+      - 'deploy'
+      - 'floksy-jewel'
+      - '--image'
+      - 'europe-west1-docker.pkg.dev/$PROJECT_ID/cloud-run-source-deploy/floksy-jewel/floksy-jewel:$COMMIT_SHA'
+      - '--region'
+      - 'europe-west1'
+      - '--platform'
+      - 'managed'
+      - '--allow-unauthenticated'
+      - '--add-cloudsql-instances'
+      - 'floksy-jewels:us-central1:floksyjewel-db'
+      - '--set-secrets'
+      - 'DATABASE_URL=DATABASE_URL:latest'
+
+options:
+  logging: CLOUD_LOGGING_ONLY
+
+images:
+  - 'europe-west1-docker.pkg.dev/$PROJECT_ID/cloud-run-source-deploy/floksy-jewel/floksy-jewel:$COMMIT_SHA'

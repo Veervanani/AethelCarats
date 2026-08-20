@@ -1,0 +1,29 @@
+{
+  "name": "floksy-jewel",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Floksy Jewel Luxury E-Commerce & Diamond Vault Platform",
+  "scripts": {
+    "postinstall": "npm run build",
+    "dev:backend": "cd backend && npm run dev",
+    "dev:frontend": "cd frontend && npm run dev",
+    "dev": "concurrently \"npm run dev:backend\" \"npm run dev:frontend\"",
+    "build:frontend": "npm --prefix frontend install --include=dev && npm --prefix frontend run build && node scripts/verify-build.js",
+    "build:backend": "npm run build:frontend && cd backend && npm install --include=dev && npx prisma generate && npm run build",
+    "build": "npm run build:frontend && cd backend && npm install --include=dev && npx prisma generate && npm run build && node ../scripts/verify-build.js",
+    "start": "node server.js",
+    "start:frontend": "cd frontend && node server.js",
+    "start:backend": "cd backend && npm start",
+    "db:migrate": "cd backend && npx prisma migrate dev",
+    "db:seed": "cd backend && npx prisma db seed",
+    "db:generate": "cd backend && npx prisma generate"
+  },
+  "dependencies": {
+    "express": "^4.19.2"
+  },
+  "devDependencies": {
+    "concurrently": "^8.2.2"
+  }
+}
+
