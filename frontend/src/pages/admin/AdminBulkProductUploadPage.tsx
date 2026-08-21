@@ -22,6 +22,7 @@ import { PRIVATE_ADMIN_PATH } from '../../App';
 import { useToast } from '../../context/ToastContext';
 import { AdminPageHeader, AdminButton } from '../../components/admin/AdminUI';
 import { exportProductsToEbayExcel, exportProductsToEbayCsv } from '../../utils/ebayExcelExportHelper';
+import { exportProductsToShopifyCsv, exportProductsToShopifyExcel } from '../../utils/shopifyProductExportHelper';
 
 const spinAnim = keyframes`
   0% { transform: rotate(0deg); }
@@ -516,6 +517,50 @@ export const AdminBulkProductUploadPage: React.FC = () => {
     }
   };
 
+  const [exportingShopify, setExportingShopify] = useState<boolean>(false);
+
+  const handleExportShopifyCsv = async () => {
+    try {
+      setExportingShopify(true);
+      const data = await api.getProducts({ status: 'ALL', limit: 1000 });
+      const products = data.products || [];
+
+      if (products.length === 0) {
+        toast.error('No products found in the catalog to export.');
+        return;
+      }
+
+      const res = exportProductsToShopifyCsv(products);
+      toast.success(`Exported ${res.count} products to Shopify CSV (${res.fileName})!`);
+    } catch (err: any) {
+      console.error('Shopify CSV export error:', err);
+      toast.error(err.message || 'Failed to export products in Shopify CSV format.');
+    } finally {
+      setExportingShopify(false);
+    }
+  };
+
+  const handleExportShopifyExcel = async () => {
+    try {
+      setExportingShopify(true);
+      const data = await api.getProducts({ status: 'ALL', limit: 1000 });
+      const products = data.products || [];
+
+      if (products.length === 0) {
+        toast.error('No products found in the catalog to export.');
+        return;
+      }
+
+      const res = exportProductsToShopifyExcel(products);
+      toast.success(`Exported ${res.count} products to Shopify Excel (${res.fileName})!`);
+    } catch (err: any) {
+      console.error('Shopify Excel export error:', err);
+      toast.error(err.message || 'Failed to export products in Shopify Excel format.');
+    } finally {
+      setExportingShopify(false);
+    }
+  };
+
   return (
     <div>
       <AdminPageHeader
@@ -525,12 +570,21 @@ export const AdminBulkProductUploadPage: React.FC = () => {
           <div style={{ display: 'flex', gap: '10px' }}>
             <AdminButton
               $variant="secondary"
-              onClick={handleExportEbay}
-              $loading={exportingEbay}
+              onClick={handleExportShopifyCsv}
+              $loading={exportingShopify}
               icon={<Download size={14} />}
-              title="Download all products in official 94-column eBay Category Listing Excel format"
+              title="Download all products in Shopify product_template CSV format"
             >
-              Export eBay Excel (.xlsx)
+              Export Shopify CSV (.csv)
+            </AdminButton>
+            <AdminButton
+              $variant="secondary"
+              onClick={handleExportShopifyExcel}
+              $loading={exportingShopify}
+              icon={<Download size={14} />}
+              title="Download all products in Shopify product_template Excel format"
+            >
+              Export Shopify Excel (.xlsx)
             </AdminButton>
             <AdminButton
               $variant="secondary"

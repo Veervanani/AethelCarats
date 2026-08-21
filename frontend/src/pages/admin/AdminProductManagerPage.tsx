@@ -22,6 +22,7 @@ import { PRIVATE_ADMIN_PATH } from '../../App';
 import { useToast } from '../../context/ToastContext';
 import { ConfirmModal } from '../../components/common/ConfirmModal';
 import { exportProductsToEbayExcel, exportProductsToEbayCsv } from '../../utils/ebayExcelExportHelper';
+import { exportProductsToShopifyCsv, exportProductsToShopifyExcel } from '../../utils/shopifyProductExportHelper';
 import {
   AdminPageHeader,
   AdminCard,
@@ -188,6 +189,58 @@ export const AdminProductManagerPage: React.FC = () => {
     }
   };
 
+  const [exportingShopify, setExportingShopify] = useState<boolean>(false);
+
+  const handleExportShopifyCsv = () => {
+    try {
+      setExportingShopify(true);
+      const targetList =
+        selectedProductIds.length > 0
+          ? products.filter((p) => selectedProductIds.includes(p.id))
+          : filteredProducts.length > 0
+          ? filteredProducts
+          : products;
+
+      if (targetList.length === 0) {
+        toast.error('No products available to export.');
+        return;
+      }
+
+      const result = exportProductsToShopifyCsv(targetList);
+      toast.success(`Successfully exported ${result.count} products to Shopify CSV (${result.fileName})!`);
+    } catch (err: any) {
+      console.error('Shopify export CSV error:', err);
+      toast.error(err.message || 'Failed to export Shopify CSV file.');
+    } finally {
+      setExportingShopify(false);
+    }
+  };
+
+  const handleExportShopifyExcel = () => {
+    try {
+      setExportingShopify(true);
+      const targetList =
+        selectedProductIds.length > 0
+          ? products.filter((p) => selectedProductIds.includes(p.id))
+          : filteredProducts.length > 0
+          ? filteredProducts
+          : products;
+
+      if (targetList.length === 0) {
+        toast.error('No products available to export.');
+        return;
+      }
+
+      const result = exportProductsToShopifyExcel(targetList);
+      toast.success(`Successfully exported ${result.count} products to Shopify Excel (${result.fileName})!`);
+    } catch (err: any) {
+      console.error('Shopify export Excel error:', err);
+      toast.error(err.message || 'Failed to export Shopify Excel file.');
+    } finally {
+      setExportingShopify(false);
+    }
+  };
+
   const fetchProducts = async () => {
     try {
       setLoading(true);
@@ -319,12 +372,21 @@ export const AdminProductManagerPage: React.FC = () => {
             </AdminButton>
             <AdminButton
               $variant="secondary"
-              onClick={handleExportEbayExcel}
-              $loading={exportingEbay}
+              onClick={handleExportShopifyCsv}
+              $loading={exportingShopify}
               icon={<Download size={14} />}
-              title="Download full catalog in official eBay Excel (.xlsx) format"
+              title="Download full catalog in Shopify product_template CSV (.csv) format"
             >
-              Export eBay Excel (.xlsx)
+              Export Shopify CSV (.csv)
+            </AdminButton>
+            <AdminButton
+              $variant="secondary"
+              onClick={handleExportShopifyExcel}
+              $loading={exportingShopify}
+              icon={<Download size={14} />}
+              title="Download full catalog in Shopify product_template Excel (.xlsx) format"
+            >
+              Export Shopify Excel (.xlsx)
             </AdminButton>
             <AdminButton
               $variant="secondary"
@@ -388,11 +450,11 @@ export const AdminProductManagerPage: React.FC = () => {
             <AdminButton
               $variant="secondary"
               $size="sm"
-              onClick={handleExportEbayExcel}
-              $loading={exportingEbay}
+              onClick={handleExportShopifyCsv}
+              $loading={exportingShopify}
               icon={<Download size={14} />}
             >
-              Export {selectedProductIds.length} to eBay (.xlsx)
+              Export {selectedProductIds.length} to Shopify (.csv)
             </AdminButton>
             <AdminButton
               $variant="ghost"
