@@ -182,21 +182,14 @@ function formatEbayTitle(title: string): string {
   return clean.length > 80 ? clean.substring(0, 77) + '...' : clean;
 }
 
-export function exportProductsToEbayExcel(products: Product[], options: ExportEbayOptions = {}) {
+function buildProductRows(products: Product[], options: ExportEbayOptions = {}): any[][] {
   const siteUrl = options.siteUrl || (typeof window !== 'undefined' ? window.location.origin : 'https://floksyjewel.com');
   const brand = options.defaultBrand || 'Floksy Jewel';
   const shippingProfile = options.defaultShippingProfile || 'shipping1 - (ID: 276534078018)';
   const returnProfile = options.defaultReturnProfile || 'free 30 days money back - International free 3 (258806232018) - (ID: 258806232018)';
   const paymentProfile = options.defaultPaymentProfile || 'eBay Managed Payments (258806234018) - (ID: 258806234018)';
 
-  const listingsData: any[][] = [
-    ['#INFO', 'Created=' + Date.now(), '', '', '', '', ' Indicates missing required fields', '', '', '', '', ' Indicates missing field that will be required soon'],
-    ['#INFO', 'Version=1.0', '', 'Template=fx_category_template_EBAY_US', '', '', ' Indicates missing recommended field', '', '', '', '', ' Indicates field does not apply to this item/category'],
-    ['#INFO'],
-    EBAY_HEADERS,
-  ];
-
-  products.forEach((p) => {
+  return products.map((p) => {
     const cat = getCategoryInfo(p);
     const price = p.salePrice || p.price || 1500;
     const sku = p.sku || ('FJ-' + (p.id ? p.id.substring(0, 8).toUpperCase() : 'PROD'));
@@ -216,7 +209,7 @@ export function exportProductsToEbayExcel(products: Product[], options: ExportEb
     const ringStyle = p.ringStyle || 'Solitaire';
     const isLab = mainStone.toLowerCase().includes('lab') || (p.diamondType || '').toLowerCase().includes('lab');
 
-    const row = [
+    return [
       'Add',
       sku,
       cat.id,
@@ -312,66 +305,69 @@ export function exportProductsToEbayExcel(products: Product[], options: ExportEb
       'compliance@floksyjewel.com',
       siteUrl,
     ];
-
-    listingsData.push(row);
   });
+}
 
-  const workbook = XLSX.utils.book_new();
-
-  const instructionsData = [
-    ['General Instructions'],
-    ['1. This template is configured for eBay US Fine Jewelry bulk upload.'],
-    ['2. Fill in all required fields and upload in eBay Seller Hub > Reports > Upload.'],
-    [''],
-    ['Table 1.0'],
-    ['*Action(SiteID=US|Country=US|Currency=USD|Version=941)', 'Category ID', 'Custom Label (SKU)', 'Relationship', 'Relationship details', 'P:UPC', 'Quantity', 'Start Price'],
-    ['Parent row', 'Add', '261994', 'FJ-RING-SET', '', '', 'Color=White Gold;Yellow Gold|Size=6;7', 'https://floksyjewel.com/sample.jpg'],
-    ['child row', '', '', 'FJ-RING-6-WG', 'Variation', 'Color=White Gold|Size=6', '', 5, 1500],
-    ['child row', '', '', 'FJ-RING-7-WG', 'Variation', 'Color=White Gold|Size=7', '', 5, 1500],
-  ];
-  const wsInstructions = XLSX.utils.aoa_to_sheet(instructionsData);
-  XLSX.utils.book_append_sheet(workbook, wsInstructions, 'GENERAL INSTRUCTIONS');
-
-  const wsListings = XLSX.utils.aoa_to_sheet(listingsData);
-  XLSX.utils.book_append_sheet(workbook, wsListings, 'Listings');
-
-  const categoriesData = [
-    ['Category Name', 'Category ID', 'Supported Conditions'],
-    ['/Jewelry & Watches/Fine Jewelry/Rings', '261994', '1000-New with packaging', '1500-New without packaging', '1750-New with imperfections', '2990-Pre-owned - Excellent', '3000-Pre-owned - Good', '3010-Pre-owned - Fair'],
-    ['/Jewelry & Watches/Fine Jewelry/Bracelets & Charms', '261988', '1000-New with packaging', '1500-New without packaging', '1750-New with imperfections', '2990-Pre-owned - Excellent', '3000-Pre-owned - Good', '3010-Pre-owned - Fair'],
-    ['/Jewelry & Watches/Fine Jewelry/Earrings', '261990', '1000-New with packaging', '1500-New without packaging', '1750-New with imperfections', '2990-Pre-owned - Excellent', '3000-Pre-owned - Good', '3010-Pre-owned - Fair'],
-    ['/Jewelry & Watches/Fine Jewelry/Necklaces & Pendants', '261993', '1000-New with packaging', '1500-New without packaging', '1750-New with imperfections', '2990-Pre-owned - Excellent', '3000-Pre-owned - Good', '3010-Pre-owned - Fair'],
-    ['/Jewelry & Watches/Fine Jewelry/Toe Rings', '261995', '1000-New with packaging', '1500-New without packaging', '1750-New with imperfections', '2990-Pre-owned - Excellent', '3000-Pre-owned - Good', '3010-Pre-owned - Fair'],
-  ];
-  const wsCategories = XLSX.utils.aoa_to_sheet(categoriesData);
-  XLSX.utils.book_append_sheet(workbook, wsCategories, 'Categories');
-
-  const staticData = [
-    ['Header', 'Mandatory', 'Values'],
-    ['', '', ''],
-    ['', '', ''],
-    ['Action', 1, 'Add'],
-    ['Relationship', '', 'Variation', 'Compatibility'],
-    ['Format', '', 'Auction', 'FixedPrice'],
-    ['Return shipping cost paid by', '', 'Buyer', 'Seller'],
-    ['Duration', '', 1, 3, 5, 7, 10, 'GTC'],
-    ['Responsible Person 1 Type', '', 'EUResponsiblePerson'],
-  ];
-  const wsStatic = XLSX.utils.aoa_to_sheet(staticData);
-  XLSX.utils.book_append_sheet(workbook, wsStatic, 'ListingStaticData');
-
-  const businessPolicyData = [
-    ['ShippingPolicyNames', 'ReturnPolicyNames', 'PaymentPolicyNames'],
-    ['shipping1 - (ID: 276534078018)', 'No Return Accepted (257553121018) - (ID: 257553121018)', 'eBay Managed Payments (257553122018) - (ID: 257553122018)'],
-    ['Shipping - (ID: 258806233018)', 'free 30 days money back - International free 3 (258806232018) - (ID: 258806232018)', 'eBay Managed Payments (258806234018) - (ID: 258806234018)'],
-    ['Diamond Ring - (ID: 257553119018)', '', ''],
-  ];
-  const wsBusinessPolicy = XLSX.utils.aoa_to_sheet(businessPolicyData);
-  XLSX.utils.book_append_sheet(workbook, wsBusinessPolicy, 'BusinessPolicy');
-
+export async function exportProductsToEbayExcel(products: Product[], options: ExportEbayOptions = {}) {
+  const rows = buildProductRows(products, options);
   const dateStr = new Date().toISOString().split('T')[0];
   const outFileName = options.fileName || ('Floksy_Jewel_eBay_Listings_' + dateStr + '.xlsx');
 
+  try {
+    const response = await fetch('/ebay-template.xlsx');
+    if (response.ok) {
+      const arrayBuffer = await response.arrayBuffer();
+      const wb = XLSX.read(arrayBuffer, { type: 'array' });
+      const ws = wb.Sheets['Listings'];
+      if (ws) {
+        XLSX.utils.sheet_add_aoa(ws, rows, { origin: -1 });
+        XLSX.writeFile(wb, outFileName);
+        return { success: true, count: products.length, fileName: outFileName };
+      }
+    }
+  } catch (e) {
+    console.warn('Could not load /ebay-template.xlsx, generating fallback workbook:', e);
+  }
+
+  const listingsData: any[][] = [
+    ['#INFO', 'Created=' + Date.now(), '', '', '', '', ' Indicates missing required fields', '', '', '', '', ' Indicates missing field that will be required soon'],
+    ['#INFO', 'Version=1.0', '', 'Template=fx_category_template_EBAY_US', '', '', ' Indicates missing recommended field', '', '', '', '', ' Indicates field does not apply to this item/category'],
+    ['#INFO'],
+    EBAY_HEADERS,
+    ...rows,
+  ];
+
+  const workbook = XLSX.utils.book_new();
+  const wsListings = XLSX.utils.aoa_to_sheet(listingsData);
+  XLSX.utils.book_append_sheet(workbook, wsListings, 'Listings');
   XLSX.writeFile(workbook, outFileName);
+  return { success: true, count: products.length, fileName: outFileName };
+}
+
+export function exportProductsToEbayCsv(products: Product[], options: ExportEbayOptions = {}) {
+  const rows = buildProductRows(products, options);
+  const dateStr = new Date().toISOString().split('T')[0];
+  const outFileName = options.fileName || ('Floksy_Jewel_eBay_Listings_' + dateStr + '.csv');
+
+  const listingsData: any[][] = [
+    ['#INFO', 'Created=' + Date.now(), '', '', '', '', ' Indicates missing required fields', '', '', '', '', ' Indicates missing field that will be required soon'],
+    ['#INFO', 'Version=1.0', '', 'Template=fx_category_template_EBAY_US', '', '', ' Indicates missing recommended field', '', '', '', '', ' Indicates field does not apply to this item/category'],
+    ['#INFO'],
+    EBAY_HEADERS,
+    ...rows,
+  ];
+
+  const ws = XLSX.utils.aoa_to_sheet(listingsData);
+  const csv = XLSX.utils.sheet_to_csv(ws);
+
+  const blob = new Blob(['\uFEFF' + csv], { type: 'text/csv;charset=utf-8;' });
+  const url = window.URL.createObjectURL(blob);
+  const link = document.createElement('a');
+  link.href = url;
+  link.setAttribute('download', outFileName);
+  document.body.appendChild(link);
+  link.click();
+  link.remove();
+
   return { success: true, count: products.length, fileName: outFileName };
 }

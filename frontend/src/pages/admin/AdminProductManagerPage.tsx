@@ -21,7 +21,7 @@ import { Product } from '../../types';
 import { PRIVATE_ADMIN_PATH } from '../../App';
 import { useToast } from '../../context/ToastContext';
 import { ConfirmModal } from '../../components/common/ConfirmModal';
-import { exportProductsToEbayExcel } from '../../utils/ebayExcelExportHelper';
+import { exportProductsToEbayExcel, exportProductsToEbayCsv } from '../../utils/ebayExcelExportHelper';
 import {
   AdminPageHeader,
   AdminCard,
@@ -138,7 +138,7 @@ export const AdminProductManagerPage: React.FC = () => {
     fetchProducts();
   }, []);
 
-  const handleExportEbayExcel = () => {
+  const handleExportEbayExcel = async () => {
     try {
       setExportingEbay(true);
       const targetList =
@@ -153,11 +153,36 @@ export const AdminProductManagerPage: React.FC = () => {
         return;
       }
 
-      const result = exportProductsToEbayExcel(targetList);
+      const result = await exportProductsToEbayExcel(targetList);
       toast.success(`Successfully exported ${result.count} products to eBay Excel (${result.fileName})!`);
     } catch (err: any) {
       console.error('eBay export error:', err);
       toast.error(err.message || 'Failed to export eBay Excel file.');
+    } finally {
+      setExportingEbay(false);
+    }
+  };
+
+  const handleExportEbayCsv = () => {
+    try {
+      setExportingEbay(true);
+      const targetList =
+        selectedProductIds.length > 0
+          ? products.filter((p) => selectedProductIds.includes(p.id))
+          : filteredProducts.length > 0
+          ? filteredProducts
+          : products;
+
+      if (targetList.length === 0) {
+        toast.error('No products available to export.');
+        return;
+      }
+
+      const result = exportProductsToEbayCsv(targetList);
+      toast.success(`Successfully exported ${result.count} products to eBay CSV (${result.fileName})!`);
+    } catch (err: any) {
+      console.error('eBay export CSV error:', err);
+      toast.error(err.message || 'Failed to export eBay CSV file.');
     } finally {
       setExportingEbay(false);
     }
@@ -297,9 +322,18 @@ export const AdminProductManagerPage: React.FC = () => {
               onClick={handleExportEbayExcel}
               $loading={exportingEbay}
               icon={<Download size={14} />}
-              title="Download full catalog in 94-column eBay Category Listing Excel format"
+              title="Download full catalog in official eBay Excel (.xlsx) format"
             >
-              Export to eBay Excel (.xlsx)
+              Export eBay Excel (.xlsx)
+            </AdminButton>
+            <AdminButton
+              $variant="secondary"
+              onClick={handleExportEbayCsv}
+              $loading={exportingEbay}
+              icon={<Download size={14} />}
+              title="Download full catalog in eBay CSV (.csv) format for instant bulk upload"
+            >
+              Export eBay CSV (.csv)
             </AdminButton>
             <AdminButton
               $variant="gold"
@@ -359,6 +393,16 @@ export const AdminProductManagerPage: React.FC = () => {
               icon={<Download size={14} />}
             >
               Export {selectedProductIds.length} to eBay (.xlsx)
+            </AdminButton>
+            <AdminButton
+              $variant="ghost"
+              $size="sm"
+              onClick={handleExportEbayCsv}
+              $loading={exportingEbay}
+              icon={<Download size={14} />}
+              style={{ color: '#fff', border: '1px solid #666' }}
+            >
+              Export {selectedProductIds.length} to eBay (.csv)
             </AdminButton>
             <AdminButton
               $variant="gold"

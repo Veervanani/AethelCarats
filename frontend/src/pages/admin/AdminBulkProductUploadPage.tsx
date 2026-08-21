@@ -21,7 +21,7 @@ import { api } from '../../services/api';
 import { PRIVATE_ADMIN_PATH } from '../../App';
 import { useToast } from '../../context/ToastContext';
 import { AdminPageHeader, AdminButton } from '../../components/admin/AdminUI';
-import { exportProductsToEbayExcel } from '../../utils/ebayExcelExportHelper';
+import { exportProductsToEbayExcel, exportProductsToEbayCsv } from '../../utils/ebayExcelExportHelper';
 
 const spinAnim = keyframes`
   0% { transform: rotate(0deg); }
@@ -485,11 +485,32 @@ export const AdminBulkProductUploadPage: React.FC = () => {
         return;
       }
 
-      const res = exportProductsToEbayExcel(products);
+      const res = await exportProductsToEbayExcel(products);
       toast.success(`Exported ${res.count} products to eBay Excel (${res.fileName})!`);
     } catch (err: any) {
       console.error('eBay export error:', err);
       toast.error(err.message || 'Failed to export products in eBay format.');
+    } finally {
+      setExportingEbay(false);
+    }
+  };
+
+  const handleExportEbayCsv = async () => {
+    try {
+      setExportingEbay(true);
+      const data = await api.getProducts({ status: 'ALL', limit: 1000 });
+      const products = data.products || [];
+
+      if (products.length === 0) {
+        toast.error('No products found in the catalog to export.');
+        return;
+      }
+
+      const res = exportProductsToEbayCsv(products);
+      toast.success(`Exported ${res.count} products to eBay CSV (${res.fileName})!`);
+    } catch (err: any) {
+      console.error('eBay CSV export error:', err);
+      toast.error(err.message || 'Failed to export products in eBay CSV format.');
     } finally {
       setExportingEbay(false);
     }
@@ -507,9 +528,18 @@ export const AdminBulkProductUploadPage: React.FC = () => {
               onClick={handleExportEbay}
               $loading={exportingEbay}
               icon={<Download size={14} />}
-              title="Download all products in 94-column eBay Category Listing format"
+              title="Download all products in official 94-column eBay Category Listing Excel format"
             >
-              Export Catalog to eBay Excel (.xlsx)
+              Export eBay Excel (.xlsx)
+            </AdminButton>
+            <AdminButton
+              $variant="secondary"
+              onClick={handleExportEbayCsv}
+              $loading={exportingEbay}
+              icon={<Download size={14} />}
+              title="Download all products in eBay CSV format for instant bulk upload"
+            >
+              Export eBay CSV (.csv)
             </AdminButton>
             <AdminButton $variant="gold" onClick={handleDownloadTemplate} icon={<Download size={14} />}>
               Download Sample Excel Template
