@@ -205,12 +205,12 @@ const DEFAULT_SECTIONS = [
     displayOrder: 2,
     items: [
       { title: 'Primary Stone Type', value: 'Lab-Grown Solitaire Diamond (VVS / VS1)', isActive: true, displayOrder: 0 },
-      { title: 'Metal Options', value: '14K Gold / 18K Gold / Silver', isActive: true, displayOrder: 1 },
+      { title: 'Metal Options', value: '14K Gold / 18K Gold', isActive: true, displayOrder: 1 },
       { title: 'Setting Style', value: 'Hand-set Prong Setting', isActive: true, displayOrder: 2 },
       { title: 'Diamond Certification', value: 'GIA / IGI Certified', isActive: true, displayOrder: 3 },
       { title: 'Ring Size Range', value: 'US 4 to US 12 (Complimentary Resizing)', isActive: true, displayOrder: 4 },
       { title: 'Conflict-Free Standard', value: '100% Ethical & Sustainable Sourcing', isActive: true, displayOrder: 5 },
-      { title: 'Precious Metal Recycling', value: '100% Recycled Fine Gold & Silver', isActive: true, displayOrder: 6 },
+      { title: 'Precious Metal Recycling', value: '100% Recycled Fine Gold', isActive: true, displayOrder: 6 },
       { title: 'Country of Origin', value: 'India (Surat Atelier)', isActive: true, displayOrder: 7 },
     ]
   },

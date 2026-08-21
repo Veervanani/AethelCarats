@@ -170,12 +170,11 @@ if (!function_exists('mapProductResponse')) {
             ['label' => '18K Yellow Gold', 'code' => '18k', 'circleColor' => '#E8C872', 'priceAdjustment' => 250],
             ['label' => '18K White Gold', 'code' => '18k', 'circleColor' => '#CBD5E1', 'priceAdjustment' => 350],
             ['label' => '18K Rose Gold', 'code' => '18k', 'circleColor' => '#E4A8A5', 'priceAdjustment' => 350],
-            ['label' => 'Silver', 'code' => 'Ag', 'circleColor' => '#E2E8F0', 'priceAdjustment' => 0],
         ]);
 
         $metalsConfig = array_values(array_filter($rawMetals, function($m) {
             $lbl = strtolower($m['label'] ?? '');
-            return !str_contains($lbl, '9k') && !str_contains($lbl, '10k') && !str_contains($lbl, 'platinum');
+            return !str_contains($lbl, '9k') && !str_contains($lbl, '10k') && !str_contains($lbl, 'platinum') && !str_contains($lbl, 'silver') && !str_contains($lbl, 'ag');
         }));
 
         $benefitsConfig = safeJsonParse($product['benefitsConfig'] ?? null, [
@@ -187,7 +186,7 @@ if (!function_exists('mapProductResponse')) {
         $accordionsConfig = safeJsonParse($product['accordionsConfig'] ?? null, [
             ['id' => 'experience', 'title' => 'YOUR FLOKSY JEWEL EXPERIENCE', 'content' => 'Every creation is handcrafted in our Surat atelier using certified conflict-free diamonds and 100% recycled precious metals.'],
             ['id' => 'details', 'title' => 'PRODUCT & DIAMOND SPECIFICATIONS', 'content' => 'Each diamond is individually selected for optimum brilliance, fire, and symmetry. Hand-set under 40x microscopic precision with official IGI / GIA certification detailing cut, color, clarity, and carat weight.'],
-            ['id' => 'craftsmanship', 'title' => 'CRAFTSMANSHIP & SUSTAINABILITY', 'content' => 'Handcrafted in our Surat atelier using 100% recycled solid gold and fine silver. Ethically created with 100% Kimberley Process certified, conflict-free lab-grown & natural diamonds.'],
+            ['id' => 'craftsmanship', 'title' => 'CRAFTSMANSHIP & SUSTAINABILITY', 'content' => 'Handcrafted in our Surat atelier using 100% recycled solid gold. Ethically created with 100% Kimberley Process certified, conflict-free lab-grown & natural diamonds.'],
             ['id' => 'shipping', 'title' => 'SHIPPING & DELIVERY', 'content' => 'After order confirmation, your order will be dispatched within 7-10 working days. Once dispatched, delivery is estimated within an additional 7-10 working days. All shipments are sent via fully insured Priority Air for secure and reliable delivery.']
         ]);
 
@@ -210,7 +209,7 @@ if (!function_exists('mapProductResponse')) {
         $rawVariations = safeJsonParse($product['variationsJson'] ?? null, []);
         $variationsConfig = array_values(array_filter($rawVariations, function($v) {
             $metalStr = strtolower($v['metal'] ?? '');
-            return !str_contains($metalStr, '9k') && !str_contains($metalStr, '10k');
+            return !str_contains($metalStr, '9k') && !str_contains($metalStr, '10k') && !str_contains($metalStr, 'silver') && !str_contains($metalStr, 'ag') && !str_contains($metalStr, 'platinum');
         }));
 
         $customOptionsConfig = safeJsonParse($product['customOptionsJson'] ?? null, []);
@@ -794,7 +793,7 @@ function handleAdminProductPageContent(): void {
                 'accordionsJson' => json_encode([
                     ['id' => 'experience', 'title' => 'YOUR FLOKSY JEWEL EXPERIENCE', 'content' => 'Every creation is handcrafted in our Surat atelier using certified conflict-free diamonds and 100% recycled precious metals.'],
                     ['id' => 'details', 'title' => 'PRODUCT & DIAMOND SPECIFICATIONS', 'content' => 'Each diamond is individually selected for optimum brilliance, fire, and symmetry. Hand-set under 40x microscopic precision with official IGI / GIA certification detailing cut, color, clarity, and carat weight.'],
-                    ['id' => 'craftsmanship', 'title' => 'CRAFTSMANSHIP & SUSTAINABILITY', 'content' => 'Handcrafted in our Surat atelier using 100% recycled solid gold and fine silver. Ethically created with 100% Kimberley Process certified, conflict-free lab-grown & natural diamonds.'],
+                    ['id' => 'craftsmanship', 'title' => 'CRAFTSMANSHIP & SUSTAINABILITY', 'content' => 'Handcrafted in our Surat atelier using 100% recycled solid gold. Ethically created with 100% Kimberley Process certified, conflict-free lab-grown & natural diamonds.'],
                     ['id' => 'shipping', 'title' => 'SHIPPING & DELIVERY', 'content' => 'After order confirmation, your order will be dispatched within 7-10 working days. Once dispatched, delivery is estimated within an additional 7-10 working days. All shipments are sent via fully insured Priority Air for secure and reliable delivery.']
                 ]),
                 'packagingImageUrl' => '/assets/floksy_ring_box.png'
@@ -1190,14 +1189,30 @@ function handleSaveProduct(): void {
         $isNewArrival         = isset($body['isNewArrival']) ? ($body['isNewArrival'] ? 1 : 0) : ($existing['isNewArrival'] ?? 0);
         $isBestseller         = isset($body['isBestseller']) ? ($body['isBestseller'] ? 1 : 0) : ($existing['isBestseller'] ?? 0);
 
-        $metalsCfgJson    = isset($body['metalsConfig']) ? json_encode($body['metalsConfig']) : ($existing['metalsConfig'] ?? null);
+        $rawMetalsInput = isset($body['metalsConfig']) ? $body['metalsConfig'] : (isset($existing['metalsConfig']) ? safeJsonParse($existing['metalsConfig'], []) : []);
+        if (is_array($rawMetalsInput)) {
+            $rawMetalsInput = array_values(array_filter($rawMetalsInput, function($m) {
+                $lbl = strtolower(is_array($m) ? ($m['label'] ?? '') : (string)$m);
+                return !str_contains($lbl, 'silver') && !str_contains($lbl, 'ag');
+            }));
+        }
+        $metalsCfgJson = json_encode($rawMetalsInput);
+
         $customOptsJson   = isset($body['customOptions']) ? json_encode($body['customOptions']) : (isset($body['customOptionsJson']) ? json_encode($body['customOptionsJson']) : ($existing['customOptionsJson'] ?? null));
         $accordionsJson   = isset($body['accordionsConfig']) ? json_encode($body['accordionsConfig']) : ($existing['accordionsConfig'] ?? null);
         $benefitsJson     = isset($body['benefitsConfig']) ? json_encode($body['benefitsConfig']) : ($existing['benefitsConfig'] ?? null);
         $internalTagsJson = isset($body['internalTags']) ? json_encode($body['internalTags']) : (isset($body['internalTagsJson']) ? json_encode($body['internalTagsJson']) : ($existing['internalTagsJson'] ?? null));
         $seoSocialJson    = isset($body['seoSocial']) ? json_encode($body['seoSocial']) : (isset($body['seoSocialJson']) ? json_encode($body['seoSocialJson']) : ($existing['seoSocialJson'] ?? null));
         $diamondDetJson   = isset($body['diamondDetails']) ? json_encode($body['diamondDetails']) : (isset($body['diamondDetailsJson']) ? json_encode($body['diamondDetailsJson']) : ($existing['diamondDetailsJson'] ?? null));
-        $variationsJson   = isset($body['variations']) ? json_encode($body['variations']) : (isset($body['variationsJson']) ? json_encode($body['variationsJson']) : ($existing['variationsJson'] ?? null));
+
+        $rawVarsInput = isset($body['variations']) ? $body['variations'] : (isset($body['variationsJson']) ? (is_array($body['variationsJson']) ? $body['variationsJson'] : safeJsonParse($body['variationsJson'], [])) : (isset($existing['variationsJson']) ? safeJsonParse($existing['variationsJson'], []) : []));
+        if (is_array($rawVarsInput)) {
+            $rawVarsInput = array_values(array_filter($rawVarsInput, function($v) {
+                $m = strtolower(is_array($v) ? ($v['metal'] ?? '') : '');
+                return !str_contains($m, 'silver') && !str_contains($m, 'ag');
+            }));
+        }
+        $variationsJson = json_encode($rawVarsInput);
 
         $pdo->beginTransaction();
 

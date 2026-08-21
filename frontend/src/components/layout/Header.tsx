@@ -139,7 +139,7 @@ const DEFAULT_MENU_ITEMS: IMenuItem[] = [
               links: [
                 { label: '18K Yellow Gold', url: '/earrings?metal=18k-yellow-gold' },
                 { label: '18K White Gold', url: '/earrings?metal=18k-white-gold' },
-                { label: 'Silver', url: '/earrings?metal=silver' }
+                { label: '18K Rose Gold', url: '/earrings?metal=18k-rose-gold' }
               ]
             }
           ]
@@ -198,7 +198,7 @@ const DEFAULT_MENU_ITEMS: IMenuItem[] = [
               links: [
                 { label: '18K Yellow Gold', url: '/necklaces?metal=18k-yellow-gold' },
                 { label: '18K White Gold', url: '/necklaces?metal=18k-white-gold' },
-                { label: 'Silver', url: '/necklaces?metal=silver' }
+                { label: '18K Rose Gold', url: '/necklaces?metal=18k-rose-gold' }
               ]
             }
           ]
@@ -257,7 +257,7 @@ const DEFAULT_MENU_ITEMS: IMenuItem[] = [
               links: [
                 { label: '18K Yellow Gold', url: '/bracelets?metal=18k-yellow-gold' },
                 { label: '18K White Gold', url: '/bracelets?metal=18k-white-gold' },
-                { label: 'Silver', url: '/bracelets?metal=silver' }
+                { label: '18K Rose Gold', url: '/bracelets?metal=18k-rose-gold' }
               ]
             }
           ]
@@ -317,7 +317,7 @@ const DEFAULT_MENU_ITEMS: IMenuItem[] = [
               links: [
                 { label: '18K Yellow Gold', url: '/pendants?metal=18k-yellow-gold' },
                 { label: '18K White Gold', url: '/pendants?metal=18k-white-gold' },
-                { label: 'Silver', url: '/pendants?metal=silver' }
+                { label: '18K Rose Gold', url: '/pendants?metal=18k-rose-gold' }
               ]
             }
           ]

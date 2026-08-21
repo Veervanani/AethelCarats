@@ -584,7 +584,6 @@ export const FloksyFilterBar: React.FC<FloksyFilterBarProps> = ({
                 { label: '18K Yellow Gold', value: '18k-yellow-gold', colorHex: '#E8C872' },
                 { label: '18K White Gold', value: '18k-white-gold', colorHex: '#CBD5E1' },
                 { label: '18K Rose Gold', value: '18k-rose-gold', colorHex: '#E4A8A5' },
-                { label: 'Silver', value: 'silver', colorHex: '#E2E8F0' },
               ]).map((m) => (
                 <div
                   key={m.value}

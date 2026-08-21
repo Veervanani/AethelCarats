@@ -1347,7 +1347,7 @@ const DEFAULT_ACCORDIONS = [
   {
     id: 'specs',
     title: 'PRODUCT & DIAMOND SPECIFICATIONS',
-    content: 'Hand-selected center stone with optical precision cut. Crafted in solid 14k/18k gold or silver with stamped hallmark verification.',
+    content: 'Hand-selected center stone with optical precision cut. Crafted in solid 14k/18k gold with stamped hallmark verification.',
     enabled: true,
     defaultOpen: false,
   },
@@ -1602,8 +1602,9 @@ export const ProductDetailPage: React.FC = () => {
             } catch (e) {}
 
             if (fetchedProduct.metal) {
-              setSelectedMetal(fetchedProduct.metal.includes('Platinum') ? 'Silver' : fetchedProduct.metal);
-              setSelectedMetalCode(fetchedProduct.metal.includes('18K') ? '18k' : (fetchedProduct.metal.includes('Silver') || fetchedProduct.metal.includes('Platinum')) ? 'Ag' : '14k');
+              const initMetal = fetchedProduct.metal.includes('Silver') ? '14K White Gold' : fetchedProduct.metal;
+              setSelectedMetal(initMetal);
+              setSelectedMetalCode(initMetal.includes('18K') ? '18k' : '14k');
             }
 
             api.get(`/product-page-content/${fetchedProduct.id}`).then((res) => {
@@ -1851,7 +1852,10 @@ export const ProductDetailPage: React.FC = () => {
   }
 
   const rawMetalsList = (product.metalsConfig && product.metalsConfig.length > 0)
-    ? product.metalsConfig.filter((m: any) => !String(m.label || '').toLowerCase().includes('platinum'))
+    ? product.metalsConfig.filter((m: any) => {
+        const lbl = String(m.label || m || '').toLowerCase();
+        return !lbl.includes('platinum') && !lbl.includes('silver') && !lbl.includes('ag');
+      })
     : [
         { label: '14K Yellow Gold', code: '14k', circleColor: '#E8C872' },
         { label: '14K White Gold', code: '14k', circleColor: '#CBD5E1' },
@@ -1859,12 +1863,11 @@ export const ProductDetailPage: React.FC = () => {
         { label: '18K Yellow Gold', code: '18k', circleColor: '#E8C872' },
         { label: '18K White Gold', code: '18k', circleColor: '#CBD5E1' },
         { label: '18K Rose Gold', code: '18k', circleColor: '#E4A8A5' },
-        { label: 'Silver', code: 'Ag', circleColor: '#E2E8F0' },
       ];
 
   const REFERENCE_METALS_LIST = rawMetalsList.filter((m: any) => {
-    const lbl = String(m.label || '').toLowerCase();
-    return !lbl.includes('9k') && !lbl.includes('10k') && !lbl.includes('platinum');
+    const lbl = String(m.label || m || '').toLowerCase();
+    return !lbl.includes('9k') && !lbl.includes('10k') && !lbl.includes('platinum') && !lbl.includes('silver') && !lbl.includes('ag');
   });
 
   const RING_SIZES = ['Select', 'US 4', 'US 4.5', 'US 5', 'US 5.5', 'US 6', 'US 6.5', 'US 7', 'US 7.5', 'US 8', 'US 8.5', 'US 9', 'US 9.5', 'US 10', 'US 10.5', 'US 11', 'US 11.5', 'US 12'];

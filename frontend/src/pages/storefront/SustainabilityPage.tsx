@@ -348,7 +348,7 @@ export const SustainabilityPage: React.FC = () => {
                 <Globe size={20} />
               </div>
               <h3>Recycled Precious Metals</h3>
-              <p>Crafted using refined 100% recycled 18K gold and solid silver.</p>
+              <p>Crafted using refined 100% recycled 14K & 18K solid gold.</p>
             </PillarCard>
           </PillarsGrid>
         </EditorialBlock>

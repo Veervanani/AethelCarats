@@ -224,7 +224,6 @@ const APPROVED_METALS = [
   { label: '18K Yellow Gold', code: '18k', circleColor: '#E8C872', priceAdjustment: 250 },
   { label: '18K White Gold', code: '18k', circleColor: '#CBD5E1', priceAdjustment: 350 },
   { label: '18K Rose Gold', code: '18k', circleColor: '#E4A8A5', priceAdjustment: 350 },
-  { label: 'Silver', code: 'Ag', circleColor: '#E2E8F0', priceAdjustment: 0 },
 ];
 
 const ALL_RING_SIZES = [
@@ -251,7 +250,7 @@ const DEFAULT_ACCORDIONS = [
   {
     id: 'craftsmanship',
     title: 'CRAFTSMANSHIP & SUSTAINABILITY',
-    content: 'Sustainably crafted with 100% recycled 18K gold and fine silver.',
+    content: 'Sustainably crafted with 100% recycled 14K & 18K solid gold.',
     enabled: true,
     defaultOpen: false,
   },
@@ -429,7 +428,6 @@ export const AdminFullProductEditorPage: React.FC = () => {
       generateVariationsFromMasterPrices(
         2500,
         2750,
-        2000,
         [...APPROVED_METALS],
         [...ALL_RING_SIZES],
         productData.sku || 'FJ-RNG-001',
@@ -476,12 +474,11 @@ export const AdminFullProductEditorPage: React.FC = () => {
         let loadedAccordions = prevAccordions(fetched);
         let vars = (fetched.variations && fetched.variations.length > 0 ? fetched.variations : []).filter((v: any) => {
           const metalStr = String(v.metal || '').toLowerCase();
-          return !metalStr.includes('platinum') && !metalStr.includes('9k') && !metalStr.includes('10k');
+          return !metalStr.includes('platinum') && !metalStr.includes('silver') && !metalStr.includes('9k') && !metalStr.includes('10k');
         });
 
         let p14k = fetched.masterPrice14k || vars.find((v: any) => v.metal?.startsWith('14K'))?.price || fetched.price || 2500;
         let p18k = fetched.masterPrice18k || vars.find((v: any) => v.metal?.startsWith('18K'))?.price || (p14k + 250);
-        let pSilver = fetched.masterPriceSilver || vars.find((v: any) => v.metal === 'Silver')?.price || 2000;
 
         let dDetails = fetched.diamondDetails || {
           shape: fetched.shape || 'Round',
@@ -523,7 +520,7 @@ export const AdminFullProductEditorPage: React.FC = () => {
           comparePrice: fetched.comparePrice !== undefined ? fetched.comparePrice : prev.comparePrice,
           masterPrice14k: p14k,
           masterPrice18k: p18k,
-          masterPriceSilver: pSilver,
+          masterPriceSilver: 0,
           categoryId: fetched.categoryId || fetched.category?.id || '',
           jewelleryType: fetched.jewelleryType || fetched.category?.name || 'Rings',
           status: fetched.status || 'DRAFT',
@@ -536,7 +533,7 @@ export const AdminFullProductEditorPage: React.FC = () => {
           seoSocial: sSocial,
           metalsConfig: (fetched.metalsConfig && fetched.metalsConfig.length > 0 ? fetched.metalsConfig : prev.metalsConfig).filter((m: any) => {
             const lbl = String(m.label || '').toLowerCase();
-            return !lbl.includes('platinum') && !lbl.includes('9k') && !lbl.includes('10k');
+            return !lbl.includes('platinum') && !lbl.includes('silver') && !lbl.includes('9k') && !lbl.includes('10k');
           }),
           variations: vars,
         }));
@@ -769,12 +766,11 @@ export const AdminFullProductEditorPage: React.FC = () => {
     }
   };
 
-  // 3 MASTER PRICES REAL-TIME UPDATES LOGIC
-  const handleMasterPriceChange = (group: '14k' | '18k' | 'silver', newPrice: number) => {
+  // 2 MASTER PRICES REAL-TIME UPDATES LOGIC (14K & 18K)
+  const handleMasterPriceChange = (group: '14k' | '18k', newPrice: number) => {
     setProductData((prev: any) => {
       let master14k = group === '14k' ? newPrice : (prev.masterPrice14k ?? 2500);
       let master18k = group === '18k' ? newPrice : (prev.masterPrice18k ?? 2750);
-      let masterAg = group === 'silver' ? newPrice : (prev.masterPriceSilver ?? 2000);
 
       const updatedVars = (prev.variations || []).map((v: any) => {
         const metalStr = String(v.metal || '');
@@ -782,8 +778,6 @@ export const AdminFullProductEditorPage: React.FC = () => {
           return { ...v, price: master14k };
         } else if (metalStr.startsWith('18K')) {
           return { ...v, price: master18k };
-        } else if (metalStr === 'Silver') {
-          return { ...v, price: masterAg };
         }
         return v;
       });
@@ -792,7 +786,6 @@ export const AdminFullProductEditorPage: React.FC = () => {
         ...prev,
         masterPrice14k: master14k,
         masterPrice18k: master18k,
-        masterPriceSilver: masterAg,
         price: master14k,
         variations: updatedVars,
       };
@@ -802,20 +795,20 @@ export const AdminFullProductEditorPage: React.FC = () => {
   const generateVariationsFromMasterPrices = (
     p14k: number,
     p18k: number,
-    pSilver: number,
     metalsList: any[],
     sizesList: string[],
     baseSku: string,
     isRing: boolean
   ) => {
-    const activeMetals = (metalsList || []).map((m: any) => typeof m === 'string' ? m : m.label);
+    const activeMetals = (metalsList || [])
+      .map((m: any) => typeof m === 'string' ? m : m.label)
+      .filter((metal: string) => !metal.toLowerCase().includes('silver') && !metal.toLowerCase().includes('ag'));
     const sizes = isRing ? (sizesList && sizesList.length > 0 ? sizesList : ALL_RING_SIZES) : [null];
     const generated: any[] = [];
 
     for (const metal of activeMetals) {
       let groupPrice = p14k;
       if (metal.startsWith('18K')) groupPrice = p18k;
-      else if (metal === 'Silver') groupPrice = pSilver;
 
       const metalCode = metal.replace(/[^a-zA-Z0-9]/g, '').substring(0, 4).toUpperCase();
 
@@ -840,16 +833,18 @@ export const AdminFullProductEditorPage: React.FC = () => {
   const handleGenerateBulkVariations = () => {
     const p14k = productData.masterPrice14k ?? 2500;
     const p18k = productData.masterPrice18k ?? 2750;
-    const pSilver = productData.masterPriceSilver ?? 2000;
     const activeMetals = productData.metalsConfig || APPROVED_METALS;
     const sizes = productData.availableRingSizes || ALL_RING_SIZES;
     const baseSku = productData.sku || 'FJ-JW-001';
 
-    generateVariationsFromMasterPrices(p14k, p18k, pSilver, activeMetals, sizes, baseSku, isRingProduct);
+    generateVariationsFromMasterPrices(p14k, p18k, activeMetals, sizes, baseSku, isRingProduct);
   };
 
   const handleAddSingleVariation = () => {
-    const metals = productData.metalsConfig || [];
+    const metals = (productData.metalsConfig || APPROVED_METALS).filter((m: any) => {
+      const lbl = String(m.label || m || '').toLowerCase();
+      return !lbl.includes('silver') && !lbl.includes('ag');
+    });
     const firstMetal = metals[0]?.label || '14K Yellow Gold';
     const defaultSize = isRingProduct ? ((productData.availableRingSizes || [])[0] || 'US 7') : null;
     const baseSku = productData.sku || 'FJ-JW-001';
@@ -857,7 +852,6 @@ export const AdminFullProductEditorPage: React.FC = () => {
 
     let groupPrice = productData.masterPrice14k || 2500;
     if (firstMetal.startsWith('18K')) groupPrice = productData.masterPrice18k || 2750;
-    else if (firstMetal === 'Silver') groupPrice = productData.masterPriceSilver || 2000;
 
     const newVar = {
       metal: firstMetal,
@@ -1701,7 +1695,7 @@ export const AdminFullProductEditorPage: React.FC = () => {
             </AdminCardHeader>
 
             <div style={{ fontSize: '0.82rem', color: '#77736c', marginBottom: 16 }}>
-              Select available precious metal options and enter the 3 Master Prices (14K, 18K, Silver) to control all variations.
+              Select available precious metal options and enter the 2 Master Prices (14K, 18K) to control all variations.
             </div>
 
             {/* METALS SELECTION CHECKBOXES */}
@@ -1709,7 +1703,7 @@ export const AdminFullProductEditorPage: React.FC = () => {
               <div style={{ fontSize: '0.78rem', fontWeight: 700, letterSpacing: '0.08em', textTransform: 'uppercase', color: '#19202a', marginBottom: 12 }}>
                 Active Metal Options
               </div>
-              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 10 }}>
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 10 }}>
                 {APPROVED_METALS.map((mObj) => {
                   const currentMetals = productData.metalsConfig || [];
                   const isChecked = currentMetals.some((m: any) => (typeof m === 'string' ? m : m.label)?.toLowerCase() === mObj.label.toLowerCase());
@@ -1739,12 +1733,12 @@ export const AdminFullProductEditorPage: React.FC = () => {
               </div>
             </div>
 
-            {/* 3 MASTER PRICES INPUTS */}
+            {/* 2 MASTER PRICES INPUTS */}
             <div style={{ background: '#faf8f5', border: '1px solid #e8e3d9', padding: 18, borderRadius: 6, marginBottom: 20 }}>
               <div style={{ fontSize: '0.82rem', fontWeight: 700, letterSpacing: '0.08em', textTransform: 'uppercase', color: '#19202a', marginBottom: 12 }}>
                 MASTER PRICES (Source of Truth for Metal Groups)
               </div>
-              <AdminFormGrid $columns={3}>
+              <AdminFormGrid $columns={2}>
                 <AdminFormGroup>
                   <label style={{ fontWeight: 700, color: '#c9a45c' }}>14K PRICE ($)</label>
                   <AdminInput
@@ -1761,15 +1755,6 @@ export const AdminFullProductEditorPage: React.FC = () => {
                     value={productData.masterPrice18k ?? 2750}
                     onChange={(e) => handleMasterPriceChange('18k', parseFloat(e.target.value) || 0)}
                     placeholder="2750"
-                  />
-                </AdminFormGroup>
-                <AdminFormGroup>
-                  <label style={{ fontWeight: 700, color: '#c9a45c' }}>SILVER PRICE ($)</label>
-                  <AdminInput
-                    type="number"
-                    value={productData.masterPriceSilver ?? 2000}
-                    onChange={(e) => handleMasterPriceChange('silver', parseFloat(e.target.value) || 0)}
-                    placeholder="2000"
                   />
                 </AdminFormGroup>
               </AdminFormGrid>
@@ -1802,7 +1787,6 @@ export const AdminFullProductEditorPage: React.FC = () => {
                             updated[vIdx].metal = newMetal;
                             if (newMetal.startsWith('14K')) updated[vIdx].price = productData.masterPrice14k || 2500;
                             else if (newMetal.startsWith('18K')) updated[vIdx].price = productData.masterPrice18k || 2750;
-                            else if (newMetal === 'Silver') updated[vIdx].price = productData.masterPriceSilver || 2000;
                             handleFieldChange('variations', updated);
                           }}
                           style={{ padding: '6px 10px', fontSize: '0.82rem' }}
