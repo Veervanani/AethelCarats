@@ -7,6 +7,7 @@ import {
   Trash2,
   Search,
   Upload,
+  Download,
   Copy,
   Sparkles,
   Tag,
@@ -20,6 +21,7 @@ import { Product } from '../../types';
 import { PRIVATE_ADMIN_PATH } from '../../App';
 import { useToast } from '../../context/ToastContext';
 import { ConfirmModal } from '../../components/common/ConfirmModal';
+import { exportProductsToEbayExcel } from '../../utils/ebayExcelExportHelper';
 import {
   AdminPageHeader,
   AdminCard,
@@ -130,10 +132,36 @@ export const AdminProductManagerPage: React.FC = () => {
   const [deleteTargetId, setDeleteTargetId] = useState<string | null>(null);
   const [resetConfirmOpen, setResetConfirmOpen] = useState<boolean>(false);
   const [resetting, setResetting] = useState<boolean>(false);
+  const [exportingEbay, setExportingEbay] = useState<boolean>(false);
 
   useEffect(() => {
     fetchProducts();
   }, []);
+
+  const handleExportEbayExcel = () => {
+    try {
+      setExportingEbay(true);
+      const targetList =
+        selectedProductIds.length > 0
+          ? products.filter((p) => selectedProductIds.includes(p.id))
+          : filteredProducts.length > 0
+          ? filteredProducts
+          : products;
+
+      if (targetList.length === 0) {
+        toast.error('No products available to export.');
+        return;
+      }
+
+      const result = exportProductsToEbayExcel(targetList);
+      toast.success(`Successfully exported ${result.count} products to eBay Excel (${result.fileName})!`);
+    } catch (err: any) {
+      console.error('eBay export error:', err);
+      toast.error(err.message || 'Failed to export eBay Excel file.');
+    } finally {
+      setExportingEbay(false);
+    }
+  };
 
   const fetchProducts = async () => {
     try {
@@ -265,6 +293,15 @@ export const AdminProductManagerPage: React.FC = () => {
               Purge DB
             </AdminButton>
             <AdminButton
+              $variant="secondary"
+              onClick={handleExportEbayExcel}
+              $loading={exportingEbay}
+              icon={<Download size={14} />}
+              title="Download full catalog in 94-column eBay Category Listing Excel format"
+            >
+              Export to eBay Excel (.xlsx)
+            </AdminButton>
+            <AdminButton
               $variant="gold"
               onClick={() => navigate(`${PRIVATE_ADMIN_PATH}/products/bulk-upload`)}
               icon={<Upload size={14} />}
@@ -314,6 +351,15 @@ export const AdminProductManagerPage: React.FC = () => {
             <span>Bulk Product Actions</span>
           </div>
           <div className="actions">
+            <AdminButton
+              $variant="secondary"
+              $size="sm"
+              onClick={handleExportEbayExcel}
+              $loading={exportingEbay}
+              icon={<Download size={14} />}
+            >
+              Export {selectedProductIds.length} to eBay (.xlsx)
+            </AdminButton>
             <AdminButton
               $variant="gold"
               $size="sm"

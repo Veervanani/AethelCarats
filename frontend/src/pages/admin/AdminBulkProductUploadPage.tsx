@@ -21,6 +21,7 @@ import { api } from '../../services/api';
 import { PRIVATE_ADMIN_PATH } from '../../App';
 import { useToast } from '../../context/ToastContext';
 import { AdminPageHeader, AdminButton } from '../../components/admin/AdminUI';
+import { exportProductsToEbayExcel } from '../../utils/ebayExcelExportHelper';
 
 const spinAnim = keyframes`
   0% { transform: rotate(0deg); }
@@ -470,15 +471,50 @@ export const AdminBulkProductUploadPage: React.FC = () => {
     }
   };
 
+  const [exportingEbay, setExportingEbay] = useState(false);
+
+  // 6. Export Current Products in eBay Excel Format
+  const handleExportEbay = async () => {
+    try {
+      setExportingEbay(true);
+      const data = await api.getProducts({ status: 'ALL', limit: 1000 });
+      const products = data.products || [];
+
+      if (products.length === 0) {
+        toast.error('No products found in the catalog to export.');
+        return;
+      }
+
+      const res = exportProductsToEbayExcel(products);
+      toast.success(`Exported ${res.count} products to eBay Excel (${res.fileName})!`);
+    } catch (err: any) {
+      console.error('eBay export error:', err);
+      toast.error(err.message || 'Failed to export products in eBay format.');
+    } finally {
+      setExportingEbay(false);
+    }
+  };
+
   return (
     <div>
       <AdminPageHeader
         title="Bulk Product Upload"
         description="Upload multiple products, pricing matrix, and media assets using Etsy CSV files (e.g. EtsyListingsDownload.csv), Shopify CSV, or Floksy Excel templates."
         actions={
-          <AdminButton $variant="gold" onClick={handleDownloadTemplate} icon={<Download size={14} />}>
-            Download Sample Excel Template
-          </AdminButton>
+          <div style={{ display: 'flex', gap: '10px' }}>
+            <AdminButton
+              $variant="secondary"
+              onClick={handleExportEbay}
+              $loading={exportingEbay}
+              icon={<Download size={14} />}
+              title="Download all products in 94-column eBay Category Listing format"
+            >
+              Export Catalog to eBay Excel (.xlsx)
+            </AdminButton>
+            <AdminButton $variant="gold" onClick={handleDownloadTemplate} icon={<Download size={14} />}>
+              Download Sample Excel Template
+            </AdminButton>
+          </div>
         }
       />
 
