@@ -140,30 +140,44 @@ function getAllImageUrls(product: Product, siteUrl: string): string[] {
 }
 
 function cleanHtmlDescription(product: Product): string {
+  let raw = product.fullDescription || product.shortDescription || '';
+
+  // Sanitize obsolete silver, 10K, and Etsy mentions
+  raw = raw.replace(/Silver Option:\s*935 Argentium Silver/gi, '');
+  raw = raw.replace(/Silver Option:\s*925 Sterling Silver/gi, '');
+  raw = raw.replace(/935 Argentium Silver/gi, '');
+  raw = raw.replace(/925 Sterling Silver/gi, '');
+  raw = raw.replace(/Argentium Silver/gi, '');
+  raw = raw.replace(/10K Solid Gold\s*\|\s*/gi, '');
+  raw = raw.replace(/10K Solid Gold/gi, '');
+  raw = raw.replace(/10K Gold\s*\|\s*/gi, '');
+  raw = raw.replace(/10k\s*\|\s*/gi, '');
+  raw = raw.replace(/\|\s*\|\s*/g, '| ');
+  raw = raw.replace(/\|\s*$/gm, '');
+
   const parts: string[] = [];
-  if (product.fullDescription) {
-    parts.push(product.fullDescription.trim());
-  } else if (product.shortDescription) {
-    parts.push(product.shortDescription.trim());
+  if (raw.trim()) {
+    parts.push(raw.trim());
   }
 
   if (product.specifications) {
-    parts.push('<p><strong>Specifications:</strong> ' + product.specifications.trim() + '</p>');
+    let specClean = product.specifications.replace(/silver/gi, '14K / 18K Solid Gold');
+    parts.push('<p><strong>Specifications:</strong> ' + specClean.trim() + '</p>');
   }
   if (product.careInstructions) {
     parts.push('<p><strong>Care Instructions:</strong> ' + product.careInstructions.trim() + '</p>');
   }
 
-  return parts.join('\n\n') || (product.name || 'Fine luxury jewellery piece handcrafted by Floksy Jewel.');
+  const combined = parts.join('\n\n') || (product.name || 'Fine luxury jewellery piece handcrafted by Floksy Jewel.');
+  return combined;
 }
 
 function generateTags(product: Product): string {
-  const tags: string[] = ['Fine Jewelry', 'Floksy Jewel', 'Luxury'];
+  const tags: string[] = ['Fine Jewelry', 'Floksy Jewel', 'Luxury', 'Solid Gold', '14K Gold', '18K Gold'];
 
   if (product.category?.name) tags.push(product.category.name);
   if (product.jewelleryType) tags.push(product.jewelleryType);
   if (product.diamondType) tags.push(product.diamondType);
-  if (product.metal) tags.push(product.metal);
   if (product.goldPurity) tags.push(product.goldPurity);
   if (product.shape) tags.push(product.shape + ' Cut');
   if (product.certification) tags.push(product.certification + ' Certified');
@@ -196,16 +210,6 @@ export function buildShopifyExportRows(products: Product[], options: ExportShopi
     const seoTitle = (product as any).metaTitle || (product as any).seoSocial?.ogTitle || title;
     const seoDesc = (product as any).metaDescription || (product as any).seoSocial?.ogDescription || (product.shortDescription || '').replace(/<[^>]*>?/gm, '');
 
-    // Get active variations
-    let vars = Array.isArray(product.variations) ? product.variations : [];
-    // Filter out silver from variations
-    vars = vars.filter((v: any) => {
-      const m = String(v.metal || '').toLowerCase();
-      return !m.includes('silver') && !m.includes('ag');
-    });
-
-    const hasRingSizes = vars.some((v: any) => Boolean(v.ringSize));
-
     const defaultPrice = product.salePrice || product.price || 2500;
     const comparePrice = product.comparePrice || (product.salePrice ? product.price : '');
     const baseSku = product.sku || ('FJ-' + (product.id ? product.id.substring(0, 8).toUpperCase() : 'PROD'));
@@ -213,144 +217,112 @@ export function buildShopifyExportRows(products: Product[], options: ExportShopi
     // Color pattern metafield string
     const colorPattern = 'White Gold; Yellow Gold; Rose Gold';
 
-    if (vars.length > 0) {
-      // Multiple variations
-      vars.forEach((v: any, vIdx: number) => {
-        const isFirstRow = vIdx === 0;
-        const varSku = v.sku || (baseSku + '-' + (vIdx + 1));
-        const varPrice = v.price || defaultPrice;
-        const metalVal = v.metal || '14K Yellow Gold';
-        const sizeVal = v.ringSize || (hasRingSizes ? 'US 7' : '');
+    // Get active variations
+    let vars = Array.isArray(product.variations) ? product.variations : [];
+    // Filter out silver from variations
+    vars = vars.filter((v: any) => {
+      const m = String(v.metal || '').toLowerCase();
+      return !m.includes('silver') && !m.includes('ag') && !m.includes('platinum') && !m.includes('10k') && !m.includes('9k');
+    });
 
-        const imgUrl = isFirstRow ? (images[0] || '') : (images[vIdx] || '');
+    // If no variations explicitly populated in DB, auto-populate the 6 standard gold color options
+    if (vars.length === 0) {
+      const p14k = (product as any).masterPrice14k || defaultPrice;
+      const p18k = (product as any).masterPrice18k || (p14k + 250);
 
-        const row = [
-          isFirstRow ? title : '',
-          handle,
-          isFirstRow ? description : '',
-          isFirstRow ? vendor : '',
-          isFirstRow ? cat.shopifyCategory : '',
-          isFirstRow ? cat.type : '',
-          isFirstRow ? tags : '',
-          isFirstRow ? 'TRUE' : '',
-          isFirstRow ? status : '',
-          varSku,
-          '', // Barcode
-          isFirstRow ? 'Metal' : '',
-          metalVal,
-          '',
-          isFirstRow ? (hasRingSizes ? 'Ring Size' : '') : '',
-          hasRingSizes ? sizeVal : '',
-          '',
-          '', // Option3 name
-          '', // Option3 value
-          '',
-          varPrice,
-          comparePrice || '',
-          '', // Cost per item
-          'TRUE', // Charge tax
-          '', // Tax code
-          '', '', '', '', // Unit price measures
-          'shopify', // Inventory tracker
-          v.stockQuantity !== undefined ? v.stockQuantity : (product.stockQuantity || 10),
-          'DENY', // Continue selling when out of stock
-          5, // Weight value (grams)
-          'g', // Weight unit
-          'TRUE', // Requires shipping
-          'manual', // Fulfillment service
-          imgUrl,
-          isFirstRow ? 1 : (imgUrl ? (vIdx + 1) : ''),
-          isFirstRow ? title : '',
-          imgUrl, // Variant image URL
-          'FALSE', // Gift card
-          isFirstRow ? seoTitle : '',
-          isFirstRow ? seoDesc : '',
-          isFirstRow ? colorPattern : '',
-          isFirstRow ? cat.googleCategory : '',
-          isFirstRow ? 'Unisex' : '',
-          isFirstRow ? 'Adult (13+ years old)' : '',
-          varSku, // MPN
-          isFirstRow ? cat.type : '',
-          isFirstRow ? 'Fine Jewelry, Lab Grown Diamond' : '',
-          isFirstRow ? 'New' : '',
-          isFirstRow ? 'FALSE' : '',
-          isFirstRow ? 'Floksy Jewel Atelier' : '',
-          '', '', '', '',
-        ];
+      const standardMetals = [
+        { metal: '14K White Gold', price: p14k, code: '14KW' },
+        { metal: '14K Yellow Gold', price: p14k, code: '14KY' },
+        { metal: '14K Rose Gold', price: p14k, code: '14KR' },
+        { metal: '18K White Gold', price: p18k, code: '18KW' },
+        { metal: '18K Yellow Gold', price: p18k, code: '18KY' },
+        { metal: '18K Rose Gold', price: p18k, code: '18KR' },
+      ];
 
-        rows.push(row);
-      });
+      vars = standardMetals.map((m) => ({
+        metal: m.metal,
+        price: m.price,
+        sku: `${baseSku}-${m.code}`,
+        stockQuantity: product.stockQuantity || 10,
+      }));
+    }
 
-      // If there are more images than variations, add extra image rows
-      if (images.length > vars.length) {
-        for (let i = vars.length; i < images.length; i++) {
-          const extraImgRow = new Array(57).fill('');
-          extraImgRow[1] = handle; // URL handle
-          extraImgRow[36] = images[i]; // Product image URL
-          extraImgRow[37] = i + 1; // Image position
-          extraImgRow[38] = title + ' - Photo ' + (i + 1); // Alt text
-          rows.push(extraImgRow);
-        }
-      }
-    } else {
-      // Single product (no variations table rows)
+    const hasRingSizes = vars.some((v: any) => Boolean(v.ringSize));
+
+    vars.forEach((v: any, vIdx: number) => {
+      const isFirstRow = vIdx === 0;
+      const varSku = v.sku || (baseSku + '-' + (vIdx + 1));
+      const varPrice = v.price || defaultPrice;
+      const metalVal = v.metal || '14K White Gold';
+      const sizeVal = v.ringSize || '';
+
+      const imgUrl = isFirstRow ? (images[0] || '') : (images[vIdx] || '');
+
       const row = [
-        title,
+        isFirstRow ? title : '',
         handle,
-        description,
-        vendor,
-        cat.shopifyCategory,
-        cat.type,
-        tags,
-        'TRUE',
-        status,
-        baseSku,
+        isFirstRow ? description : '',
+        isFirstRow ? vendor : '',
+        isFirstRow ? cat.shopifyCategory : '',
+        isFirstRow ? cat.type : '',
+        isFirstRow ? tags : '',
+        isFirstRow ? 'TRUE' : '',
+        isFirstRow ? status : '',
+        varSku,
         '', // Barcode
-        'Title', // Option1 name
-        'Default Title', // Option1 value
+        isFirstRow ? 'Metal' : '',
+        metalVal,
         '',
-        '', '', '', '', '', '', // Option2 & 3
-        defaultPrice,
+        isFirstRow ? (hasRingSizes ? 'Ring Size' : '') : '',
+        hasRingSizes ? sizeVal : '',
+        '',
+        '', // Option3 name
+        '', // Option3 value
+        '',
+        varPrice,
         comparePrice || '',
-        '',
-        'TRUE',
-        '',
-        '', '', '', '',
-        'shopify',
-        product.stockQuantity || 10,
-        'DENY',
-        5,
-        'g',
-        'TRUE',
-        'manual',
-        images[0] || '',
-        1,
-        title,
-        images[0] || '',
-        'FALSE',
-        seoTitle,
-        seoDesc,
-        colorPattern,
-        cat.googleCategory,
-        'Unisex',
-        'Adult (13+ years old)',
-        baseSku,
-        cat.type,
-        'Fine Jewelry, Lab Grown Diamond',
-        'New',
-        'FALSE',
-        'Floksy Jewel Atelier',
+        '', // Cost per item
+        'TRUE', // Charge tax
+        '', // Tax code
+        '', '', '', '', // Unit price measures
+        'shopify', // Inventory tracker
+        v.stockQuantity !== undefined ? v.stockQuantity : (product.stockQuantity || 10),
+        'DENY', // Continue selling when out of stock
+        5, // Weight value (grams)
+        'g', // Weight unit
+        'TRUE', // Requires shipping
+        'manual', // Fulfillment service
+        imgUrl,
+        isFirstRow ? 1 : (imgUrl ? (vIdx + 1) : ''),
+        isFirstRow ? title : '',
+        imgUrl, // Variant image URL
+        'FALSE', // Gift card
+        isFirstRow ? seoTitle : '',
+        isFirstRow ? seoDesc : '',
+        isFirstRow ? colorPattern : '',
+        isFirstRow ? cat.googleCategory : '',
+        isFirstRow ? 'Unisex' : '',
+        isFirstRow ? 'Adult (13+ years old)' : '',
+        varSku, // MPN
+        isFirstRow ? cat.type : '',
+        isFirstRow ? 'Fine Jewelry, Lab Grown Diamond' : '',
+        isFirstRow ? 'New' : '',
+        isFirstRow ? 'FALSE' : '',
+        isFirstRow ? 'Floksy Jewel Atelier' : '',
         '', '', '', '',
       ];
-      rows.push(row);
 
-      // Add extra gallery images as separate image rows
-      for (let i = 1; i < images.length; i++) {
+      rows.push(row);
+    });
+
+    // If there are more gallery images than variations, add extra image rows
+    if (images.length > vars.length) {
+      for (let i = vars.length; i < images.length; i++) {
         const extraImgRow = new Array(57).fill('');
-        extraImgRow[1] = handle;
-        extraImgRow[36] = images[i];
-        extraImgRow[37] = i + 1;
-        extraImgRow[38] = title + ' - Photo ' + (i + 1);
+        extraImgRow[1] = handle; // URL handle
+        extraImgRow[36] = images[i]; // Product image URL
+        extraImgRow[37] = i + 1; // Image position
+        extraImgRow[38] = title + ' - Photo ' + (i + 1); // Alt text
         rows.push(extraImgRow);
       }
     }
