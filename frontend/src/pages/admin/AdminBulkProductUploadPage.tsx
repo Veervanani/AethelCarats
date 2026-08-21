@@ -23,6 +23,7 @@ import { useToast } from '../../context/ToastContext';
 import { AdminPageHeader, AdminButton } from '../../components/admin/AdminUI';
 import { exportProductsToEbayExcel, exportProductsToEbayCsv } from '../../utils/ebayExcelExportHelper';
 import { exportProductsToShopifyCsv, exportProductsToShopifyExcel } from '../../utils/shopifyProductExportHelper';
+import { exportProductsToEtsyCsv, exportProductsToEtsyExcel } from '../../utils/etsyListingsExportHelper';
 
 const spinAnim = keyframes`
   0% { transform: rotate(0deg); }
@@ -561,6 +562,29 @@ export const AdminBulkProductUploadPage: React.FC = () => {
     }
   };
 
+  const [exportingEtsy, setExportingEtsy] = useState<boolean>(false);
+
+  const handleExportEtsyCsv = async () => {
+    try {
+      setExportingEtsy(true);
+      const data = await api.getProducts({ status: 'ALL', limit: 1000 });
+      const products = data.products || [];
+
+      if (products.length === 0) {
+        toast.error('No products found in the catalog to export.');
+        return;
+      }
+
+      const res = exportProductsToEtsyCsv(products);
+      toast.success(`Exported ${res.count} products to Etsy CSV (${res.fileName})!`);
+    } catch (err: any) {
+      console.error('Etsy CSV export error:', err);
+      toast.error(err.message || 'Failed to export products in Etsy CSV format.');
+    } finally {
+      setExportingEtsy(false);
+    }
+  };
+
   return (
     <div>
       <AdminPageHeader
@@ -568,6 +592,15 @@ export const AdminBulkProductUploadPage: React.FC = () => {
         description="Upload multiple products, pricing matrix, and media assets using Etsy CSV files (e.g. EtsyListingsDownload.csv), Shopify CSV, or Floksy Excel templates."
         actions={
           <div style={{ display: 'flex', gap: '10px' }}>
+            <AdminButton
+              $variant="secondary"
+              onClick={handleExportEtsyCsv}
+              $loading={exportingEtsy}
+              icon={<Download size={14} />}
+              title="Download all products in official EtsyListingsDownload.csv format"
+            >
+              Export Etsy CSV (.csv)
+            </AdminButton>
             <AdminButton
               $variant="secondary"
               onClick={handleExportShopifyCsv}

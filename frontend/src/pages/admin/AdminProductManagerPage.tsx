@@ -23,6 +23,7 @@ import { useToast } from '../../context/ToastContext';
 import { ConfirmModal } from '../../components/common/ConfirmModal';
 import { exportProductsToEbayExcel, exportProductsToEbayCsv } from '../../utils/ebayExcelExportHelper';
 import { exportProductsToShopifyCsv, exportProductsToShopifyExcel } from '../../utils/shopifyProductExportHelper';
+import { exportProductsToEtsyCsv, exportProductsToEtsyExcel } from '../../utils/etsyListingsExportHelper';
 import {
   AdminPageHeader,
   AdminCard,
@@ -241,6 +242,58 @@ export const AdminProductManagerPage: React.FC = () => {
     }
   };
 
+  const [exportingEtsy, setExportingEtsy] = useState<boolean>(false);
+
+  const handleExportEtsyCsv = () => {
+    try {
+      setExportingEtsy(true);
+      const targetList =
+        selectedProductIds.length > 0
+          ? products.filter((p) => selectedProductIds.includes(p.id))
+          : filteredProducts.length > 0
+          ? filteredProducts
+          : products;
+
+      if (targetList.length === 0) {
+        toast.error('No products available to export.');
+        return;
+      }
+
+      const result = exportProductsToEtsyCsv(targetList);
+      toast.success(`Successfully exported ${result.count} products to Etsy CSV (${result.fileName})!`);
+    } catch (err: any) {
+      console.error('Etsy export CSV error:', err);
+      toast.error(err.message || 'Failed to export Etsy CSV file.');
+    } finally {
+      setExportingEtsy(false);
+    }
+  };
+
+  const handleExportEtsyExcel = () => {
+    try {
+      setExportingEtsy(true);
+      const targetList =
+        selectedProductIds.length > 0
+          ? products.filter((p) => selectedProductIds.includes(p.id))
+          : filteredProducts.length > 0
+          ? filteredProducts
+          : products;
+
+      if (targetList.length === 0) {
+        toast.error('No products available to export.');
+        return;
+      }
+
+      const result = exportProductsToEtsyExcel(targetList);
+      toast.success(`Successfully exported ${result.count} products to Etsy Excel (${result.fileName})!`);
+    } catch (err: any) {
+      console.error('Etsy export Excel error:', err);
+      toast.error(err.message || 'Failed to export Etsy Excel file.');
+    } finally {
+      setExportingEtsy(false);
+    }
+  };
+
   const fetchProducts = async () => {
     try {
       setLoading(true);
@@ -372,21 +425,21 @@ export const AdminProductManagerPage: React.FC = () => {
             </AdminButton>
             <AdminButton
               $variant="secondary"
+              onClick={handleExportEtsyCsv}
+              $loading={exportingEtsy}
+              icon={<Download size={14} />}
+              title="Download full catalog in EtsyListingsDownload CSV (.csv) format"
+            >
+              Export Etsy CSV (.csv)
+            </AdminButton>
+            <AdminButton
+              $variant="secondary"
               onClick={handleExportShopifyCsv}
               $loading={exportingShopify}
               icon={<Download size={14} />}
               title="Download full catalog in Shopify product_template CSV (.csv) format"
             >
               Export Shopify CSV (.csv)
-            </AdminButton>
-            <AdminButton
-              $variant="secondary"
-              onClick={handleExportShopifyExcel}
-              $loading={exportingShopify}
-              icon={<Download size={14} />}
-              title="Download full catalog in Shopify product_template Excel (.xlsx) format"
-            >
-              Export Shopify Excel (.xlsx)
             </AdminButton>
             <AdminButton
               $variant="secondary"
@@ -447,6 +500,15 @@ export const AdminProductManagerPage: React.FC = () => {
             <span>Bulk Product Actions</span>
           </div>
           <div className="actions">
+            <AdminButton
+              $variant="secondary"
+              $size="sm"
+              onClick={handleExportEtsyCsv}
+              $loading={exportingEtsy}
+              icon={<Download size={14} />}
+            >
+              Export {selectedProductIds.length} to Etsy (.csv)
+            </AdminButton>
             <AdminButton
               $variant="secondary"
               $size="sm"
