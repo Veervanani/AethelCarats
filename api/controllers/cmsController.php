@@ -385,7 +385,12 @@ function handleGetSiteSettings(): void {
             }
             $decoded = json_decode($val, true);
             $settings[$k] = (json_last_error() === JSON_ERROR_NONE) ? $decoded : $val;
+        }
+
         $defaults = [
+            'instagramUrl'              => 'https://www.instagram.com/floksyjewel',
+            'facebookUrl'               => 'https://facebook.com/floksyjewel',
+            'pinterestUrl'              => 'https://pinterest.com/floksyjewel',
             'google_analytics_id'       => 'G-4819ZT1SH9',
             'google_tag_ids'            => 'G-4819ZT1SH9, G-XXY9NETZMZ, GT-NFXXGC34, GT-WPL2TXJW, GT-NSVC87ZS',
             'google_merchant_center_id' => 'MC-FZJ1P4XPW8, MC-V2Y54WKJL7',
@@ -406,6 +411,9 @@ function handleGetSiteSettings(): void {
     } catch (Throwable $e) {
         error_log("handleGetSiteSettings error: " . $e->getMessage());
         $defaults = [
+            'instagramUrl'              => 'https://www.instagram.com/floksyjewel',
+            'facebookUrl'               => 'https://facebook.com/floksyjewel',
+            'pinterestUrl'              => 'https://pinterest.com/floksyjewel',
             'google_analytics_id'       => 'G-4819ZT1SH9',
             'google_tag_ids'            => 'G-4819ZT1SH9, G-XXY9NETZMZ, GT-NFXXGC34, GT-WPL2TXJW, GT-NSVC87ZS',
             'google_merchant_center_id' => 'MC-FZJ1P4XPW8, MC-V2Y54WKJL7',

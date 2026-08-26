@@ -56,7 +56,7 @@ export const AdminFooterManagerPage: React.FC = () => {
     email: 'contact@floksyjewel.com',
     phone: '+91973785306',
     address: 'Surat, India',
-    instagram: 'https://www.instagram.com/bhumi_floksyjewel?igsh=MTAxdHVtcTdqcXRldg==',
+    instagram: 'https://www.instagram.com/floksyjewel',
     facebook: 'https://facebook.com/floksyjewel',
     pinterest: 'https://pinterest.com/floksyjewel',
     trustBadgeImage: '/assets/trust_badges.png',
@@ -92,9 +92,6 @@ export const AdminFooterManagerPage: React.FC = () => {
         if (!merged.brandName || merged.brandName.includes('Mayfair')) {
           merged.brandName = 'FLOKSY JEWEL';
         }
-        if (!merged.instagram || merged.instagram === 'https://instagram.com/floksyjewel') {
-          merged.instagram = 'https://www.instagram.com/bhumi_floksyjewel?igsh=MTAxdHVtcTdqcXRldg==';
-        }
 
         setFooterSettings((prev: any) => ({ ...prev, ...merged }));
       }
@@ -109,16 +106,41 @@ export const AdminFooterManagerPage: React.FC = () => {
       setSuccessMsg('');
       setErrorMsg('');
 
-      await api.updateSiteSetting('footer_settings', footerSettings);
+      const cleanInstagram = (footerSettings.instagram || '').trim();
+      const cleanFacebook = (footerSettings.facebook || '').trim();
+      const cleanPinterest = (footerSettings.pinterest || '').trim();
+
+      const payload = {
+        ...footerSettings,
+        instagram: cleanInstagram,
+        facebook: cleanFacebook,
+        pinterest: cleanPinterest,
+      };
+
+      await api.updateSiteSetting('footer_settings', payload);
       await api.updateSiteSetting('contactEmail', footerSettings.email ?? '');
       await api.updateSiteSetting('contactPhone', footerSettings.phone ?? '');
-      await api.updateSiteSetting('instagramUrl', footerSettings.instagram ?? '');
-      await api.updateSiteSetting('facebookUrl', footerSettings.facebook ?? '');
-      await api.updateSiteSetting('pinterestUrl', footerSettings.pinterest ?? '');
+      await api.updateSiteSetting('instagramUrl', cleanInstagram);
+      await api.updateSiteSetting('instagram', cleanInstagram);
+      await api.updateSiteSetting('facebookUrl', cleanFacebook);
+      await api.updateSiteSetting('facebook', cleanFacebook);
+      await api.updateSiteSetting('pinterestUrl', cleanPinterest);
+      await api.updateSiteSetting('pinterest', cleanPinterest);
       await api.updateSiteSetting('storeName', footerSettings.brandName ?? '');
       await api.updateSiteSetting('storeAddress', footerSettings.address ?? '');
 
-      setSuccessMsg('Footer content and settings updated successfully!');
+      await api.updateSiteSettings({
+        instagramUrl: cleanInstagram,
+        facebookUrl: cleanFacebook,
+        pinterestUrl: cleanPinterest,
+        contactEmail: footerSettings.email ?? '',
+        contactPhone: footerSettings.phone ?? '',
+        storeName: footerSettings.brandName ?? '',
+        storeAddress: footerSettings.address ?? '',
+      });
+
+      setFooterSettings(payload);
+      setSuccessMsg('Footer content and social links updated successfully in database!');
       setTimeout(() => setSuccessMsg(''), 4000);
     } catch (err: any) {
       setErrorMsg(err.message || 'Failed to save footer settings.');

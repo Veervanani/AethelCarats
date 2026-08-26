@@ -335,7 +335,11 @@ export const Footer: React.FC = () => {
   };
 
   const resolveSocialUrl = (network: 'instagram' | 'facebook' | 'pinterest', defaultBase: string) => {
-    const value = footerConfig[`${network}Url`] || footerConfig[network];
+    const value =
+      footerConfig[`${network}Url`] ||
+      footerConfig[network] ||
+      (network === 'instagram' ? footerConfig.instagram : network === 'facebook' ? footerConfig.facebook : footerConfig.pinterest);
+
     if (typeof value === 'string' && value.trim()) return getFullSocialUrl(value, defaultBase);
 
     const socialLinks = footerConfig.socialLinks || footerConfig.social_links || [];
@@ -347,7 +351,7 @@ export const Footer: React.FC = () => {
     return defaultBase;
   };
 
-  const instagramHref = resolveSocialUrl('instagram', 'https://www.instagram.com/bhumi_floksyjewel?igsh=MTAxdHVtcTdqcXRldg==');
+  const instagramHref = resolveSocialUrl('instagram', 'https://www.instagram.com/floksyjewel');
   const facebookHref = resolveSocialUrl('facebook', 'https://facebook.com/floksyjewel');
   const pinterestHref = resolveSocialUrl('pinterest', 'https://pinterest.com/floksyjewel');
 

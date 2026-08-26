@@ -148,7 +148,7 @@ export const AdminSettingsPage: React.FC = () => {
     whatsappNumber: '+91973785306',
     freeShippingThreshold: '1000',
     publicSiteUrl: 'https://floksyjewel.com',
-    instagramUrl: 'https://www.instagram.com/bhumi_floksyjewel?igsh=MTAxdHVtcTdqcXRldg==',
+    instagramUrl: 'https://www.instagram.com/floksyjewel',
     facebookUrl: 'https://facebook.com/floksyjewel',
     pinterestUrl: 'https://pinterest.com/floksyjewel',
     storeAddress: 'Surat, India',
