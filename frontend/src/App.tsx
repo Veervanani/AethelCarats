@@ -10,6 +10,7 @@ import { ToastProvider } from './context/ToastContext';
 import { AuthProvider, useAuth } from './context/AuthContext';
 import { ErrorBoundary } from './components/ui/ErrorBoundary';
 import { QuickViewModal } from './components/modals/QuickViewModal';
+import { GoogleAnalyticsTracker } from './components/common/GoogleAnalyticsTracker';
 
 const ScrollToTop: React.FC = () => {
   const { pathname, search, hash, key } = useLocation();
@@ -267,6 +268,7 @@ export const App: React.FC = () => {
                   <GlobalStyle />
                   <BrowserRouter future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
                     <ScrollToTop />
+                    <GoogleAnalyticsTracker />
                     <Suspense fallback={<PageLoadingSpinner />}>
                       <Routes>
                         {/* Private Admin Routes */}

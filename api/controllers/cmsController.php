@@ -385,13 +385,40 @@ function handleGetSiteSettings(): void {
             }
             $decoded = json_decode($val, true);
             $settings[$k] = (json_last_error() === JSON_ERROR_NONE) ? $decoded : $val;
-        }
+        $defaults = [
+            'google_analytics_id'       => 'G-4819ZT1SH9',
+            'google_tag_ids'            => 'G-4819ZT1SH9, G-XXY9NETZMZ, GT-NFXXGC34, GT-WPL2TXJW, GT-NSVC87ZS',
+            'google_merchant_center_id' => 'MC-FZJ1P4XPW8, MC-V2Y54WKJL7',
+            'google_tag_manager_id'     => 'GT-NFXXGC34',
+            'google_ads_conversion_id'  => '',
+            'facebook_pixel_id'         => '',
+            'custom_head_scripts'       => '',
+            'custom_body_scripts'       => '',
+            'enable_google_analytics'   => 'true',
+            'enable_google_tag'         => 'true',
+            'enable_ecommerce_tracking' => 'true',
+        ];
+
+        $settings = array_merge($defaults, $settings);
 
         jsonResponse($settings, 200);
 
     } catch (Throwable $e) {
         error_log("handleGetSiteSettings error: " . $e->getMessage());
-        jsonResponse([], 200);
+        $defaults = [
+            'google_analytics_id'       => 'G-4819ZT1SH9',
+            'google_tag_ids'            => 'G-4819ZT1SH9, G-XXY9NETZMZ, GT-NFXXGC34, GT-WPL2TXJW, GT-NSVC87ZS',
+            'google_merchant_center_id' => 'MC-FZJ1P4XPW8, MC-V2Y54WKJL7',
+            'google_tag_manager_id'     => 'GT-NFXXGC34',
+            'google_ads_conversion_id'  => '',
+            'facebook_pixel_id'         => '',
+            'custom_head_scripts'       => '',
+            'custom_body_scripts'       => '',
+            'enable_google_analytics'   => 'true',
+            'enable_google_tag'         => 'true',
+            'enable_ecommerce_tracking' => 'true',
+        ];
+        jsonResponse($defaults, 200);
     }
 }
 

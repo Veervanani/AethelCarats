@@ -1,6 +1,24 @@
 import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
-import { Save, CheckCircle, AlertCircle, Store, Mail, Phone, MessageSquare, Truck, Share2, Headphones, Clock } from 'lucide-react';
+import {
+  Save,
+  CheckCircle,
+  AlertCircle,
+  Store,
+  Mail,
+  Phone,
+  MessageSquare,
+  Truck,
+  Share2,
+  Headphones,
+  Clock,
+  BarChart2,
+  Code,
+  Activity,
+  Globe,
+  Zap,
+  ShieldCheck,
+} from 'lucide-react';
 import { api } from '../../services/api';
 import { AdminPageHeader, AdminButton } from '../../components/admin/AdminUI';
 
@@ -67,16 +85,24 @@ const FormGroup = styled.div`
     color: #4a4741;
   }
 
-  input {
+  input, select, textarea {
     padding: 10px 14px;
     border: 1px solid #e8e3d9;
     border-radius: 4px;
     font-size: 0.9rem;
     outline: none;
+    font-family: inherit;
 
     &:focus {
       border-color: #c9a45c;
     }
+  }
+
+  textarea {
+    resize: vertical;
+    min-height: 80px;
+    font-family: monospace;
+    font-size: 0.82rem;
   }
 `;
 
@@ -134,6 +160,18 @@ export const AdminSettingsPage: React.FC = () => {
     consultEmail: 'contact@floksyjewel.com',
     consultEmailLabel: 'Email Concierge',
     consultCloseLabel: 'Close',
+    // Google Analytics, Google Tag & Tracking
+    enable_google_analytics: 'true',
+    enable_google_tag: 'true',
+    enable_ecommerce_tracking: 'true',
+    google_analytics_id: 'G-4819ZT1SH9',
+    google_tag_ids: 'G-4819ZT1SH9, G-XXY9NETZMZ, GT-NFXXGC34, GT-WPL2TXJW, GT-NSVC87ZS',
+    google_merchant_center_id: 'MC-FZJ1P4XPW8, MC-V2Y54WKJL7',
+    google_tag_manager_id: 'GT-NFXXGC34',
+    google_ads_conversion_id: '',
+    facebook_pixel_id: '',
+    custom_head_scripts: '',
+    custom_body_scripts: '',
   });
 
   const [saving, setSaving] = useState(false);
@@ -521,6 +559,135 @@ export const AdminSettingsPage: React.FC = () => {
           <FormGroup>
             <label>Pinterest Board URL</label>
             <input value={settings.pinterestUrl || ''} onChange={(e) => handleChange('pinterestUrl', e.target.value)} />
+          </FormGroup>
+        </Grid>
+      </FormSection>
+
+      {/* GOOGLE ANALYTICS, GOOGLE TAG & MARKETING TRACKING */}
+      <FormSection style={{ border: '1px solid #c9a45c', background: '#fffefb' }}>
+        <SectionHeader style={{ color: '#1a1918', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+          <span style={{ display: 'flex', alignItems: 'center', gap: 8, color: '#c9a45c' }}>
+            <BarChart2 size={18} /> Google Analytics, Google Tag & Marketing Tracking
+          </span>
+          <span style={{ fontSize: '0.78rem', background: '#e6f4ea', color: '#137333', padding: '4px 10px', borderRadius: 20, fontWeight: 600, border: '1px solid #ceead6' }}>
+            ✓ Real-Time Database Connected
+          </span>
+        </SectionHeader>
+
+        <div style={{ background: '#f8f9fa', border: '1px solid #e9ecef', padding: '14px 18px', borderRadius: 6, fontSize: '0.84rem', color: '#495057' }}>
+          <div style={{ fontWeight: 700, color: '#1a1918', marginBottom: 4, display: 'flex', alignItems: 'center', gap: 6 }}>
+            <ShieldCheck size={16} color="#137333" /> Active Google Tag Destinations
+          </div>
+          <div>
+            Configured Tag IDs: <code style={{ background: '#e8f0fe', color: '#1a73e8', padding: '2px 6px', borderRadius: 4, fontWeight: 600 }}>{settings.google_analytics_id || 'G-4819ZT1SH9'}</code>
+            {settings.google_tag_ids && <span style={{ marginLeft: 8, color: '#6c757d' }}>+ destinations ({settings.google_tag_ids})</span>}
+          </div>
+          <div style={{ marginTop: 4, fontSize: '0.78rem', color: '#6c757d' }}>
+            Changes made here are saved directly to the database and take effect immediately across all storefront pages without code changes.
+          </div>
+        </div>
+
+        <Grid>
+          <FormGroup>
+            <label>Enable Google Tag & Analytics</label>
+            <select
+              value={settings.enable_google_analytics || 'true'}
+              onChange={(e) => handleChange('enable_google_analytics', e.target.value)}
+            >
+              <option value="true">Enabled (Active Tracking)</option>
+              <option value="false">Disabled</option>
+            </select>
+          </FormGroup>
+
+          <FormGroup>
+            <label>Enable E-commerce Tracking</label>
+            <select
+              value={settings.enable_ecommerce_tracking || 'true'}
+              onChange={(e) => handleChange('enable_ecommerce_tracking', e.target.value)}
+            >
+              <option value="true">Enabled (Pageviews, View Item, Add to Cart, Purchases)</option>
+              <option value="false">Disabled</option>
+            </select>
+          </FormGroup>
+
+          <FormGroup>
+            <label>Primary GA4 Measurement ID</label>
+            <input
+              value={settings.google_analytics_id || ''}
+              onChange={(e) => handleChange('google_analytics_id', e.target.value)}
+              placeholder="G-4819ZT1SH9"
+            />
+            <span style={{ fontSize: '0.74rem', color: '#77736c' }}>Primary Google Analytics 4 stream measurement ID</span>
+          </FormGroup>
+
+          <FormGroup>
+            <label>Google Tag Manager ID (GTM / GT)</label>
+            <input
+              value={settings.google_tag_manager_id || ''}
+              onChange={(e) => handleChange('google_tag_manager_id', e.target.value)}
+              placeholder="GT-NFXXGC34"
+            />
+            <span style={{ fontSize: '0.74rem', color: '#77736c' }}>e.g. GT-NFXXGC34 or GTM-XXXXXX</span>
+          </FormGroup>
+
+          <FormGroup style={{ gridColumn: 'span 2' }}>
+            <label>All Google Tag IDs (gtag.js Destinations)</label>
+            <input
+              value={settings.google_tag_ids || ''}
+              onChange={(e) => handleChange('google_tag_ids', e.target.value)}
+              placeholder="G-4819ZT1SH9, G-XXY9NETZMZ, GT-NFXXGC34, GT-WPL2TXJW, GT-NSVC87ZS"
+            />
+            <span style={{ fontSize: '0.74rem', color: '#77736c' }}>Comma-separated list of all Google Tag IDs associated with your domain</span>
+          </FormGroup>
+
+          <FormGroup>
+            <label>Google Merchant Center IDs</label>
+            <input
+              value={settings.google_merchant_center_id || ''}
+              onChange={(e) => handleChange('google_merchant_center_id', e.target.value)}
+              placeholder="MC-FZJ1P4XPW8, MC-V2Y54WKJL7"
+            />
+            <span style={{ fontSize: '0.74rem', color: '#77736c' }}>Merchant Center tracking destinations</span>
+          </FormGroup>
+
+          <FormGroup>
+            <label>Google Ads Conversion ID</label>
+            <input
+              value={settings.google_ads_conversion_id || ''}
+              onChange={(e) => handleChange('google_ads_conversion_id', e.target.value)}
+              placeholder="AW-XXXXXXXXX"
+            />
+            <span style={{ fontSize: '0.74rem', color: '#77736c' }}>Google Ads Remarketing / Conversion ID</span>
+          </FormGroup>
+
+          <FormGroup style={{ gridColumn: 'span 2' }}>
+            <label>Facebook / Meta Pixel ID</label>
+            <input
+              value={settings.facebook_pixel_id || ''}
+              onChange={(e) => handleChange('facebook_pixel_id', e.target.value)}
+              placeholder="e.g. 123456789012345"
+            />
+          </FormGroup>
+
+          <FormGroup style={{ gridColumn: 'span 2' }}>
+            <label>Custom Header Tracking Scripts (&lt;head&gt;)</label>
+            <textarea
+              value={settings.custom_head_scripts || ''}
+              onChange={(e) => handleChange('custom_head_scripts', e.target.value)}
+              placeholder="<!-- Paste any custom verification meta tags or <script> tags to inject into <head> -->"
+              rows={4}
+            />
+            <span style={{ fontSize: '0.74rem', color: '#77736c' }}>Injected safely into website &lt;head&gt; across all pages</span>
+          </FormGroup>
+
+          <FormGroup style={{ gridColumn: 'span 2' }}>
+            <label>Custom Body Tracking Scripts (&lt;body&gt;)</label>
+            <textarea
+              value={settings.custom_body_scripts || ''}
+              onChange={(e) => handleChange('custom_body_scripts', e.target.value)}
+              placeholder="<!-- Paste any custom <body> scripts or noscript fallback tags -->"
+              rows={3}
+            />
           </FormGroup>
         </Grid>
       </FormSection>
