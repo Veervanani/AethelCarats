@@ -1593,21 +1593,6 @@ function handleGetBusinessTargets(): void {
     $stmt->execute([$year, $year]);
     $rawTargets = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
-    // If no targets exist for the current month/year, create a default $50,000 company target
-    if (empty($rawTargets)) {
-        $defaultMonth = (int)date('n');
-        $defaultYear = (int)date('Y');
-        $defId = 'tgt-company-' . $defaultYear . '-' . $defaultMonth;
-
-        $insDef = $pdo->prepare("INSERT INTO `salestarget` (`id`, `periodType`, `periodYear`, `periodMonth`, `year`, `month`, `targetAmount`, `notes`, `createdAt`, `updatedAt`)
-            VALUES (?, 'MONTHLY', ?, ?, ?, ?, 50000, 'Company Monthly Revenue Target', NOW(), NOW())
-            ON DUPLICATE KEY UPDATE `targetAmount` = VALUES(`targetAmount`)");
-        $insDef->execute([$defId, $defaultYear, $defaultMonth, $defaultYear, $defaultMonth]);
-
-        $stmt->execute([$year, $year]);
-        $rawTargets = $stmt->fetchAll(PDO::FETCH_ASSOC);
-    }
-
     $targets = [];
     foreach ($rawTargets as $t) {
         $tMonth = (int)($t['month'] ?? $t['periodMonth'] ?? 8);
@@ -1719,6 +1704,15 @@ function handleDeleteBusinessTarget(string $id): void {
 
     $stmt = $pdo->prepare("DELETE FROM `salestarget` WHERE `id` = ?");
     $stmt->execute([$id]);
+
+    if (preg_match('/tgt-company-(\d+)-(\d+)/', $id, $m)) {
+        $yr = (int)$m[1];
+        $mo = (int)$m[2];
+        try {
+            $pdo->prepare("DELETE FROM `salestarget` WHERE (`year` = ? AND `month` = ?) OR (`periodYear` = ? AND `periodMonth` = ?)")->execute([$yr, $mo, $yr, $mo]);
+        } catch (\Throwable $e) {}
+    }
+
     recordBusinessAuditLog('DELETE_TARGET', 'SalesTarget', "Deleted company target {$id}");
     jsonResponse(['message' => 'Target removed successfully', 'success' => true]);
 }

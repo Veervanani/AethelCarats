@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
 import { businessApi } from '../services/businessApi';
 import { SalesTarget } from '../types';
-import { TrendingUp, Plus, Target, CheckCircle2, Award, DollarSign, Trash2, Calendar, Sparkles } from 'lucide-react';
+import { TrendingUp, Plus, Target, CheckCircle2, Award, DollarSign, Trash2, Calendar, Sparkles, Edit2 } from 'lucide-react';
 
 const PageHeader = styled.div`
   display: flex;
@@ -115,6 +115,7 @@ export const BusinessSalesTargetsPage: React.FC = () => {
   const [targets, setTargets] = useState<SalesTarget[]>([]);
   const [loading, setLoading] = useState(true);
   const [showModal, setShowModal] = useState(false);
+  const [editingTarget, setEditingTarget] = useState<SalesTarget | null>(null);
   const [periodYear, setPeriodYear] = useState('2026');
   const [periodMonth, setPeriodMonth] = useState('8');
   const [targetAmount, setTargetAmount] = useState('50000');
@@ -138,7 +139,25 @@ export const BusinessSalesTargetsPage: React.FC = () => {
     fetchTargets();
   }, [periodYear]);
 
-  const handleCreateTarget = async (e: React.FormEvent) => {
+  const handleOpenCreate = () => {
+    setEditingTarget(null);
+    setPeriodYear(periodYear || '2026');
+    setPeriodMonth(String(new Date().getMonth() + 1));
+    setTargetAmount('');
+    setNotes('Company Monthly Sales Target');
+    setShowModal(true);
+  };
+
+  const handleOpenEdit = (t: SalesTarget) => {
+    setEditingTarget(t);
+    setPeriodYear(String(t.periodYear || periodYear));
+    setPeriodMonth(String(t.periodMonth || 8));
+    setTargetAmount(String(t.targetAmount || ''));
+    setNotes(t.notes || 'Company Monthly Sales Target');
+    setShowModal(true);
+  };
+
+  const handleSaveTarget = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
       await businessApi.createTarget({
@@ -149,8 +168,9 @@ export const BusinessSalesTargetsPage: React.FC = () => {
         notes,
       });
       setShowModal(false);
-      fetchTargets();
-      alert('✅ Company monthly sales target established successfully.');
+      setEditingTarget(null);
+      await fetchTargets();
+      alert(editingTarget ? '✅ Company monthly target updated successfully.' : '✅ Company monthly target saved successfully.');
     } catch (err: any) {
       alert(err?.response?.data?.message || 'Failed to save target');
     }
@@ -159,11 +179,13 @@ export const BusinessSalesTargetsPage: React.FC = () => {
   const handleDeleteTarget = async (id: string, name: string) => {
     if (!window.confirm(`⚠️ Are you sure you want to remove target for ${name}?`)) return;
     try {
+      setTargets((prev) => prev.filter((t) => t.id !== id));
       await businessApi.deleteTarget(id);
-      fetchTargets();
+      await fetchTargets();
       alert('✅ Target removed.');
     } catch (err: any) {
       alert(err?.response?.data?.message || 'Failed to delete target');
+      fetchTargets();
     }
   };
 
@@ -202,7 +224,7 @@ export const BusinessSalesTargetsPage: React.FC = () => {
           </select>
 
           <button
-            onClick={() => setShowModal(true)}
+            onClick={handleOpenCreate}
             style={{
               display: 'flex',
               alignItems: 'center',
@@ -299,6 +321,22 @@ export const BusinessSalesTargetsPage: React.FC = () => {
                       {isAchieved ? '🟢 Achieved' : actRev > 0 ? '🔵 In Progress' : '🟡 Pending'}
                     </span>
                     <button
+                      onClick={() => handleOpenEdit(t)}
+                      style={{
+                        background: '#f8fafc',
+                        border: '1px solid #cbd5e1',
+                        color: '#334155',
+                        borderRadius: 5,
+                        padding: '4px 6px',
+                        cursor: 'pointer',
+                        display: 'inline-flex',
+                        alignItems: 'center',
+                      }}
+                      title="Edit Target"
+                    >
+                      <Edit2 size={13} />
+                    </button>
+                    <button
                       onClick={() => handleDeleteTarget(t.id, `${mName} ${t.periodYear}`)}
                       style={{
                         background: '#fff1f2',
@@ -307,6 +345,8 @@ export const BusinessSalesTargetsPage: React.FC = () => {
                         borderRadius: 5,
                         padding: '4px 6px',
                         cursor: 'pointer',
+                        display: 'inline-flex',
+                        alignItems: 'center',
                       }}
                       title="Delete Target"
                     >
@@ -367,7 +407,7 @@ export const BusinessSalesTargetsPage: React.FC = () => {
         )}
       </TargetGrid>
 
-      {/* Set Company Target Modal */}
+      {/* Set/Edit Company Target Modal */}
       {showModal && (
         <div
           style={{
@@ -395,13 +435,15 @@ export const BusinessSalesTargetsPage: React.FC = () => {
             onClick={(e) => e.stopPropagation()}
           >
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16 }}>
-              <h2 style={{ fontSize: '1.15rem', fontWeight: 800, color: '#0f172a', margin: 0 }}>Set Company Monthly Target</h2>
+              <h2 style={{ fontSize: '1.15rem', fontWeight: 800, color: '#0f172a', margin: 0 }}>
+                {editingTarget ? 'Edit Company Monthly Target' : 'Set Company Monthly Target'}
+              </h2>
               <button onClick={() => setShowModal(false)} style={{ background: 'none', border: 'none', cursor: 'pointer', fontSize: '1.1rem' }}>
                 ✕
               </button>
             </div>
 
-            <form onSubmit={handleCreateTarget}>
+            <form onSubmit={handleSaveTarget}>
               <div style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
                 <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>
                   <div>
@@ -485,7 +527,7 @@ export const BusinessSalesTargetsPage: React.FC = () => {
                     cursor: 'pointer',
                   }}
                 >
-                  Save Company Target
+                  {editingTarget ? 'Update Company Target' : 'Save Company Target'}
                 </button>
               </div>
             </form>
