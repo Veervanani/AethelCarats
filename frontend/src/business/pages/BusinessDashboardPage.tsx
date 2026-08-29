@@ -177,6 +177,7 @@ export const BusinessDashboardPage: React.FC = () => {
   }, [period, year, month, dollarRate]);
 
   const m = data?.metrics;
+  const fmt = (val: any) => (Number(val) || 0).toLocaleString();
 
   return (
     <div>
@@ -275,7 +276,7 @@ export const BusinessDashboardPage: React.FC = () => {
             <DollarSign size={16} />
           </div>
           <div className="kpi-value">
-            {currencyView === 'USD' ? `$${(m?.totalRevenue || 0).toLocaleString()}` : `₹${((m?.totalRevenue || 0) * dollarRate).toLocaleString()}`}
+            {currencyView === 'USD' ? `$${fmt(m?.totalRevenue)}` : `₹${fmt((Number(m?.totalRevenue) || 0) * dollarRate)}`}
           </div>
           <div className="kpi-sub">{m?.totalOrders || 0} Invoiced Orders</div>
         </KpiCard>
@@ -286,9 +287,9 @@ export const BusinessDashboardPage: React.FC = () => {
             <TrendingUp size={16} color="#16a34a" />
           </div>
           <div className="kpi-value" style={{ color: '#16a34a' }}>
-            {currencyView === 'USD' ? `$${(m?.totalNetProfit || 0).toLocaleString()}` : `₹${(m?.totalNetProfitINR || 0).toLocaleString()}`}
+            {currencyView === 'USD' ? `$${fmt(m?.totalNetProfit)}` : `₹${fmt(m?.totalNetProfitINR || (Number(m?.totalNetProfit) || 0) * dollarRate)}`}
           </div>
-          <div className="kpi-sub">Avg Markup: {((m?.averageMarkupPercent || 0) * 100).toFixed(1)}%</div>
+          <div className="kpi-sub">Avg Markup: {((Number(m?.averageMarkupPercent) || 0) * 100).toFixed(1)}%</div>
         </KpiCard>
 
         <KpiCard>
@@ -297,10 +298,10 @@ export const BusinessDashboardPage: React.FC = () => {
             <Award size={16} color="#d97706" />
           </div>
           <div className="kpi-value" style={{ color: '#d97706' }}>
-            {currencyView === 'USD' ? `$${(m?.totalCommission || 0).toLocaleString()}` : `₹${(m?.totalCommissionINR || 0).toLocaleString()}`}
+            {currencyView === 'USD' ? `$${fmt(m?.totalCommission)}` : `₹${fmt(m?.totalCommissionINR || (Number(m?.totalCommission) || 0) * dollarRate)}`}
           </div>
           <div className="kpi-sub">
-            Retained Profit: {currencyView === 'USD' ? `$${(m?.totalProfitAfterCommission || 0).toLocaleString()}` : `₹${(m?.profitAfterCommissionINR || 0).toLocaleString()}`}
+            Retained Profit: {currencyView === 'USD' ? `$${fmt(m?.totalProfitAfterCommission)}` : `₹${fmt(m?.profitAfterCommissionINR || (Number(m?.totalProfitAfterCommission) || 0) * dollarRate)}`}
           </div>
         </KpiCard>
 
@@ -310,10 +311,10 @@ export const BusinessDashboardPage: React.FC = () => {
             <Users size={16} color="#2563eb" />
           </div>
           <div className="kpi-value" style={{ color: '#2563eb' }}>
-            {data?.attendance?.present || 0} / {data?.attendance?.totalEmployees || 0}
+            {(data as any)?.attendanceToday?.present || data?.attendance?.present || 0} / {(data as any)?.attendanceToday?.total || data?.attendance?.totalEmployees || 0}
           </div>
           <div className="kpi-sub">
-            {data?.attendance?.late || 0} Late | {data?.attendance?.absent || 0} Absent | {data?.attendance?.onLeave || 0} Leave
+            {(data as any)?.attendanceToday?.late || data?.attendance?.late || 0} Late | {(data as any)?.attendanceToday?.absent || data?.attendance?.absent || 0} Absent | {(data as any)?.attendanceToday?.onLeave || data?.attendance?.onLeave || 0} Leave
           </div>
         </KpiCard>
       </KpiGrid>
@@ -342,24 +343,32 @@ export const BusinessDashboardPage: React.FC = () => {
                 </tr>
               </thead>
               <tbody>
-                {data?.salesPersonPerformance?.map((sp, idx) => (
-                  <tr key={idx}>
-                    <td style={{ fontWeight: 600 }}>{sp.name}</td>
-                    <td>{sp.orders}</td>
-                    <td>${sp.revenue.toLocaleString()}</td>
-                    <td style={{ color: '#16a34a', fontWeight: 600 }}>
-                      {currencyView === 'USD' ? `$${sp.netProfitUSD.toLocaleString()}` : `₹${sp.netProfitINR.toLocaleString()}`}
-                    </td>
-                    <td style={{ color: '#d97706', fontWeight: 600 }}>
-                      {currencyView === 'USD' ? `$${sp.commissionUSD.toLocaleString()}` : `₹${sp.commissionINR.toLocaleString()}`}
-                    </td>
-                    <td style={{ fontWeight: 600 }}>
-                      {currencyView === 'USD'
-                        ? `$${sp.profitAfterCommission.toLocaleString()}`
-                        : `₹${(sp.profitAfterCommission * dollarRate).toLocaleString()}`}
-                    </td>
-                  </tr>
-                ))}
+                {data?.salesPersonPerformance?.map((sp, idx) => {
+                  const rev = Number(sp.revenue) || 0;
+                  const npUSD = Number(sp.netProfitUSD) || 0;
+                  const npINR = Number(sp.netProfitINR) || npUSD * dollarRate;
+                  const commUSD = Number(sp.commissionUSD) || 0;
+                  const commINR = Number(sp.commissionINR) || commUSD * dollarRate;
+                  const pacUSD = Number(sp.profitAfterCommission) || (npUSD - commUSD);
+                  const pacINR = pacUSD * dollarRate;
+
+                  return (
+                    <tr key={idx}>
+                      <td style={{ fontWeight: 600 }}>{sp.name || 'Unassigned'}</td>
+                      <td>{sp.orders || 0}</td>
+                      <td>${fmt(rev)}</td>
+                      <td style={{ color: '#16a34a', fontWeight: 600 }}>
+                        {currencyView === 'USD' ? `$${fmt(npUSD)}` : `₹${fmt(npINR)}`}
+                      </td>
+                      <td style={{ color: '#d97706', fontWeight: 600 }}>
+                        {currencyView === 'USD' ? `$${fmt(commUSD)}` : `₹${fmt(commINR)}`}
+                      </td>
+                      <td style={{ fontWeight: 600 }}>
+                        {currencyView === 'USD' ? `$${fmt(pacUSD)}` : `₹${fmt(pacINR)}`}
+                      </td>
+                    </tr>
+                  );
+                })}
                 {(!data?.salesPersonPerformance || data.salesPersonPerformance.length === 0) && (
                   <tr>
                     <td colSpan={6} style={{ textAlign: 'center', padding: '24px', color: '#94a3b8' }}>
@@ -384,7 +393,7 @@ export const BusinessDashboardPage: React.FC = () => {
               <div>
                 <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.8rem', fontWeight: 600, marginBottom: 4 }}>
                   <span>Loose Diamonds</span>
-                  <span>${data?.productDistribution?.diamond?.revenue?.toLocaleString() || 0}</span>
+                  <span>${fmt(data?.productDistribution?.diamond?.revenue)}</span>
                 </div>
                 <div style={{ height: 8, background: '#f1f5f9', borderRadius: 4, overflow: 'hidden' }}>
                   <div
@@ -392,22 +401,22 @@ export const BusinessDashboardPage: React.FC = () => {
                       height: '100%',
                       background: '#e2b96f',
                       width: `${
-                        (m?.totalRevenue || 0) > 0
-                          ? Math.min(100, (((data?.productDistribution?.diamond?.revenue || 0) / (m?.totalRevenue || 1)) * 100))
+                        (Number(m?.totalRevenue) || 0) > 0
+                          ? Math.min(100, (((Number(data?.productDistribution?.diamond?.revenue) || 0) / (Number(m?.totalRevenue) || 1)) * 100))
                           : 0
                       }%`,
                     }}
                   />
                 </div>
                 <div style={{ fontSize: '0.7rem', color: '#64748b', marginTop: 2 }}>
-                  {data?.productDistribution?.diamond?.orders || 0} Orders | Net: ${data?.productDistribution?.diamond?.netProfit || 0}
+                  {data?.productDistribution?.diamond?.orders || 0} Orders | Net: ${fmt(data?.productDistribution?.diamond?.netProfit)}
                 </div>
               </div>
 
               <div>
                 <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.8rem', fontWeight: 600, marginBottom: 4 }}>
                   <span>Finished Jewelry</span>
-                  <span>${data?.productDistribution?.jewelry?.revenue?.toLocaleString() || 0}</span>
+                  <span>${fmt(data?.productDistribution?.jewelry?.revenue)}</span>
                 </div>
                 <div style={{ height: 8, background: '#f1f5f9', borderRadius: 4, overflow: 'hidden' }}>
                   <div
@@ -415,15 +424,15 @@ export const BusinessDashboardPage: React.FC = () => {
                       height: '100%',
                       background: '#0d1319',
                       width: `${
-                        (m?.totalRevenue || 0) > 0
-                          ? Math.min(100, (((data?.productDistribution?.jewelry?.revenue || 0) / (m?.totalRevenue || 1)) * 100))
+                        (Number(m?.totalRevenue) || 0) > 0
+                          ? Math.min(100, (((Number(data?.productDistribution?.jewelry?.revenue) || 0) / (Number(m?.totalRevenue) || 1)) * 100))
                           : 0
                       }%`,
                     }}
                   />
                 </div>
                 <div style={{ fontSize: '0.7rem', color: '#64748b', marginTop: 2 }}>
-                  {data?.productDistribution?.jewelry?.orders || 0} Orders | Net: ${data?.productDistribution?.jewelry?.netProfit || 0}
+                  {data?.productDistribution?.jewelry?.orders || 0} Orders | Net: ${fmt(data?.productDistribution?.jewelry?.netProfit)}
                 </div>
               </div>
             </div>
@@ -438,21 +447,21 @@ export const BusinessDashboardPage: React.FC = () => {
 
             <div>
               <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.82rem', fontWeight: 700 }}>
-                <span>Achieved: ${data?.targets?.actualSales?.toLocaleString() || 0}</span>
-                <span>Target: ${data?.targets?.totalTarget?.toLocaleString() || 0}</span>
+                <span>Achieved: ${fmt((data as any)?.salesTargetOverall?.actual || data?.targets?.actualSales || m?.totalRevenue)}</span>
+                <span>Target: ${fmt((data as any)?.salesTargetOverall?.target || data?.targets?.totalTarget || 100000)}</span>
               </div>
               <div style={{ height: 10, background: '#f1f5f9', borderRadius: 5, overflow: 'hidden', margin: '8px 0' }}>
                 <div
                   style={{
                     height: '100%',
                     background: '#2563eb',
-                    width: `${Math.min(100, data?.targets?.achievementPercent || 0)}%`,
+                    width: `${Math.min(100, Math.round(((Number(m?.totalRevenue) || 0) / 100000) * 100))}%`,
                   }}
                 />
               </div>
               <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.72rem', color: '#64748b' }}>
-                <span>Achievement: {data?.targets?.achievementPercent || 0}%</span>
-                <span>Remaining: ${data?.targets?.remaining?.toLocaleString() || 0}</span>
+                <span>Achievement: {Math.min(100, Math.round(((Number(m?.totalRevenue) || 0) / 100000) * 100))}%</span>
+                <span>Remaining: ${fmt(Math.max(0, 100000 - (Number(m?.totalRevenue) || 0)))}</span>
               </div>
             </div>
           </ContentCard>
@@ -480,9 +489,16 @@ export const BusinessDashboardPage: React.FC = () => {
                   <td style={{ fontWeight: 600 }}>{c.name}</td>
                   <td>{c.country || '-'}</td>
                   <td>{c.orders}</td>
-                  <td style={{ fontWeight: 700 }}>${c.revenue.toLocaleString()}</td>
+                  <td style={{ fontWeight: 700 }}>${fmt(c.revenue)}</td>
                 </tr>
               ))}
+              {(!data?.topCustomers || data.topCustomers.length === 0) && (
+                <tr>
+                  <td colSpan={4} style={{ textAlign: 'center', padding: '16px', color: '#94a3b8' }}>
+                    No client revenue records yet.
+                  </td>
+                </tr>
+              )}
             </tbody>
           </Table>
         </ContentCard>
@@ -504,9 +520,16 @@ export const BusinessDashboardPage: React.FC = () => {
                 <tr key={i}>
                   <td style={{ fontWeight: 600 }}>{c.country}</td>
                   <td>{c.orders}</td>
-                  <td style={{ fontWeight: 700 }}>${c.revenue.toLocaleString()}</td>
+                  <td style={{ fontWeight: 700 }}>${fmt(c.revenue)}</td>
                 </tr>
               ))}
+              {(!data?.countryDistribution || data.countryDistribution.length === 0) && (
+                <tr>
+                  <td colSpan={3} style={{ textAlign: 'center', padding: '16px', color: '#94a3b8' }}>
+                    No geographic distribution data yet.
+                  </td>
+                </tr>
+              )}
             </tbody>
           </Table>
         </ContentCard>

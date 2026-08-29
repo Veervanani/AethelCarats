@@ -177,16 +177,31 @@ export const BusinessReportsPage: React.FC = () => {
             </tr>
           </thead>
           <tbody>
-            {data?.salesPersonPerformance?.map((sp: any, i: number) => (
-              <tr key={i}>
-                <td style={{ fontWeight: 600 }}>{sp.name}</td>
-                <td>{sp.orders}</td>
-                <td style={{ fontWeight: 700 }}>${sp.revenue.toLocaleString()}</td>
-                <td style={{ color: '#16a34a', fontWeight: 600 }}>${sp.netProfitUSD.toLocaleString()}</td>
-                <td style={{ color: '#d97706' }}>${sp.commissionUSD.toLocaleString()}</td>
-                <td>₹{sp.netProfitINR.toLocaleString()}</td>
+            {data?.salesPersonPerformance?.map((sp: any, i: number) => {
+              const rev = Number(sp.revenue) || 0;
+              const npUSD = Number(sp.netProfitUSD) || 0;
+              const npINR = Number(sp.netProfitINR) || npUSD * (data?.metrics?.dollarRate || 94.55);
+              const commUSD = Number(sp.commissionUSD) || 0;
+              const fmt = (v: any) => (Number(v) || 0).toLocaleString();
+
+              return (
+                <tr key={i}>
+                  <td style={{ fontWeight: 600 }}>{sp.name || 'Unassigned'}</td>
+                  <td>{sp.orders || 0}</td>
+                  <td style={{ fontWeight: 700 }}>${fmt(rev)}</td>
+                  <td style={{ color: '#16a34a', fontWeight: 600 }}>${fmt(npUSD)}</td>
+                  <td style={{ color: '#d97706' }}>${fmt(commUSD)}</td>
+                  <td>₹{fmt(npINR)}</td>
+                </tr>
+              );
+            })}
+            {(!data?.salesPersonPerformance || data.salesPersonPerformance.length === 0) && (
+              <tr>
+                <td colSpan={6} style={{ textAlign: 'center', padding: '24px', color: '#94a3b8' }}>
+                  No staff performance records available.
+                </td>
               </tr>
-            ))}
+            )}
           </tbody>
         </Table>
       )}
@@ -197,34 +212,34 @@ export const BusinessReportsPage: React.FC = () => {
             <tr>
               <th>Financial Metric</th>
               <th>Value (USD)</th>
-              <th>Value (INR @ {data?.metrics?.dollarRate})</th>
+              <th>Value (INR @ {data?.metrics?.dollarRate || 94.55})</th>
             </tr>
           </thead>
           <tbody>
             <tr>
               <td style={{ fontWeight: 600 }}>Total Billed Revenue</td>
-              <td style={{ fontWeight: 700 }}>${(data?.metrics?.totalRevenue || 0).toLocaleString()}</td>
-              <td>₹{((data?.metrics?.totalRevenue || 0) * (data?.metrics?.dollarRate || 94.55)).toLocaleString()}</td>
+              <td style={{ fontWeight: 700 }}>${(Number(data?.metrics?.totalRevenue) || 0).toLocaleString()}</td>
+              <td>₹{((Number(data?.metrics?.totalRevenue) || 0) * (data?.metrics?.dollarRate || 94.55)).toLocaleString()}</td>
             </tr>
             <tr>
               <td style={{ fontWeight: 600 }}>Procurement Cost (COGS)</td>
-              <td>${(data?.metrics?.totalPurchaseCost || 0).toLocaleString()}</td>
-              <td>₹{((data?.metrics?.totalPurchaseCost || 0) * (data?.metrics?.dollarRate || 94.55)).toLocaleString()}</td>
+              <td>${(Number(data?.metrics?.totalPurchaseCost) || 0).toLocaleString()}</td>
+              <td>₹{((Number(data?.metrics?.totalPurchaseCost) || 0) * (data?.metrics?.dollarRate || 94.55)).toLocaleString()}</td>
             </tr>
             <tr>
               <td style={{ fontWeight: 600 }}>Net Operational Profit</td>
-              <td style={{ color: '#16a34a', fontWeight: 700 }}>${(data?.metrics?.totalNetProfit || 0).toLocaleString()}</td>
-              <td style={{ color: '#16a34a', fontWeight: 700 }}>₹{(data?.metrics?.totalNetProfitINR || 0).toLocaleString()}</td>
+              <td style={{ color: '#16a34a', fontWeight: 700 }}>${(Number(data?.metrics?.totalNetProfit) || 0).toLocaleString()}</td>
+              <td style={{ color: '#16a34a', fontWeight: 700 }}>₹{(Number(data?.metrics?.totalNetProfitINR) || (Number(data?.metrics?.totalNetProfit) || 0) * (data?.metrics?.dollarRate || 94.55)).toLocaleString()}</td>
             </tr>
             <tr>
               <td style={{ fontWeight: 600 }}>Total Sales Commission</td>
-              <td style={{ color: '#d97706', fontWeight: 700 }}>${(data?.metrics?.totalCommission || 0).toLocaleString()}</td>
-              <td style={{ color: '#d97706', fontWeight: 700 }}>₹{(data?.metrics?.totalCommissionINR || 0).toLocaleString()}</td>
+              <td style={{ color: '#d97706', fontWeight: 700 }}>${(Number(data?.metrics?.totalCommission) || 0).toLocaleString()}</td>
+              <td style={{ color: '#d97706', fontWeight: 700 }}>₹{(Number(data?.metrics?.totalCommissionINR) || (Number(data?.metrics?.totalCommission) || 0) * (data?.metrics?.dollarRate || 94.55)).toLocaleString()}</td>
             </tr>
             <tr style={{ background: '#f8fafc' }}>
               <td style={{ fontWeight: 800 }}>Retained Company Profit</td>
-              <td style={{ color: '#0d1319', fontWeight: 800 }}>${(data?.metrics?.totalProfitAfterCommission || 0).toLocaleString()}</td>
-              <td style={{ color: '#0d1319', fontWeight: 800 }}>₹{(data?.metrics?.profitAfterCommissionINR || 0).toLocaleString()}</td>
+              <td style={{ color: '#0d1319', fontWeight: 800 }}>${(Number(data?.metrics?.totalProfitAfterCommission) || 0).toLocaleString()}</td>
+              <td style={{ color: '#0d1319', fontWeight: 800 }}>₹{(Number(data?.metrics?.profitAfterCommissionINR) || (Number(data?.metrics?.totalProfitAfterCommission) || 0) * (data?.metrics?.dollarRate || 94.55)).toLocaleString()}</td>
             </tr>
           </tbody>
         </Table>
