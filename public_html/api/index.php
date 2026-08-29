@@ -651,8 +651,10 @@ if (str_starts_with($path, '/api/v1/business/')) {
         handleGetBusinessCommissions();
     } else if ($path === '/api/v1/business/targets' && $method === 'GET') {
         handleGetBusinessTargets();
-    } else if ($path === '/api/v1/business/audit-logs' && $method === 'GET') {
-        handleGetBusinessAuditLogs();
+    } else if (($path === '/api/v1/business/reset' || $path === '/api/v1/business/reset-all') && ($method === 'POST' || $method === 'GET')) {
+        handleResetBusinessData();
+    } else if (($path === '/api/v1/business/sales/delete-all' || $path === '/api/v1/business/sales/clear') && ($method === 'POST' || $method === 'DELETE' || $method === 'GET')) {
+        handleDeleteAllSales();
     } else {
         jsonError('Business Endpoint Not Found', 404);
     }

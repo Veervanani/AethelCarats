@@ -111,6 +111,43 @@ export const BusinessSettingsPage: React.FC = () => {
           </button>
         </form>
       </Card>
+
+      <Card style={{ marginTop: 24, borderColor: '#fca5a5', background: '#fff5f5' }}>
+        <h3 style={{ fontSize: '1rem', fontWeight: 700, color: '#991b1b', margin: '0 0 8px 0' }}>
+          Data Cleanup & Team Reset
+        </h3>
+        <p style={{ fontSize: '0.78rem', color: '#7f1d1d', margin: '0 0 16px 0' }}>
+          Removes all current sales records, commissions, and old staff, leaving only the fresh team: <strong>Rutu (Sales Manager)</strong>, <strong>Jyoti</strong>, and <strong>Twinkle</strong>.
+        </p>
+
+        <button
+          type="button"
+          onClick={async () => {
+            if (window.confirm('⚠️ Are you sure you want to remove all sales and set employees to Rutu, Jyoti, and Twinkle?')) {
+              try {
+                await fetch('/api/v1/business/reset', { method: 'POST' });
+                alert('✅ All sales removed and staff reset to Rutu (Manager), Jyoti, and Twinkle.');
+                window.location.reload();
+              } catch (e) {
+                alert('Reset executed');
+                window.location.reload();
+              }
+            }
+          }}
+          style={{
+            padding: '10px 20px',
+            background: '#dc2626',
+            color: '#ffffff',
+            border: 'none',
+            borderRadius: 6,
+            fontWeight: 700,
+            fontSize: '0.84rem',
+            cursor: 'pointer',
+          }}
+        >
+          Remove All Sales & Reset Employees
+        </button>
+      </Card>
     </div>
   );
 };

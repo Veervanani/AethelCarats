@@ -679,3 +679,93 @@ function handleGetBusinessAuditLogs(): void {
     $stmt = $pdo->query("SELECT * FROM `activitylog` ORDER BY `createdAt` DESC LIMIT 100");
     jsonResponse(['logs' => $stmt->fetchAll(PDO::FETCH_ASSOC)]);
 }
+
+function handleResetBusinessData(): void {
+    $pdo = getDatabaseConnection();
+    ensureBusinessTablesExist($pdo);
+
+    // 1. Delete all sales and commissions
+    $pdo->exec("DELETE FROM `commission`");
+    $pdo->exec("DELETE FROM `internalsale`");
+
+    // 2. Delete all attendance and targets
+    $pdo->exec("DELETE FROM `attendance`");
+    $pdo->exec("DELETE FROM `salestarget`");
+
+    // 3. Clear existing employees and reseed only Rutu, Jyoti, Twinkle
+    $pdo->exec("DELETE FROM `employee`");
+
+    $employeesToSeed = [
+        [
+            'id' => 'emp-rutu-001',
+            'employeeCode' => 'EMP-1001',
+            'name' => 'Rutu',
+            'email' => 'rutu@floksyjewel.com',
+            'phone' => '+91 98765 43210',
+            'department' => 'Sales',
+            'designation' => 'Sales Manager',
+            'role' => 'SALES_MANAGER',
+            'status' => 'ACTIVE',
+            'monthlyTarget' => 150000,
+            'notes' => 'Sales Manager leading retail and high jewellery sales'
+        ],
+        [
+            'id' => 'emp-jyoti-002',
+            'employeeCode' => 'EMP-1002',
+            'name' => 'Jyoti',
+            'email' => 'jyoti@floksyjewel.com',
+            'phone' => '+91 98765 43211',
+            'department' => 'Sales',
+            'designation' => 'Sales Executive',
+            'role' => 'SALES_EMPLOYEE',
+            'status' => 'ACTIVE',
+            'monthlyTarget' => 80000,
+            'notes' => 'Sales Executive specializing in diamond and custom jewelry'
+        ],
+        [
+            'id' => 'emp-twinkle-003',
+            'employeeCode' => 'EMP-1003',
+            'name' => 'Twinkle',
+            'email' => 'twinkle@floksyjewel.com',
+            'phone' => '+91 98765 43212',
+            'department' => 'Sales',
+            'designation' => 'Sales Executive',
+            'role' => 'SALES_EMPLOYEE',
+            'status' => 'ACTIVE',
+            'monthlyTarget' => 80000,
+            'notes' => 'Sales Executive handling fine jewellery and solitaire sales'
+        ]
+    ];
+
+    $seedStmt = $pdo->prepare("INSERT INTO `employee` (`id`, `employeeCode`, `name`, `email`, `phone`, `department`, `designation`, `role`, `status`, `monthlyTarget`, `notes`, `createdAt`, `updatedAt`) 
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, NOW(), NOW())");
+
+    foreach ($employeesToSeed as $e) {
+        $seedStmt->execute([
+            $e['id'],
+            $e['employeeCode'],
+            $e['name'],
+            $e['email'],
+            $e['phone'],
+            $e['department'],
+            $e['designation'],
+            $e['role'],
+            $e['status'],
+            $e['monthlyTarget'],
+            $e['notes']
+        ]);
+    }
+
+    jsonResponse([
+        'message' => 'All sales and old employees removed. Rutu (Sales Manager), Jyoti, and Twinkle re-seeded as fresh staff.',
+        'success' => true
+    ]);
+}
+
+function handleDeleteAllSales(): void {
+    $pdo = getDatabaseConnection();
+    ensureBusinessTablesExist($pdo);
+    $pdo->exec("DELETE FROM `commission`");
+    $pdo->exec("DELETE FROM `internalsale`");
+    jsonResponse(['message' => 'All sales removed successfully', 'success' => true]);
+}
