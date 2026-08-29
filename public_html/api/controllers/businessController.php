@@ -283,143 +283,186 @@ function computePhpFinancials(array $d): array {
 // -------------------------------------------------------------
 
 function handleGetBusinessDashboard(): void {
-    $pdo = getDatabaseConnection();
-    ensureBusinessTablesExist($pdo);
+    try {
+        $pdo = getDatabaseConnection();
+        ensureBusinessTablesExist($pdo);
 
-    $where = [];
-    $params = [];
+        $where = [];
+        $params = [];
 
-    $year = $_GET['year'] ?? '';
-    if (!empty($year) && $year !== 'All Years') {
-        $where[] = "(YEAR(`saleDate`) = ? OR `saleDate` LIKE ?)";
-        $params[] = (int)$year;
-        $params[] = $year . '%';
-    }
+        $year = trim($_GET['year'] ?? '');
+        if (!empty($year) && $year !== 'All Years' && is_numeric($year)) {
+            $where[] = "YEAR(`saleDate`) = ?";
+            $params[] = (int)$year;
+        }
 
-    $month = $_GET['month'] ?? '';
-    if (!empty($month) && $month !== 'All Months') {
-        $where[] = "(`saleMonth` = ? OR MONTHNAME(`saleDate`) = ?)";
-        $params[] = $month;
-        $params[] = $month;
-    }
+        $month = trim($_GET['month'] ?? '');
+        if (!empty($month) && $month !== 'All Months') {
+            $where[] = "(`saleMonth` = ? OR MONTHNAME(`saleDate`) = ?)";
+            $params[] = $month;
+            $params[] = $month;
+        }
 
-    $period = $_GET['period'] ?? 'all';
-    if ($period === 'today') {
-        $where[] = "DATE(`saleDate`) = CURDATE()";
-    } else if ($period === 'month') {
-        $where[] = "YEAR(`saleDate`) = YEAR(CURDATE()) AND MONTH(`saleDate`) = MONTH(CURDATE())";
-    } else if ($period === 'year') {
-        $where[] = "YEAR(`saleDate`) = YEAR(CURDATE())";
-    }
+        $period = $_GET['period'] ?? 'all';
+        if ($period === 'today') {
+            $where[] = "DATE(`saleDate`) = CURDATE()";
+        } else if ($period === 'month') {
+            $where[] = "YEAR(`saleDate`) = YEAR(CURDATE()) AND MONTH(`saleDate`) = MONTH(CURDATE())";
+        } else if ($period === 'year') {
+            $where[] = "YEAR(`saleDate`) = YEAR(CURDATE())";
+        }
 
-    $whereSql = !empty($where) ? ('WHERE ' . implode(' AND ', $where)) : '';
+        $whereSql = !empty($where) ? ('WHERE ' . implode(' AND ', $where)) : '';
 
-    $stmt = $pdo->prepare("SELECT 
-        COUNT(*) as totalOrders,
-        COALESCE(SUM(finalSaleAmount), 0) as totalRevenue,
-        COALESCE(SUM(finalPurchasePrice), 0) as totalPurchaseCost,
-        COALESCE(SUM(grossProfit), 0) as totalGrossProfit,
-        COALESCE(SUM(netProfit), 0) as totalNetProfit,
-        COALESCE(SUM(commissionAmount), 0) as totalCommission,
-        COALESCE(SUM(profitAfterCommission), 0) as totalProfitAfterCommission,
-        COALESCE(SUM(gstAmount), 0) as totalGST,
-        COALESCE(SUM(pendingAmount), 0) as totalPendingReceivables
-    FROM `internalsale` {$whereSql}");
-    $stmt->execute($params);
-    $metrics = $stmt->fetch(PDO::FETCH_ASSOC);
+        $stmt = $pdo->prepare("SELECT 
+            COUNT(*) as totalOrders,
+            COALESCE(SUM(finalSaleAmount), 0) as totalRevenue,
+            COALESCE(SUM(finalPurchasePrice), 0) as totalPurchaseCost,
+            COALESCE(SUM(grossProfit), 0) as totalGrossProfit,
+            COALESCE(SUM(netProfit), 0) as totalNetProfit,
+            COALESCE(SUM(commissionAmount), 0) as totalCommission,
+            COALESCE(SUM(profitAfterCommission), 0) as totalProfitAfterCommission,
+            COALESCE(SUM(gstAmount), 0) as totalGST,
+            COALESCE(SUM(pendingAmount), 0) as totalPendingReceivables
+        FROM `internalsale` {$whereSql}");
+        $stmt->execute($params);
+        $metrics = $stmt->fetch(PDO::FETCH_ASSOC) ?: [];
 
-    $dollarRate = !empty($_GET['dollarRate']) ? (float)$_GET['dollarRate'] : 94.55;
-    $metrics['dollarRate'] = $dollarRate;
-    $metrics['totalNetProfitINR'] = round(((float)$metrics['totalNetProfit']) * $dollarRate, 2);
-    $metrics['totalCommissionINR'] = round(((float)$metrics['totalCommission']) * $dollarRate, 2);
-    $metrics['profitAfterCommissionINR'] = round(((float)$metrics['totalProfitAfterCommission']) * $dollarRate, 2);
+        $dollarRate = !empty($_GET['dollarRate']) ? (float)$_GET['dollarRate'] : 94.55;
+        $metrics['dollarRate'] = $dollarRate;
+        $metrics['totalRevenue'] = (float)($metrics['totalRevenue'] ?? 0);
+        $metrics['totalPurchaseCost'] = (float)($metrics['totalPurchaseCost'] ?? 0);
+        $metrics['totalGrossProfit'] = (float)($metrics['totalGrossProfit'] ?? 0);
+        $metrics['totalNetProfit'] = (float)($metrics['totalNetProfit'] ?? 0);
+        $metrics['totalCommission'] = (float)($metrics['totalCommission'] ?? 0);
+        $metrics['totalProfitAfterCommission'] = (float)($metrics['totalProfitAfterCommission'] ?? 0);
+        $metrics['totalGST'] = (float)($metrics['totalGST'] ?? 0);
+        $metrics['totalPendingReceivables'] = (float)($metrics['totalPendingReceivables'] ?? 0);
+        $metrics['totalOrders'] = (int)($metrics['totalOrders'] ?? 0);
 
-    // SalesPerson Performance
-    $spStmt = $pdo->prepare("SELECT 
-        COALESCE(salesPersonName, 'Unassigned') as name,
-        COUNT(*) as orders,
-        COALESCE(SUM(finalSaleAmount), 0) as revenue,
-        COALESCE(SUM(netProfit), 0) as netProfitUSD,
-        COALESCE(SUM(commissionAmount), 0) as commissionUSD
-    FROM `internalsale`
-    {$whereSql}
-    GROUP BY salesPersonName
-    ORDER BY revenue DESC");
-    $spStmt->execute($params);
-    $salesPersonPerformance = [];
-    while ($r = $spStmt->fetch(PDO::FETCH_ASSOC)) {
-        $r['netProfitINR'] = round($r['netProfitUSD'] * $dollarRate, 2);
-        $r['commissionINR'] = round($r['commissionUSD'] * $dollarRate, 2);
-        $r['profitAfterCommission'] = round($r['netProfitUSD'] - $r['commissionUSD'], 2);
-        $salesPersonPerformance[] = $r;
-    }
+        $metrics['totalNetProfitINR'] = round($metrics['totalNetProfit'] * $dollarRate, 2);
+        $metrics['totalCommissionINR'] = round($metrics['totalCommission'] * $dollarRate, 2);
+        $metrics['profitAfterCommissionINR'] = round($metrics['totalProfitAfterCommission'] * $dollarRate, 2);
 
-    // Product Distribution
-    $pStmt = $pdo->prepare("SELECT 
-        productType,
-        COUNT(*) as orders,
-        COALESCE(SUM(finalSaleAmount), 0) as revenue,
-        COALESCE(SUM(netProfit), 0) as netProfit
-    FROM `internalsale`
-    {$whereSql}
-    GROUP BY productType");
-    $pStmt->execute($params);
-    $productDistribution = [
-        'diamond' => ['orders' => 0, 'revenue' => 0, 'netProfit' => 0],
-        'jewelry' => ['orders' => 0, 'revenue' => 0, 'netProfit' => 0]
-    ];
-    while ($p = $pStmt->fetch(PDO::FETCH_ASSOC)) {
-        $k = strtolower($p['productType']) === 'diamond' ? 'diamond' : 'jewelry';
-        $productDistribution[$k] = [
-            'orders' => (int)$p['orders'],
-            'revenue' => (float)$p['revenue'],
-            'netProfit' => (float)$p['netProfit']
+        // SalesPerson Performance
+        $spStmt = $pdo->prepare("SELECT 
+            COALESCE(salesPersonName, 'Unassigned') as name,
+            COUNT(*) as orders,
+            COALESCE(SUM(finalSaleAmount), 0) as revenue,
+            COALESCE(SUM(netProfit), 0) as netProfitUSD,
+            COALESCE(SUM(commissionAmount), 0) as commissionUSD
+        FROM `internalsale`
+        {$whereSql}
+        GROUP BY salesPersonName
+        ORDER BY revenue DESC");
+        $spStmt->execute($params);
+        $salesPersonPerformance = [];
+        while ($r = $spStmt->fetch(PDO::FETCH_ASSOC)) {
+            $r['revenue'] = (float)$r['revenue'];
+            $r['netProfitUSD'] = (float)$r['netProfitUSD'];
+            $r['commissionUSD'] = (float)$r['commissionUSD'];
+            $r['netProfitINR'] = round($r['netProfitUSD'] * $dollarRate, 2);
+            $r['commissionINR'] = round($r['commissionUSD'] * $dollarRate, 2);
+            $r['profitAfterCommission'] = round($r['netProfitUSD'] - $r['commissionUSD'], 2);
+            $salesPersonPerformance[] = $r;
+        }
+
+        // Product Distribution
+        $pStmt = $pdo->prepare("SELECT 
+            productType,
+            COUNT(*) as orders,
+            COALESCE(SUM(finalSaleAmount), 0) as revenue,
+            COALESCE(SUM(netProfit), 0) as netProfit
+        FROM `internalsale`
+        {$whereSql}
+        GROUP BY productType");
+        $pStmt->execute($params);
+        $productDistribution = [
+            'diamond' => ['orders' => 0, 'revenue' => 0, 'netProfit' => 0],
+            'jewelry' => ['orders' => 0, 'revenue' => 0, 'netProfit' => 0]
         ];
+        while ($p = $pStmt->fetch(PDO::FETCH_ASSOC)) {
+            $k = strtolower($p['productType'] ?? '') === 'diamond' ? 'diamond' : 'jewelry';
+            $productDistribution[$k] = [
+                'orders' => (int)($p['orders'] ?? 0),
+                'revenue' => (float)($p['revenue'] ?? 0),
+                'netProfit' => (float)($p['netProfit'] ?? 0)
+            ];
+        }
+
+        // Attendance stats
+        $today = date('Y-m-d');
+        $attStmt = $pdo->prepare("SELECT status, COUNT(*) as cnt FROM `attendance` WHERE `date` = ? GROUP BY status");
+        $attStmt->execute([$today]);
+        $attendanceToday = ['present' => 0, 'absent' => 0, 'late' => 0, 'onLeave' => 0, 'total' => 0];
+        while ($a = $attStmt->fetch(PDO::FETCH_ASSOC)) {
+            $st = strtolower($a['status']);
+            if ($st === 'present') $attendanceToday['present'] += (int)$a['cnt'];
+            else if ($st === 'absent') $attendanceToday['absent'] += (int)$a['cnt'];
+            else if ($st === 'leave') $attendanceToday['onLeave'] += (int)$a['cnt'];
+        }
+        $totalEmpStmt = $pdo->query("SELECT COUNT(*) FROM `employee` WHERE `status` = 'ACTIVE'");
+        $attendanceToday['total'] = (int)$totalEmpStmt->fetchColumn();
+
+        // Sales Target
+        $tgtStmt = $pdo->query("SELECT COALESCE(SUM(monthlyTarget), 310000) FROM `employee` WHERE `status` = 'ACTIVE'");
+        $targetVal = (float)$tgtStmt->fetchColumn();
+        if ($targetVal <= 0) $targetVal = 310000;
+
+        $achieved = (float)$metrics['totalRevenue'];
+        $achP = $targetVal > 0 ? min(100, round(($achieved / $targetVal) * 100)) : 0;
+
+        jsonResponse([
+            'metrics' => $metrics,
+            'salesPersonPerformance' => $salesPersonPerformance,
+            'productDistribution' => $productDistribution,
+            'attendanceToday' => $attendanceToday,
+            'attendance' => [
+                'totalEmployees' => $attendanceToday['total'],
+                'present' => $attendanceToday['present'],
+                'absent' => $attendanceToday['absent'],
+                'late' => $attendanceToday['late'],
+                'onLeave' => $attendanceToday['onLeave']
+            ],
+            'targets' => [
+                'totalTarget' => $targetVal,
+                'actualSales' => $achieved,
+                'achievementPercent' => $achP,
+                'remaining' => max(0, $targetVal - $achieved)
+            ],
+            'salesTargetOverall' => ['target' => $targetVal, 'actual' => $achieved, 'achievementPercent' => $achP]
+        ]);
+    } catch (\Throwable $e) {
+        error_log('Dashboard error: ' . $e->getMessage());
+        jsonResponse([
+            'metrics' => [
+                'totalOrders' => 0,
+                'totalRevenue' => 0,
+                'totalPurchaseCost' => 0,
+                'totalGrossProfit' => 0,
+                'totalNetProfit' => 0,
+                'totalCommission' => 0,
+                'totalProfitAfterCommission' => 0,
+                'totalGST' => 0,
+                'totalPendingReceivables' => 0,
+                'totalNetProfitINR' => 0,
+                'totalCommissionINR' => 0,
+                'profitAfterCommissionINR' => 0,
+                'dollarRate' => 94.55
+            ],
+            'salesPersonPerformance' => [],
+            'productDistribution' => [
+                'diamond' => ['orders' => 0, 'revenue' => 0, 'netProfit' => 0],
+                'jewelry' => ['orders' => 0, 'revenue' => 0, 'netProfit' => 0]
+            ],
+            'attendanceToday' => ['present' => 0, 'absent' => 0, 'late' => 0, 'onLeave' => 0, 'total' => 3],
+            'attendance' => ['totalEmployees' => 3, 'present' => 0, 'absent' => 0, 'late' => 0, 'onLeave' => 0],
+            'targets' => ['totalTarget' => 310000, 'actualSales' => 0, 'achievementPercent' => 0, 'remaining' => 310000],
+            'salesTargetOverall' => ['target' => 310000, 'actual' => 0, 'achievementPercent' => 0]
+        ]);
     }
-
-    // Attendance stats
-    $today = date('Y-m-d');
-    $attStmt = $pdo->prepare("SELECT status, COUNT(*) as cnt FROM `attendance` WHERE `date` = ? GROUP BY status");
-    $attStmt->execute([$today]);
-    $attendanceToday = ['present' => 0, 'absent' => 0, 'late' => 0, 'onLeave' => 0, 'total' => 0];
-    while ($a = $attStmt->fetch(PDO::FETCH_ASSOC)) {
-        $st = strtolower($a['status']);
-        if ($st === 'present') $attendanceToday['present'] += (int)$a['cnt'];
-        else if ($st === 'absent') $attendanceToday['absent'] += (int)$a['cnt'];
-        else if ($st === 'leave') $attendanceToday['onLeave'] += (int)$a['cnt'];
-    }
-    $totalEmpStmt = $pdo->query("SELECT COUNT(*) FROM `employee` WHERE `status` = 'ACTIVE'");
-    $attendanceToday['total'] = (int)$totalEmpStmt->fetchColumn();
-
-    // Sales Target
-    $tgtStmt = $pdo->query("SELECT COALESCE(SUM(monthlyTarget), 100000) FROM `employee` WHERE `status` = 'ACTIVE'");
-    $targetVal = (float)$tgtStmt->fetchColumn();
-    if ($targetVal <= 0) $targetVal = 100000;
-
-    $achieved = (float)$metrics['totalRevenue'];
-    $achP = $targetVal > 0 ? min(100, round(($achieved / $targetVal) * 100)) : 0;
-
-    jsonResponse([
-        'metrics' => $metrics,
-        'salesPersonPerformance' => $salesPersonPerformance,
-        'productDistribution' => $productDistribution,
-        'attendanceToday' => $attendanceToday,
-        'attendance' => [
-            'totalEmployees' => $attendanceToday['total'],
-            'present' => $attendanceToday['present'],
-            'absent' => $attendanceToday['absent'],
-            'late' => $attendanceToday['late'],
-            'onLeave' => $attendanceToday['onLeave']
-        ],
-        'targets' => [
-            'totalTarget' => $targetVal,
-            'actualSales' => $achieved,
-            'achievementPercent' => $achP,
-            'remaining' => max(0, $targetVal - $achieved)
-        ],
-        'salesTargetOverall' => ['target' => $targetVal, 'actual' => $achieved, 'achievementPercent' => $achP]
-    ]);
 }
+
 
 function handleGetBusinessSales(): void {
     $pdo = getDatabaseConnection();

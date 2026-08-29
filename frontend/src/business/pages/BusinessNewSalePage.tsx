@@ -226,13 +226,17 @@ export const BusinessNewSalePage: React.FC = () => {
   const [submitting, setSubmitting] = useState(false);
 
   useEffect(() => {
-    businessApi.getEmployees({ status: 'ACTIVE' }).then((res) => {
-      setEmployees(res.employees || []);
-      if (res.employees && res.employees.length > 0 && !employeeId) {
-        setEmployeeId(res.employees[0].id);
+    businessApi.getEmployees({ status: 'ACTIVE' }).then((res: any) => {
+      const list = Array.isArray(res) ? res : (res?.employees || []);
+      setEmployees(list);
+      if (list.length > 0 && !employeeId) {
+        setEmployeeId(list[0].id);
       }
     });
-    businessApi.getSuppliers().then((res) => setSuppliers(res || []));
+    businessApi.getSuppliers().then((res: any) => {
+      const list = Array.isArray(res) ? res : (res?.suppliers || []);
+      setSuppliers(list);
+    });
   }, []);
 
   // Duplicate Customer Check
@@ -242,8 +246,8 @@ export const BusinessNewSalePage: React.FC = () => {
       return;
     }
     const timeout = setTimeout(() => {
-      businessApi.checkDuplicateCustomer({ name: customerName }).then((res) => {
-        setDuplicateMatches(res.matches || []);
+      businessApi.checkDuplicateCustomer({ name: customerName }).then((res: any) => {
+        setDuplicateMatches(Array.isArray(res) ? res : (res?.matches || []));
       });
     }, 400);
     return () => clearTimeout(timeout);
@@ -615,7 +619,7 @@ export const BusinessNewSalePage: React.FC = () => {
                   list="suppliers-list"
                 />
                 <datalist id="suppliers-list">
-                  {suppliers.map((s) => (
+                  {(suppliers || []).map((s) => (
                     <option key={s.id} value={s.name} />
                   ))}
                 </datalist>
@@ -690,9 +694,9 @@ export const BusinessNewSalePage: React.FC = () => {
               <FormGroup>
                 <label>Sales Person *</label>
                 <select value={employeeId} onChange={(e) => setEmployeeId(e.target.value)} required>
-                  {employees.map((emp) => (
+                  {(employees || []).map((emp) => (
                     <option key={emp.id} value={emp.id}>
-                      {emp.fullName} ({emp.employeeCode})
+                      {emp.fullName || (emp as any).name} ({emp.employeeCode})
                     </option>
                   ))}
                 </select>
