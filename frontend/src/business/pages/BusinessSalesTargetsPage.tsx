@@ -221,7 +221,7 @@ export const BusinessSalesTargetsPage: React.FC = () => {
                   >
                     {employees.map((e) => (
                       <option key={e.id} value={e.id}>
-                        {e.fullName} ({e.employeeCode})
+                        {e.fullName || (e as any).name} ({e.employeeCode})
                       </option>
                     ))}
                   </select>
