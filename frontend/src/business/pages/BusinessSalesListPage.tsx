@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import styled from 'styled-components';
+import * as XLSX from 'xlsx';
 import { PRIVATE_BUSINESS_PATH } from '../../App';
 import { businessApi } from '../services/businessApi';
 import { InternalSale } from '../types';
@@ -9,6 +10,8 @@ import {
   Search,
   Filter,
   Download,
+  FileSpreadsheet,
+  UploadCloud,
   Eye,
   Edit2,
   Trash2,
@@ -272,6 +275,116 @@ export const BusinessSalesListPage: React.FC = () => {
     document.body.removeChild(link);
   };
 
+  const exportExcel = () => {
+    if (sales.length === 0) {
+      alert('No sales to export');
+      return;
+    }
+
+    const headers = [
+      'Invoice No',
+      'Sale Date',
+      'Customer Name',
+      'Customer Country',
+      'Product Type',
+      'Product Description',
+      'Stone Type',
+      'Shape',
+      'Diamond Color',
+      'Clarity',
+      'Cut',
+      'Polish',
+      'Symmetry',
+      'Fluorescence',
+      'Measurement',
+      'Price per Carat ',
+      'Carat / Weight',
+      'Quantity',
+      'Certificate',
+      'Certificate No',
+      'Supplier ',
+      'Purchase Price ',
+      'Selling Price ',
+      'Discount ',
+      'Final Sale Amount ',
+      'Shipping Cost ',
+      'GST %',
+      'GST Amount',
+      'Final Purchase Price',
+      'Payment Status',
+      'Payment Method',
+      'Amount Received ',
+      'Pending Amount',
+      'Gross Profit',
+      'Net Profit',
+      'Sales Person',
+      'Commission %',
+      'Commission Amount',
+      'Profit After Commission',
+      'Profit % (Markup)',
+      'Final Profit %',
+      'Order Status',
+      'Tracking Number',
+      'Tracking Link',
+      'Dollar Rate',
+      'Sale Month',
+    ];
+
+    const dataRows = sales.map((s) => [
+      s.invoiceNo,
+      s.saleDate ? new Date(s.saleDate).toISOString().split('T')[0] : '',
+      s.customerName || '',
+      s.customerCountry || '',
+      s.productType || '',
+      s.productDescription || '',
+      s.stoneType || '',
+      s.shape || '',
+      s.diamondColor || '',
+      s.clarity || '',
+      s.cut || '',
+      s.polish || '',
+      s.symmetry || '',
+      s.fluorescence || '',
+      s.measurement || '',
+      s.pricePerCarat ?? '',
+      s.caratWeight ?? '',
+      s.quantity ?? 1,
+      s.certificate || '',
+      s.certificateNo || '',
+      s.supplierName || '',
+      s.purchasePrice ?? 0,
+      s.sellingPrice ?? 0,
+      s.discount ?? 0,
+      s.finalSaleAmount ?? 0,
+      s.shippingCost ?? 0,
+      s.gstPercent ?? 0,
+      s.gstAmount ?? 0,
+      s.finalPurchasePrice ?? 0,
+      s.paymentStatus || '',
+      s.paymentMethod || '',
+      s.amountReceived ?? 0,
+      s.pendingAmount ?? 0,
+      s.grossProfit ?? 0,
+      s.netProfit ?? 0,
+      s.salesPersonName || '',
+      s.commissionPercent ?? 0,
+      s.commissionAmount ?? 0,
+      s.profitAfterCommission ?? 0,
+      s.markupPercent ?? 0,
+      s.finalProfitPercent ?? 0,
+      s.orderStatus || '',
+      s.trackingNumber || '',
+      s.trackingLink || '',
+      s.dollarRate ?? '',
+      s.saleMonth || '',
+    ]);
+
+    const worksheet = XLSX.utils.aoa_to_sheet([headers, ...dataRows]);
+    const workbook = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(workbook, worksheet, 'Sales Tracking');
+    XLSX.writeFile(workbook, `Sales_Tracker_Final_${new Date().toISOString().split('T')[0]}.xlsx`);
+  };
+
   return (
     <div>
       <PageHeader>
@@ -282,7 +395,46 @@ export const BusinessSalesListPage: React.FC = () => {
           </p>
         </div>
 
-        <div style={{ display: 'flex', gap: 10 }}>
+        <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap', alignItems: 'center' }}>
+          <Link
+            to={`${PRIVATE_BUSINESS_PATH}/import`}
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              gap: 6,
+              padding: '8px 14px',
+              background: '#ffffff',
+              border: '1px solid #cbd5e1',
+              borderRadius: 6,
+              fontSize: '0.82rem',
+              fontWeight: 600,
+              color: '#0f172a',
+              textDecoration: 'none',
+              cursor: 'pointer',
+            }}
+          >
+            <UploadCloud size={14} color="#2563eb" /> Import Excel / File
+          </Link>
+
+          <button
+            onClick={exportExcel}
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              gap: 6,
+              padding: '8px 14px',
+              background: '#ffffff',
+              border: '1px solid #cbd5e1',
+              borderRadius: 6,
+              fontSize: '0.82rem',
+              fontWeight: 600,
+              color: '#15803d',
+              cursor: 'pointer',
+            }}
+          >
+            <FileSpreadsheet size={14} color="#15803d" /> Export Excel (.xlsx)
+          </button>
+
           <button
             onClick={exportCSV}
             style={{
@@ -295,6 +447,7 @@ export const BusinessSalesListPage: React.FC = () => {
               borderRadius: 6,
               fontSize: '0.82rem',
               fontWeight: 600,
+              color: '#475569',
               cursor: 'pointer',
             }}
           >
