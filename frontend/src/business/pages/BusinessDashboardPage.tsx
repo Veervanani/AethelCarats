@@ -472,9 +472,9 @@ export const BusinessDashboardPage: React.FC = () => {
           <ContentCard>
             {(() => {
               const tgt = (data as any)?.salesTargetOverall || (data as any)?.targets || {};
-              const mName = tgt.monthName || 'August';
-              const yr = tgt.year || '2026';
-              const tgtVal = Number(tgt.target || tgt.totalTarget || 30000) || 30000;
+              const mName = tgt.monthName || month !== 'All Months' ? month : 'August';
+              const yr = tgt.year || year !== 'All Years' ? year : '2026';
+              const tgtVal = Number(tgt.target ?? tgt.totalTarget ?? 0);
               const actVal = Number(tgt.actual ?? tgt.actualSales ?? 0);
               const achPct = tgtVal > 0 ? Math.min(100, Math.round((actVal / tgtVal) * 100)) : 0;
               const remaining = Math.max(0, tgtVal - actVal);
@@ -492,23 +492,34 @@ export const BusinessDashboardPage: React.FC = () => {
                     <Percent size={16} color="#2563eb" />
                   </div>
 
-                  <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.82rem', fontWeight: 700 }}>
-                    <span style={{ color: '#0f172a' }}>Achieved: ${fmt(actVal)}</span>
-                    <span style={{ color: '#64748b' }}>Target: ${fmt(tgtVal)}</span>
-                  </div>
-                  <div style={{ height: 10, background: '#f1f5f9', borderRadius: 5, overflow: 'hidden', margin: '8px 0' }}>
-                    <div
-                      style={{
-                        height: '100%',
-                        background: achPct >= 100 ? '#16a34a' : '#2563eb',
-                        width: `${achPct}%`,
-                      }}
-                    />
-                  </div>
-                  <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.72rem', color: '#64748b' }}>
-                    <span>Achievement: <strong style={{ color: achPct >= 100 ? '#16a34a' : '#0f172a' }}>{achPct}%</strong></span>
-                    <span>Remaining: <strong>${fmt(remaining)}</strong></span>
-                  </div>
+                  {tgtVal > 0 ? (
+                    <>
+                      <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.82rem', fontWeight: 700 }}>
+                        <span style={{ color: '#0f172a' }}>Achieved: ${fmt(actVal)}</span>
+                        <span style={{ color: '#64748b' }}>Target: ${fmt(tgtVal)}</span>
+                      </div>
+                      <div style={{ height: 10, background: '#f1f5f9', borderRadius: 5, overflow: 'hidden', margin: '8px 0' }}>
+                        <div
+                          style={{
+                            height: '100%',
+                            background: achPct >= 100 ? '#16a34a' : '#2563eb',
+                            width: `${achPct}%`,
+                          }}
+                        />
+                      </div>
+                      <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.72rem', color: '#64748b' }}>
+                        <span>Achievement: <strong style={{ color: achPct >= 100 ? '#16a34a' : '#0f172a' }}>{achPct}%</strong></span>
+                        <span>Remaining: <strong>${fmt(remaining)}</strong></span>
+                      </div>
+                    </>
+                  ) : (
+                    <div style={{ padding: '8px 0', fontSize: '0.78rem', color: '#64748b' }}>
+                      <div>No target quota configured for <strong>{mName} {yr}</strong>.</div>
+                      <div style={{ marginTop: 6, fontWeight: 700, color: '#0f172a' }}>
+                        Closed Sales: ${fmt(actVal)} ({orders} orders)
+                      </div>
+                    </div>
+                  )}
                 </div>
               );
             })()}

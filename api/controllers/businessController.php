@@ -523,35 +523,38 @@ function handleGetBusinessDashboard(): void {
         $attendanceToday['total'] = (int)$totalEmpStmt->fetchColumn();
 
         // Company Monthly Sales Target calculation (month-specific)
-        $curYear = !empty($_GET['year']) ? (int)$_GET['year'] : (int)date('Y');
+        $curYear = !empty($_GET['year']) && is_numeric($_GET['year']) ? (int)$_GET['year'] : (int)date('Y');
         $curMonth = (int)date('n');
+        $isMonthFiltered = false;
 
-        if (!empty($_GET['month'])) {
+        if (!empty($_GET['month']) && $_GET['month'] !== 'All Months') {
+            $isMonthFiltered = true;
             $mParam = trim($_GET['month']);
             if (is_numeric($mParam)) {
                 $curMonth = (int)$mParam;
             } else {
-                $mTime = strtotime($mParam);
+                $mTime = strtotime($mParam . ' 1 ' . $curYear);
                 if ($mTime) $curMonth = (int)date('n', $mTime);
             }
         }
 
-        // Fetch configured target for this month/year, or fallback to any target configured for this year
+        // Fetch configured target for this month/year
         $tgtStmt = $pdo->prepare("SELECT * FROM `salestarget` 
             WHERE (`year` = ? OR `periodYear` = ?) AND (`month` = ? OR `periodMonth` = ?) 
             LIMIT 1");
         $tgtStmt->execute([$curYear, $curYear, $curMonth, $curMonth]);
         $targetRow = $tgtStmt->fetch(PDO::FETCH_ASSOC);
 
-        if (!$targetRow) {
-            $anyTgt = $pdo->prepare("SELECT * FROM `salestarget` WHERE (`year` = ? OR `periodYear` = ?) ORDER BY `createdAt` DESC LIMIT 1");
+        if (!$targetRow && !$isMonthFiltered) {
+            // When viewing All Months, fall back to the latest configured target for this year
+            $anyTgt = $pdo->prepare("SELECT * FROM `salestarget` WHERE (`year` = ? OR `periodYear` = ?) ORDER BY `month` DESC, `periodMonth` DESC, `createdAt` DESC LIMIT 1");
             $anyTgt->execute([$curYear, $curYear]);
             $targetRow = $anyTgt->fetch(PDO::FETCH_ASSOC);
         }
 
         $tYear = (int)($targetRow['year'] ?? $targetRow['periodYear'] ?? $curYear);
         $tMonth = (int)($targetRow['month'] ?? $targetRow['periodMonth'] ?? $curMonth);
-        $targetVal = (float)($targetRow['targetAmount'] ?? 30000);
+        $targetVal = isset($targetRow['targetAmount']) ? (float)$targetRow['targetAmount'] : 0;
         $targetMonthName = date('F', mktime(0, 0, 0, $tMonth, 10));
 
         // Query sales specifically for this target's month & year
