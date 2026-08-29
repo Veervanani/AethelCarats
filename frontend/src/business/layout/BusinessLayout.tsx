@@ -236,14 +236,52 @@ const TopBar = styled.header`
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.02);
 
   @media (max-width: 768px) {
-    padding: 10px 16px;
+    padding: 10px 14px;
+  }
+`;
+
+const MobileMenuButton = styled.button`
+  display: none;
+  background: none;
+  border: 1px solid #e2e8f0;
+  padding: 6px;
+  border-radius: 6px;
+  color: #0f172a;
+  cursor: pointer;
+
+  @media (max-width: 767px) {
+    display: flex;
+    align-items: center;
+    justify-content: center;
   }
 `;
 
 const TopBarActions = styled.div`
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: 10px;
+
+  .user-badge {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 4px 10px;
+    background: #f1f5f9;
+    border-radius: 6px;
+
+    @media (max-width: 480px) {
+      display: none;
+    }
+  }
+`;
+
+const ContentContainer = styled.div`
+  padding: 24px 28px;
+  flex: 1;
+
+  @media (max-width: 768px) {
+    padding: 14px 12px;
+  }
 `;
 
 const CheckInButton = styled.button<{ $isCheckedIn?: boolean }>`
@@ -264,6 +302,7 @@ const CheckInButton = styled.button<{ $isCheckedIn?: boolean }>`
     filter: brightness(0.96);
   }
 `;
+
 
 export const BusinessLayout: React.FC = () => {
   const navigate = useNavigate();
@@ -430,15 +469,14 @@ export const BusinessLayout: React.FC = () => {
 
       <MainContent>
         <TopBar>
-          <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
-            <button
+          <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+            <MobileMenuButton
               type="button"
               onClick={() => setIsMobileOpen(true)}
-              style={{ display: 'none', background: 'none', border: 'none', cursor: 'pointer' }}
-              className="mobile-menu-btn"
+              title="Open Navigation Menu"
             >
-              <MenuIcon size={22} />
-            </button>
+              <MenuIcon size={20} />
+            </MobileMenuButton>
             <div>
               <div style={{ fontSize: '0.72rem', color: '#64748b', fontWeight: 600, letterSpacing: '0.04em' }}>
                 FLOKSY JEWEL BUSINESS HUB
@@ -450,10 +488,10 @@ export const BusinessLayout: React.FC = () => {
           <TopBarActions>
             <CheckInButton $isCheckedIn={isCheckedIn} onClick={handleClockToggle} disabled={loadingClock}>
               <Clock size={14} />
-              <span>{loadingClock ? 'Processing...' : isCheckedIn ? 'Clock Out' : 'Clock In'}</span>
+              <span>{loadingClock ? '...' : isCheckedIn ? 'Clock Out' : 'Clock In'}</span>
             </CheckInButton>
 
-            <div style={{ display: 'flex', alignItems: 'center', gap: 8, padding: '4px 10px', background: '#f1f5f9', borderRadius: 6 }}>
+            <div className="user-badge">
               <Briefcase size={14} color="#0f172a" />
               <span style={{ fontSize: '0.8rem', fontWeight: 600, color: '#0f172a' }}>{user?.name || user?.email || 'Authorized User'}</span>
               <span style={{ fontSize: '0.68rem', padding: '2px 6px', background: '#e2b96f', color: '#0d1319', fontWeight: 700, borderRadius: 4 }}>
@@ -463,9 +501,9 @@ export const BusinessLayout: React.FC = () => {
           </TopBarActions>
         </TopBar>
 
-        <div style={{ padding: '24px 28px', flex: 1 }}>
+        <ContentContainer>
           <Outlet />
-        </div>
+        </ContentContainer>
       </MainContent>
     </BusinessWrapper>
   );

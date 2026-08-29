@@ -58,18 +58,24 @@ const GridTwo = styled.div`
   grid-template-columns: 1fr 1fr;
   gap: 14px;
 
-  @media (max-width: 600px) {
+  @media (max-width: 640px) {
     grid-template-columns: 1fr;
+    gap: 10px;
   }
 `;
 
 const GridThree = styled.div`
   display: grid;
-  grid-template-columns: 1fr 1fr 1fr;
+  grid-template-columns: repeat(3, 1fr);
   gap: 12px;
 
-  @media (max-width: 600px) {
+  @media (max-width: 840px) {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  @media (max-width: 540px) {
     grid-template-columns: 1fr;
+    gap: 10px;
   }
 `;
 
@@ -135,6 +141,12 @@ const SummaryLedger = styled.div`
   padding: 20px;
   position: sticky;
   top: 80px;
+
+  @media (max-width: 1024px) {
+    position: static;
+    margin-top: 16px;
+    padding: 16px;
+  }
 
   .ledger-title {
     font-size: 0.8rem;
