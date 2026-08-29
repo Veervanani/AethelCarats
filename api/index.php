@@ -637,10 +637,10 @@ if (str_starts_with($path, '/api/v1/business/')) {
         } else {
             jsonError('Method Not Allowed', 405);
         }
-    } else if ($path === '/api/v1/business/import/execute' && $method === 'POST') {
-        handleExecuteSalesImport();
     } else if ($path === '/api/v1/business/employees' && $method === 'GET') {
         handleGetBusinessEmployees();
+    } else if (preg_match('#^/api/v1/business/employees/([^/]+)$#', $path, $empMatches) && $method === 'GET') {
+        handleGetBusinessEmployeeDetail(urldecode($empMatches[1]));
     } else if ($path === '/api/v1/business/attendance' && $method === 'GET') {
         handleGetBusinessAttendance();
     } else if ($path === '/api/v1/business/attendance/today' && $method === 'GET') {

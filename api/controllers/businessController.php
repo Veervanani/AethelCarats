@@ -683,8 +683,57 @@ function handleGetBusinessEmployees(): void {
     $pdo = getDatabaseConnection();
     ensureBusinessTablesExist($pdo);
     $stmt = $pdo->query("SELECT * FROM `employee` ORDER BY `name` ASC");
-    jsonResponse(['employees' => $stmt->fetchAll(PDO::FETCH_ASSOC)]);
+    $raw = $stmt->fetchAll(PDO::FETCH_ASSOC);
+    $employees = [];
+    foreach ($raw as $e) {
+        $e['fullName'] = $e['name'];
+        $e['monthlySalesTarget'] = (float)$e['monthlyTarget'];
+        $e['targetAmount'] = (float)$e['monthlyTarget'];
+        $employees[] = $e;
+    }
+    jsonResponse(['employees' => $employees]);
 }
+
+function handleGetBusinessEmployeeDetail(string $id): void {
+    $pdo = getDatabaseConnection();
+    ensureBusinessTablesExist($pdo);
+
+    $stmt = $pdo->prepare("SELECT * FROM `employee` WHERE `id` = ? OR `employeeCode` = ? OR LOWER(`name`) = LOWER(?) LIMIT 1");
+    $stmt->execute([$id, $id, $id]);
+    $emp = $stmt->fetch(PDO::FETCH_ASSOC);
+
+    if (!$emp) {
+        jsonError('Employee not found', 404);
+    }
+
+    $emp['fullName'] = $emp['name'];
+    $emp['monthlySalesTarget'] = (float)$emp['monthlyTarget'];
+    $emp['targetAmount'] = (float)$emp['monthlyTarget'];
+
+    // Query employee sales statistics
+    $salesStmt = $pdo->prepare("SELECT 
+        COUNT(*) as totalOrders,
+        COALESCE(SUM(finalSaleAmount), 0) as totalSalesAmount,
+        COALESCE(SUM(netProfit), 0) as netProfit,
+        COALESCE(SUM(commissionAmount), 0) as totalCommission
+    FROM `internalsale`
+    WHERE `employeeId` = ? OR LOWER(`salesPersonName`) = LOWER(?)");
+    $salesStmt->execute([$emp['id'], $emp['name']]);
+    $stats = $salesStmt->fetch(PDO::FETCH_ASSOC);
+
+    // Recent orders
+    $ordersStmt = $pdo->prepare("SELECT * FROM `internalsale` WHERE `employeeId` = ? OR LOWER(`salesPersonName`) = LOWER(?) ORDER BY `saleDate` DESC LIMIT 10");
+    $ordersStmt->execute([$emp['id'], $emp['name']]);
+    $recentOrders = $ordersStmt->fetchAll(PDO::FETCH_ASSOC);
+
+    jsonResponse([
+        'employee' => $emp,
+        'stats' => $stats,
+        'recentOrders' => $recentOrders,
+        'sales' => $recentOrders
+    ]);
+}
+
 
 function handleGetBusinessAttendance(): void {
     $pdo = getDatabaseConnection();

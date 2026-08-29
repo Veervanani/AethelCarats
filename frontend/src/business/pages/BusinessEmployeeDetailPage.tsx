@@ -138,14 +138,16 @@ export const BusinessEmployeeDetailPage: React.FC = () => {
       <ProfileHeader>
         <div>
           <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-            <h1 style={{ fontSize: '1.4rem', fontWeight: 800, color: '#0f172a', margin: 0 }}>{employee.fullName}</h1>
+            <h1 style={{ fontSize: '1.4rem', fontWeight: 800, color: '#0f172a', margin: 0 }}>
+              {employee.fullName || employee.name || 'Employee Profile'}
+            </h1>
             <span style={{ fontSize: '0.72rem', padding: '2px 8px', background: '#f1f5f9', borderRadius: 4, fontWeight: 700 }}>
               {employee.employeeCode}
             </span>
           </div>
           <div style={{ display: 'flex', gap: 16, marginTop: 8, fontSize: '0.8rem', color: '#64748b', flexWrap: 'wrap' }}>
-            <span>🏢 {employee.department}</span>
-            <span>💼 {employee.designation}</span>
+            <span>🏢 {employee.department || 'Sales'}</span>
+            <span>💼 {employee.designation || 'Sales Executive'}</span>
             <span>📧 {employee.email}</span>
             <span>📞 {employee.phone || 'No phone'}</span>
           </div>
@@ -155,7 +157,7 @@ export const BusinessEmployeeDetailPage: React.FC = () => {
           <div style={{ textAlign: 'right' }}>
             <div style={{ fontSize: '0.72rem', color: '#64748b', fontWeight: 600 }}>MONTHLY TARGET</div>
             <div style={{ fontSize: '1.2rem', fontWeight: 800, color: '#0f172a' }}>
-              ${(employee.monthlySalesTarget || 0).toLocaleString()}
+              ${(Number(employee.monthlySalesTarget) || Number(employee.monthlyTarget) || Number(employee.targetAmount) || 0).toLocaleString()}
             </div>
           </div>
         </div>

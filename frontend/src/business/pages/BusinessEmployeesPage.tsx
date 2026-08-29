@@ -251,16 +251,16 @@ export const BusinessEmployeesPage: React.FC = () => {
                   to={`${PRIVATE_BUSINESS_PATH}/employees/${emp.id}`}
                   style={{ color: '#0f172a', textDecoration: 'none' }}
                 >
-                  {emp.fullName}
+                  {emp.fullName || (emp as any).name || 'Staff Member'}
                 </Link>
               </td>
               <td>
                 <div>{emp.email}</div>
                 <div style={{ fontSize: '0.72rem', color: '#64748b' }}>{emp.phone || '-'}</div>
               </td>
-              <td>{emp.department}</td>
-              <td>{emp.designation}</td>
-              <td style={{ fontWeight: 600 }}>${(emp.monthlySalesTarget || 0).toLocaleString()}</td>
+              <td>{emp.department || 'Sales'}</td>
+              <td>{emp.designation || 'Sales Executive'}</td>
+              <td style={{ fontWeight: 600 }}>${(Number(emp.monthlySalesTarget) || Number((emp as any).monthlyTarget) || Number((emp as any).targetAmount) || 0).toLocaleString()}</td>
               <td>{emp._count?.sales || 0}</td>
               <td>
                 <StatusBadge $status={emp.status}>
