@@ -81,9 +81,10 @@ function ensureBusinessTablesExist(PDO $pdo): void {
         `name` VARCHAR(191) NOT NULL,
         `country` VARCHAR(100) NULL,
         `companyName` VARCHAR(191) NULL,
+        `company` VARCHAR(191) NULL,
         `email` VARCHAR(191) NULL,
         `phone` VARCHAR(50) NULL,
-        `assignedStaff` VARCHAR(191) NULL,
+        `assignedStaff` VARCHAR(191) NULL DEFAULT 'Sales Team',
         `assignedEmployeeId` VARCHAR(191) NULL,
         `totalInvoicedDeals` INT NOT NULL DEFAULT 0,
         `lifetimeVolume` DOUBLE NOT NULL DEFAULT 0,
@@ -93,6 +94,21 @@ function ensureBusinessTablesExist(PDO $pdo): void {
         `createdAt` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
         `updatedAt` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
     ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;");
+
+    // Self-healing columns for customer table (supports all legacy & prisma schemas)
+    try { $pdo->exec("ALTER TABLE `customer` MODIFY COLUMN `email` VARCHAR(191) NULL DEFAULT NULL"); } catch (\Throwable $e) {}
+    try { $pdo->exec("ALTER TABLE `customer` DROP INDEX `Customer_email_key`"); } catch (\Throwable $e) {}
+    try { $pdo->exec("ALTER TABLE `customer` DROP INDEX `email`"); } catch (\Throwable $e) {}
+    try { $pdo->exec("ALTER TABLE `customer` ADD COLUMN `companyName` VARCHAR(191) NULL"); } catch (\Throwable $e) {}
+    try { $pdo->exec("ALTER TABLE `customer` ADD COLUMN `company` VARCHAR(191) NULL"); } catch (\Throwable $e) {}
+    try { $pdo->exec("ALTER TABLE `customer` ADD COLUMN `country` VARCHAR(100) NULL"); } catch (\Throwable $e) {}
+    try { $pdo->exec("ALTER TABLE `customer` ADD COLUMN `assignedStaff` VARCHAR(191) NULL DEFAULT 'Sales Team'"); } catch (\Throwable $e) {}
+    try { $pdo->exec("ALTER TABLE `customer` ADD COLUMN `assignedEmployeeId` VARCHAR(191) NULL"); } catch (\Throwable $e) {}
+    try { $pdo->exec("ALTER TABLE `customer` ADD COLUMN `totalInvoicedDeals` INT NOT NULL DEFAULT 0"); } catch (\Throwable $e) {}
+    try { $pdo->exec("ALTER TABLE `customer` ADD COLUMN `lifetimeVolume` DOUBLE NOT NULL DEFAULT 0"); } catch (\Throwable $e) {}
+    try { $pdo->exec("ALTER TABLE `customer` ADD COLUMN `netProfit` DOUBLE NOT NULL DEFAULT 0"); } catch (\Throwable $e) {}
+    try { $pdo->exec("ALTER TABLE `customer` ADD COLUMN `lastSaleDate` DATETIME NULL"); } catch (\Throwable $e) {}
+    try { $pdo->exec("ALTER TABLE `customer` ADD COLUMN `notes` TEXT NULL"); } catch (\Throwable $e) {}
 
     // 5. InternalSale (46 Columns matching Excel)
     $pdo->exec("CREATE TABLE IF NOT EXISTS `internalsale` (
@@ -1329,14 +1345,23 @@ function syncBusinessCustomersFromSales(PDO $pdo): void {
         GROUP BY TRIM(customerName)");
         $salesCustomers = $salesCustStmt->fetchAll(PDO::FETCH_ASSOC);
 
-        $existStmt = $pdo->query("SELECT `id`, LOWER(TRIM(`name`)) as normName FROM `customer`");
+        if (empty($salesCustomers)) {
+            return;
+        }
+
+        $existStmt = $pdo->query("SELECT `id`, LOWER(TRIM(`name`)) as normName FROM `customer` WHERE `name` IS NOT NULL");
         $existingMap = [];
         while ($row = $existStmt->fetch(PDO::FETCH_ASSOC)) {
-            $existingMap[$row['normName']] = $row['id'];
+            $norm = $row['normName'];
+            if (!empty($norm)) {
+                $existingMap[$norm] = $row['id'];
+            }
         }
 
         $updateStmt = $pdo->prepare("UPDATE `customer` SET 
             `country` = COALESCE(?, `country`),
+            `companyName` = COALESCE(?, `companyName`),
+            `company` = COALESCE(?, `company`),
             `assignedStaff` = COALESCE(?, `assignedStaff`),
             `totalInvoicedDeals` = ?,
             `lifetimeVolume` = ?,
@@ -1346,8 +1371,8 @@ function syncBusinessCustomersFromSales(PDO $pdo): void {
             WHERE `id` = ?");
 
         $insertStmt = $pdo->prepare("INSERT INTO `customer` (
-            `id`, `name`, `country`, `companyName`, `assignedStaff`, `totalInvoicedDeals`, `lifetimeVolume`, `netProfit`, `lastSaleDate`, `createdAt`, `updatedAt`
-        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, NOW(), NOW())");
+            `id`, `name`, `email`, `country`, `companyName`, `company`, `assignedStaff`, `totalInvoicedDeals`, `lifetimeVolume`, `netProfit`, `lastSaleDate`, `createdAt`, `updatedAt`
+        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, NOW(), NOW())");
 
         foreach ($salesCustomers as $sc) {
             $rawName = trim($sc['name']);
@@ -1355,12 +1380,18 @@ function syncBusinessCustomersFromSales(PDO $pdo): void {
             $norm = strtolower($rawName);
 
             $lastDate = !empty($sc['lastSaleDate']) ? parseFlexibleDate($sc['lastSaleDate']) : date('Y-m-d H:i:s');
+            $country = !empty($sc['country']) ? trim($sc['country']) : null;
+            $staff = !empty($sc['assignedStaff']) ? trim($sc['assignedStaff']) : 'Sales Team';
+            $companyDesc = $country ? ($rawName . ' (' . $country . ')') : null;
+            $dummyEmail = 'client.' . substr(md5($norm), 0, 8) . '@floksyjewel.internal';
 
             if (isset($existingMap[$norm])) {
                 $custId = $existingMap[$norm];
                 $updateStmt->execute([
-                    $sc['country'] ?? null,
-                    $sc['assignedStaff'] ?? 'Sales Team',
+                    $country,
+                    $companyDesc,
+                    $companyDesc,
+                    $staff,
                     (int)$sc['totalInvoicedDeals'],
                     (float)$sc['lifetimeVolume'],
                     (float)$sc['netProfit'],
@@ -1372,9 +1403,11 @@ function syncBusinessCustomersFromSales(PDO $pdo): void {
                 $insertStmt->execute([
                     $custId,
                     $rawName,
-                    $sc['country'] ?? null,
-                    $sc['country'] ? ($rawName . ' (' . $sc['country'] . ')') : null,
-                    $sc['assignedStaff'] ?? 'Sales Team',
+                    $dummyEmail,
+                    $country,
+                    $companyDesc,
+                    $companyDesc,
+                    $staff,
                     (int)$sc['totalInvoicedDeals'],
                     (float)$sc['lifetimeVolume'],
                     (float)$sc['netProfit'],
@@ -1400,24 +1433,40 @@ function handleGetBusinessCustomers(): void {
     $params = [];
     if (!empty($search)) {
         $s = '%' . $search . '%';
-        $where = "WHERE `name` LIKE ? OR `country` LIKE ? OR `email` LIKE ? OR `phone` LIKE ? OR `companyName` LIKE ?";
-        $params = [$s, $s, $s, $s, $s];
+        $where = "WHERE (`name` LIKE ? OR `country` LIKE ? OR `email` LIKE ? OR `phone` LIKE ? OR `companyName` LIKE ? OR `company` LIKE ?)";
+        $params = [$s, $s, $s, $s, $s, $s];
     }
 
-    $stmt = $pdo->prepare("SELECT * FROM `customer` {$where} ORDER BY `lifetimeVolume` DESC, `createdAt` DESC LIMIT 500");
-    $stmt->execute($params);
-    $rawCustomers = $stmt->fetchAll(PDO::FETCH_ASSOC);
+    try {
+        $stmt = $pdo->prepare("SELECT * FROM `customer` {$where} ORDER BY `lifetimeVolume` DESC, `createdAt` DESC LIMIT 500");
+        $stmt->execute($params);
+        $rawCustomers = $stmt->fetchAll(PDO::FETCH_ASSOC);
+    } catch (\Throwable $e) {
+        $stmt = $pdo->prepare("SELECT * FROM `customer` {$where} ORDER BY `createdAt` DESC LIMIT 500");
+        $stmt->execute($params);
+        $rawCustomers = $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
 
     $customers = array_map(function($c) {
+        $cName = $c['name'] ?? $c['clientName'] ?? 'Client';
+        $cEmail = $c['email'] ?? '';
+        if (str_contains($cEmail, '@floksyjewel.internal')) {
+            $cEmail = '-';
+        }
         return [
             'id' => $c['id'],
-            'name' => $c['name'],
-            'email' => $c['email'] ?? ($c['phone'] ? $c['phone'] : '-'),
+            'name' => $cName,
+            'clientName' => $cName,
+            'fullName' => $cName,
+            'customerName' => $cName,
+            'email' => !empty($cEmail) && $cEmail !== '-' ? $cEmail : ($c['phone'] ?? '-'),
             'phone' => $c['phone'] ?? null,
-            'company' => $c['companyName'] ?? null,
+            'company' => $c['company'] ?? $c['companyName'] ?? null,
+            'companyName' => $c['companyName'] ?? $c['company'] ?? null,
             'country' => $c['country'] ?? '-',
-            'assignedStaff' => $c['assignedStaff'] ?? 'Sales Executive',
-            'assignedEmployee' => ['name' => $c['assignedStaff'] ?? 'Sales Executive', 'fullName' => $c['assignedStaff'] ?? 'Sales Executive'],
+            'customerCountry' => $c['country'] ?? '-',
+            'assignedStaff' => $c['assignedStaff'] ?? 'Sales Team',
+            'assignedEmployee' => ['name' => $c['assignedStaff'] ?? 'Sales Team', 'fullName' => $c['assignedStaff'] ?? 'Sales Team'],
             'totalInvoicedDeals' => (int)($c['totalInvoicedDeals'] ?? 0),
             'totalSales' => (float)($c['lifetimeVolume'] ?? 0),
             'lifetimeVolume' => (float)($c['lifetimeVolume'] ?? 0),

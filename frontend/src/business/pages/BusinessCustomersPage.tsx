@@ -103,11 +103,15 @@ export const BusinessCustomersPage: React.FC = () => {
         businessApi.getCustomers({ search }),
         businessApi.getEmployees({ status: 'ACTIVE' }),
       ]);
-      setCustomers(cRes.customers || []);
-      setEmployees(empRes.employees || []);
+      const rawCustomers = Array.isArray(cRes) ? cRes : ((cRes as any)?.customers || []);
+      const rawEmployees = Array.isArray(empRes) ? empRes : ((empRes as any)?.employees || []);
+      setCustomers(rawCustomers);
+      setEmployees(rawEmployees);
       setSelectedIds(new Set());
     } catch (e) {
       console.error(e);
+      setCustomers([]);
+      setEmployees([]);
     } finally {
       setLoading(false);
     }
@@ -327,14 +331,14 @@ export const BusinessCustomersPage: React.FC = () => {
                   {selectedIds.has(c.id) && <Check size={11} strokeWidth={3} />}
                 </CustomCheckbox>
               </td>
-              <td style={{ fontWeight: 600 }}>{c.name}</td>
+              <td style={{ fontWeight: 600 }}>{c.name || (c as any).clientName || (c as any).customerName || 'Client'}</td>
               <td>{c.country || (c as any).customerCountry || '-'}</td>
               <td>
                 <div>{c.email && c.email !== '-' ? c.email : (c.phone || '-')}</div>
                 <div style={{ fontSize: '0.72rem', color: '#64748b' }}>{c.company || (c as any).companyName || ''}</div>
               </td>
               <td>{(c.assignedEmployee as any)?.fullName || (c.assignedEmployee as any)?.name || (c as any).assignedStaff || 'Sales Team'}</td>
-              <td style={{ fontWeight: 600 }}>{c._count?.internalSales ?? (c as any).totalInvoicedDeals ?? 0}</td>
+              <td style={{ fontWeight: 600 }}>{c._count?.internalSales ?? (c as any).totalInvoicedDeals ?? (c as any).totalOrders ?? 0}</td>
               <td style={{ fontWeight: 700 }}>${Number((c as any).lifetimeVolume ?? c.totalSales ?? 0).toLocaleString()}</td>
               <td style={{ color: '#16a34a', fontWeight: 600 }}>${Number((c as any).netProfit ?? c.totalNetProfit ?? 0).toLocaleString()}</td>
               <td>{c.lastSaleDate ? new Date(c.lastSaleDate).toLocaleDateString() : '-'}</td>
