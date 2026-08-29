@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
 import { businessApi } from '../services/businessApi';
 import { Clock, Calendar, Download, Printer } from 'lucide-react';
+import { MonthlyAttendanceCalendar } from '../components/MonthlyAttendanceCalendar';
 
 const PageHeader = styled.div`
   display: flex;
@@ -185,11 +186,9 @@ export const BusinessAttendanceReportPage: React.FC = () => {
             ⚡ {marking ? 'Marking...' : `Mark All Present (${month})`}
           </button>
 
-          <input
-            type="month"
-            value={month}
-            onChange={(e) => setMonth(e.target.value)}
-            style={{ padding: '6px 12px', borderRadius: 6, border: '1px solid #cbd5e1', fontSize: '0.84rem' }}
+          <MonthlyAttendanceCalendar
+            selectedMonth={month}
+            onMonthChange={(newMonth) => setMonth(newMonth)}
           />
           <button
             onClick={() => window.print()}
