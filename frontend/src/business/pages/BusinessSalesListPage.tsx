@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import styled from 'styled-components';
+import styled, { keyframes } from 'styled-components';
 import * as XLSX from 'xlsx';
 import { PRIVATE_BUSINESS_PATH } from '../../App';
 import { businessApi } from '../services/businessApi';
@@ -24,7 +24,352 @@ import {
   TrendingUp,
   AlertTriangle,
   Check,
+  Receipt,
+  DollarSign,
+  Wallet,
+  Sparkles,
+  Award,
+  ShieldCheck,
+  X,
+  RefreshCw,
+  Gem,
+  Package,
 } from 'lucide-react';
+
+const pulse = keyframes`
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.4; }
+`;
+
+const PageContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  width: 100%;
+  max-width: 100%;
+`;
+
+const PageHeader = styled.div`
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 16px;
+
+  .title-group {
+    h1 {
+      font-size: 1.45rem;
+      font-weight: 800;
+      color: #0f172a;
+      letter-spacing: -0.02em;
+      margin: 0;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+
+      .badge-tag {
+        font-size: 0.68rem;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        background: #f1f5f9;
+        color: #475569;
+        padding: 3px 8px;
+        border-radius: 20px;
+        border: 1px solid #e2e8f0;
+      }
+    }
+
+    p {
+      font-size: 0.82rem;
+      color: #64748b;
+      margin: 4px 0 0 0;
+    }
+  }
+
+  .action-toolbar {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: wrap;
+  }
+`;
+
+const PrimaryButton = styled(Link)`
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  padding: 8px 18px;
+  background: #0d1319;
+  color: #ffffff;
+  border-radius: 8px;
+  text-decoration: none;
+  font-size: 0.82rem;
+  font-weight: 700;
+  box-shadow: 0 2px 4px rgba(13, 19, 25, 0.15);
+  transition: all 0.15s ease;
+  white-space: nowrap;
+
+  &:hover {
+    background: #1e293b;
+    box-shadow: 0 4px 8px rgba(13, 19, 25, 0.2);
+    transform: translateY(-1px);
+  }
+`;
+
+const SecondaryButton = styled.button<{ $variant?: 'danger' | 'success' | 'default' }>`
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 14px;
+  border-radius: 8px;
+  font-size: 0.82rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  white-space: nowrap;
+  background: #ffffff;
+
+  ${({ $variant }) => {
+    switch ($variant) {
+      case 'danger':
+        return `
+          border: 1px solid #fecaca;
+          color: #b91c1c;
+          background: #fff5f5;
+          &:hover {
+            background: #fee2e2;
+            border-color: #f87171;
+          }
+        `;
+      case 'success':
+        return `
+          border: 1px solid #bbf7d0;
+          color: #15803d;
+          &:hover {
+            background: #f0fdf4;
+            border-color: #86efac;
+          }
+        `;
+      default:
+        return `
+          border: 1px solid #cbd5e1;
+          color: #334155;
+          &:hover {
+            background: #f8fafc;
+            border-color: #94a3b8;
+          }
+        `;
+    }
+  }}
+`;
+
+const SecondaryLink = styled(Link)`
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 14px;
+  border-radius: 8px;
+  font-size: 0.82rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  white-space: nowrap;
+  background: #ffffff;
+  border: 1px solid #cbd5e1;
+  color: #334155;
+  text-decoration: none;
+
+  &:hover {
+    background: #f8fafc;
+    border-color: #94a3b8;
+  }
+`;
+
+const SummaryGrid = styled.div`
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 12px;
+`;
+
+const KpiCard = styled.div<{ $highlight?: 'revenue' | 'profit' | 'warning' | 'retained' }>`
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 10px;
+  padding: 12px 16px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.03);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  transition: all 0.15s ease;
+
+  &:hover {
+    border-color: #cbd5e1;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+    transform: translateY(-1px);
+  }
+
+  .card-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 6px;
+
+    .label {
+      font-size: 0.7rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.03em;
+      color: #64748b;
+    }
+
+    .icon-wrap {
+      width: 24px;
+      height: 24px;
+      border-radius: 6px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: #f8fafc;
+      color: #64748b;
+    }
+  }
+
+  .val {
+    font-size: 1.25rem;
+    font-weight: 800;
+    color: ${({ $highlight }) =>
+      $highlight === 'profit'
+        ? '#16a34a'
+        : $highlight === 'warning'
+        ? '#d97706'
+        : $highlight === 'retained'
+        ? '#2563eb'
+        : '#0f172a'};
+    letter-spacing: -0.02em;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .subtitle {
+    font-size: 0.68rem;
+    color: #94a3b8;
+    margin-top: 4px;
+  }
+`;
+
+const SkeletonKpi = styled.div`
+  background: #f1f5f9;
+  border: 1px solid #e2e8f0;
+  border-radius: 10px;
+  height: 86px;
+  animation: ${pulse} 1.5s infinite;
+`;
+
+const FilterToolbar = styled.div`
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 10px;
+  padding: 10px 14px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  align-items: center;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.02);
+
+  .search-wrapper {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: #f8fafc;
+    border: 1px solid #cbd5e1;
+    border-radius: 8px;
+    padding: 6px 12px;
+    flex: 1;
+    min-width: 240px;
+    transition: all 0.15s ease;
+
+    &:focus-within {
+      border-color: #0d1319;
+      background: #ffffff;
+      box-shadow: 0 0 0 2px rgba(13, 19, 25, 0.08);
+    }
+
+    input {
+      border: none;
+      background: transparent;
+      outline: none;
+      font-size: 0.82rem;
+      color: #0f172a;
+      width: 100%;
+
+      &::placeholder {
+        color: #94a3b8;
+      }
+    }
+
+    .clear-btn {
+      background: none;
+      border: none;
+      cursor: pointer;
+      color: #94a3b8;
+      padding: 0;
+      display: flex;
+      align-items: center;
+
+      &:hover {
+        color: #475569;
+      }
+    }
+  }
+
+  .filter-select {
+    padding: 7px 12px;
+    border-radius: 8px;
+    border: 1px solid #cbd5e1;
+    font-size: 0.82rem;
+    font-weight: 500;
+    color: #334155;
+    background: #ffffff;
+    cursor: pointer;
+    outline: none;
+    transition: border-color 0.15s ease;
+
+    &:focus {
+      border-color: #0d1319;
+    }
+  }
+
+  .results-pill {
+    font-size: 0.76rem;
+    font-weight: 600;
+    color: #64748b;
+    padding: 4px 10px;
+    background: #f8fafc;
+    border-radius: 6px;
+    border: 1px solid #e2e8f0;
+    margin-left: auto;
+  }
+`;
+
+const SelectionBanner = styled.div`
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: #f0fdf4;
+  border: 1px solid #bbf7d0;
+  border-radius: 8px;
+  padding: 8px 16px;
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: #166534;
+  animation: fadeIn 0.2s ease;
+
+  .actions {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+`;
 
 const CustomCheckbox = styled.label<{ $checked?: boolean }>`
   display: inline-flex;
@@ -51,61 +396,14 @@ const CustomCheckbox = styled.label<{ $checked?: boolean }>`
   }
 `;
 
-const PageHeader = styled.div`
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 20px;
-  flex-wrap: wrap;
-  gap: 16px;
-`;
-
-const SummaryStrip = styled.div`
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
-  gap: 10px;
-  margin-bottom: 20px;
-`;
-
-const SummaryPill = styled.div`
-  background: #ffffff;
-  border: 1px solid #e2e8f0;
-  border-radius: 8px;
-  padding: 12px 14px;
-
-  .label {
-    font-size: 0.68rem;
-    font-weight: 700;
-    text-transform: uppercase;
-    color: #64748b;
-  }
-  .val {
-    font-size: 1.15rem;
-    font-weight: 800;
-    color: #0f172a;
-    margin-top: 2px;
-  }
-`;
-
-const FilterCard = styled.div`
-  background: #ffffff;
-  border: 1px solid #e2e8f0;
-  border-radius: 8px;
-  padding: 12px 16px;
-  margin-bottom: 16px;
-  display: flex;
-  flex-wrap: wrap;
-  gap: 10px;
-  align-items: center;
-`;
-
 const TableContainer = styled.div`
   background: #ffffff;
   border: 1px solid #e2e8f0;
-  border-radius: 10px;
+  border-radius: 12px;
   overflow-x: auto;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.04);
   scrollbar-width: thin;
+  position: relative;
 `;
 
 const Table = styled.table`
@@ -116,14 +414,15 @@ const Table = styled.table`
 
   th {
     background: #0d1319;
-    color: #f1f4f8;
-    padding: 10px 12px;
+    color: #f8fafc;
+    padding: 11px 12px;
     font-weight: 600;
     text-align: left;
     border-right: 1px solid rgba(255, 255, 255, 0.08);
     position: sticky;
     top: 0;
     z-index: 10;
+    letter-spacing: 0.01em;
   }
 
   td {
@@ -131,6 +430,7 @@ const Table = styled.table`
     border-bottom: 1px solid #f1f5f9;
     border-right: 1px solid #f1f5f9;
     color: #1e293b;
+    font-variant-numeric: tabular-nums;
   }
 
   tr:hover td {
@@ -163,22 +463,22 @@ const Table = styled.table`
   th.sticky-col-inv {
     position: sticky;
     left: 44px;
-    min-width: 115px;
+    min-width: 125px;
     background: #0d1319 !important;
     color: #f1f4f8 !important;
     z-index: 30;
     font-weight: 700;
-    box-shadow: 3px 0 6px rgba(0, 0, 0, 0.15);
+    box-shadow: 3px 0 6px rgba(0, 0, 0, 0.12);
   }
 
   td.sticky-col-inv {
     position: sticky;
     left: 44px;
-    min-width: 115px;
+    min-width: 125px;
     background: #ffffff;
     z-index: 20;
     font-weight: 700;
-    box-shadow: 3px 0 6px rgba(0, 0, 0, 0.05);
+    box-shadow: 3px 0 6px rgba(0, 0, 0, 0.04);
   }
 
   tr:hover td.sticky-col-chk,
@@ -190,29 +490,78 @@ const Table = styled.table`
 const Badge = styled.span<{ $type?: string }>`
   font-size: 0.68rem;
   font-weight: 700;
-  padding: 2px 6px;
+  padding: 3px 7px;
   border-radius: 4px;
   display: inline-block;
+  letter-spacing: 0.02em;
 
   ${({ $type }) => {
     switch ($type) {
       case 'Paid':
-        return 'background: #ebfbee; color: #2b8a3e;';
+        return 'background: #ebfbee; color: #2b8a3e; border: 1px solid #b2f2bb;';
       case 'Partial':
-        return 'background: #fff9db; color: #f59f00;';
+        return 'background: #fff9db; color: #f59f00; border: 1px solid #ffe066;';
       case 'Pending':
       case 'Unpaid':
-        return 'background: #fff5f5; color: #e03131;';
+        return 'background: #fff5f5; color: #e03131; border: 1px solid #ffc9c9;';
       case 'Delivered':
-        return 'background: #e7f5ff; color: #1c7ed6;';
+        return 'background: #e7f5ff; color: #1c7ed6; border: 1px solid #a5d8ff;';
+      case 'Shipped':
+        return 'background: #f3f0ff; color: #7950f2; border: 1px solid #d0bfff;';
+      case 'Processing':
+        return 'background: #fff4e6; color: #d9480f; border: 1px solid #ffd8a8;';
       case 'Diamond':
-        return 'background: #fff3bf; color: #d97706;';
+        return 'background: #fff3bf; color: #b45309; border: 1px solid #fde68a;';
       case 'Jewelry':
-        return 'background: #f3f0ff; color: #7950f2;';
+        return 'background: #ede9fe; color: #6d28d9; border: 1px solid #ddd6fe;';
       default:
-        return 'background: #f1f5f9; color: #64748b;';
+        return 'background: #f1f5f9; color: #64748b; border: 1px solid #e2e8f0;';
     }
   }}
+`;
+
+const EmptyStateContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 64px 24px;
+  text-align: center;
+
+  .icon-circle {
+    width: 56px;
+    height: 56px;
+    border-radius: 50%;
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #64748b;
+    margin-bottom: 16px;
+  }
+
+  h3 {
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: #0f172a;
+    margin: 0 0 6px 0;
+  }
+
+  p {
+    font-size: 0.84rem;
+    color: #64748b;
+    max-width: 420px;
+    margin: 0 0 20px 0;
+    line-height: 1.4;
+  }
+
+  .cta-group {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
 `;
 
 const fmt = (num: any) => (Number(num) || 0).toLocaleString();
@@ -229,9 +578,11 @@ export const BusinessSalesListPage: React.FC = () => {
   const [pagination, setPagination] = useState<any>(null);
   const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
   const [editingSale, setEditingSale] = useState<InternalSale | null>(null);
+  const [fetchError, setFetchError] = useState<string | null>(null);
 
   const fetchSales = async () => {
     setLoading(true);
+    setFetchError(null);
     try {
       const res = await businessApi.getSales({
         search: search || undefined,
@@ -244,8 +595,9 @@ export const BusinessSalesListPage: React.FC = () => {
       setSales(res.sales || []);
       setSummary(res.summary);
       setPagination(res.pagination);
-    } catch (e) {
+    } catch (e: any) {
       console.error(e);
+      setFetchError('Unable to load sales data. Please check your connection and retry.');
     } finally {
       setLoading(false);
     }
@@ -489,230 +841,240 @@ export const BusinessSalesListPage: React.FC = () => {
       s.orderStatus || '',
       s.trackingNumber || '',
       s.trackingLink || '',
-      s.dollarRate ?? '',
+      s.dollarRate ?? 94.55,
       s.saleMonth || '',
     ]);
 
     const worksheet = XLSX.utils.aoa_to_sheet([headers, ...dataRows]);
     const workbook = XLSX.utils.book_new();
-    XLSX.utils.book_append_sheet(workbook, worksheet, 'Sales Tracking');
-    XLSX.writeFile(workbook, `Sales_Tracker_Final_${new Date().toISOString().split('T')[0]}.xlsx`);
+    XLSX.utils.book_append_sheet(workbook, worksheet, 'Sales Ledger');
+    XLSX.writeFile(workbook, `sales_ledger_${new Date().toISOString().split('T')[0]}.xlsx`);
+  };
+
+  const hasActiveFilters = search || productType !== 'ALL' || paymentStatus !== 'ALL' || orderStatus !== 'ALL';
+
+  const handleResetFilters = () => {
+    setSearch('');
+    setProductType('ALL');
+    setPaymentStatus('ALL');
+    setOrderStatus('ALL');
+    setPage(1);
   };
 
   return (
-    <div>
+    <PageContainer>
+      {/* Top Header & Actions Bar */}
       <PageHeader>
-        <div>
-          <h1 style={{ fontSize: '1.4rem', fontWeight: 800, color: '#0f172a', margin: 0 }}>Sales Management Tracker</h1>
-          <p style={{ fontSize: '0.8rem', color: '#64748b', margin: '4px 0 0 0' }}>
-            Authoritative financial tracking, 46-column spreadsheet ledger, commissions & margins
-          </p>
+        <div className="title-group">
+          <h1>
+            Sales Management Tracker
+            <span className="badge-tag">46-Column Ledger</span>
+          </h1>
+          <p>Authoritative financial tracking, sales performance, commissions & margins</p>
         </div>
 
-        <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', alignItems: 'center' }}>
-          {selectedIds.size > 0 && (
-            <button
-              onClick={handleDeleteSelected}
-              style={{
-                display: 'flex',
-                alignItems: 'center',
-                gap: 6,
-                padding: '8px 14px',
-                background: '#dc2626',
-                color: '#ffffff',
-                border: 'none',
-                borderRadius: 6,
-                fontSize: '0.82rem',
-                fontWeight: 700,
-                cursor: 'pointer',
-              }}
-            >
-              <Trash2 size={14} /> Delete Selected ({selectedIds.size})
-            </button>
-          )}
-
-          <button
+        <div className="action-toolbar">
+          <SecondaryButton
+            type="button"
+            $variant="danger"
             onClick={handleDeleteAll}
-            style={{
-              display: 'flex',
-              alignItems: 'center',
-              gap: 6,
-              padding: '8px 12px',
-              background: '#fff5f5',
-              border: '1px solid #fca5a5',
-              color: '#991b1b',
-              borderRadius: 6,
-              fontSize: '0.82rem',
-              fontWeight: 600,
-              cursor: 'pointer',
-            }}
             title="Purge all sales data from database"
           >
-            <Trash2 size={13} color="#991b1b" /> Delete All Sales
-          </button>
+            <Trash2 size={13} /> Delete All Sales
+          </SecondaryButton>
 
-          <Link
-            to={`${PRIVATE_BUSINESS_PATH}/import`}
-            style={{
-              display: 'flex',
-              alignItems: 'center',
-              gap: 6,
-              padding: '8px 14px',
-              background: '#ffffff',
-              border: '1px solid #cbd5e1',
-              borderRadius: 6,
-              fontSize: '0.82rem',
-              fontWeight: 600,
-              color: '#0f172a',
-              textDecoration: 'none',
-              cursor: 'pointer',
-            }}
-          >
+          <SecondaryLink to={`${PRIVATE_BUSINESS_PATH}/import`} title="Import batch sales via Excel or CSV">
             <UploadCloud size={14} color="#2563eb" /> Import Excel / File
-          </Link>
+          </SecondaryLink>
 
-          <button
-            onClick={exportExcel}
-            style={{
-              display: 'flex',
-              alignItems: 'center',
-              gap: 6,
-              padding: '8px 14px',
-              background: '#ffffff',
-              border: '1px solid #cbd5e1',
-              borderRadius: 6,
-              fontSize: '0.82rem',
-              fontWeight: 600,
-              color: '#15803d',
-              cursor: 'pointer',
-            }}
-          >
+          <SecondaryButton type="button" $variant="success" onClick={exportExcel} title="Export ledger to Excel workbook">
             <FileSpreadsheet size={14} color="#15803d" /> Export Excel (.xlsx)
-          </button>
+          </SecondaryButton>
 
-          <button
-            onClick={exportCSV}
-            style={{
-              display: 'flex',
-              alignItems: 'center',
-              gap: 6,
-              padding: '8px 14px',
-              background: '#ffffff',
-              border: '1px solid #cbd5e1',
-              borderRadius: 6,
-              fontSize: '0.82rem',
-              fontWeight: 600,
-              color: '#475569',
-              cursor: 'pointer',
-            }}
-          >
+          <SecondaryButton type="button" onClick={exportCSV} title="Export CSV spreadsheet">
             <Download size={14} /> Export CSV
-          </button>
+          </SecondaryButton>
 
-          <Link
-            to={`${PRIVATE_BUSINESS_PATH}/sales/new`}
-            style={{
-              display: 'flex',
-              alignItems: 'center',
-              gap: 6,
-              padding: '8px 18px',
-              background: '#0d1319',
-              color: '#ffffff',
-              borderRadius: 6,
-              textDecoration: 'none',
-              fontSize: '0.82rem',
-              fontWeight: 600,
-            }}
-          >
+          <PrimaryButton to={`${PRIVATE_BUSINESS_PATH}/sales/new`} title="Create a new commercial invoice">
             <Plus size={16} /> New Sale Invoice
-          </Link>
+          </PrimaryButton>
         </div>
       </PageHeader>
 
-      <SummaryStrip>
-        <SummaryPill>
-          <div className="label">Total Orders</div>
-          <div className="val">{summary?.totalOrders || 0}</div>
-        </SummaryPill>
-        <SummaryPill>
-          <div className="label">Total Revenue</div>
-          <div className="val">${fmt(summary?.totalRevenue)}</div>
-        </SummaryPill>
-        <SummaryPill>
-          <div className="label">Purchase Costs</div>
-          <div className="val" style={{ color: '#475569' }}>
-            ${fmt(summary?.totalPurchaseCost)}
-          </div>
-        </SummaryPill>
-        <SummaryPill>
-          <div className="label">Gross Profit</div>
-          <div className="val">${fmt(summary?.totalGrossProfit)}</div>
-        </SummaryPill>
-        <SummaryPill>
-          <div className="label">Net Profit</div>
-          <div className="val" style={{ color: '#16a34a' }}>
-            ${fmt(summary?.totalNetProfit)}
-          </div>
-        </SummaryPill>
-        <SummaryPill>
-          <div className="label">Commission Due</div>
-          <div className="val" style={{ color: '#d97706' }}>
-            ${fmt(summary?.totalCommission)}
-          </div>
-        </SummaryPill>
-        <SummaryPill>
-          <div className="label">Retained Profit</div>
-          <div className="val" style={{ color: '#2563eb' }}>
-            ${fmt(summary?.totalProfitAfterCommission)}
-          </div>
-        </SummaryPill>
-      </SummaryStrip>
+      {/* KPI Financial Metric Cards */}
+      <SummaryGrid>
+        {loading && !summary ? (
+          Array.from({ length: 7 }).map((_, i) => <SkeletonKpi key={i} />)
+        ) : (
+          <>
+            <KpiCard>
+              <div className="card-top">
+                <span className="label">Total Orders</span>
+                <span className="icon-wrap"><Receipt size={14} /></span>
+              </div>
+              <div className="val">{summary?.totalOrders || 0}</div>
+              <div className="subtitle">Processed deals</div>
+            </KpiCard>
 
-      <FilterCard>
-        <div style={{ display: 'flex', alignItems: 'center', gap: 6, background: '#f8fafc', padding: '6px 10px', borderRadius: 6, border: '1px solid #cbd5e1', flex: 1, minWidth: 200 }}>
+            <KpiCard $highlight="revenue">
+              <div className="card-top">
+                <span className="label">Total Revenue</span>
+                <span className="icon-wrap"><DollarSign size={14} color="#0f172a" /></span>
+              </div>
+              <div className="val">${fmt(summary?.totalRevenue)}</div>
+              <div className="subtitle">Gross billed volume</div>
+            </KpiCard>
+
+            <KpiCard>
+              <div className="card-top">
+                <span className="label">Purchase Costs</span>
+                <span className="icon-wrap"><Wallet size={14} /></span>
+              </div>
+              <div className="val" style={{ color: '#475569' }}>
+                ${fmt(summary?.totalPurchaseCost)}
+              </div>
+              <div className="subtitle">Inventory & vendor COGS</div>
+            </KpiCard>
+
+            <KpiCard>
+              <div className="card-top">
+                <span className="label">Gross Profit</span>
+                <span className="icon-wrap"><TrendingUp size={14} /></span>
+              </div>
+              <div className="val">${fmt(summary?.totalGrossProfit)}</div>
+              <div className="subtitle">Revenue minus COGS</div>
+            </KpiCard>
+
+            <KpiCard $highlight="profit">
+              <div className="card-top">
+                <span className="label">Net Profit</span>
+                <span className="icon-wrap" style={{ background: '#f0fdf4', color: '#16a34a' }}><Sparkles size={14} /></span>
+              </div>
+              <div className="val">${fmt(summary?.totalNetProfit)}</div>
+              <div className="subtitle">Post-shipping & GST</div>
+            </KpiCard>
+
+            <KpiCard $highlight="warning">
+              <div className="card-top">
+                <span className="label">Commission Due</span>
+                <span className="icon-wrap" style={{ background: '#fffbeb', color: '#d97706' }}><Award size={14} /></span>
+              </div>
+              <div className="val">${fmt(summary?.totalCommission)}</div>
+              <div className="subtitle">Staff commission liability</div>
+            </KpiCard>
+
+            <KpiCard $highlight="retained">
+              <div className="card-top">
+                <span className="label">Retained Profit</span>
+                <span className="icon-wrap" style={{ background: '#eff6ff', color: '#2563eb' }}><ShieldCheck size={14} /></span>
+              </div>
+              <div className="val">${fmt(summary?.totalProfitAfterCommission)}</div>
+              <div className="subtitle">Retained business equity</div>
+            </KpiCard>
+          </>
+        )}
+      </SummaryGrid>
+
+      {/* Filter Toolbar */}
+      <FilterToolbar>
+        <div className="search-wrapper">
           <Search size={14} color="#64748b" />
           <input
             type="text"
             placeholder="Search invoice, client, stone, certificate..."
             value={search}
-            onChange={(e) => setSearch(e.target.value)}
-            style={{ border: 'none', background: 'transparent', outline: 'none', fontSize: '0.82rem', width: '100%' }}
+            onChange={(e) => {
+              setSearch(e.target.value);
+              setPage(1);
+            }}
           />
+          {search && (
+            <button className="clear-btn" onClick={() => setSearch('')} title="Clear search">
+              <X size={13} />
+            </button>
+          )}
         </div>
 
         <select
+          className="filter-select"
           value={productType}
-          onChange={(e) => setProductType(e.target.value)}
-          style={{ padding: '6px 12px', borderRadius: 6, border: '1px solid #cbd5e1', fontSize: '0.82rem' }}
+          onChange={(e) => {
+            setProductType(e.target.value);
+            setPage(1);
+          }}
         >
           <option value="ALL">All Product Types</option>
-          <option value="Diamond">Diamond Only</option>
-          <option value="Jewelry">Jewelry Only</option>
+          <option value="Diamond">💎 Diamonds Only</option>
+          <option value="Jewelry">✨ Jewelry Only</option>
         </select>
 
         <select
+          className="filter-select"
           value={paymentStatus}
-          onChange={(e) => setPaymentStatus(e.target.value)}
-          style={{ padding: '6px 12px', borderRadius: 6, border: '1px solid #cbd5e1', fontSize: '0.82rem' }}
+          onChange={(e) => {
+            setPaymentStatus(e.target.value);
+            setPage(1);
+          }}
         >
           <option value="ALL">All Payment Statuses</option>
-          <option value="Paid">Paid</option>
-          <option value="Partial">Partial</option>
-          <option value="Pending">Pending</option>
+          <option value="Paid">Paid (Full)</option>
+          <option value="Partial">Partial Payment</option>
+          <option value="Pending">Pending / Unpaid</option>
         </select>
 
         <select
+          className="filter-select"
           value={orderStatus}
-          onChange={(e) => setOrderStatus(e.target.value)}
-          style={{ padding: '6px 12px', borderRadius: 6, border: '1px solid #cbd5e1', fontSize: '0.82rem' }}
+          onChange={(e) => {
+            setOrderStatus(e.target.value);
+            setPage(1);
+          }}
         >
           <option value="ALL">All Order Statuses</option>
           <option value="Delivered">Delivered</option>
           <option value="Shipped">Shipped</option>
           <option value="Processing">Processing</option>
         </select>
-      </FilterCard>
 
+        {hasActiveFilters && (
+          <SecondaryButton type="button" onClick={handleResetFilters} style={{ padding: '6px 12px', fontSize: '0.78rem' }}>
+            <RefreshCw size={12} /> Reset Filters
+          </SecondaryButton>
+        )}
+
+        <div className="results-pill">
+          {loading ? 'Loading...' : `Showing ${sales.length} ${sales.length === 1 ? 'sale' : 'sales'}`}
+        </div>
+      </FilterToolbar>
+
+      {/* Floating Selection Banner */}
+      {selectedIds.size > 0 && (
+        <SelectionBanner>
+          <div>
+            ✨ <strong>{selectedIds.size}</strong> {selectedIds.size === 1 ? 'record' : 'records'} selected
+          </div>
+          <div className="actions">
+            <SecondaryButton type="button" onClick={() => setSelectedIds(new Set())} style={{ padding: '4px 10px', fontSize: '0.76rem' }}>
+              Deselect All
+            </SecondaryButton>
+            <SecondaryButton type="button" $variant="danger" onClick={handleDeleteSelected} style={{ padding: '4px 12px', fontSize: '0.76rem' }}>
+              <Trash2 size={12} /> Delete Selected ({selectedIds.size})
+            </SecondaryButton>
+          </div>
+        </SelectionBanner>
+      )}
+
+      {/* Error Banner */}
+      {fetchError && (
+        <div style={{ background: '#fff5f5', border: '1px solid #fecaca', borderRadius: 8, padding: '12px 16px', color: '#b91c1c', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+          <span>⚠️ {fetchError}</span>
+          <SecondaryButton type="button" onClick={fetchSales} style={{ padding: '4px 10px', fontSize: '0.76rem' }}>
+            Try Again
+          </SecondaryButton>
+        </div>
+      )}
+
+      {/* Main Data Table */}
       <TableContainer>
         <Table>
           <thead>
@@ -766,6 +1128,8 @@ export const BusinessSalesListPage: React.FC = () => {
           <tbody>
             {sales.map((s) => {
               const isSelected = selectedIds.has(s.id);
+              const isDiamond = s.productType === 'Diamond';
+
               return (
                 <tr key={s.id} style={{ background: isSelected ? '#f0fdf4' : undefined }}>
                   <td className="sticky-col-chk">
@@ -785,46 +1149,69 @@ export const BusinessSalesListPage: React.FC = () => {
                       {isSelected && <Check size={11} strokeWidth={3} />}
                     </CustomCheckbox>
                   </td>
+
                   <td className="sticky-col-inv">
-                    <Link to={`${PRIVATE_BUSINESS_PATH}/sales/${s.id}`} style={{ color: '#0d1319', textDecoration: 'none' }}>
+                    <Link
+                      to={`${PRIVATE_BUSINESS_PATH}/sales/${s.id}`}
+                      style={{ color: '#0d1319', textDecoration: 'none', fontWeight: 700 }}
+                    >
                       {s.invoiceNo}
                     </Link>
                   </td>
+
                   <td>{s.saleDate ? new Date(s.saleDate).toLocaleDateString() : '-'}</td>
-                  <td style={{ fontWeight: 600 }}>{s.customerName}</td>
+                  <td style={{ fontWeight: 600, color: '#0f172a' }}>{s.customerName}</td>
                   <td>{s.customerCountry || '-'}</td>
+
                   <td>
-                    <Badge $type={s.productType}>{s.productType}</Badge>
+                    <Badge $type={s.productType}>
+                      {s.productType === 'Diamond' ? '💎 Diamond' : '✨ Jewelry'}
+                    </Badge>
                   </td>
-                  <td>{s.productDescription || s.shape || '-'}</td>
-                  <td>{s.caratWeight ? `${s.caratWeight} ct` : '-'}</td>
-                  <td>{s.diamondColor ? `${s.diamondColor} / ${s.clarity || ''}` : '-'}</td>
-                  <td>{s.certificateNo || '-'}</td>
+
+                  <td style={{ maxWidth: 220, overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                    {isDiamond ? (s.shape || s.productDescription || '-') : (s.productDescription || '-')}
+                  </td>
+
+                  <td>{isDiamond && s.caratWeight ? `${s.caratWeight} ct` : isDiamond ? '-' : `Qty: ${s.quantity || 1}`}</td>
+                  <td>{isDiamond && s.diamondColor ? `${s.diamondColor} / ${s.clarity || ''}` : '-'}</td>
+                  <td>{isDiamond ? (s.certificateNo || '-') : '-'}</td>
                   <td>{s.supplierName || 'None'}</td>
+
                   <td>${fmt(s.sellingPrice)}</td>
-                  <td style={{ fontWeight: 700 }}>${fmt(s.finalSaleAmount)}</td>
+                  <td style={{ fontWeight: 700, color: '#0f172a' }}>${fmt(s.finalSaleAmount)}</td>
                   <td>${fmt(s.purchasePrice)}</td>
                   <td>${fmt(s.gstAmount)}</td>
                   <td>${fmt(s.finalPurchasePrice)}</td>
                   <td>${fmt(s.grossProfit)}</td>
+
                   <td style={{ fontWeight: 700, color: (Number(s.netProfit) || 0) >= 0 ? '#16a34a' : '#dc2626' }}>
                     ${fmt(s.netProfit)}
                   </td>
+
                   <td>{s.salesPersonName || '-'}</td>
                   <td>{((Number(s.commissionPercent) || 0) * 100).toFixed(1)}%</td>
                   <td style={{ color: '#d97706', fontWeight: 600 }}>${fmt(s.commissionAmount)}</td>
-                  <td style={{ fontWeight: 700 }}>${fmt(s.profitAfterCommission)}</td>
+                  <td style={{ fontWeight: 700, color: '#2563eb' }}>${fmt(s.profitAfterCommission)}</td>
                   <td>{((Number(s.markupPercent) || 0) * 100).toFixed(1)}%</td>
+
                   <td>
                     <Badge $type={s.paymentStatus}>{s.paymentStatus}</Badge>
                   </td>
+
                   <td>
                     <Badge $type={s.orderStatus}>{s.orderStatus}</Badge>
                   </td>
+
                   <td>
                     {s.trackingNumber ? (
                       s.trackingLink ? (
-                        <a href={s.trackingLink} target="_blank" rel="noreferrer" style={{ display: 'inline-flex', alignItems: 'center', gap: 2, color: '#2563eb' }}>
+                        <a
+                          href={s.trackingLink}
+                          target="_blank"
+                          rel="noreferrer"
+                          style={{ display: 'inline-flex', alignItems: 'center', gap: 3, color: '#2563eb', textDecoration: 'none' }}
+                        >
                           {s.trackingNumber} <ExternalLink size={10} />
                         </a>
                       ) : (
@@ -834,6 +1221,7 @@ export const BusinessSalesListPage: React.FC = () => {
                       '-'
                     )}
                   </td>
+
                   <td style={{ textAlign: 'center' }}>
                     <input
                       type="number"
@@ -853,10 +1241,10 @@ export const BusinessSalesListPage: React.FC = () => {
                         if (e.key === 'Enter') (e.target as HTMLInputElement).blur();
                       }}
                       style={{
-                        width: 72,
-                        padding: '3px 6px',
+                        width: 70,
+                        padding: '4px 6px',
                         border: '1px solid #cbd5e1',
-                        borderRadius: 4,
+                        borderRadius: 6,
                         fontSize: '0.78rem',
                         background: '#ffffff',
                         textAlign: 'center',
@@ -865,36 +1253,91 @@ export const BusinessSalesListPage: React.FC = () => {
                       }}
                     />
                   </td>
+
                   <td style={{ textAlign: 'right' }}>
                     <div style={{ display: 'inline-flex', gap: 6 }}>
                       <Link to={`${PRIVATE_BUSINESS_PATH}/sales/${s.id}`}>
-                        <button style={{ background: 'none', border: '1px solid #e2e8f0', padding: '4px 8px', borderRadius: 4, cursor: 'pointer' }} title="View Sale Detail">
-                          <Eye size={12} />
+                        <button
+                          style={{
+                            background: '#f8fafc',
+                            border: '1px solid #e2e8f0',
+                            padding: '4px 8px',
+                            borderRadius: 6,
+                            cursor: 'pointer',
+                            color: '#334155',
+                          }}
+                          title="View Sale Detail"
+                        >
+                          <Eye size={13} />
                         </button>
                       </Link>
+
                       <button
                         onClick={() => setEditingSale(s)}
-                        style={{ background: 'none', border: '1px solid #e2e8f0', padding: '4px 8px', borderRadius: 4, cursor: 'pointer', color: '#0f172a' }}
+                        style={{
+                          background: '#f8fafc',
+                          border: '1px solid #e2e8f0',
+                          padding: '4px 8px',
+                          borderRadius: 6,
+                          cursor: 'pointer',
+                          color: '#0f172a',
+                        }}
                         title="Edit Sale Invoice"
                       >
-                        <Edit2 size={12} />
+                        <Edit2 size={13} />
                       </button>
+
                       <button
                         onClick={() => handleDelete(s.id, s.invoiceNo)}
-                        style={{ background: 'none', border: '1px solid #fee2e2', color: '#dc2626', padding: '4px 8px', borderRadius: 4, cursor: 'pointer' }}
+                        style={{
+                          background: '#fff5f5',
+                          border: '1px solid #fee2e2',
+                          color: '#dc2626',
+                          padding: '4px 8px',
+                          borderRadius: 6,
+                          cursor: 'pointer',
+                        }}
                         title="Delete Sale Invoice"
                       >
-                        <Trash2 size={12} />
+                        <Trash2 size={13} />
                       </button>
                     </div>
                   </td>
                 </tr>
               );
             })}
+
+            {/* Empty State */}
             {sales.length === 0 && !loading && (
               <tr>
-                <td colSpan={28} style={{ textAlign: 'center', padding: '40px', color: '#94a3b8' }}>
-                  No sales found in the database. Click "Import Excel / File" or "New Sale Invoice" to add records.
+                <td colSpan={28} style={{ padding: 0 }}>
+                  <EmptyStateContainer>
+                    <div className="icon-circle">
+                      <FileSpreadsheet size={26} />
+                    </div>
+                    <h3>No sales records found</h3>
+                    <p>
+                      {hasActiveFilters
+                        ? 'No transactions matched your current search filters. Try clearing or broadening your search.'
+                        : 'Get started by creating your first commercial invoice or importing your existing spreadsheet ledger.'}
+                    </p>
+                    <div className="cta-group">
+                      {hasActiveFilters ? (
+                        <SecondaryButton type="button" onClick={handleResetFilters}>
+                          <RefreshCw size={13} /> Reset Filters
+                        </SecondaryButton>
+                      ) : (
+                        <>
+                          <PrimaryButton to={`${PRIVATE_BUSINESS_PATH}/sales/new`}>
+                            <Plus size={15} /> Create Invoice
+                          </PrimaryButton>
+                          <SecondaryLink to={`${PRIVATE_BUSINESS_PATH}/import`}>
+                            <UploadCloud size={15} color="#2563eb" /> Import Excel / CSV
+                          </SecondaryLink>
+                        </>
+                      )}
+                    </div>
+                  </EmptyStateContainer>
                 </td>
               </tr>
             )}
@@ -902,26 +1345,32 @@ export const BusinessSalesListPage: React.FC = () => {
         </Table>
       </TableContainer>
 
-      {/* Pagination */}
+      {/* Pagination Footer */}
       {pagination && pagination.totalPages > 1 && (
-        <div style={{ display: 'flex', justifyContent: 'flex-end', alignItems: 'center', gap: 10, marginTop: 16 }}>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: 10, marginTop: 4, flexWrap: 'wrap' }}>
           <span style={{ fontSize: '0.8rem', color: '#64748b' }}>
-            Page {pagination.page} of {pagination.totalPages} ({pagination.total} total)
+            Showing page <strong>{pagination.page}</strong> of <strong>{pagination.totalPages}</strong> ({pagination.total} total transactions)
           </span>
-          <button
-            onClick={() => setPage((p) => Math.max(1, p - 1))}
-            disabled={pagination.page === 1}
-            style={{ padding: '6px 12px', border: '1px solid #cbd5e1', background: '#fff', borderRadius: 6, cursor: 'pointer' }}
-          >
-            <ChevronLeft size={14} />
-          </button>
-          <button
-            onClick={() => setPage((p) => Math.min(pagination.totalPages, p + 1))}
-            disabled={pagination.page === pagination.totalPages}
-            style={{ padding: '6px 12px', border: '1px solid #cbd5e1', background: '#fff', borderRadius: 6, cursor: 'pointer' }}
-          >
-            <ChevronRight size={14} />
-          </button>
+
+          <div style={{ display: 'flex', gap: 6 }}>
+            <SecondaryButton
+              type="button"
+              onClick={() => setPage((p) => Math.max(1, p - 1))}
+              disabled={pagination.page === 1}
+              style={{ padding: '6px 12px' }}
+            >
+              <ChevronLeft size={14} /> Previous
+            </SecondaryButton>
+
+            <SecondaryButton
+              type="button"
+              onClick={() => setPage((p) => Math.min(pagination.totalPages, p + 1))}
+              disabled={pagination.page === pagination.totalPages}
+              style={{ padding: '6px 12px' }}
+            >
+              Next <ChevronRight size={14} />
+            </SecondaryButton>
+          </div>
         </div>
       )}
 
@@ -936,6 +1385,6 @@ export const BusinessSalesListPage: React.FC = () => {
           }}
         />
       )}
-    </div>
+    </PageContainer>
   );
 };
