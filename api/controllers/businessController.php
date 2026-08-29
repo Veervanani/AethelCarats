@@ -1144,23 +1144,76 @@ function handleDeleteSaleById(string $id): void {
     jsonResponse(['message' => 'Sale deleted successfully', 'success' => true]);
 }
 
-function handleDeleteSalesBatch(): void {
+function recordBusinessAuditLog(string $action, string $object, ?string $details = null): void {
+    try {
+        $pdo = getDatabaseConnection();
+        $id = generateUuidV4();
+        $stmt = $pdo->prepare("INSERT INTO `activitylog` (`id`, `action`, `object`, `newValue`, `createdAt`) VALUES (?, ?, ?, ?, NOW())");
+        $stmt->execute([$id, $action, $object, $details]);
+    } catch (\Throwable $e) {
+        error_log('Audit log error: ' . $e->getMessage());
+    }
+}
+
+function handleDeleteAllCustomers(): void {
     $pdo = getDatabaseConnection();
     ensureBusinessTablesExist($pdo);
+    $pdo->exec("DELETE FROM `customer`");
+    recordBusinessAuditLog('DELETE_ALL', 'Customer', 'Purged all client CRM records');
+    jsonResponse(['message' => 'All customers removed successfully', 'success' => true]);
+}
 
+function handleDeleteCustomerById(string $id): void {
+    $pdo = getDatabaseConnection();
+    ensureBusinessTablesExist($pdo);
+    $stmt = $pdo->prepare("DELETE FROM `customer` WHERE `id` = ?");
+    $stmt->execute([$id]);
+    recordBusinessAuditLog('DELETE', 'Customer', "Deleted customer ID {$id}");
+    jsonResponse(['message' => 'Customer deleted successfully', 'success' => true]);
+}
+
+function handleDeleteCustomersBatch(): void {
+    $pdo = getDatabaseConnection();
+    ensureBusinessTablesExist($pdo);
     $raw = file_get_contents('php://input');
     $body = json_decode($raw, true) ?? $_POST;
     $ids = $body['ids'] ?? [];
 
     if (empty($ids) || !is_array($ids)) {
-        jsonError('No sale IDs provided', 400);
+        jsonError('No customer IDs provided', 400);
     }
 
     $placeholders = implode(',', array_fill(0, count($ids), '?'));
-    $pdo->prepare("DELETE FROM `commission` WHERE `saleId` IN ($placeholders)")->execute($ids);
-    $stmt = $pdo->prepare("DELETE FROM `internalsale` WHERE `id` IN ($placeholders)");
+    $stmt = $pdo->prepare("DELETE FROM `customer` WHERE `id` IN ($placeholders)");
     $stmt->execute($ids);
+    recordBusinessAuditLog('DELETE_BATCH', 'Customer', "Deleted " . count($ids) . " customers");
+    jsonResponse(['message' => count($ids) . ' customers deleted successfully', 'success' => true]);
+}
 
-    jsonResponse(['message' => count($ids) . ' sales deleted successfully', 'success' => true]);
+function handleDeleteEmployeeById(string $id): void {
+    $pdo = getDatabaseConnection();
+    ensureBusinessTablesExist($pdo);
+    $stmt = $pdo->prepare("DELETE FROM `employee` WHERE `id` = ? OR `employeeCode` = ?");
+    $stmt->execute([$id, $id]);
+    recordBusinessAuditLog('DELETE', 'Employee', "Deleted employee ID {$id}");
+    jsonResponse(['message' => 'Employee deleted successfully', 'success' => true]);
+}
+
+function handleDeleteEmployeesBatch(): void {
+    $pdo = getDatabaseConnection();
+    ensureBusinessTablesExist($pdo);
+    $raw = file_get_contents('php://input');
+    $body = json_decode($raw, true) ?? $_POST;
+    $ids = $body['ids'] ?? [];
+
+    if (empty($ids) || !is_array($ids)) {
+        jsonError('No employee IDs provided', 400);
+    }
+
+    $placeholders = implode(',', array_fill(0, count($ids), '?'));
+    $stmt = $pdo->prepare("DELETE FROM `employee` WHERE `id` IN ($placeholders)");
+    $stmt->execute($ids);
+    recordBusinessAuditLog('DELETE_BATCH', 'Employee', "Deleted " . count($ids) . " employees");
+    jsonResponse(['message' => count($ids) . ' employees deleted successfully', 'success' => true]);
 }
 

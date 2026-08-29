@@ -123,6 +123,7 @@ const ActionBtn = styled.button`
 
 export const BusinessEmployeesPage: React.FC = () => {
   const [employees, setEmployees] = useState<Employee[]>([]);
+  const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState('');
   const [department, setDepartment] = useState('ALL');
@@ -139,6 +140,7 @@ export const BusinessEmployeesPage: React.FC = () => {
         status: status !== 'ALL' ? status : undefined,
       });
       setEmployees(res.employees || []);
+      setSelectedIds(new Set());
     } catch (e) {
       console.error(e);
     } finally {
@@ -149,6 +151,45 @@ export const BusinessEmployeesPage: React.FC = () => {
   useEffect(() => {
     fetchEmployees();
   }, [search, department, status]);
+
+  const handleSelectAll = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.checked) {
+      setSelectedIds(new Set(employees.map((emp) => emp.id)));
+    } else {
+      setSelectedIds(new Set());
+    }
+  };
+
+  const handleToggleSelect = (id: string) => {
+    const next = new Set(selectedIds);
+    if (next.has(id)) {
+      next.delete(id);
+    } else {
+      next.add(id);
+    }
+    setSelectedIds(next);
+  };
+
+  const handleDeleteSingle = async (id: string, name: string) => {
+    if (!window.confirm(`Are you sure you want to delete employee "${name}"?`)) return;
+    try {
+      await businessApi.deleteEmployee(id);
+      fetchEmployees();
+    } catch (err: any) {
+      alert(err?.response?.data?.message || 'Delete failed');
+    }
+  };
+
+  const handleDeleteSelected = async () => {
+    if (selectedIds.size === 0) return;
+    if (!window.confirm(`Are you sure you want to delete ${selectedIds.size} selected employees?`)) return;
+    try {
+      await businessApi.deleteEmployeesBatch(Array.from(selectedIds));
+      fetchEmployees();
+    } catch (err: any) {
+      alert(err?.response?.data?.message || 'Batch delete failed');
+    }
+  };
 
   const handleToggleStatus = async (id: string) => {
     try {
@@ -169,27 +210,50 @@ export const BusinessEmployeesPage: React.FC = () => {
           </p>
         </div>
 
-        <button
-          onClick={() => {
-            setEditingEmp(null);
-            setIsModalOpen(true);
-          }}
-          style={{
-            display: 'flex',
-            alignItems: 'center',
-            gap: 8,
-            padding: '8px 18px',
-            background: '#0d1319',
-            color: '#ffffff',
-            border: 'none',
-            borderRadius: 6,
-            fontWeight: 600,
-            fontSize: '0.82rem',
-            cursor: 'pointer',
-          }}
-        >
-          <UserPlus size={16} /> Add Employee
-        </button>
+        <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap' }}>
+          {selectedIds.size > 0 && (
+            <button
+              onClick={handleDeleteSelected}
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                gap: 6,
+                padding: '8px 14px',
+                background: '#e11d48',
+                color: '#ffffff',
+                border: 'none',
+                borderRadius: 6,
+                fontWeight: 600,
+                fontSize: '0.8rem',
+                cursor: 'pointer',
+              }}
+            >
+              🗑️ Delete Selected ({selectedIds.size})
+            </button>
+          )}
+
+          <button
+            onClick={() => {
+              setEditingEmp(null);
+              setIsModalOpen(true);
+            }}
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              gap: 8,
+              padding: '8px 18px',
+              background: '#0d1319',
+              color: '#ffffff',
+              border: 'none',
+              borderRadius: 6,
+              fontWeight: 600,
+              fontSize: '0.82rem',
+              cursor: 'pointer',
+            }}
+          >
+            <UserPlus size={16} /> Add Employee
+          </button>
+        </div>
       </PageHeader>
 
       <ControlBar>
@@ -231,6 +295,13 @@ export const BusinessEmployeesPage: React.FC = () => {
       <Table>
         <thead>
           <tr>
+            <th style={{ width: 36, textAlign: 'center' }}>
+              <input
+                type="checkbox"
+                checked={employees.length > 0 && selectedIds.size === employees.length}
+                onChange={handleSelectAll}
+              />
+            </th>
             <th>Code</th>
             <th>Full Name</th>
             <th>Email / Phone</th>
@@ -245,6 +316,13 @@ export const BusinessEmployeesPage: React.FC = () => {
         <tbody>
           {employees.map((emp) => (
             <tr key={emp.id}>
+              <td style={{ textAlign: 'center' }}>
+                <input
+                  type="checkbox"
+                  checked={selectedIds.has(emp.id)}
+                  onChange={() => handleToggleSelect(emp.id)}
+                />
+              </td>
               <td style={{ fontWeight: 700, color: '#64748b' }}>{emp.employeeCode}</td>
               <td style={{ fontWeight: 600 }}>
                 <Link
@@ -290,13 +368,20 @@ export const BusinessEmployeesPage: React.FC = () => {
                   >
                     {emp.status === 'ACTIVE' ? 'Deactivate' : 'Activate'}
                   </ActionBtn>
+                  <ActionBtn
+                    title="Delete Staff"
+                    onClick={() => handleDeleteSingle(emp.id, emp.fullName || (emp as any).name || emp.employeeCode)}
+                    style={{ color: '#e11d48', borderColor: '#fecdd3', background: '#fff1f2' }}
+                  >
+                    🗑️
+                  </ActionBtn>
                 </div>
               </td>
             </tr>
           ))}
           {employees.length === 0 && !loading && (
             <tr>
-              <td colSpan={9} style={{ textAlign: 'center', padding: '32px', color: '#94a3b8' }}>
+              <td colSpan={10} style={{ textAlign: 'center', padding: '32px', color: '#94a3b8' }}>
                 No employees found matching criteria.
               </td>
             </tr>

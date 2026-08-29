@@ -100,7 +100,17 @@ export const businessApi = {
   },
 
   getMonthlyAttendanceReport: async (month?: string) => {
-    const res = await API.get<any>('/business/attendance/monthly-report', { params: { month } });
+    const res = await API.get<any>('/business/attendance/report', { params: { month } });
+    return res.data;
+  },
+
+  deleteEmployee: async (id: string) => {
+    const res = await API.delete<any>(`/business/employees/${id}`);
+    return res.data;
+  },
+
+  deleteEmployeesBatch: async (ids: string[]) => {
+    const res = await API.post<any>('/business/employees/batch', { ids });
     return res.data;
   },
 
@@ -221,6 +231,21 @@ export const businessApi = {
 
   createCustomer: async (data: any) => {
     const res = await API.post<BusinessCustomer>('/business/customers', data);
+    return res.data;
+  },
+
+  deleteCustomer: async (id: string) => {
+    const res = await API.delete<any>(`/business/customers/${id}`);
+    return res.data;
+  },
+
+  deleteCustomersBatch: async (ids: string[]) => {
+    const res = await API.post<any>('/business/customers/batch', { ids });
+    return res.data;
+  },
+
+  deleteAllCustomers: async () => {
+    const res = await API.post<any>('/business/customers/delete-all');
     return res.data;
   },
 

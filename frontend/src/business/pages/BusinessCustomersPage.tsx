@@ -59,6 +59,7 @@ const Table = styled.table`
 export const BusinessCustomersPage: React.FC = () => {
   const [customers, setCustomers] = useState<BusinessCustomer[]>([]);
   const [employees, setEmployees] = useState<Employee[]>([]);
+  const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
   const [search, setSearch] = useState('');
   const [loading, setLoading] = useState(true);
   const [showModal, setShowModal] = useState(false);
@@ -79,6 +80,7 @@ export const BusinessCustomersPage: React.FC = () => {
       ]);
       setCustomers(cRes.customers || []);
       setEmployees(empRes.employees || []);
+      setSelectedIds(new Set());
     } catch (e) {
       console.error(e);
     } finally {
@@ -89,6 +91,56 @@ export const BusinessCustomersPage: React.FC = () => {
   useEffect(() => {
     fetchCustomers();
   }, [search]);
+
+  const handleSelectAll = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.checked) {
+      setSelectedIds(new Set(customers.map((c) => c.id)));
+    } else {
+      setSelectedIds(new Set());
+    }
+  };
+
+  const handleToggleSelect = (id: string) => {
+    const next = new Set(selectedIds);
+    if (next.has(id)) {
+      next.delete(id);
+    } else {
+      next.add(id);
+    }
+    setSelectedIds(next);
+  };
+
+  const handleDeleteSingle = async (id: string, name: string) => {
+    if (!window.confirm(`Are you sure you want to delete customer "${name}"?`)) return;
+    try {
+      await businessApi.deleteCustomer(id);
+      fetchCustomers();
+    } catch (err: any) {
+      alert(err?.response?.data?.message || 'Delete failed');
+    }
+  };
+
+  const handleDeleteSelected = async () => {
+    if (selectedIds.size === 0) return;
+    if (!window.confirm(`Are you sure you want to delete ${selectedIds.size} selected clients?`)) return;
+    try {
+      await businessApi.deleteCustomersBatch(Array.from(selectedIds));
+      fetchCustomers();
+    } catch (err: any) {
+      alert(err?.response?.data?.message || 'Batch delete failed');
+    }
+  };
+
+  const handleDeleteAll = async () => {
+    if (!window.confirm('⚠️ WARNING: Are you sure you want to permanently delete ALL client records? This action cannot be undone.')) return;
+    try {
+      await businessApi.deleteAllCustomers();
+      fetchCustomers();
+      alert('✅ All clients have been deleted successfully.');
+    } catch (err: any) {
+      alert(err?.response?.data?.message || 'Failed to delete all clients');
+    }
+  };
 
   const handleCreateCustomer = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -123,24 +175,66 @@ export const BusinessCustomersPage: React.FC = () => {
           </p>
         </div>
 
-        <button
-          onClick={() => setShowModal(true)}
-          style={{
-            display: 'flex',
-            alignItems: 'center',
-            gap: 8,
-            padding: '8px 18px',
-            background: '#0d1319',
-            color: '#ffffff',
-            border: 'none',
-            borderRadius: 6,
-            fontWeight: 600,
-            fontSize: '0.82rem',
-            cursor: 'pointer',
-          }}
-        >
-          <Plus size={16} /> Add Client
-        </button>
+        <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap' }}>
+          <button
+            onClick={handleDeleteAll}
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              gap: 6,
+              padding: '8px 14px',
+              background: '#fff1f2',
+              color: '#e11d48',
+              border: '1px solid #fecdd3',
+              borderRadius: 6,
+              fontWeight: 600,
+              fontSize: '0.8rem',
+              cursor: 'pointer',
+            }}
+          >
+            🗑️ Delete All Clients
+          </button>
+
+          {selectedIds.size > 0 && (
+            <button
+              onClick={handleDeleteSelected}
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                gap: 6,
+                padding: '8px 14px',
+                background: '#e11d48',
+                color: '#ffffff',
+                border: 'none',
+                borderRadius: 6,
+                fontWeight: 600,
+                fontSize: '0.8rem',
+                cursor: 'pointer',
+              }}
+            >
+              🗑️ Delete Selected ({selectedIds.size})
+            </button>
+          )}
+
+          <button
+            onClick={() => setShowModal(true)}
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              gap: 8,
+              padding: '8px 18px',
+              background: '#0d1319',
+              color: '#ffffff',
+              border: 'none',
+              borderRadius: 6,
+              fontWeight: 600,
+              fontSize: '0.82rem',
+              cursor: 'pointer',
+            }}
+          >
+            <Plus size={16} /> Add Client
+          </button>
+        </div>
       </PageHeader>
 
       <ControlBar>
@@ -160,6 +254,13 @@ export const BusinessCustomersPage: React.FC = () => {
       <Table>
         <thead>
           <tr>
+            <th style={{ width: 36, textAlign: 'center' }}>
+              <input
+                type="checkbox"
+                checked={customers.length > 0 && selectedIds.size === customers.length}
+                onChange={handleSelectAll}
+              />
+            </th>
             <th>Client Name</th>
             <th>Country</th>
             <th>Contact Details</th>
@@ -168,28 +269,45 @@ export const BusinessCustomersPage: React.FC = () => {
             <th>Lifetime Volume</th>
             <th>Net Profit</th>
             <th>Last Sale Date</th>
+            <th style={{ textAlign: 'center' }}>Actions</th>
           </tr>
         </thead>
         <tbody>
           {customers.map((c) => (
             <tr key={c.id}>
+              <td style={{ textAlign: 'center' }}>
+                <input
+                  type="checkbox"
+                  checked={selectedIds.has(c.id)}
+                  onChange={() => handleToggleSelect(c.id)}
+                />
+              </td>
               <td style={{ fontWeight: 600 }}>{c.name}</td>
               <td>{c.country || '-'}</td>
               <td>
                 <div>{c.email}</div>
                 <div style={{ fontSize: '0.72rem', color: '#64748b' }}>{c.phone || c.company || '-'}</div>
               </td>
-              <td>{c.assignedEmployee?.fullName || 'Unassigned'}</td>
+              <td>{(c.assignedEmployee as any)?.fullName || (c.assignedEmployee as any)?.name || 'Unassigned'}</td>
               <td style={{ fontWeight: 600 }}>{c._count?.internalSales || 0}</td>
               <td style={{ fontWeight: 700 }}>${(c.totalSales || 0).toLocaleString()}</td>
               <td style={{ color: '#16a34a', fontWeight: 600 }}>${(c.totalNetProfit || 0).toLocaleString()}</td>
               <td>{c.lastSaleDate ? new Date(c.lastSaleDate).toLocaleDateString() : '-'}</td>
+              <td style={{ textAlign: 'center' }}>
+                <button
+                  onClick={() => handleDeleteSingle(c.id, c.name)}
+                  style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#e11d48' }}
+                  title="Delete Client"
+                >
+                  🗑️
+                </button>
+              </td>
             </tr>
           ))}
           {customers.length === 0 && !loading && (
             <tr>
-              <td colSpan={8} style={{ textAlign: 'center', padding: '32px', color: '#94a3b8' }}>
-                No clients found matching search.
+              <td colSpan={10} style={{ textAlign: 'center', padding: '32px', color: '#94a3b8' }}>
+                No clients found.
               </td>
             </tr>
           )}

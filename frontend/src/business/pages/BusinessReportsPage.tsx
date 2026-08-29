@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
 import { businessApi } from '../services/businessApi';
-import { FileText, Download, Filter, Calendar } from 'lucide-react';
+import { Download, FileText, TrendingUp, Users, DollarSign } from 'lucide-react';
+import * as XLSX from 'xlsx';
 
 const PageHeader = styled.div`
   display: flex;
@@ -77,7 +78,60 @@ export const BusinessReportsPage: React.FC = () => {
   }, []);
 
   const handleExport = () => {
-    alert('Report downloaded in CSV format.');
+    try {
+      const wb = XLSX.utils.book_new();
+
+      // Sheet 1: Sales Category Breakdown
+      const salesBreakdown = [
+        {
+          Category: 'Loose Diamonds',
+          Orders: data?.productDistribution?.diamond?.orders || 0,
+          Revenue: data?.productDistribution?.diamond?.revenue || 0,
+          NetProfit: data?.productDistribution?.diamond?.netProfit || 0,
+          ProfitMargin: ((Number(data?.metrics?.averageMarkupPercent) || 0) * 100).toFixed(1) + '%',
+        },
+        {
+          Category: 'Finished Jewelry',
+          Orders: data?.productDistribution?.jewelry?.orders || 0,
+          Revenue: data?.productDistribution?.jewelry?.revenue || 0,
+          NetProfit: data?.productDistribution?.jewelry?.netProfit || 0,
+          ProfitMargin: '0%',
+        },
+      ];
+      const wsSales = XLSX.utils.json_to_sheet(salesBreakdown);
+      XLSX.utils.book_append_sheet(wb, wsSales, 'Category Breakdown');
+
+      // Sheet 2: Staff Performance
+      const staffPerf = (data?.salesPersonPerformance || []).map((sp: any) => ({
+        'Staff Member': sp.name || 'Unassigned',
+        Orders: sp.orders || 0,
+        'Revenue ($)': sp.revenue || 0,
+        'Net Profit ($)': sp.netProfitUSD || 0,
+        'Commission ($)': sp.commissionUSD || 0,
+        'Profit Retained ($)': sp.profitAfterCommission || 0,
+      }));
+      const wsStaff = XLSX.utils.json_to_sheet(staffPerf.length > 0 ? staffPerf : [{ 'Staff Member': 'No Sales Recorded' }]);
+      XLSX.utils.book_append_sheet(wb, wsStaff, 'Staff Performance');
+
+      // Sheet 3: Financial Summary
+      const summaryData = [
+        { Metric: 'Total Orders', Value: data?.metrics?.totalOrders || 0 },
+        { Metric: 'Total Revenue ($)', Value: data?.metrics?.totalRevenue || 0 },
+        { Metric: 'Total Purchase Cost ($)', Value: data?.metrics?.totalPurchaseCost || 0 },
+        { Metric: 'Total Gross Profit ($)', Value: data?.metrics?.totalGrossProfit || 0 },
+        { Metric: 'Total Net Profit ($)', Value: data?.metrics?.totalNetProfit || 0 },
+        { Metric: 'Total Commission Due ($)', Value: data?.metrics?.totalCommission || 0 },
+        { Metric: 'Total Retained Profit ($)', Value: data?.metrics?.totalProfitAfterCommission || 0 },
+      ];
+      const wsSummary = XLSX.utils.json_to_sheet(summaryData);
+      XLSX.utils.book_append_sheet(wb, wsSummary, 'Executive Summary');
+
+      const fileName = `Floksy_Jewel_Audit_Report_${new Date().toISOString().slice(0, 10)}.xlsx`;
+      XLSX.writeFile(wb, fileName);
+    } catch (e) {
+      console.error(e);
+      alert('Failed to generate audit report file.');
+    }
   };
 
   return (

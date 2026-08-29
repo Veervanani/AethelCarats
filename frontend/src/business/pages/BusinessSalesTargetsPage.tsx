@@ -77,13 +77,17 @@ export const BusinessSalesTargetsPage: React.FC = () => {
         businessApi.getTargets({ year: periodYear }),
         businessApi.getEmployees({ status: 'ACTIVE' }),
       ]);
-      setTargets(tRes || []);
-      setEmployees(empRes.employees || []);
-      if (empRes.employees && empRes.employees.length > 0 && !employeeId) {
-        setEmployeeId(empRes.employees[0].id);
+      const rawTargets = Array.isArray(tRes) ? tRes : ((tRes as any)?.targets || []);
+      const rawEmployees = Array.isArray(empRes) ? empRes : ((empRes as any)?.employees || []);
+      setTargets(rawTargets);
+      setEmployees(rawEmployees);
+      if (rawEmployees.length > 0 && !employeeId) {
+        setEmployeeId(rawEmployees[0].id);
       }
     } catch (e) {
       console.error(e);
+      setTargets([]);
+      setEmployees([]);
     } finally {
       setLoading(false);
     }
@@ -142,15 +146,15 @@ export const BusinessSalesTargetsPage: React.FC = () => {
       </PageHeader>
 
       <TargetGrid>
-        {targets.map((t) => (
+        {Array.isArray(targets) && targets.map((t) => (
           <TargetCard key={t.id}>
             <div className="header">
               <div>
-                <div className="emp-name">{t.employee?.fullName}</div>
-                <div style={{ fontSize: '0.72rem', color: '#64748b' }}>{t.employee?.employeeCode}</div>
+                <div className="emp-name">{(t.employee as any)?.fullName || (t.employee as any)?.name || (t as any).employeeName || 'Staff Member'}</div>
+                <div style={{ fontSize: '0.72rem', color: '#64748b' }}>{t.employee?.employeeCode || '-'}</div>
               </div>
               <span className="period-badge">
-                {t.periodType} {t.periodMonth ? `(M${t.periodMonth}/${t.periodYear})` : t.periodYear}
+                {t.periodType || 'MONTHLY'} {t.periodMonth ? `(M${t.periodMonth}/${t.periodYear || periodYear})` : t.periodYear || periodYear}
               </span>
             </div>
 
@@ -165,18 +169,18 @@ export const BusinessSalesTargetsPage: React.FC = () => {
             </div>
 
             <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.82rem', fontWeight: 700 }}>
-              <span>Achieved: ${(t.actualSales || 0).toLocaleString()}</span>
-              <span>Quota: ${t.targetAmount.toLocaleString()}</span>
+              <span>Achieved: ${(Number(t.actualSales) || 0).toLocaleString()}</span>
+              <span>Quota: ${(Number(t.targetAmount) || 0).toLocaleString()}</span>
             </div>
 
             <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.72rem', color: '#64748b', marginTop: 8 }}>
               <span>Achievement: {t.achievementPercent || 0}%</span>
               <span>{t.orderCount || 0} Orders</span>
-              <span>Remaining: ${(t.remaining || 0).toLocaleString()}</span>
+              <span>Remaining: ${(Number(t.remaining) || Math.max(0, (Number(t.targetAmount) || 0) - (Number(t.actualSales) || 0))).toLocaleString()}</span>
             </div>
           </TargetCard>
         ))}
-        {targets.length === 0 && !loading && (
+        {(!Array.isArray(targets) || targets.length === 0) && !loading && (
           <div style={{ gridColumn: '1 / -1', textAlign: 'center', padding: '40px', background: '#fff', borderRadius: 8, color: '#94a3b8' }}>
             No quotas established for {periodYear}. Click "Set Quota Target" to configure targets.
           </div>

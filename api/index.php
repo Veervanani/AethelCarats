@@ -647,8 +647,14 @@ if (str_starts_with($path, '/api/v1/business/')) {
         handleExecuteSalesImport();
     } else if ($path === '/api/v1/business/employees' && $method === 'GET') {
         handleGetBusinessEmployees();
-    } else if (preg_match('#^/api/v1/business/employees/([^/]+)$#', $path, $empMatches) && $method === 'GET') {
-        handleGetBusinessEmployeeDetail(urldecode($empMatches[1]));
+    } else if ($path === '/api/v1/business/employees/batch' && ($method === 'POST' || $method === 'DELETE')) {
+        handleDeleteEmployeesBatch();
+    } else if (preg_match('#^/api/v1/business/employees/([^/]+)$#', $path, $empMatches)) {
+        if ($method === 'DELETE' || $method === 'POST') {
+            handleDeleteEmployeeById(urldecode($empMatches[1]));
+        } else {
+            handleGetBusinessEmployeeDetail(urldecode($empMatches[1]));
+        }
     } else if ($path === '/api/v1/business/attendance' && $method === 'GET') {
         handleGetBusinessAttendance();
     } else if ($path === '/api/v1/business/attendance/today' && $method === 'GET') {
@@ -661,6 +667,12 @@ if (str_starts_with($path, '/api/v1/business/')) {
         handleBusinessCheckOut();
     } else if ($path === '/api/v1/business/attendance/manual' && $method === 'POST') {
         handleBusinessManualAttendance();
+    } else if (($path === '/api/v1/business/customers/delete-all' || $path === '/api/v1/business/customers/clear') && ($method === 'POST' || $method === 'DELETE' || $method === 'GET')) {
+        handleDeleteAllCustomers();
+    } else if ($path === '/api/v1/business/customers/batch' && ($method === 'POST' || $method === 'DELETE')) {
+        handleDeleteCustomersBatch();
+    } else if (preg_match('#^/api/v1/business/customers/([^/]+)$#', $path, $custMatches) && ($method === 'DELETE' || $method === 'POST')) {
+        handleDeleteCustomerById(urldecode($custMatches[1]));
     } else if ($path === '/api/v1/business/customers' && $method === 'GET') {
         handleGetBusinessCustomers();
     } else if ($path === '/api/v1/business/suppliers' && $method === 'GET') {
@@ -669,6 +681,8 @@ if (str_starts_with($path, '/api/v1/business/')) {
         handleGetBusinessCommissions();
     } else if ($path === '/api/v1/business/targets' && $method === 'GET') {
         handleGetBusinessTargets();
+    } else if (($path === '/api/v1/business/audit-logs' || $path === '/api/v1/business/audit') && $method === 'GET') {
+        handleGetBusinessAuditLogs();
     } else if (($path === '/api/v1/business/reset' || $path === '/api/v1/business/reset-all') && ($method === 'POST' || $method === 'GET')) {
         handleResetBusinessData();
     } else {
