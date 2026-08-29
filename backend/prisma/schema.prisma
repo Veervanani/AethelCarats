@@ -16,6 +16,8 @@ model User {
   name         String
   role         String        @default("CUSTOMER")
   avatar       String?
+  employeeId   String?       @unique
+  employee     Employee?     @relation(fields: [employeeId], references: [id], onDelete: SetNull)
   createdAt    DateTime      @default(now())
   updatedAt    DateTime      @updatedAt
   activityLogs ActivityLog[]
@@ -172,6 +174,7 @@ model Product {
   wishlistItems          WishlistItem[]
   detailSections         ProductDetailSection[]
   pageContent            ProductPageContent?
+  internalSales          InternalSale[]
 }
 
 model ProductVariant {
@@ -263,8 +266,9 @@ model Diamond {
   videoUrl          String?
   video360Url       String?
   certificatePdfUrl String?
-  createdAt         DateTime @default(now())
-  updatedAt         DateTime @updatedAt
+  createdAt         DateTime       @default(now())
+  updatedAt         DateTime       @updatedAt
+  internalSales     InternalSale[]
 
   @@index([shape, diamondType, carat, price, status])
 }
@@ -321,18 +325,24 @@ model CustomTimelineItem {
 }
 
 model Customer {
-  id             String                  @id @default(uuid())
-  email          String                  @unique
-  name           String
-  phone          String?
-  country        String?
-  createdAt      DateTime                @default(now())
-  updatedAt      DateTime                @updatedAt
-  addresses      Address[]
-  carts          Cart[]
-  customerPrices CustomerSpecificPrice[]
-  orders         Order[]
-  wishlists      Wishlist[]
+  id                 String                  @id @default(uuid())
+  email              String                  @unique
+  name               String
+  phone              String?
+  country            String?
+  company            String?
+  address            String?
+  assignedEmployeeId String?
+  notes              String?
+  createdAt          DateTime                @default(now())
+  updatedAt          DateTime                @updatedAt
+  addresses          Address[]
+  carts              Cart[]
+  customerPrices     CustomerSpecificPrice[]
+  orders             Order[]
+  wishlists          Wishlist[]
+  internalSales      InternalSale[]
+  assignedEmployee   Employee?               @relation("AssignedCustomerEmployee", fields: [assignedEmployeeId], references: [id], onDelete: SetNull)
 }
 
 model CustomerSpecificPrice {
@@ -1013,4 +1023,207 @@ model HeroBanner {
   createdAt        DateTime @default(now())
   updatedAt        DateTime @updatedAt
 }
+
+model Supplier {
+  id            String         @id @default(uuid())
+  name          String         @unique
+  contactPerson String?
+  email         String?
+  phone         String?
+  country       String?
+  notes         String?
+  status        String         @default("ACTIVE")
+  createdAt     DateTime       @default(now())
+  updatedAt     DateTime       @updatedAt
+  sales         InternalSale[]
+}
+
+model Employee {
+  id                 String           @id @default(uuid())
+  employeeCode       String           @unique
+  userId             String?          @unique
+  user               User?
+  fullName           String
+  email              String           @unique
+  phone              String?
+  department         String?          @default("Sales")
+  designation        String?          @default("Sales Executive")
+  role               String           @default("SALES_EMPLOYEE")
+  status             String           @default("ACTIVE")
+  joiningDate        DateTime?
+  commissionPlanId   String?
+  monthlySalesTarget Float?           @default(0)
+  notes              String?
+  createdAt          DateTime         @default(now())
+  updatedAt          DateTime         @updatedAt
+  attendances        Attendance[]
+  sales              InternalSale[]
+  commissions        Commission[]
+  salesTargets       SalesTarget[]
+  commissionRules    CommissionRule[]
+  assignedCustomers  Customer[]       @relation("AssignedCustomerEmployee")
+  commissionPlan     CommissionPlan?  @relation(fields: [commissionPlanId], references: [id], onDelete: SetNull)
+}
+
+model Attendance {
+  id               String    @id @default(uuid())
+  employeeId       String
+  date             DateTime
+  checkInTime      DateTime?
+  checkOutTime     DateTime?
+  workingHours     Float?    @default(0)
+  status           String    @default("PRESENT") // PRESENT, ABSENT, HALF_DAY, LEAVE, HOLIDAY
+  lateStatus       Boolean   @default(false)
+  notes            String?
+  isManualEntry    Boolean   @default(false)
+  modifiedByUserId String?
+  createdAt        DateTime  @default(now())
+  updatedAt        DateTime  @updatedAt
+  employee         Employee  @relation(fields: [employeeId], references: [id], onDelete: Cascade)
+
+  @@unique([employeeId, date])
+  @@index([date, status])
+}
+
+model CommissionPlan {
+  id          String           @id @default(uuid())
+  name        String           @unique
+  description String?
+  isDefault   Boolean          @default(false)
+  status      String           @default("ACTIVE")
+  createdAt   DateTime         @default(now())
+  updatedAt   DateTime         @updatedAt
+  rules       CommissionRule[]
+  employees   Employee[]
+}
+
+model CommissionRule {
+  id              String          @id @default(uuid())
+  planId          String?
+  employeeId      String?
+  productType     String?         @default("ALL") // ALL, DIAMOND, JEWELRY
+  commissionBasis String          @default("NET_PROFIT") // NET_PROFIT, SALE_AMOUNT, FIXED_AMOUNT
+  commissionRate  Float           @default(0) // e.g. 0.05 for 5%
+  minAmount       Float?
+  maxAmount       Float?
+  effectiveFrom   DateTime?
+  effectiveTo     DateTime?
+  status          String          @default("ACTIVE")
+  notes           String?
+  createdAt       DateTime        @default(now())
+  updatedAt       DateTime        @updatedAt
+  plan            CommissionPlan? @relation(fields: [planId], references: [id], onDelete: Cascade)
+  employee        Employee?       @relation(fields: [employeeId], references: [id], onDelete: Cascade)
+}
+
+model InternalSale {
+  id                    String        @id @default(uuid())
+  invoiceNo             String        @unique
+  saleDate              DateTime      @default(now())
+  customerId            String?
+  customerName          String
+  customerCountry       String?
+  productType           String        @default("Diamond") // Diamond, Jewelry
+  productDescription    String?
+  stoneType             String?       // Natural, CVD
+  shape                 String?
+  diamondColor          String?
+  clarity               String?
+  cut                   String?
+  polish                String?
+  symmetry              String?
+  fluorescence          String?
+  measurement           String?
+  pricePerCarat         Float?
+  caratWeight           Float?
+  quantity              Float?        @default(1)
+  certificate           String?
+  certificateNo         String?
+  supplierId            String?
+  supplierName          String?
+  purchasePrice         Float         @default(0)
+  sellingPrice          Float         @default(0)
+  discount              Float         @default(0)
+  finalSaleAmount       Float         @default(0)
+  shippingCost          Float         @default(0)
+  gstPercent            Float         @default(0) // e.g. 0.015 for 1.5%
+  gstAmount             Float         @default(0)
+  finalPurchasePrice    Float         @default(0)
+  paymentStatus         String        @default("Paid") // Paid, Partial, Pending, Unpaid
+  paymentMethod         String?       @default("Bank Wire") // Bank Wire, Bank, Cash, PayPal
+  amountReceived        Float         @default(0)
+  pendingAmount         Float         @default(0)
+  grossProfit           Float         @default(0)
+  netProfit             Float         @default(0)
+  employeeId            String?
+  salesPersonName       String?
+  commissionPercent     Float         @default(0)
+  commissionAmount      Float         @default(0)
+  profitAfterCommission Float         @default(0)
+  markupPercent         Float         @default(0)
+  finalProfitPercent    Float         @default(0)
+  orderStatus           String        @default("Delivered") // Delivered, Shipped, Processing, Cancelled
+  trackingNumber        String?
+  trackingLink          String?
+  dollarRate            Float?
+  saleMonth             String?
+  notes                 String?
+  isImported            Boolean       @default(false)
+  diamondId             String?
+  productId             String?
+  createdAt             DateTime      @default(now())
+  updatedAt             DateTime      @updatedAt
+
+  customer   Customer?    @relation(fields: [customerId], references: [id], onDelete: SetNull)
+  employee   Employee?    @relation(fields: [employeeId], references: [id], onDelete: SetNull)
+  supplier   Supplier?    @relation(fields: [supplierId], references: [id], onDelete: SetNull)
+  diamond    Diamond?     @relation(fields: [diamondId], references: [id], onDelete: SetNull)
+  product    Product?     @relation(fields: [productId], references: [id], onDelete: SetNull)
+  commission Commission?
+
+  @@index([saleDate, productType, paymentStatus, orderStatus])
+  @@index([employeeId, customerId])
+}
+
+model Commission {
+  id               String       @id @default(uuid())
+  saleId           String       @unique
+  employeeId       String
+  commissionBasis  String       @default("NET_PROFIT")
+  commissionRate   Float        @default(0)
+  commissionAmount Float        @default(0)
+  status           String       @default("PENDING") // PENDING, APPROVED, PAID, CANCELLED
+  approvedBy       String?
+  approvedAt       DateTime?
+  paidBy           String?
+  paidAt           DateTime?
+  paymentReference String?
+  notes            String?
+  createdAt        DateTime     @default(now())
+  updatedAt        DateTime     @updatedAt
+  sale             InternalSale @relation(fields: [saleId], references: [id], onDelete: Cascade)
+  employee         Employee     @relation(fields: [employeeId], references: [id], onDelete: Cascade)
+
+  @@index([employeeId, status])
+}
+
+model SalesTarget {
+  id            String    @id @default(uuid())
+  employeeId    String
+  periodType    String    @default("MONTHLY") // MONTHLY, QUARTERLY, YEARLY
+  periodYear    Int
+  periodMonth   Int?
+  periodQuarter Int?
+  targetAmount  Float     @default(0)
+  startDate     DateTime
+  endDate       DateTime
+  status        String    @default("ACTIVE")
+  notes         String?
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+  employee      Employee  @relation(fields: [employeeId], references: [id], onDelete: Cascade)
+
+  @@index([employeeId, periodYear, periodType])
+}
+
 

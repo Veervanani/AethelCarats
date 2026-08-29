@@ -1,5 +1,5 @@
 import React, { useEffect, useLayoutEffect, lazy, Suspense } from 'react';
-import { BrowserRouter, Routes, Route, useLocation } from 'react-router-dom';
+import { BrowserRouter, Routes, Route, Navigate, useLocation } from 'react-router-dom';
 import { ThemeProvider } from 'styled-components';
 import { theme } from './styles/theme';
 import { GlobalStyle } from './styles/GlobalStyle';
@@ -133,6 +133,67 @@ const AdminBulkProductUploadPage = lazy(() => import('./pages/admin/AdminBulkPro
 const AdminSectionEditorPage = lazy(() => import('./pages/admin/AdminSectionEditorPage').then(m => ({ default: m.AdminSectionEditorPage })));
 const AdminProductDetailsManagerPage = lazy(() => import('./pages/admin/AdminProductDetailsManagerPage').then(m => ({ default: m.AdminProductDetailsManagerPage })));
 const AdminProductPageContentPage = lazy(() => import('./pages/admin/AdminProductPageContentPage').then(m => ({ default: m.AdminProductPageContentPage })));
+
+// Private Business ERP & Operations Pages
+export const PRIVATE_BUSINESS_PATH = '/flk-business-vault-8R2Lp9Kx7Qm4Nw6T';
+
+const BusinessLayout = lazy(() => import('./business/layout/BusinessLayout').then(m => ({ default: m.BusinessLayout })));
+const BusinessDashboardPage = lazy(() => import('./business/pages/BusinessDashboardPage').then(m => ({ default: m.BusinessDashboardPage })));
+const BusinessEmployeesPage = lazy(() => import('./business/pages/BusinessEmployeesPage').then(m => ({ default: m.BusinessEmployeesPage })));
+const BusinessEmployeeDetailPage = lazy(() => import('./business/pages/BusinessEmployeeDetailPage').then(m => ({ default: m.BusinessEmployeeDetailPage })));
+const BusinessAttendancePage = lazy(() => import('./business/pages/BusinessAttendancePage').then(m => ({ default: m.BusinessAttendancePage })));
+const BusinessAttendanceReportPage = lazy(() => import('./business/pages/BusinessAttendanceReportPage').then(m => ({ default: m.BusinessAttendanceReportPage })));
+const BusinessSalesListPage = lazy(() => import('./business/pages/BusinessSalesListPage').then(m => ({ default: m.BusinessSalesListPage })));
+const BusinessNewSalePage = lazy(() => import('./business/pages/BusinessNewSalePage').then(m => ({ default: m.BusinessNewSalePage })));
+const BusinessSaleDetailPage = lazy(() => import('./business/pages/BusinessSaleDetailPage').then(m => ({ default: m.BusinessSaleDetailPage })));
+const BusinessCommissionPage = lazy(() => import('./business/pages/BusinessCommissionPage').then(m => ({ default: m.BusinessCommissionPage })));
+const BusinessCommissionPlansPage = lazy(() => import('./business/pages/BusinessCommissionPlansPage').then(m => ({ default: m.BusinessCommissionPlansPage })));
+const BusinessSalesTargetsPage = lazy(() => import('./business/pages/BusinessSalesTargetsPage').then(m => ({ default: m.BusinessSalesTargetsPage })));
+const BusinessCustomersPage = lazy(() => import('./business/pages/BusinessCustomersPage').then(m => ({ default: m.BusinessCustomersPage })));
+const BusinessSuppliersPage = lazy(() => import('./business/pages/BusinessSuppliersPage').then(m => ({ default: m.BusinessSuppliersPage })));
+const BusinessReportsPage = lazy(() => import('./business/pages/BusinessReportsPage').then(m => ({ default: m.BusinessReportsPage })));
+const BusinessExcelImportPage = lazy(() => import('./business/pages/BusinessExcelImportPage').then(m => ({ default: m.BusinessExcelImportPage })));
+const BusinessAuditLogsPage = lazy(() => import('./business/pages/BusinessAuditLogsPage').then(m => ({ default: m.BusinessAuditLogsPage })));
+const BusinessSettingsPage = lazy(() => import('./business/pages/BusinessSettingsPage').then(m => ({ default: m.BusinessSettingsPage })));
+
+const ProtectedBusinessLayout: React.FC = () => {
+  const { user, isAuthenticated, isLoading } = useAuth();
+  const token = localStorage.getItem('floksy_token') || localStorage.getItem('fj_admin_token');
+
+  if (isLoading) {
+    return (
+      <div style={{ padding: '80px', textAlign: 'center', fontFamily: 'Inter, sans-serif', fontSize: '1.2rem', color: '#0d1319' }}>
+        AUTHENTICATING BUSINESS OPERATIONS HUB...
+      </div>
+    );
+  }
+
+  if (!token || !isAuthenticated) {
+    return <AdminLoginPage onSuccess={() => window.location.reload()} />;
+  }
+
+  const allowedRoles = ['ADMIN', 'SUPER_ADMIN', 'SALES_MANAGER', 'SALES_EMPLOYEE', 'ACCOUNTANT'];
+  if (user && (!user.role || !allowedRoles.includes(user.role as string))) {
+    return (
+      <div style={{ maxWidth: '600px', margin: '80px auto', padding: '48px 32px', background: '#fff', border: '1px solid #e2e8f0', borderRadius: '12px', textAlign: 'center', boxShadow: '0 12px 36px rgba(15,23,42,0.08)' }}>
+        <h2 style={{ fontSize: '1.6rem', fontWeight: 800, color: '#0f172a', marginBottom: '12px' }}>
+          403 — ACCESS DENIED
+        </h2>
+        <p style={{ color: '#64748b', fontSize: '0.9rem', lineHeight: '1.6', marginBottom: '24px' }}>
+          Business Operations permissions are required to access this system. Your account ({user.email}) is currently assigned the role of <strong>{user.role}</strong>.
+        </p>
+        <button
+          onClick={() => (window.location.href = '/')}
+          style={{ padding: '12px 24px', backgroundColor: '#0d1319', color: '#fff', fontSize: '0.82rem', fontWeight: 700, borderRadius: '6px', border: 'none', cursor: 'pointer' }}
+        >
+          RETURN TO MAIN SITE
+        </button>
+      </div>
+    );
+  }
+
+  return <BusinessLayout />;
+};
 
 const PageLoadingSpinner: React.FC = () => (
   <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: '400px', width: '100%' }}>
@@ -321,6 +382,29 @@ export const App: React.FC = () => {
                         </Route>
                         <Route path="/admin/product-page-content" element={<ProtectedAdminLayout />}>
                           <Route index element={<AdminProductPageContentPage />} />
+                        </Route>
+
+                        {/* PRIVATE INTERNAL BUSINESS & SALES ERP SYSTEM */}
+                        <Route path={PRIVATE_BUSINESS_PATH} element={<ProtectedBusinessLayout />}>
+                          <Route index element={<Navigate to={`${PRIVATE_BUSINESS_PATH}/dashboard`} replace />} />
+                          <Route path="dashboard" element={<BusinessDashboardPage />} />
+                          <Route path="employees" element={<BusinessEmployeesPage />} />
+                          <Route path="employees/new" element={<BusinessEmployeesPage />} />
+                          <Route path="employees/:id" element={<BusinessEmployeeDetailPage />} />
+                          <Route path="attendance" element={<BusinessAttendancePage />} />
+                          <Route path="attendance/report" element={<BusinessAttendanceReportPage />} />
+                          <Route path="sales" element={<BusinessSalesListPage />} />
+                          <Route path="sales/new" element={<BusinessNewSalePage />} />
+                          <Route path="sales/:id" element={<BusinessSaleDetailPage />} />
+                          <Route path="commissions" element={<BusinessCommissionPage />} />
+                          <Route path="commission-plans" element={<BusinessCommissionPlansPage />} />
+                          <Route path="targets" element={<BusinessSalesTargetsPage />} />
+                          <Route path="customers" element={<BusinessCustomersPage />} />
+                          <Route path="suppliers" element={<BusinessSuppliersPage />} />
+                          <Route path="reports" element={<BusinessReportsPage />} />
+                          <Route path="import" element={<BusinessExcelImportPage />} />
+                          <Route path="audit-logs" element={<BusinessAuditLogsPage />} />
+                          <Route path="settings" element={<BusinessSettingsPage />} />
                         </Route>
 
                         {/* Storefront Routes */}

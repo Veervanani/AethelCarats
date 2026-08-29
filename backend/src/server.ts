@@ -506,6 +506,119 @@ app.post('/api/v1/admin/seo', authenticateToken, requireRole(['CONTENT_MANAGER',
 app.get('/api/v1/admin/redirects', authenticateToken, getRedirects);
 app.post('/api/v1/admin/redirects', authenticateToken, requireRole(['CONTENT_MANAGER', 'ADMIN']), createRedirect);
 
+// ============================================================
+// PRIVATE INTERNAL BUSINESS MANAGEMENT REST APIS (/api/v1/business/...)
+// ============================================================
+import { requireBusinessRole, requireBusinessAdmin, requireAccountantOrAdmin } from './middleware/auth';
+import {
+  getEmployees,
+  getEmployeeById,
+  createEmployee,
+  updateEmployee,
+  toggleEmployeeStatus,
+} from './controllers/businessEmployeeController';
+import {
+  getAttendanceList,
+  getTodayAttendanceSummary,
+  employeeCheckIn,
+  employeeCheckOut,
+  manualAttendanceEntry,
+  getMonthlyAttendanceReport,
+} from './controllers/businessAttendanceController';
+import {
+  getSalesList,
+  getSaleById,
+  createSale,
+  updateSale,
+  deleteSale,
+  calculateSalesPreview,
+} from './controllers/businessSalesController';
+import {
+  getCommissionsList,
+  approveCommission,
+  payCommission,
+  getCommissionPlans,
+  createCommissionPlan,
+  updateCommissionPlan,
+} from './controllers/businessCommissionController';
+import { getBusinessDashboardMetrics } from './controllers/businessDashboardController';
+import {
+  getSalesTargets,
+  createSalesTarget,
+  updateSalesTarget,
+} from './controllers/businessTargetController';
+import {
+  getSuppliers,
+  createSupplier,
+  updateSupplier,
+} from './controllers/businessSupplierController';
+import {
+  getBusinessCustomers,
+  checkDuplicateCustomer,
+  createBusinessCustomer,
+} from './controllers/businessCustomerController';
+import {
+  validateSalesExcelImport,
+  executeSalesExcelImport,
+} from './controllers/businessImportController';
+import { getBusinessAuditLogs } from './controllers/businessAuditController';
+
+// Dashboard Metrics
+app.get('/api/v1/business/dashboard', authenticateToken, requireBusinessRole, getBusinessDashboardMetrics);
+
+// Employees
+app.get('/api/v1/business/employees', authenticateToken, requireBusinessRole, getEmployees);
+app.get('/api/v1/business/employees/:id', authenticateToken, requireBusinessRole, getEmployeeById);
+app.post('/api/v1/business/employees', authenticateToken, requireBusinessAdmin, createEmployee);
+app.put('/api/v1/business/employees/:id', authenticateToken, requireBusinessAdmin, updateEmployee);
+app.patch('/api/v1/business/employees/:id/status', authenticateToken, requireBusinessAdmin, toggleEmployeeStatus);
+
+// Attendance
+app.get('/api/v1/business/attendance', authenticateToken, requireBusinessRole, getAttendanceList);
+app.get('/api/v1/business/attendance/today', authenticateToken, requireBusinessRole, getTodayAttendanceSummary);
+app.post('/api/v1/business/attendance/check-in', authenticateToken, requireBusinessRole, employeeCheckIn);
+app.post('/api/v1/business/attendance/check-out', authenticateToken, requireBusinessRole, employeeCheckOut);
+app.post('/api/v1/business/attendance/manual', authenticateToken, requireBusinessAdmin, manualAttendanceEntry);
+app.get('/api/v1/business/attendance/monthly-report', authenticateToken, requireBusinessRole, getMonthlyAttendanceReport);
+
+// Sales & Calculations
+app.get('/api/v1/business/sales', authenticateToken, requireBusinessRole, getSalesList);
+app.get('/api/v1/business/sales/:id', authenticateToken, requireBusinessRole, getSaleById);
+app.post('/api/v1/business/sales', authenticateToken, requireBusinessRole, createSale);
+app.put('/api/v1/business/sales/:id', authenticateToken, requireBusinessRole, updateSale);
+app.delete('/api/v1/business/sales/:id', authenticateToken, requireBusinessAdmin, deleteSale);
+app.post('/api/v1/business/sales/calculate-preview', authenticateToken, requireBusinessRole, calculateSalesPreview);
+
+// Commissions
+app.get('/api/v1/business/commissions', authenticateToken, requireBusinessRole, getCommissionsList);
+app.post('/api/v1/business/commissions/:id/approve', authenticateToken, requireBusinessAdmin, approveCommission);
+app.post('/api/v1/business/commissions/:id/pay', authenticateToken, requireAccountantOrAdmin, payCommission);
+app.get('/api/v1/business/commission-plans', authenticateToken, requireBusinessRole, getCommissionPlans);
+app.post('/api/v1/business/commission-plans', authenticateToken, requireBusinessAdmin, createCommissionPlan);
+app.put('/api/v1/business/commission-plans/:id', authenticateToken, requireBusinessAdmin, updateCommissionPlan);
+
+// Targets
+app.get('/api/v1/business/targets', authenticateToken, requireBusinessRole, getSalesTargets);
+app.post('/api/v1/business/targets', authenticateToken, requireBusinessAdmin, createSalesTarget);
+app.put('/api/v1/business/targets/:id', authenticateToken, requireBusinessAdmin, updateSalesTarget);
+
+// Suppliers
+app.get('/api/v1/business/suppliers', authenticateToken, requireBusinessRole, getSuppliers);
+app.post('/api/v1/business/suppliers', authenticateToken, requireBusinessRole, createSupplier);
+app.put('/api/v1/business/suppliers/:id', authenticateToken, requireBusinessRole, updateSupplier);
+
+// Customers
+app.get('/api/v1/business/customers', authenticateToken, requireBusinessRole, getBusinessCustomers);
+app.post('/api/v1/business/customers/check-duplicate', authenticateToken, requireBusinessRole, checkDuplicateCustomer);
+app.post('/api/v1/business/customers', authenticateToken, requireBusinessRole, createBusinessCustomer);
+
+// Excel Sales Tracker Import
+app.post('/api/v1/business/import/validate', authenticateToken, requireBusinessAdmin, upload.single('file'), validateSalesExcelImport);
+app.post('/api/v1/business/import/execute', authenticateToken, requireBusinessAdmin, executeSalesExcelImport);
+
+// Audit Logs
+app.get('/api/v1/business/audit-logs', authenticateToken, requireBusinessAdmin, getBusinessAuditLogs);
+
 // Real-Time Database Connection Diagnostic Endpoint
 app.get('/api/v1/health', async (req, res) => {
   try {

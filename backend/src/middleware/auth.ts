@@ -2,13 +2,23 @@ import { Request, Response, NextFunction } from 'express';
 import jwt from 'jsonwebtoken';
 import prisma from '../prisma';
 
-export type RoleType = 'SUPER_ADMIN' | 'ADMIN' | 'PRODUCT_MANAGER' | 'CONTENT_MANAGER' | 'ORDER_MANAGER' | 'CUSTOMER';
+export type RoleType =
+  | 'SUPER_ADMIN'
+  | 'ADMIN'
+  | 'PRODUCT_MANAGER'
+  | 'CONTENT_MANAGER'
+  | 'ORDER_MANAGER'
+  | 'SALES_MANAGER'
+  | 'SALES_EMPLOYEE'
+  | 'ACCOUNTANT'
+  | 'CUSTOMER';
 
 export interface AuthRequest extends Request {
   user?: {
     id: string;
     email: string;
     role: RoleType;
+    employeeId?: string;
   };
 }
 
@@ -91,3 +101,6 @@ export const requireRole = (allowedRoles: RoleType[]) => {
 };
 
 export const requireAdmin = requireRole(['ADMIN', 'SUPER_ADMIN']);
+export const requireBusinessRole = requireRole(['ADMIN', 'SUPER_ADMIN', 'SALES_MANAGER', 'SALES_EMPLOYEE', 'ACCOUNTANT']);
+export const requireBusinessAdmin = requireRole(['ADMIN', 'SUPER_ADMIN', 'SALES_MANAGER']);
+export const requireAccountantOrAdmin = requireRole(['ADMIN', 'SUPER_ADMIN', 'SALES_MANAGER', 'ACCOUNTANT']);

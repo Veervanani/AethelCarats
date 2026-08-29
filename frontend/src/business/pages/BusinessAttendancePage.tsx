@@ -1,0 +1,449 @@
+import React, { useState, useEffect } from 'react';
+import styled from 'styled-components';
+import { businessApi } from '../services/businessApi';
+import { AttendanceRecord, Employee } from '../types';
+import {
+  CalendarCheck,
+  Clock,
+  CheckCircle2,
+  XCircle,
+  AlertTriangle,
+  Users,
+  Filter,
+  Plus,
+} from 'lucide-react';
+
+const PageHeader = styled.div`
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 24px;
+  flex-wrap: wrap;
+  gap: 16px;
+`;
+
+const SummaryGrid = styled.div`
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 14px;
+  margin-bottom: 24px;
+`;
+
+const SummaryCard = styled.div<{ $color?: string }>`
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-left: 4px solid ${({ $color }) => $color || '#0d1319'};
+  border-radius: 8px;
+  padding: 16px;
+
+  .card-label {
+    font-size: 0.72rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    color: #64748b;
+  }
+  .card-val {
+    font-size: 1.5rem;
+    font-weight: 800;
+    color: #0f172a;
+    margin-top: 4px;
+  }
+`;
+
+const ControlBar = styled.div`
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: #ffffff;
+  padding: 12px 18px;
+  border-radius: 8px;
+  border: 1px solid #e2e8f0;
+  margin-bottom: 20px;
+  flex-wrap: wrap;
+  gap: 12px;
+`;
+
+const Table = styled.table`
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.82rem;
+  background: #ffffff;
+  border-radius: 8px;
+  overflow: hidden;
+  border: 1px solid #e2e8f0;
+
+  th {
+    text-align: left;
+    padding: 12px 16px;
+    background: #f8fafc;
+    color: #475569;
+    font-weight: 600;
+    border-bottom: 1px solid #e2e8f0;
+  }
+
+  td {
+    padding: 12px 16px;
+    border-bottom: 1px solid #f1f5f9;
+    color: #1e293b;
+    vertical-align: middle;
+  }
+
+  tr:hover td {
+    background: #f8fafc;
+  }
+`;
+
+const StatusPill = styled.span<{ $status: string }>`
+  font-size: 0.72rem;
+  font-weight: 700;
+  padding: 3px 8px;
+  border-radius: 12px;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+
+  ${({ $status }) => {
+    switch ($status) {
+      case 'PRESENT':
+        return 'background: #ebfbee; color: #2b8a3e; border: 1px solid #b2f2bb;';
+      case 'ABSENT':
+        return 'background: #fff5f5; color: #e03131; border: 1px solid #ffc9c9;';
+      case 'HALF_DAY':
+        return 'background: #fff9db; color: #f59f00; border: 1px solid #ffe066;';
+      case 'LEAVE':
+        return 'background: #f3f0ff; color: #7950f2; border: 1px solid #d0bfff;';
+      default:
+        return 'background: #f1f5f9; color: #64748b; border: 1px solid #cbd5e1;';
+    }
+  }}
+`;
+
+export const BusinessAttendancePage: React.FC = () => {
+  const [summary, setSummary] = useState<any>(null);
+  const [records, setRecords] = useState<AttendanceRecord[]>([]);
+  const [employees, setEmployees] = useState<Employee[]>([]);
+  const [selectedDate, setSelectedDate] = useState<string>(new Date().toISOString().split('T')[0]);
+  const [loading, setLoading] = useState(true);
+  const [showManualModal, setShowManualModal] = useState(false);
+
+  // Manual modal fields
+  const [manualEmpId, setManualEmpId] = useState('');
+  const [manualStatus, setManualStatus] = useState('PRESENT');
+  const [manualInTime, setManualInTime] = useState('09:00');
+  const [manualOutTime, setManualOutTime] = useState('18:00');
+  const [manualHours, setManualHours] = useState('9');
+  const [manualLate, setManualLate] = useState(false);
+  const [manualNotes, setManualNotes] = useState('');
+
+  const loadData = async () => {
+    setLoading(true);
+    try {
+      const [sumRes, attRes, empRes] = await Promise.all([
+        businessApi.getTodayAttendanceSummary(),
+        businessApi.getAttendance({ date: selectedDate }),
+        businessApi.getEmployees({ status: 'ACTIVE' }),
+      ]);
+      setSummary(sumRes);
+      setRecords(attRes.records || []);
+      setEmployees(empRes.employees || []);
+      if (empRes.employees && empRes.employees.length > 0 && !manualEmpId) {
+        setManualEmpId(empRes.employees[0].id);
+      }
+    } catch (e) {
+      console.error(e);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    loadData();
+  }, [selectedDate]);
+
+  const handleManualSave = async (e: React.FormEvent) => {
+    e.preventDefault();
+    try {
+      const checkInDateTime = new Date(`${selectedDate}T${manualInTime}:00Z`);
+      const checkOutDateTime = new Date(`${selectedDate}T${manualOutTime}:00Z`);
+      await businessApi.manualAttendanceEntry({
+        employeeId: manualEmpId,
+        date: selectedDate,
+        checkInTime: checkInDateTime,
+        checkOutTime: checkOutDateTime,
+        workingHours: Number(manualHours),
+        status: manualStatus,
+        lateStatus: manualLate,
+        notes: manualNotes,
+      });
+      setShowManualModal(false);
+      loadData();
+      alert('✅ Manual entry saved');
+    } catch (err: any) {
+      alert(err?.response?.data?.message || 'Failed to save');
+    }
+  };
+
+  return (
+    <div>
+      <PageHeader>
+        <div>
+          <h1 style={{ fontSize: '1.4rem', fontWeight: 800, color: '#0f172a', margin: 0 }}>Attendance Roster</h1>
+          <p style={{ fontSize: '0.8rem', color: '#64748b', margin: '4px 0 0 0' }}>
+            Daily check-in logs, punctuality tracking, and manual admin adjustments
+          </p>
+        </div>
+
+        <button
+          onClick={() => setShowManualModal(true)}
+          style={{
+            display: 'flex',
+            alignItems: 'center',
+            gap: 8,
+            padding: '8px 18px',
+            background: '#0d1319',
+            color: '#ffffff',
+            border: 'none',
+            borderRadius: 6,
+            fontWeight: 600,
+            fontSize: '0.82rem',
+            cursor: 'pointer',
+          }}
+        >
+          <Plus size={16} /> Record Manual Entry
+        </button>
+      </PageHeader>
+
+      <SummaryGrid>
+        <SummaryCard $color="#2563eb">
+          <div className="card-label">Active Staff</div>
+          <div className="card-val">{summary?.totalEmployees || 0}</div>
+        </SummaryCard>
+        <SummaryCard $color="#16a34a">
+          <div className="card-label">Present Today</div>
+          <div className="card-val" style={{ color: '#16a34a' }}>
+            {summary?.present || 0}
+          </div>
+        </SummaryCard>
+        <SummaryCard $color="#d97706">
+          <div className="card-label">Late Arrivals</div>
+          <div className="card-val" style={{ color: '#d97706' }}>
+            {summary?.late || 0}
+          </div>
+        </SummaryCard>
+        <SummaryCard $color="#dc2626">
+          <div className="card-label">Absent / Unrecorded</div>
+          <div className="card-val" style={{ color: '#dc2626' }}>
+            {summary?.absent || 0}
+          </div>
+        </SummaryCard>
+        <SummaryCard $color="#7c3aed">
+          <div className="card-label">On Leave</div>
+          <div className="card-val" style={{ color: '#7c3aed' }}>
+            {summary?.leave || 0}
+          </div>
+        </SummaryCard>
+      </SummaryGrid>
+
+      <ControlBar>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+          <span style={{ fontSize: '0.82rem', fontWeight: 600, color: '#334155' }}>Select Date:</span>
+          <input
+            type="date"
+            value={selectedDate}
+            onChange={(e) => setSelectedDate(e.target.value)}
+            style={{ padding: '6px 10px', borderRadius: 6, border: '1px solid #cbd5e1', fontSize: '0.82rem' }}
+          />
+        </div>
+        <div style={{ fontSize: '0.8rem', color: '#64748b' }}>
+          Viewing records for <strong>{new Date(selectedDate).toDateString()}</strong>
+        </div>
+      </ControlBar>
+
+      <Table>
+        <thead>
+          <tr>
+            <th>Employee</th>
+            <th>Department</th>
+            <th>Check In</th>
+            <th>Check Out</th>
+            <th>Hours</th>
+            <th>Punctuality</th>
+            <th>Status</th>
+            <th>Notes</th>
+          </tr>
+        </thead>
+        <tbody>
+          {records.map((r) => (
+            <tr key={r.id}>
+              <td style={{ fontWeight: 600 }}>
+                <div>{r.employee?.fullName || 'Staff Member'}</div>
+                <div style={{ fontSize: '0.72rem', color: '#64748b' }}>{r.employee?.employeeCode}</div>
+              </td>
+              <td>{r.employee?.department || 'Sales'}</td>
+              <td>{r.checkInTime ? new Date(r.checkInTime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : '-'}</td>
+              <td>{r.checkOutTime ? new Date(r.checkOutTime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : '-'}</td>
+              <td style={{ fontWeight: 600 }}>{r.workingHours || 0} hrs</td>
+              <td>
+                {r.lateStatus ? (
+                  <span style={{ color: '#d97706', fontWeight: 600 }}>⚠️ Late Arrival</span>
+                ) : (
+                  <span style={{ color: '#16a34a' }}>✓ On Time</span>
+                )}
+              </td>
+              <td>
+                <StatusPill $status={r.status}>{r.status}</StatusPill>
+              </td>
+              <td style={{ fontSize: '0.75rem', color: '#64748b' }}>
+                {r.isManualEntry && <span style={{ color: '#2563eb', fontWeight: 600 }}>[Admin] </span>}
+                {r.notes || '-'}
+              </td>
+            </tr>
+          ))}
+          {records.length === 0 && !loading && (
+            <tr>
+              <td colSpan={8} style={{ textAlign: 'center', padding: '32px', color: '#94a3b8' }}>
+                No attendance logs found for this date.
+              </td>
+            </tr>
+          )}
+        </tbody>
+      </Table>
+
+      {/* Manual Entry Modal */}
+      {showManualModal && (
+        <div
+          style={{
+            position: 'fixed',
+            inset: 0,
+            background: 'rgba(15, 23, 42, 0.7)',
+            backdropFilter: 'blur(3px)',
+            zIndex: 10000,
+            display: 'flex',
+            justifyContent: 'center',
+            alignItems: 'center',
+            padding: 16,
+          }}
+          onClick={() => setShowManualModal(false)}
+        >
+          <div
+            style={{
+              background: '#fff',
+              borderRadius: 12,
+              width: '100%',
+              maxWidth: 500,
+              padding: 24,
+            }}
+            onClick={(e) => e.stopPropagation()}
+          >
+            <h2 style={{ fontSize: '1.15rem', fontWeight: 700, margin: '0 0 16px 0' }}>Manual Attendance Adjustment</h2>
+            <form onSubmit={handleManualSave}>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+                <div>
+                  <label style={{ fontSize: '0.78rem', fontWeight: 600 }}>Select Employee</label>
+                  <select
+                    value={manualEmpId}
+                    onChange={(e) => setManualEmpId(e.target.value)}
+                    style={{ width: '100%', padding: '8px', border: '1px solid #cbd5e1', borderRadius: 6 }}
+                    required
+                  >
+                    {employees.map((e) => (
+                      <option key={e.id} value={e.id}>
+                        {e.fullName} ({e.employeeCode})
+                      </option>
+                    ))}
+                  </select>
+                </div>
+
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10 }}>
+                  <div>
+                    <label style={{ fontSize: '0.78rem', fontWeight: 600 }}>Status</label>
+                    <select
+                      value={manualStatus}
+                      onChange={(e) => setManualStatus(e.target.value)}
+                      style={{ width: '100%', padding: '8px', border: '1px solid #cbd5e1', borderRadius: 6 }}
+                    >
+                      <option value="PRESENT">PRESENT</option>
+                      <option value="ABSENT">ABSENT</option>
+                      <option value="HALF_DAY">HALF DAY</option>
+                      <option value="LEAVE">ON LEAVE</option>
+                    </select>
+                  </div>
+                  <div>
+                    <label style={{ fontSize: '0.78rem', fontWeight: 600 }}>Working Hours</label>
+                    <input
+                      type="number"
+                      step="0.5"
+                      value={manualHours}
+                      onChange={(e) => setManualHours(e.target.value)}
+                      style={{ width: '100%', padding: '8px', border: '1px solid #cbd5e1', borderRadius: 6 }}
+                    />
+                  </div>
+                </div>
+
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10 }}>
+                  <div>
+                    <label style={{ fontSize: '0.78rem', fontWeight: 600 }}>Check In</label>
+                    <input
+                      type="time"
+                      value={manualInTime}
+                      onChange={(e) => setManualInTime(e.target.value)}
+                      style={{ width: '100%', padding: '8px', border: '1px solid #cbd5e1', borderRadius: 6 }}
+                    />
+                  </div>
+                  <div>
+                    <label style={{ fontSize: '0.78rem', fontWeight: 600 }}>Check Out</label>
+                    <input
+                      type="time"
+                      value={manualOutTime}
+                      onChange={(e) => setManualOutTime(e.target.value)}
+                      style={{ width: '100%', padding: '8px', border: '1px solid #cbd5e1', borderRadius: 6 }}
+                    />
+                  </div>
+                </div>
+
+                <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                  <input
+                    type="checkbox"
+                    id="manualLateCheck"
+                    checked={manualLate}
+                    onChange={(e) => setManualLate(e.target.checked)}
+                  />
+                  <label htmlFor="manualLateCheck" style={{ fontSize: '0.8rem', cursor: 'pointer' }}>
+                    Mark as Late Arrival
+                  </label>
+                </div>
+
+                <div>
+                  <label style={{ fontSize: '0.78rem', fontWeight: 600 }}>Reason / Audit Notes</label>
+                  <input
+                    type="text"
+                    value={manualNotes}
+                    onChange={(e) => setManualNotes(e.target.value)}
+                    placeholder="e.g. Approved leave / Fingerprint sensor offline"
+                    style={{ width: '100%', padding: '8px', border: '1px solid #cbd5e1', borderRadius: 6 }}
+                  />
+                </div>
+              </div>
+
+              <div style={{ display: 'flex', justifyContent: 'flex-end', gap: 10, marginTop: 20 }}>
+                <button
+                  type="button"
+                  onClick={() => setShowManualModal(false)}
+                  style={{ padding: '8px 16px', border: '1px solid #cbd5e1', background: '#fff', borderRadius: 6 }}
+                >
+                  Cancel
+                </button>
+                <button
+                  type="submit"
+                  style={{ padding: '8px 20px', background: '#0d1319', color: '#fff', border: 'none', borderRadius: 6 }}
+                >
+                  Save Entry
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+};
