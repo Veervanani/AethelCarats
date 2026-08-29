@@ -642,6 +642,165 @@ function handleCreateBusinessSale(): void {
     jsonResponse(['message' => 'Sale created successfully', 'id' => $id], 201);
 }
 
+function handleGetBusinessSaleDetail(string $id): void {
+    $pdo = getDatabaseConnection();
+    ensureBusinessTablesExist($pdo);
+    $stmt = $pdo->prepare("SELECT * FROM `internalsale` WHERE `id` = ? OR `invoiceNo` = ? LIMIT 1");
+    $stmt->execute([$id, $id]);
+    $sale = $stmt->fetch(PDO::FETCH_ASSOC);
+    if (!$sale) {
+        jsonError('Sale not found', 404);
+    }
+    jsonResponse(['sale' => $sale]);
+}
+
+function handleUpdateBusinessSale(string $id): void {
+    $pdo = getDatabaseConnection();
+    ensureBusinessTablesExist($pdo);
+
+    $raw = file_get_contents('php://input');
+    $body = json_decode($raw, true) ?? $_POST;
+
+    $stmt = $pdo->prepare("SELECT * FROM `internalsale` WHERE `id` = ? OR `invoiceNo` = ? LIMIT 1");
+    $stmt->execute([$id, $id]);
+    $existing = $stmt->fetch(PDO::FETCH_ASSOC);
+
+    if (!$existing) {
+        jsonError('Sale not found', 404);
+    }
+
+    $actualId = $existing['id'];
+
+    // If only dollarRate is being updated (live inline edit)
+    if (isset($body['dollarRate']) && (count($body) === 1 || (count($body) === 2 && isset($body['id'])))) {
+        $rate = (float)$body['dollarRate'];
+        $up = $pdo->prepare("UPDATE `internalsale` SET `dollarRate` = ?, `updatedAt` = NOW() WHERE `id` = ?");
+        $up->execute([$rate, $actualId]);
+        recordBusinessAuditLog('UPDATE_RATE', 'Sale', "Updated Dollar Rate to {$rate} for invoice {$existing['invoiceNo']}");
+        jsonResponse(['message' => 'Dollar rate updated successfully', 'dollarRate' => $rate, 'success' => true]);
+        return;
+    }
+
+    $merged = array_merge($existing, $body);
+    $fin = computePhpFinancials($merged);
+
+    $saleDate = !empty($merged['saleDate']) ? parseFlexibleDate($merged['saleDate']) : $existing['saleDate'];
+    $saleMonth = !empty($merged['saleMonth']) ? $merged['saleMonth'] : date('F', strtotime($saleDate));
+
+    $updateStmt = $pdo->prepare("UPDATE `internalsale` SET
+        `invoiceNo` = ?, `saleDate` = ?, `customerName` = ?, `customerCountry` = ?, `customerId` = ?, `productType` = ?,
+        `productDescription` = ?, `stoneType` = ?, `shape` = ?, `diamondColor` = ?, `clarity` = ?, `cut` = ?, `polish` = ?,
+        `symmetry` = ?, `fluorescence` = ?, `measurement` = ?, `pricePerCarat` = ?, `caratWeight` = ?, `quantity` = ?,
+        `certificate` = ?, `certificateNo` = ?, `supplierName` = ?, `supplierId` = ?, `purchasePrice` = ?, `sellingPrice` = ?,
+        `discount` = ?, `finalSaleAmount` = ?, `shippingCost` = ?, `gstPercent` = ?, `gstAmount` = ?, `finalPurchasePrice` = ?,
+        `paymentStatus` = ?, `paymentMethod` = ?, `amountReceived` = ?, `pendingAmount` = ?, `grossProfit` = ?, `netProfit` = ?,
+        `salesPersonName` = ?, `employeeId` = ?, `commissionPercent` = ?, `commissionAmount` = ?, `profitAfterCommission` = ?,
+        `markupPercent` = ?, `finalProfitPercent` = ?, `orderStatus` = ?, `trackingNumber` = ?, `trackingLink` = ?, `dollarRate` = ?,
+        `saleMonth` = ?, `updatedAt` = NOW()
+        WHERE `id` = ?");
+
+    $updateStmt->execute([
+        $merged['invoiceNo'] ?? $existing['invoiceNo'],
+        $saleDate,
+        $merged['customerName'] ?? $existing['customerName'],
+        $merged['customerCountry'] ?? null,
+        $merged['customerId'] ?? null,
+        $merged['productType'] ?? 'Diamond',
+        $merged['productDescription'] ?? null,
+        $merged['stoneType'] ?? null,
+        $merged['shape'] ?? null,
+        $merged['diamondColor'] ?? null,
+        $merged['clarity'] ?? null,
+        $merged['cut'] ?? null,
+        $merged['polish'] ?? null,
+        $merged['symmetry'] ?? null,
+        $merged['fluorescence'] ?? null,
+        $merged['measurement'] ?? null,
+        $merged['pricePerCarat'] ?? null,
+        $merged['caratWeight'] ?? null,
+        $merged['quantity'] ?? 1,
+        $merged['certificate'] ?? null,
+        $merged['certificateNo'] ?? null,
+        $merged['supplierName'] ?? null,
+        $merged['supplierId'] ?? null,
+        $fin['purchasePrice'],
+        $fin['sellingPrice'],
+        $fin['discount'],
+        $fin['finalSaleAmount'],
+        $fin['shippingCost'],
+        $fin['gstPercent'],
+        $fin['gstAmount'],
+        $fin['finalPurchasePrice'],
+        $fin['paymentStatus'],
+        $merged['paymentMethod'] ?? null,
+        $fin['amountReceived'],
+        $fin['pendingAmount'],
+        $fin['grossProfit'],
+        $fin['netProfit'],
+        $merged['salesPersonName'] ?? null,
+        $merged['employeeId'] ?? null,
+        $fin['commissionPercent'],
+        $fin['commissionAmount'],
+        $fin['profitAfterCommission'],
+        $fin['markupPercent'],
+        $fin['finalProfitPercent'],
+        $merged['orderStatus'] ?? 'Delivered',
+        $merged['trackingNumber'] ?? null,
+        $merged['trackingLink'] ?? null,
+        $merged['dollarRate'] ?? 94.55,
+        $saleMonth,
+        $actualId
+    ]);
+
+    recordBusinessAuditLog('UPDATE', 'Sale', "Updated invoice {$merged['invoiceNo']}");
+    jsonResponse(['message' => 'Sale updated successfully', 'id' => $actualId, 'success' => true]);
+}
+
+function handleMarkAllEmployeesPresentForMonth(): void {
+    $pdo = getDatabaseConnection();
+    ensureBusinessTablesExist($pdo);
+
+    $raw = file_get_contents('php://input');
+    $body = json_decode($raw, true) ?? $_POST;
+
+    $monthStr = $body['month'] ?? ($_GET['month'] ?? date('Y-m'));
+    $parts = explode('-', $monthStr);
+    $year = (int)($parts[0] ?? date('Y'));
+    $month = (int)($parts[1] ?? date('m'));
+
+    $daysInMonth = (int)date('t', strtotime("{$year}-{$month}-01"));
+
+    // Get all employees
+    $empStmt = $pdo->query("SELECT id, name FROM `employee`");
+    $employees = $empStmt->fetchAll(PDO::FETCH_ASSOC);
+
+    if (empty($employees)) {
+        ensureBusinessTablesExist($pdo);
+        $employees = $pdo->query("SELECT id, name FROM `employee`")->fetchAll(PDO::FETCH_ASSOC);
+    }
+
+    $insertStmt = $pdo->prepare("INSERT INTO `attendance` (`id`, `employeeId`, `date`, `hoursWorked`, `status`, `lateStatus`, `isManualEntry`, `notes`, `createdAt`, `updatedAt`)
+        VALUES (?, ?, ?, 8.0, 'PRESENT', 'ON_TIME', 1, 'Monthly Bulk Presence', NOW(), NOW())
+        ON DUPLICATE KEY UPDATE `hoursWorked` = 8.0, `status` = 'PRESENT', `lateStatus` = 'ON_TIME', `isManualEntry` = 1");
+
+    $count = 0;
+    foreach ($employees as $emp) {
+        for ($d = 1; $d <= $daysInMonth; $d++) {
+            $dateStr = sprintf('%04d-%02d-%02d', $year, $month, $d);
+            $id = generateUuidV4();
+            $insertStmt->execute([$id, $emp['id'], $dateStr]);
+            $count++;
+        }
+    }
+
+    recordBusinessAuditLog('BULK_ATTENDANCE', 'Attendance', "Marked all employees present for {$monthStr} ({$count} entries)");
+    jsonResponse([
+        'message' => "Successfully marked all employees present for {$monthStr}",
+        'entriesCount' => $count,
+        'success' => true
+    ]);
+}
+
 function handleExecuteSalesImport(): void {
     $pdo = getDatabaseConnection();
     ensureBusinessTablesExist($pdo);

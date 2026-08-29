@@ -641,8 +641,15 @@ if (str_starts_with($path, '/api/v1/business/')) {
         handleDeleteAllSales();
     } else if ($path === '/api/v1/business/sales/batch' && ($method === 'POST' || $method === 'DELETE')) {
         handleDeleteSalesBatch();
-    } else if (preg_match('#^/api/v1/business/sales/([^/]+)$#', $path, $saleMatches) && ($method === 'DELETE' || $method === 'POST')) {
-        handleDeleteSaleById(urldecode($saleMatches[1]));
+    } else if (preg_match('#^/api/v1/business/sales/([^/]+)$#', $path, $saleMatches)) {
+        $saleId = urldecode($saleMatches[1]);
+        if ($method === 'DELETE') {
+            handleDeleteSaleById($saleId);
+        } else if ($method === 'PUT' || $method === 'PATCH' || ($method === 'POST' && isset($_GET['_method']) && in_array(strtoupper($_GET['_method']), ['PUT', 'PATCH']))) {
+            handleUpdateBusinessSale($saleId);
+        } else {
+            handleGetBusinessSaleDetail($saleId);
+        }
     } else if ($path === '/api/v1/business/import/execute' && $method === 'POST') {
         handleExecuteSalesImport();
     } else if ($path === '/api/v1/business/employees' && $method === 'GET') {
@@ -659,8 +666,10 @@ if (str_starts_with($path, '/api/v1/business/')) {
         handleGetBusinessAttendance();
     } else if ($path === '/api/v1/business/attendance/today' && $method === 'GET') {
         handleGetBusinessAttendanceToday();
-    } else if ($path === '/api/v1/business/attendance/report' && $method === 'GET') {
+    } else if (($path === '/api/v1/business/attendance/report' || $path === '/api/v1/business/attendance/monthly-report') && $method === 'GET') {
         handleGetBusinessAttendanceReport();
+    } else if ($path === '/api/v1/business/attendance/mark-all-present' && ($method === 'POST' || $method === 'GET')) {
+        handleMarkAllEmployeesPresentForMonth();
     } else if ($path === '/api/v1/business/attendance/check-in' && $method === 'POST') {
         handleBusinessCheckIn();
     } else if ($path === '/api/v1/business/attendance/check-out' && $method === 'POST') {

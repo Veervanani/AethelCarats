@@ -81,6 +81,7 @@ export const BusinessAttendanceReportPage: React.FC = () => {
   const [report, setReport] = useState<any[]>([]);
   const [daysInMonth, setDaysInMonth] = useState<number>(31);
   const [loading, setLoading] = useState(true);
+  const [marking, setMarking] = useState(false);
 
   const fetchReport = async () => {
     setLoading(true);
@@ -99,6 +100,58 @@ export const BusinessAttendanceReportPage: React.FC = () => {
     fetchReport();
   }, [month]);
 
+  const handleMarkAllPresent = async () => {
+    if (!window.confirm(`Mark all employees as PRESENT for the entire month (${month})?`)) return;
+    setMarking(true);
+    try {
+      await businessApi.markAllEmployeesPresentForMonth(month);
+      await fetchReport();
+      alert(`✅ All employees successfully marked PRESENT for ${month}`);
+    } catch (e: any) {
+      alert(e?.response?.data?.message || 'Failed to mark attendance');
+    } finally {
+      setMarking(false);
+    }
+  };
+
+  const handleToggleCellStatus = async (employeeId: string, dayNumber: number, currentStatus?: string) => {
+    const nextStatusMap: Record<string, string> = {
+      PRESENT: 'ABSENT',
+      ABSENT: 'HALF_DAY',
+      HALF_DAY: 'LEAVE',
+      LEAVE: 'PRESENT',
+      '-': 'PRESENT',
+    };
+    const nextStatus = nextStatusMap[currentStatus || '-'] || 'PRESENT';
+    const [y, m] = month.split('-');
+    const dateStr = `${y}-${m.padStart(2, '0')}-${String(dayNumber).padStart(2, '0')}`;
+
+    try {
+      await businessApi.manualAttendanceEntry({
+        employeeId,
+        date: dateStr,
+        status: nextStatus,
+        workingHours: nextStatus === 'PRESENT' ? 8 : nextStatus === 'HALF_DAY' ? 4 : 0,
+        lateStatus: false,
+      });
+      fetchReport();
+    } catch (e) {
+      console.error(e);
+    }
+  };
+
+  const getDayInfo = (d: number) => {
+    const [y, m] = month.split('-').map(Number);
+    const dateObj = new Date(y, m - 1, d);
+    const dayNames = ['Su', 'Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa'];
+    const dayOfWeek = dateObj.getDay();
+    return {
+      dayName: dayNames[dayOfWeek],
+      isSunday: dayOfWeek === 0,
+      isWeekend: dayOfWeek === 0 || dayOfWeek === 6,
+    };
+  };
+
   const daysArray = Array.from({ length: daysInMonth }, (_, i) => i + 1);
 
   return (
@@ -107,11 +160,31 @@ export const BusinessAttendanceReportPage: React.FC = () => {
         <div>
           <h1 style={{ fontSize: '1.4rem', fontWeight: 800, color: '#0f172a', margin: 0 }}>Monthly Attendance Matrix</h1>
           <p style={{ fontSize: '0.8rem', color: '#64748b', margin: '4px 0 0 0' }}>
-            Comprehensive month-view attendance and hours log for all staff members
+            Comprehensive month-view attendance ledger with day-of-week calendar mapping
           </p>
         </div>
 
-        <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 10, flexWrap: 'wrap' }}>
+          <button
+            onClick={handleMarkAllPresent}
+            disabled={marking}
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              gap: 6,
+              padding: '7px 14px',
+              background: '#0d1319',
+              color: '#ffffff',
+              border: 'none',
+              borderRadius: 6,
+              fontSize: '0.8rem',
+              fontWeight: 600,
+              cursor: 'pointer',
+            }}
+          >
+            ⚡ {marking ? 'Marking...' : `Mark All Present (${month})`}
+          </button>
+
           <input
             type="month"
             value={month}
@@ -151,6 +224,9 @@ export const BusinessAttendanceReportPage: React.FC = () => {
         <span style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
           <span style={{ width: 12, height: 12, background: '#f3f0ff', border: '1px solid #d0bfff', display: 'inline-block' }}></span> L = Leave
         </span>
+        <span style={{ color: '#64748b', fontSize: '0.72rem', marginLeft: 'auto' }}>
+          💡 Click any day cell to quickly toggle attendance status
+        </span>
       </div>
 
       <MatrixContainer>
@@ -158,9 +234,22 @@ export const BusinessAttendanceReportPage: React.FC = () => {
           <thead>
             <tr>
               <th className="emp-col">Staff Member</th>
-              {daysArray.map((d) => (
-                <th key={d}>{d}</th>
-              ))}
+              {daysArray.map((d) => {
+                const { dayName, isSunday, isWeekend } = getDayInfo(d);
+                return (
+                  <th
+                    key={d}
+                    style={{
+                      background: isSunday ? '#fee2e2' : isWeekend ? '#f1f5f9' : '#f8fafc',
+                      color: isSunday ? '#dc2626' : '#475569',
+                      padding: '4px 2px',
+                    }}
+                  >
+                    <div style={{ fontSize: '0.62rem', fontWeight: 600, opacity: 0.9 }}>{dayName}</div>
+                    <div style={{ fontSize: '0.76rem', fontWeight: 800 }}>{d}</div>
+                  </th>
+                );
+              })}
               <th style={{ background: '#f1f5f9' }}>Pres</th>
               <th style={{ background: '#f1f5f9' }}>Abs</th>
               <th style={{ background: '#f1f5f9' }}>Late</th>
@@ -171,29 +260,41 @@ export const BusinessAttendanceReportPage: React.FC = () => {
             {report.map((item) => (
               <tr key={item.employee.id}>
                 <td className="emp-col">
-                  <div>{item.employee.fullName}</div>
+                  <div>{item.employee.fullName || item.employee.name}</div>
                   <div style={{ fontSize: '0.64rem', color: '#64748b' }}>{item.employee.employeeCode}</div>
                 </td>
                 {daysArray.map((d) => {
                   const rec = item.days[d];
-                  if (!rec) return <td key={d}>-</td>;
+                  const { isSunday } = getDayInfo(d);
                   let cellClass = '';
                   let label = '-';
-                  if (rec.status === 'PRESENT') {
-                    cellClass = 'status-p';
-                    label = rec.lateStatus ? 'P*' : 'P';
-                  } else if (rec.status === 'ABSENT') {
-                    cellClass = 'status-a';
-                    label = 'A';
-                  } else if (rec.status === 'LEAVE') {
-                    cellClass = 'status-l';
-                    label = 'L';
-                  } else if (rec.status === 'HALF_DAY') {
-                    cellClass = 'status-hd';
-                    label = 'HD';
+                  if (rec) {
+                    if (rec.status === 'PRESENT') {
+                      cellClass = 'status-p';
+                      label = rec.lateStatus ? 'P*' : 'P';
+                    } else if (rec.status === 'ABSENT') {
+                      cellClass = 'status-a';
+                      label = 'A';
+                    } else if (rec.status === 'LEAVE') {
+                      cellClass = 'status-l';
+                      label = 'L';
+                    } else if (rec.status === 'HALF_DAY') {
+                      cellClass = 'status-hd';
+                      label = 'HD';
+                    }
                   }
                   return (
-                    <td key={d} className={cellClass} title={`${rec.status} (${rec.workingHours || 0} hrs)`}>
+                    <td
+                      key={d}
+                      className={cellClass}
+                      onClick={() => handleToggleCellStatus(item.employee.id, d, rec?.status)}
+                      style={{
+                        cursor: 'pointer',
+                        background: !cellClass && isSunday ? '#fff1f2' : undefined,
+                        color: !cellClass && isSunday ? '#f43f5e' : undefined,
+                      }}
+                      title={`Click to change: ${rec?.status || 'UNMARKED'} (${rec?.workingHours || 0} hrs)`}
+                    >
                       {label}
                     </td>
                   );

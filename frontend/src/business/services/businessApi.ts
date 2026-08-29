@@ -104,6 +104,11 @@ export const businessApi = {
     return res.data;
   },
 
+  markAllEmployeesPresentForMonth: async (month?: string) => {
+    const res = await API.post<any>('/business/attendance/mark-all-present', { month });
+    return res.data;
+  },
+
   deleteEmployee: async (id: string) => {
     const res = await API.delete<any>(`/business/employees/${id}`);
     return res.data;
@@ -132,6 +137,11 @@ export const businessApi = {
 
   updateSale: async (id: string, data: any) => {
     const res = await API.put<InternalSale>(`/business/sales/${id}`, data);
+    return res.data;
+  },
+
+  updateDollarRate: async (id: string, dollarRate: number) => {
+    const res = await API.patch<any>(`/business/sales/${id}`, { dollarRate });
     return res.data;
   },
 

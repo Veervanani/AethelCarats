@@ -222,6 +222,7 @@ export const BusinessNewSalePage: React.FC = () => {
   const [discount, setDiscount] = useState<number | ''>(0);
   const [shippingCost, setShippingCost] = useState<number | ''>(0);
   const [gstPercent, setGstPercent] = useState<number | ''>(0.015); // Default 1.5% from Excel
+  const [dollarRate, setDollarRate] = useState<number | ''>(94.55); // Default snapshot rate
 
   // Salesperson & Commission
   const [employeeId, setEmployeeId] = useState('');
@@ -350,6 +351,7 @@ export const BusinessNewSalePage: React.FC = () => {
         employeeId: employeeId || undefined,
         salesPersonName: selectedEmp?.fullName || undefined,
         commissionPercent: Number(commissionPercent) || 0,
+        dollarRate: dollarRate ? Number(dollarRate) : 94.55,
         paymentStatus,
         paymentMethod,
         amountReceived: Number(financials.recv),
@@ -721,6 +723,17 @@ export const BusinessNewSalePage: React.FC = () => {
                   step="0.005"
                   value={commissionPercent}
                   onChange={(e) => setCommissionPercent(e.target.value ? Number(e.target.value) : '')}
+                />
+              </FormGroup>
+
+              <FormGroup>
+                <label>Dollar Rate ($ / ₹)</label>
+                <input
+                  type="number"
+                  step="0.01"
+                  placeholder="e.g. 94.55"
+                  value={dollarRate}
+                  onChange={(e) => setDollarRate(e.target.value ? Number(e.target.value) : '')}
                 />
               </FormGroup>
             </GridThree>

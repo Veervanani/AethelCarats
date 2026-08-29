@@ -5,6 +5,7 @@ import * as XLSX from 'xlsx';
 import { PRIVATE_BUSINESS_PATH } from '../../App';
 import { businessApi } from '../services/businessApi';
 import { InternalSale } from '../types';
+import { BusinessEditSaleModal } from './BusinessEditSaleModal';
 import {
   Plus,
   Search,
@@ -110,26 +111,52 @@ const Table = styled.table`
     background: #f8fafc;
   }
 
-  th.sticky-col {
+  th.sticky-col-chk {
     position: sticky;
     left: 0;
+    width: 44px;
+    min-width: 44px;
+    max-width: 44px;
     background: #0d1319 !important;
     color: #f1f4f8 !important;
-    z-index: 20;
-    font-weight: 700;
-    box-shadow: 2px 0 4px rgba(0, 0, 0, 0.15);
+    z-index: 30;
+    text-align: center;
   }
 
-  td.sticky-col {
+  td.sticky-col-chk {
     position: sticky;
     left: 0;
+    width: 44px;
+    min-width: 44px;
+    max-width: 44px;
     background: #ffffff;
-    z-index: 5;
-    font-weight: 700;
-    box-shadow: 2px 0 4px rgba(0, 0, 0, 0.04);
+    z-index: 20;
+    text-align: center;
   }
 
-  tr:hover td.sticky-col {
+  th.sticky-col-inv {
+    position: sticky;
+    left: 44px;
+    min-width: 115px;
+    background: #0d1319 !important;
+    color: #f1f4f8 !important;
+    z-index: 30;
+    font-weight: 700;
+    box-shadow: 3px 0 6px rgba(0, 0, 0, 0.15);
+  }
+
+  td.sticky-col-inv {
+    position: sticky;
+    left: 44px;
+    min-width: 115px;
+    background: #ffffff;
+    z-index: 20;
+    font-weight: 700;
+    box-shadow: 3px 0 6px rgba(0, 0, 0, 0.05);
+  }
+
+  tr:hover td.sticky-col-chk,
+  tr:hover td.sticky-col-inv {
     background: #f8fafc;
   }
 `;
@@ -175,6 +202,7 @@ export const BusinessSalesListPage: React.FC = () => {
   const [page, setPage] = useState(1);
   const [pagination, setPagination] = useState<any>(null);
   const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
+  const [editingSale, setEditingSale] = useState<InternalSale | null>(null);
 
   const fetchSales = async () => {
     setLoading(true);
@@ -663,7 +691,7 @@ export const BusinessSalesListPage: React.FC = () => {
         <Table>
           <thead>
             <tr>
-              <th style={{ width: 40, textAlign: 'center' }}>
+              <th className="sticky-col-chk">
                 <input
                   type="checkbox"
                   checked={sales.length > 0 && selectedIds.size === sales.length}
@@ -671,7 +699,7 @@ export const BusinessSalesListPage: React.FC = () => {
                   style={{ cursor: 'pointer' }}
                 />
               </th>
-              <th className="sticky-col">Invoice No</th>
+              <th className="sticky-col-inv">Invoice No</th>
               <th>Date</th>
               <th>Customer</th>
               <th>Country</th>
@@ -705,7 +733,7 @@ export const BusinessSalesListPage: React.FC = () => {
               const isSelected = selectedIds.has(s.id);
               return (
                 <tr key={s.id} style={{ background: isSelected ? '#f0fdf4' : undefined }}>
-                  <td style={{ textAlign: 'center' }}>
+                  <td className="sticky-col-chk">
                     <input
                       type="checkbox"
                       checked={isSelected}
@@ -713,7 +741,7 @@ export const BusinessSalesListPage: React.FC = () => {
                       style={{ cursor: 'pointer' }}
                     />
                   </td>
-                  <td className="sticky-col">
+                  <td className="sticky-col-inv">
                     <Link to={`${PRIVATE_BUSINESS_PATH}/sales/${s.id}`} style={{ color: '#0d1319', textDecoration: 'none' }}>
                       {s.invoiceNo}
                     </Link>
@@ -762,8 +790,36 @@ export const BusinessSalesListPage: React.FC = () => {
                       '-'
                     )}
                   </td>
-                  <td style={{ fontWeight: 600, color: '#475569' }}>
-                    {s.dollarRate ? Number(s.dollarRate).toFixed(2) : '94.55'}
+                  <td style={{ textAlign: 'center' }}>
+                    <input
+                      type="number"
+                      step="0.01"
+                      defaultValue={s.dollarRate ? Number(s.dollarRate).toFixed(2) : '94.55'}
+                      onBlur={async (e) => {
+                        const val = Number(e.target.value);
+                        if (val && val !== Number(s.dollarRate)) {
+                          try {
+                            await businessApi.updateDollarRate(s.id, val);
+                          } catch (err) {
+                            console.error('Failed to update dollar rate', err);
+                          }
+                        }
+                      }}
+                      onKeyDown={(e) => {
+                        if (e.key === 'Enter') (e.target as HTMLInputElement).blur();
+                      }}
+                      style={{
+                        width: 72,
+                        padding: '3px 6px',
+                        border: '1px solid #cbd5e1',
+                        borderRadius: 4,
+                        fontSize: '0.78rem',
+                        background: '#ffffff',
+                        textAlign: 'center',
+                        fontWeight: 600,
+                        color: '#0f172a',
+                      }}
+                    />
                   </td>
                   <td style={{ textAlign: 'right' }}>
                     <div style={{ display: 'inline-flex', gap: 6 }}>
@@ -772,6 +828,13 @@ export const BusinessSalesListPage: React.FC = () => {
                           <Eye size={12} />
                         </button>
                       </Link>
+                      <button
+                        onClick={() => setEditingSale(s)}
+                        style={{ background: 'none', border: '1px solid #e2e8f0', padding: '4px 8px', borderRadius: 4, cursor: 'pointer', color: '#0f172a' }}
+                        title="Edit Sale Invoice"
+                      >
+                        <Edit2 size={12} />
+                      </button>
                       <button
                         onClick={() => handleDelete(s.id, s.invoiceNo)}
                         style={{ background: 'none', border: '1px solid #fee2e2', color: '#dc2626', padding: '4px 8px', borderRadius: 4, cursor: 'pointer' }}
@@ -786,7 +849,7 @@ export const BusinessSalesListPage: React.FC = () => {
             })}
             {sales.length === 0 && !loading && (
               <tr>
-                <td colSpan={27} style={{ textAlign: 'center', padding: '40px', color: '#94a3b8' }}>
+                <td colSpan={28} style={{ textAlign: 'center', padding: '40px', color: '#94a3b8' }}>
                   No sales found in the database. Click "Import Excel / File" or "New Sale Invoice" to add records.
                 </td>
               </tr>
@@ -816,6 +879,18 @@ export const BusinessSalesListPage: React.FC = () => {
             <ChevronRight size={14} />
           </button>
         </div>
+      )}
+
+      {/* Edit Sale Modal */}
+      {editingSale && (
+        <BusinessEditSaleModal
+          sale={editingSale}
+          onClose={() => setEditingSale(null)}
+          onSuccess={() => {
+            setEditingSale(null);
+            fetchSales();
+          }}
+        />
       )}
     </div>
   );
