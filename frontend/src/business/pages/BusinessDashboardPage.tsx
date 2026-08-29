@@ -179,6 +179,34 @@ export const BusinessDashboardPage: React.FC = () => {
   const m = data?.metrics;
   const fmt = (val: any) => (Number(val) || 0).toLocaleString();
 
+  const handlePeriodChange = (val: string) => {
+    setPeriod(val);
+    if (val === 'all') {
+      setYear('All Years');
+      setMonth('All Months');
+    } else if (val === 'month') {
+      setYear('2026');
+      setMonth('August');
+    } else if (val === 'year') {
+      setYear('2026');
+      setMonth('All Months');
+    }
+  };
+
+  const handleYearChange = (val: string) => {
+    setYear(val);
+    if (period !== 'all' && period !== 'month') {
+      setPeriod('all');
+    }
+  };
+
+  const handleMonthChange = (val: string) => {
+    setMonth(val);
+    if (period !== 'all' && period !== 'month') {
+      setPeriod('all');
+    }
+  };
+
   return (
     <div>
       <PageHeader>
@@ -190,20 +218,20 @@ export const BusinessDashboardPage: React.FC = () => {
         </div>
 
         <FilterBar>
-          <SelectInput value={period} onChange={(e) => setPeriod(e.target.value)}>
+          <SelectInput value={period} onChange={(e) => handlePeriodChange(e.target.value)}>
             <option value="all">All Time</option>
             <option value="today">Today</option>
             <option value="month">This Month</option>
             <option value="year">This Year</option>
           </SelectInput>
 
-          <SelectInput value={year} onChange={(e) => setYear(e.target.value)}>
+          <SelectInput value={year} onChange={(e) => handleYearChange(e.target.value)}>
             <option value="All Years">All Years</option>
             <option value="2026">2026</option>
             <option value="2025">2025</option>
           </SelectInput>
 
-          <SelectInput value={month} onChange={(e) => setMonth(e.target.value)}>
+          <SelectInput value={month} onChange={(e) => handleMonthChange(e.target.value)}>
             <option value="All Months">All Months</option>
             {['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'].map(
               (mo) => (

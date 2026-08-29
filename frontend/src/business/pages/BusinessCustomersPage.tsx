@@ -328,15 +328,15 @@ export const BusinessCustomersPage: React.FC = () => {
                 </CustomCheckbox>
               </td>
               <td style={{ fontWeight: 600 }}>{c.name}</td>
-              <td>{c.country || '-'}</td>
+              <td>{c.country || (c as any).customerCountry || '-'}</td>
               <td>
-                <div>{c.email}</div>
-                <div style={{ fontSize: '0.72rem', color: '#64748b' }}>{c.phone || c.company || '-'}</div>
+                <div>{c.email && c.email !== '-' ? c.email : (c.phone || '-')}</div>
+                <div style={{ fontSize: '0.72rem', color: '#64748b' }}>{c.company || (c as any).companyName || ''}</div>
               </td>
-              <td>{(c.assignedEmployee as any)?.fullName || (c.assignedEmployee as any)?.name || 'Unassigned'}</td>
-              <td style={{ fontWeight: 600 }}>{c._count?.internalSales || 0}</td>
-              <td style={{ fontWeight: 700 }}>${(c.totalSales || 0).toLocaleString()}</td>
-              <td style={{ color: '#16a34a', fontWeight: 600 }}>${(c.totalNetProfit || 0).toLocaleString()}</td>
+              <td>{(c.assignedEmployee as any)?.fullName || (c.assignedEmployee as any)?.name || (c as any).assignedStaff || 'Sales Team'}</td>
+              <td style={{ fontWeight: 600 }}>{c._count?.internalSales ?? (c as any).totalInvoicedDeals ?? 0}</td>
+              <td style={{ fontWeight: 700 }}>${Number((c as any).lifetimeVolume ?? c.totalSales ?? 0).toLocaleString()}</td>
+              <td style={{ color: '#16a34a', fontWeight: 600 }}>${Number((c as any).netProfit ?? c.totalNetProfit ?? 0).toLocaleString()}</td>
               <td>{c.lastSaleDate ? new Date(c.lastSaleDate).toLocaleDateString() : '-'}</td>
               <td style={{ textAlign: 'center' }}>
                 <button

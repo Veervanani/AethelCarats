@@ -75,6 +75,25 @@ function ensureBusinessTablesExist(PDO $pdo): void {
         `updatedAt` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
     ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;");
 
+    // 4b. Customer
+    $pdo->exec("CREATE TABLE IF NOT EXISTS `customer` (
+        `id` VARCHAR(191) PRIMARY KEY,
+        `name` VARCHAR(191) NOT NULL,
+        `country` VARCHAR(100) NULL,
+        `companyName` VARCHAR(191) NULL,
+        `email` VARCHAR(191) NULL,
+        `phone` VARCHAR(50) NULL,
+        `assignedStaff` VARCHAR(191) NULL,
+        `assignedEmployeeId` VARCHAR(191) NULL,
+        `totalInvoicedDeals` INT NOT NULL DEFAULT 0,
+        `lifetimeVolume` DOUBLE NOT NULL DEFAULT 0,
+        `netProfit` DOUBLE NOT NULL DEFAULT 0,
+        `lastSaleDate` DATETIME NULL,
+        `notes` TEXT NULL,
+        `createdAt` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+        `updatedAt` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+    ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;");
+
     // 5. InternalSale (46 Columns matching Excel)
     $pdo->exec("CREATE TABLE IF NOT EXISTS `internalsale` (
         `id` VARCHAR(191) PRIMARY KEY,
@@ -313,33 +332,59 @@ function handleGetBusinessDashboard(): void {
         $pdo = getDatabaseConnection();
         ensureBusinessTablesExist($pdo);
 
-        $where = [];
-        $params = [];
-
         $year = trim($_GET['year'] ?? '');
-        if (!empty($year) && $year !== 'All Years' && is_numeric($year)) {
-            $where[] = "(YEAR(`saleDate`) = ? OR `saleDate` LIKE ?)";
-            $params[] = (int)$year;
-            $params[] = $year . '%';
-        }
-
         $month = trim($_GET['month'] ?? '');
-        if (!empty($month) && $month !== 'All Months') {
-            $monthNum = (int)date('m', strtotime($month . ' 1 2026'));
-            $where[] = "(`saleMonth` = ? OR `saleMonth` LIKE ? OR MONTH(`saleDate`) = ? OR MONTHNAME(`saleDate`) = ?)";
-            $params[] = $month;
-            $params[] = $month . '%';
-            $params[] = $monthNum;
-            $params[] = $month;
-        }
-
         $period = $_GET['period'] ?? 'all';
+
         if ($period === 'today') {
-            $where[] = "DATE(`saleDate`) = CURDATE()";
-        } else if ($period === 'month') {
-            $where[] = "YEAR(`saleDate`) = YEAR(CURDATE()) AND MONTH(`saleDate`) = MONTH(CURDATE())";
-        } else if ($period === 'year') {
-            $where[] = "YEAR(`saleDate`) = YEAR(CURDATE())";
+            $where[] = "(DATE(`saleDate`) = CURDATE() OR DATE(`createdAt`) = CURDATE())";
+        } else if ($period === 'month' && empty($month)) {
+            $where[] = "(
+                (YEAR(`saleDate`) = YEAR(CURDATE()) AND MONTH(`saleDate`) = MONTH(CURDATE()))
+                OR (YEAR(`createdAt`) = YEAR(CURDATE()) AND MONTH(`createdAt`) = MONTH(CURDATE()))
+            )";
+        } else if ($period === 'year' && empty($year)) {
+            $where[] = "(YEAR(`saleDate`) = YEAR(CURDATE()) OR YEAR(`createdAt`) = YEAR(CURDATE()))";
+        } else {
+            // Apply Year filter
+            if (!empty($year) && $year !== 'All Years' && is_numeric($year)) {
+                $shortYear = substr($year, -2);
+                $where[] = "(
+                    YEAR(`saleDate`) = ?
+                    OR `saleDate` LIKE ?
+                    OR `saleMonth` LIKE ?
+                    OR `saleMonth` LIKE ?
+                    OR YEAR(`createdAt`) = ?
+                )";
+                $params[] = (int)$year;
+                $params[] = '%' . $year . '%';
+                $params[] = '%' . $year . '%';
+                $params[] = '%' . $shortYear . '%';
+                $params[] = (int)$year;
+            }
+
+            // Apply Month filter
+            if (!empty($month) && $month !== 'All Months') {
+                $monthNum = (int)date('m', strtotime($month . ' 1 2026'));
+                $shortMonth = date('M', strtotime($month . ' 1 2026'));
+                $paddedMonth = sprintf('%02d', $monthNum);
+                $where[] = "(
+                    MONTH(`saleDate`) = ?
+                    OR `saleMonth` LIKE ?
+                    OR `saleMonth` LIKE ?
+                    OR `saleDate` LIKE ?
+                    OR `saleDate` LIKE ?
+                    OR `saleDate` LIKE ?
+                    OR MONTH(`createdAt`) = ?
+                )";
+                $params[] = $monthNum;
+                $params[] = '%' . $month . '%';
+                $params[] = '%' . $shortMonth . '%';
+                $params[] = '%-' . $paddedMonth . '-%';
+                $params[] = '%/' . $paddedMonth . '/%';
+                $params[] = '%-' . $monthNum . '-%';
+                $params[] = $monthNum;
+            }
         }
 
         $whereSql = !empty($where) ? ('WHERE ' . implode(' AND ', $where)) : '';
@@ -1175,8 +1220,89 @@ function handleBusinessManualAttendance(): void {
 function handleGetBusinessCustomers(): void {
     $pdo = getDatabaseConnection();
     ensureBusinessTablesExist($pdo);
-    $stmt = $pdo->query("SELECT * FROM `customer` ORDER BY `createdAt` DESC LIMIT 100");
-    jsonResponse(['customers' => $stmt->fetchAll(PDO::FETCH_ASSOC)]);
+
+    // 1. Sync all customers from `internalsale` into `customer` table
+    try {
+        $salesCustStmt = $pdo->query("SELECT 
+            TRIM(customerName) as name,
+            MAX(customerCountry) as country,
+            COUNT(id) as totalInvoicedDeals,
+            COALESCE(SUM(finalSaleAmount), 0) as lifetimeVolume,
+            COALESCE(SUM(netProfit), 0) as netProfit,
+            MAX(saleDate) as lastSaleDate,
+            MAX(salesPersonName) as assignedStaff
+        FROM `internalsale`
+        WHERE customerName IS NOT NULL AND TRIM(customerName) != ''
+        GROUP BY TRIM(customerName)");
+        $salesCustomers = $salesCustStmt->fetchAll(PDO::FETCH_ASSOC);
+
+        $upsertCustStmt = $pdo->prepare("INSERT INTO `customer` (
+            `id`, `name`, `country`, `companyName`, `assignedStaff`, `totalInvoicedDeals`, `lifetimeVolume`, `netProfit`, `lastSaleDate`, `createdAt`, `updatedAt`
+        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, NOW(), NOW())
+        ON DUPLICATE KEY UPDATE 
+            `country` = COALESCE(VALUES(`country`), `country`),
+            `assignedStaff` = COALESCE(VALUES(`assignedStaff`), `assignedStaff`),
+            `totalInvoicedDeals` = VALUES(`totalInvoicedDeals`),
+            `lifetimeVolume` = VALUES(`lifetimeVolume`),
+            `netProfit` = VALUES(`netProfit`),
+            `lastSaleDate` = VALUES(`lastSaleDate`),
+            `updatedAt` = NOW()");
+
+        foreach ($salesCustomers as $sc) {
+            $cName = trim($sc['name']);
+            if (empty($cName)) continue;
+            $cId = 'cust-' . substr(md5(strtolower($cName)), 0, 16);
+            $upsertCustStmt->execute([
+                $cId,
+                $cName,
+                $sc['country'] ?? null,
+                $sc['country'] ? ($cName . ' (' . $sc['country'] . ')') : null,
+                $sc['assignedStaff'] ?? 'Sales Team',
+                (int)$sc['totalInvoicedDeals'],
+                (float)$sc['lifetimeVolume'],
+                (float)$sc['netProfit'],
+                $sc['lastSaleDate'] ?? date('Y-m-d H:i:s')
+            ]);
+        }
+    } catch (\Throwable $e) {
+        error_log('Customer sync error: ' . $e->getMessage());
+    }
+
+    // 2. Fetch all customers
+    $search = trim($_GET['search'] ?? '');
+    $where = '';
+    $params = [];
+    if (!empty($search)) {
+        $s = '%' . $search . '%';
+        $where = "WHERE `name` LIKE ? OR `country` LIKE ? OR `email` LIKE ? OR `phone` LIKE ? OR `companyName` LIKE ?";
+        $params = [$s, $s, $s, $s, $s];
+    }
+
+    $stmt = $pdo->prepare("SELECT * FROM `customer` {$where} ORDER BY `lifetimeVolume` DESC, `createdAt` DESC LIMIT 500");
+    $stmt->execute($params);
+    $rawCustomers = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+    $customers = array_map(function($c) {
+        return [
+            'id' => $c['id'],
+            'name' => $c['name'],
+            'email' => $c['email'] ?? ($c['phone'] ? $c['phone'] : '-'),
+            'phone' => $c['phone'] ?? null,
+            'company' => $c['companyName'] ?? null,
+            'country' => $c['country'] ?? '-',
+            'assignedStaff' => $c['assignedStaff'] ?? 'Sales Executive',
+            'assignedEmployee' => ['name' => $c['assignedStaff'] ?? 'Sales Executive', 'fullName' => $c['assignedStaff'] ?? 'Sales Executive'],
+            'totalInvoicedDeals' => (int)($c['totalInvoicedDeals'] ?? 0),
+            'totalSales' => (float)($c['lifetimeVolume'] ?? 0),
+            'lifetimeVolume' => (float)($c['lifetimeVolume'] ?? 0),
+            'totalNetProfit' => (float)($c['netProfit'] ?? 0),
+            'netProfit' => (float)($c['netProfit'] ?? 0),
+            'lastSaleDate' => $c['lastSaleDate'] ?? null,
+            '_count' => ['internalSales' => (int)($c['totalInvoicedDeals'] ?? 0)]
+        ];
+    }, $rawCustomers);
+
+    jsonResponse(['customers' => $customers]);
 }
 
 function handleGetBusinessSuppliers(): void {
