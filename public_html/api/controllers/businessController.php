@@ -522,16 +522,53 @@ function handleGetBusinessDashboard(): void {
         $totalEmpStmt = $pdo->query("SELECT COUNT(*) FROM `employee` WHERE `status` = 'ACTIVE'");
         $attendanceToday['total'] = (int)$totalEmpStmt->fetchColumn();
 
-        // Company Monthly Sales Target
-        $curYear = (int)date('Y');
+        // Company Monthly Sales Target calculation (month-specific)
+        $curYear = !empty($_GET['year']) ? (int)$_GET['year'] : (int)date('Y');
         $curMonth = (int)date('n');
-        $tgtStmt = $pdo->prepare("SELECT targetAmount FROM `salestarget` WHERE (`year` = ? OR `periodYear` = ?) AND (`month` = ? OR `periodMonth` = ?) LIMIT 1");
-        $tgtStmt->execute([$curYear, $curYear, $curMonth, $curMonth]);
-        $targetVal = (float)$tgtStmt->fetchColumn();
-        if ($targetVal <= 0) $targetVal = 50000;
 
-        $achieved = (float)$metrics['totalRevenue'];
-        $achP = $targetVal > 0 ? min(100, round(($achieved / $targetVal) * 100)) : 0;
+        if (!empty($_GET['month'])) {
+            $mParam = trim($_GET['month']);
+            if (is_numeric($mParam)) {
+                $curMonth = (int)$mParam;
+            } else {
+                $mTime = strtotime($mParam);
+                if ($mTime) $curMonth = (int)date('n', $mTime);
+            }
+        }
+
+        // Fetch configured target for this month/year, or fallback to any target configured for this year
+        $tgtStmt = $pdo->prepare("SELECT * FROM `salestarget` 
+            WHERE (`year` = ? OR `periodYear` = ?) AND (`month` = ? OR `periodMonth` = ?) 
+            LIMIT 1");
+        $tgtStmt->execute([$curYear, $curYear, $curMonth, $curMonth]);
+        $targetRow = $tgtStmt->fetch(PDO::FETCH_ASSOC);
+
+        if (!$targetRow) {
+            $anyTgt = $pdo->prepare("SELECT * FROM `salestarget` WHERE (`year` = ? OR `periodYear` = ?) ORDER BY `createdAt` DESC LIMIT 1");
+            $anyTgt->execute([$curYear, $curYear]);
+            $targetRow = $anyTgt->fetch(PDO::FETCH_ASSOC);
+        }
+
+        $tYear = (int)($targetRow['year'] ?? $targetRow['periodYear'] ?? $curYear);
+        $tMonth = (int)($targetRow['month'] ?? $targetRow['periodMonth'] ?? $curMonth);
+        $targetVal = (float)($targetRow['targetAmount'] ?? 30000);
+        $targetMonthName = date('F', mktime(0, 0, 0, $tMonth, 10));
+
+        // Query sales specifically for this target's month & year
+        $tSalesStmt = $pdo->prepare("SELECT 
+            COUNT(id) as orderCount,
+            COALESCE(SUM(finalSaleAmount), 0) as actualRevenue,
+            COALESCE(SUM(netProfit), 0) as netProfit
+        FROM `internalsale`
+        WHERE (YEAR(saleDate) = ? AND MONTH(saleDate) = ?) OR LOWER(TRIM(saleMonth)) = ?");
+        $tSalesStmt->execute([$tYear, $tMonth, strtolower($targetMonthName)]);
+        $tMetrics = $tSalesStmt->fetch(PDO::FETCH_ASSOC);
+
+        $targetActual = (float)($tMetrics['actualRevenue'] ?? 0);
+        $targetOrders = (int)($tMetrics['orderCount'] ?? 0);
+        $targetNetProfit = (float)($tMetrics['netProfit'] ?? 0);
+        $targetAchPct = $targetVal > 0 ? round(($targetActual / $targetVal) * 100, 1) : 0;
+        $targetRemaining = max(0, $targetVal - $targetActual);
 
         // Top Customers by Revenue
         $topCustStmt = $pdo->prepare("SELECT 
@@ -587,11 +624,28 @@ function handleGetBusinessDashboard(): void {
             ],
             'targets' => [
                 'totalTarget' => $targetVal,
-                'actualSales' => $achieved,
-                'achievementPercent' => $achP,
-                'remaining' => max(0, $targetVal - $achieved)
+                'actualSales' => $targetActual,
+                'actualRevenue' => $targetActual,
+                'achievementPercent' => $targetAchPct,
+                'remaining' => $targetRemaining,
+                'orderCount' => $targetOrders,
+                'monthName' => $targetMonthName,
+                'month' => $tMonth,
+                'year' => $tYear,
+                'periodMonth' => $tMonth,
+                'periodYear' => $tYear,
             ],
-            'salesTargetOverall' => ['target' => $targetVal, 'actual' => $achieved, 'achievementPercent' => $achP]
+            'salesTargetOverall' => [
+                'target' => $targetVal,
+                'actual' => $targetActual,
+                'actualRevenue' => $targetActual,
+                'achievementPercent' => $targetAchPct,
+                'remaining' => $targetRemaining,
+                'orderCount' => $targetOrders,
+                'monthName' => $targetMonthName,
+                'month' => $tMonth,
+                'year' => $tYear,
+            ]
         ]);
     } catch (\Throwable $e) {
         error_log('Dashboard error: ' . $e->getMessage());

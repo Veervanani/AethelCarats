@@ -470,21 +470,31 @@ export const BusinessDashboardPage: React.FC = () => {
 
           {/* Company Monthly Sales Target Progress */}
           <ContentCard>
-            <div className="card-header">
-              <div className="card-title">Company Monthly Target</div>
-              <Percent size={16} color="#2563eb" />
-            </div>
-
             {(() => {
-              const tgtVal = Number((data as any)?.salesTargetOverall?.target || data?.targets?.totalTarget || 50000) || 50000;
-              const actVal = Number((data as any)?.salesTargetOverall?.actual || data?.targets?.actualSales || m?.totalRevenue) || 0;
+              const tgt = (data as any)?.salesTargetOverall || (data as any)?.targets || {};
+              const mName = tgt.monthName || 'August';
+              const yr = tgt.year || '2026';
+              const tgtVal = Number(tgt.target || tgt.totalTarget || 30000) || 30000;
+              const actVal = Number(tgt.actual ?? tgt.actualSales ?? 0);
               const achPct = tgtVal > 0 ? Math.min(100, Math.round((actVal / tgtVal) * 100)) : 0;
               const remaining = Math.max(0, tgtVal - actVal);
+              const orders = tgt.orderCount ?? 0;
+
               return (
                 <div>
+                  <div className="card-header" style={{ marginBottom: 12 }}>
+                    <div>
+                      <div className="card-title">Company Monthly Target</div>
+                      <div style={{ fontSize: '0.72rem', color: '#64748b', marginTop: 2 }}>
+                        Target for <strong>{mName} {yr}</strong> ({orders} orders)
+                      </div>
+                    </div>
+                    <Percent size={16} color="#2563eb" />
+                  </div>
+
                   <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.82rem', fontWeight: 700 }}>
-                    <span>Achieved: ${fmt(actVal)}</span>
-                    <span>Target: ${fmt(tgtVal)}</span>
+                    <span style={{ color: '#0f172a' }}>Achieved: ${fmt(actVal)}</span>
+                    <span style={{ color: '#64748b' }}>Target: ${fmt(tgtVal)}</span>
                   </div>
                   <div style={{ height: 10, background: '#f1f5f9', borderRadius: 5, overflow: 'hidden', margin: '8px 0' }}>
                     <div
@@ -496,8 +506,8 @@ export const BusinessDashboardPage: React.FC = () => {
                     />
                   </div>
                   <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.72rem', color: '#64748b' }}>
-                    <span>Achievement: {achPct}%</span>
-                    <span>Remaining: ${fmt(remaining)}</span>
+                    <span>Achievement: <strong style={{ color: achPct >= 100 ? '#16a34a' : '#0f172a' }}>{achPct}%</strong></span>
+                    <span>Remaining: <strong>${fmt(remaining)}</strong></span>
                   </div>
                 </div>
               );
