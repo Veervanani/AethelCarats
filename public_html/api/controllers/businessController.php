@@ -702,6 +702,7 @@ function handleCreateBusinessSale(): void {
         $saleMonth
     ]);
 
+    syncBusinessCustomersFromSales($pdo);
     jsonResponse(['message' => 'Sale created successfully', 'id' => $id], 201);
 }
 
@@ -1027,6 +1028,8 @@ function handleExecuteSalesImport(): void {
         $importedCount++;
     }
 
+    syncBusinessCustomersFromSales($pdo);
+
     jsonResponse([
         'message' => 'Import executed successfully',
         'importedCount' => $importedCount,
@@ -1296,12 +1299,9 @@ function handleBusinessManualAttendance(): void {
 }
 
 
-function handleGetBusinessCustomers(): void {
-    $pdo = getDatabaseConnection();
-    ensureBusinessTablesExist($pdo);
-
-    // 1. Sync all customers from `internalsale` into `customer` table
+function syncBusinessCustomersFromSales(PDO $pdo): void {
     try {
+        ensureBusinessTablesExist($pdo);
         $salesCustStmt = $pdo->query("SELECT 
             TRIM(customerName) as name,
             MAX(customerCountry) as country,
@@ -1315,39 +1315,72 @@ function handleGetBusinessCustomers(): void {
         GROUP BY TRIM(customerName)");
         $salesCustomers = $salesCustStmt->fetchAll(PDO::FETCH_ASSOC);
 
-        $upsertCustStmt = $pdo->prepare("INSERT INTO `customer` (
+        $existStmt = $pdo->query("SELECT `id`, LOWER(TRIM(`name`)) as normName FROM `customer`");
+        $existingMap = [];
+        while ($row = $existStmt->fetch(PDO::FETCH_ASSOC)) {
+            $existingMap[$row['normName']] = $row['id'];
+        }
+
+        $updateStmt = $pdo->prepare("UPDATE `customer` SET 
+            `country` = COALESCE(?, `country`),
+            `assignedStaff` = COALESCE(?, `assignedStaff`),
+            `totalInvoicedDeals` = ?,
+            `lifetimeVolume` = ?,
+            `netProfit` = ?,
+            `lastSaleDate` = ?,
+            `updatedAt` = NOW()
+            WHERE `id` = ?");
+
+        $insertStmt = $pdo->prepare("INSERT INTO `customer` (
             `id`, `name`, `country`, `companyName`, `assignedStaff`, `totalInvoicedDeals`, `lifetimeVolume`, `netProfit`, `lastSaleDate`, `createdAt`, `updatedAt`
-        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, NOW(), NOW())
-        ON DUPLICATE KEY UPDATE 
-            `country` = COALESCE(VALUES(`country`), `country`),
-            `assignedStaff` = COALESCE(VALUES(`assignedStaff`), `assignedStaff`),
-            `totalInvoicedDeals` = VALUES(`totalInvoicedDeals`),
-            `lifetimeVolume` = VALUES(`lifetimeVolume`),
-            `netProfit` = VALUES(`netProfit`),
-            `lastSaleDate` = VALUES(`lastSaleDate`),
-            `updatedAt` = NOW()");
+        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, NOW(), NOW())");
 
         foreach ($salesCustomers as $sc) {
-            $cName = trim($sc['name']);
-            if (empty($cName)) continue;
-            $cId = 'cust-' . substr(md5(strtolower($cName)), 0, 16);
-            $upsertCustStmt->execute([
-                $cId,
-                $cName,
-                $sc['country'] ?? null,
-                $sc['country'] ? ($cName . ' (' . $sc['country'] . ')') : null,
-                $sc['assignedStaff'] ?? 'Sales Team',
-                (int)$sc['totalInvoicedDeals'],
-                (float)$sc['lifetimeVolume'],
-                (float)$sc['netProfit'],
-                $sc['lastSaleDate'] ?? date('Y-m-d H:i:s')
-            ]);
+            $rawName = trim($sc['name']);
+            if ($rawName === '') continue;
+            $norm = strtolower($rawName);
+
+            $lastDate = !empty($sc['lastSaleDate']) ? parseFlexibleDate($sc['lastSaleDate']) : date('Y-m-d H:i:s');
+
+            if (isset($existingMap[$norm])) {
+                $custId = $existingMap[$norm];
+                $updateStmt->execute([
+                    $sc['country'] ?? null,
+                    $sc['assignedStaff'] ?? 'Sales Team',
+                    (int)$sc['totalInvoicedDeals'],
+                    (float)$sc['lifetimeVolume'],
+                    (float)$sc['netProfit'],
+                    $lastDate,
+                    $custId
+                ]);
+            } else {
+                $custId = 'cust-' . substr(md5($norm), 0, 16);
+                $insertStmt->execute([
+                    $custId,
+                    $rawName,
+                    $sc['country'] ?? null,
+                    $sc['country'] ? ($rawName . ' (' . $sc['country'] . ')') : null,
+                    $sc['assignedStaff'] ?? 'Sales Team',
+                    (int)$sc['totalInvoicedDeals'],
+                    (float)$sc['lifetimeVolume'],
+                    (float)$sc['netProfit'],
+                    $lastDate
+                ]);
+                $existingMap[$norm] = $custId;
+            }
         }
     } catch (\Throwable $e) {
-        error_log('Customer sync error: ' . $e->getMessage());
+        error_log('Sync customer error: ' . $e->getMessage());
     }
+}
 
-    // 2. Fetch all customers
+function handleGetBusinessCustomers(): void {
+    $pdo = getDatabaseConnection();
+    ensureBusinessTablesExist($pdo);
+
+    // Automatically sync distinct customers from sales without duplicates
+    syncBusinessCustomersFromSales($pdo);
+
     $search = trim($_GET['search'] ?? '');
     $where = '';
     $params = [];
@@ -1384,11 +1417,97 @@ function handleGetBusinessCustomers(): void {
     jsonResponse(['customers' => $customers]);
 }
 
+function handleCreateBusinessCustomer(): void {
+    $pdo = getDatabaseConnection();
+    ensureBusinessTablesExist($pdo);
+
+    $raw = file_get_contents('php://input');
+    $body = json_decode($raw, true) ?? $_POST;
+
+    $name = trim($body['name'] ?? '');
+    if (empty($name)) {
+        jsonError('Customer name is required', 400);
+    }
+
+    // Check duplicate
+    $norm = strtolower($name);
+    $checkStmt = $pdo->prepare("SELECT id FROM `customer` WHERE LOWER(TRIM(`name`)) = ? LIMIT 1");
+    $checkStmt->execute([$norm]);
+    if ($checkStmt->fetch()) {
+        jsonError('A customer with this name already exists', 409);
+    }
+
+    $id = 'cust-' . substr(md5($norm), 0, 16);
+    $stmt = $pdo->prepare("INSERT INTO `customer` (
+        `id`, `name`, `country`, `companyName`, `email`, `phone`, `assignedStaff`, `notes`, `createdAt`, `updatedAt`
+    ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, NOW(), NOW())");
+
+    $stmt->execute([
+        $id,
+        $name,
+        $body['country'] ?? null,
+        $body['company'] ?? $body['companyName'] ?? null,
+        $body['email'] ?? null,
+        $body['phone'] ?? null,
+        $body['assignedStaff'] ?? 'Sales Executive',
+        $body['notes'] ?? null
+    ]);
+
+    recordBusinessAuditLog('CREATE', 'Customer', "Created client profile for {$name}");
+    jsonResponse(['message' => 'Customer created successfully', 'id' => $id, 'success' => true]);
+}
+
 function handleGetBusinessSuppliers(): void {
     $pdo = getDatabaseConnection();
     ensureBusinessTablesExist($pdo);
     $stmt = $pdo->query("SELECT * FROM `supplier` ORDER BY `name` ASC");
-    jsonResponse(['suppliers' => $stmt->fetchAll(PDO::FETCH_ASSOC)]);
+    $suppliers = $stmt->fetchAll(PDO::FETCH_ASSOC);
+    jsonResponse(['suppliers' => $suppliers]);
+}
+
+function handleCreateBusinessSupplier(): void {
+    $pdo = getDatabaseConnection();
+    ensureBusinessTablesExist($pdo);
+
+    $raw = file_get_contents('php://input');
+    $body = json_decode($raw, true) ?? $_POST;
+
+    $name = trim($body['name'] ?? '');
+    if (empty($name)) {
+        jsonError('Supplier name is required', 400);
+    }
+
+    $id = 'supp-' . substr(md5(uniqid()), 0, 12);
+    $stmt = $pdo->prepare("INSERT INTO `supplier` (
+        `id`, `name`, `contactPerson`, `email`, `phone`, `country`, `notes`, `createdAt`, `updatedAt`
+    ) VALUES (?, ?, ?, ?, ?, ?, ?, NOW(), NOW())");
+
+    $stmt->execute([
+        $id,
+        $name,
+        $body['contactPerson'] ?? null,
+        $body['email'] ?? null,
+        $body['phone'] ?? null,
+        $body['country'] ?? 'India',
+        $body['notes'] ?? null
+    ]);
+
+    recordBusinessAuditLog('CREATE', 'Supplier', "Created supplier {$name}");
+    jsonResponse(['message' => 'Supplier created successfully', 'id' => $id, 'success' => true]);
+}
+
+function handleGetBusinessCommissionPlans(): void {
+    $defaultPlan = [
+        'id' => 'plan-default',
+        'name' => 'Standard Executive Commission Matrix',
+        'description' => '5.0% Net Profit Commission for Loose Diamonds & Finished Jewelry',
+        'isDefault' => true,
+        'rules' => [
+            ['productType' => 'DIAMOND', 'commissionBasis' => 'NET_PROFIT', 'commissionRate' => 0.05],
+            ['productType' => 'JEWELRY', 'commissionBasis' => 'NET_PROFIT', 'commissionRate' => 0.05],
+        ]
+    ];
+    jsonResponse(['plans' => [$defaultPlan]]);
 }
 
 function handleGetBusinessCommissions(): void {
@@ -1406,6 +1525,30 @@ function handleGetBusinessTargets(): void {
     ensureBusinessTablesExist($pdo);
     $stmt = $pdo->query("SELECT t.*, e.name as employeeName FROM `salestarget` t JOIN `employee` e ON t.employeeId = e.id");
     jsonResponse(['targets' => $stmt->fetchAll(PDO::FETCH_ASSOC)]);
+}
+
+function handleCreateBusinessTarget(): void {
+    $pdo = getDatabaseConnection();
+    ensureBusinessTablesExist($pdo);
+
+    $raw = file_get_contents('php://input');
+    $body = json_decode($raw, true) ?? $_POST;
+
+    $id = 'tgt-' . substr(md5(uniqid()), 0, 12);
+    $stmt = $pdo->prepare("INSERT INTO `salestarget` (
+        `id`, `employeeId`, `targetAmount`, `periodType`, `periodYear`, `periodMonth`, `createdAt`, `updatedAt`
+    ) VALUES (?, ?, ?, ?, ?, ?, NOW(), NOW())");
+
+    $stmt->execute([
+        $id,
+        $body['employeeId'] ?? null,
+        (float)($body['targetAmount'] ?? 0),
+        $body['periodType'] ?? 'MONTHLY',
+        (int)($body['periodYear'] ?? date('Y')),
+        (int)($body['periodMonth'] ?? date('n'))
+    ]);
+
+    jsonResponse(['message' => 'Sales target saved', 'id' => $id, 'success' => true]);
 }
 
 function handleGetBusinessAuditLogs(): void {

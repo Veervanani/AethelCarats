@@ -71,10 +71,11 @@ export const BusinessCommissionPlansPage: React.FC = () => {
   const fetchPlans = async () => {
     setLoading(true);
     try {
-      const res = await businessApi.getCommissionPlans();
-      setPlans(res || []);
+      const res: any = await businessApi.getCommissionPlans();
+      setPlans(Array.isArray(res) ? res : (res?.plans || []));
     } catch (e) {
       console.error(e);
+      setPlans([]);
     } finally {
       setLoading(false);
     }

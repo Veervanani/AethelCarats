@@ -686,12 +686,20 @@ if (str_starts_with($path, '/api/v1/business/')) {
         handleDeleteCustomerById(urldecode($custMatches[1]));
     } else if ($path === '/api/v1/business/customers' && $method === 'GET') {
         handleGetBusinessCustomers();
+    } else if ($path === '/api/v1/business/customers' && $method === 'POST') {
+        handleCreateBusinessCustomer();
+    } else if ($path === '/api/v1/business/commission-plans' && $method === 'GET') {
+        handleGetBusinessCommissionPlans();
     } else if ($path === '/api/v1/business/suppliers' && $method === 'GET') {
         handleGetBusinessSuppliers();
+    } else if ($path === '/api/v1/business/suppliers' && $method === 'POST') {
+        handleCreateBusinessSupplier();
     } else if ($path === '/api/v1/business/commissions' && $method === 'GET') {
         handleGetBusinessCommissions();
     } else if ($path === '/api/v1/business/targets' && $method === 'GET') {
         handleGetBusinessTargets();
+    } else if ($path === '/api/v1/business/targets' && $method === 'POST') {
+        handleCreateBusinessTarget();
     } else if (($path === '/api/v1/business/audit-logs' || $path === '/api/v1/business/audit') && $method === 'GET') {
         handleGetBusinessAuditLogs();
     } else if ($path === '/api/v1/business/backups' && $method === 'GET') {

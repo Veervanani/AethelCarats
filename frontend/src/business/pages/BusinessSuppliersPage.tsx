@@ -58,10 +58,11 @@ export const BusinessSuppliersPage: React.FC = () => {
   const fetchSuppliers = async () => {
     setLoading(true);
     try {
-      const res = await businessApi.getSuppliers({ search });
-      setSuppliers(res || []);
+      const res: any = await businessApi.getSuppliers({ search });
+      setSuppliers(Array.isArray(res) ? res : (res?.suppliers || []));
     } catch (e) {
       console.error(e);
+      setSuppliers([]);
     } finally {
       setLoading(false);
     }

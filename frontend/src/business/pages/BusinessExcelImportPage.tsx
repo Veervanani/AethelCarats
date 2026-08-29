@@ -415,13 +415,13 @@ export const BusinessExcelImportPage: React.FC = () => {
                     <td>{r.productType}</td>
                     <td>{r.shape || r.productDescription || '-'}</td>
                     <td>{r.caratWeight || '-'}</td>
-                    <td>${r.sellingPrice?.toLocaleString()}</td>
-                    <td style={{ fontWeight: 700 }}>${r.finalSaleAmount?.toLocaleString()}</td>
-                    <td>${r.purchasePrice?.toLocaleString()}</td>
-                    <td>${r.grossProfit?.toLocaleString()}</td>
-                    <td style={{ color: '#16a34a', fontWeight: 600 }}>${r.netProfit?.toLocaleString()}</td>
-                    <td>{r.salesPersonName}</td>
-                    <td style={{ color: '#d97706' }}>${r.commissionAmount?.toLocaleString()}</td>
+                    <td>${(Number(r.sellingPrice) || 0).toLocaleString()}</td>
+                    <td style={{ fontWeight: 700 }}>${(Number(r.finalSaleAmount) || 0).toLocaleString()}</td>
+                    <td>${(Number(r.purchasePrice) || 0).toLocaleString()}</td>
+                    <td>${(Number(r.grossProfit) || 0).toLocaleString()}</td>
+                    <td style={{ color: '#16a34a', fontWeight: 600 }}>${(Number(r.netProfit) || 0).toLocaleString()}</td>
+                    <td>{r.salesPersonName || '-'}</td>
+                    <td style={{ color: '#d97706' }}>${(Number(r.commissionAmount) || 0).toLocaleString()}</td>
                     <td>
                       {r.isDuplicate ? (
                         <span style={{ fontSize: '0.7rem', padding: '2px 6px', background: '#fff9db', color: '#f59f00', borderRadius: 4, fontWeight: 700 }}>
