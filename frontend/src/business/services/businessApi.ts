@@ -303,4 +303,15 @@ export const businessApi = {
     const res = await API.delete<{ message: string; success: boolean }>(`/business/backups/${id}`);
     return res.data;
   },
+
+  downloadBackup: async (id: string, backupName?: string) => {
+    const res = await API.get(`/business/backups/${id}/download?format=json`, { responseType: 'blob' });
+    const url = window.URL.createObjectURL(new Blob([res.data], { type: 'application/json' }));
+    const link = document.createElement('a');
+    link.href = url;
+    link.setAttribute('download', `${(backupName || 'database_backup').replace(/[^a-zA-Z0-9_-]/g, '_')}.json`);
+    document.body.appendChild(link);
+    link.click();
+    link.remove();
+  },
 };

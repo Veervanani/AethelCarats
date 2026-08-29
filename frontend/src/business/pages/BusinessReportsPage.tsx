@@ -144,8 +144,12 @@ export const BusinessReportsPage: React.FC = () => {
     }
   };
 
-  const handleDownloadBackup = (id: string) => {
-    window.open(`/api/v1/business/backups/${id}/download?format=json`, '_blank');
+  const handleDownloadBackup = async (id: string, name?: string) => {
+    try {
+      await businessApi.downloadBackup(id, name);
+    } catch (err: any) {
+      alert('Failed to download backup snapshot.');
+    }
   };
 
   const handleExport = () => {
@@ -434,7 +438,7 @@ export const BusinessReportsPage: React.FC = () => {
                   <td style={{ textAlign: 'right' }}>
                     <div style={{ display: 'inline-flex', gap: 6 }}>
                       <button
-                        onClick={() => handleDownloadBackup(b.id)}
+                        onClick={() => handleDownloadBackup(b.id, b.backupName)}
                         style={{
                           display: 'inline-flex',
                           alignItems: 'center',

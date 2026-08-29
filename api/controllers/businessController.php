@@ -819,6 +819,7 @@ function handleUpdateBusinessSale(string $id): void {
         $actualId
     ]);
 
+    syncBusinessCustomersFromSales($pdo);
     recordBusinessAuditLog('UPDATE', 'Sale', "Updated invoice {$merged['invoiceNo']}");
     jsonResponse(['message' => 'Sale updated successfully', 'id' => $actualId, 'success' => true]);
 }
@@ -876,6 +877,7 @@ function handleBulkUpdateBusinessSales(): void {
         $updatedCount++;
     }
 
+    syncBusinessCustomersFromSales($pdo);
     recordBusinessAuditLog('BULK_UPDATE', 'Sale', "Bulk updated {$updatedCount} sales records");
     jsonResponse([
         'message' => "{$updatedCount} sales updated successfully",
@@ -1734,6 +1736,7 @@ function handleDeleteAllSales(): void {
     ensureBusinessTablesExist($pdo);
     $pdo->exec("DELETE FROM `commission`");
     $pdo->exec("DELETE FROM `internalsale`");
+    syncBusinessCustomersFromSales($pdo);
     jsonResponse(['message' => 'All sales removed successfully', 'success' => true]);
 }
 
@@ -1745,6 +1748,7 @@ function handleDeleteSaleById(string $id): void {
     $stmt = $pdo->prepare("DELETE FROM `internalsale` WHERE `id` = ? OR `invoiceNo` = ?");
     $stmt->execute([$id, $id]);
 
+    syncBusinessCustomersFromSales($pdo);
     jsonResponse(['message' => 'Sale deleted successfully', 'success' => true]);
 }
 
