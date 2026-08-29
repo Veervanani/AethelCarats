@@ -110,7 +110,17 @@ const Table = styled.table`
     background: #f8fafc;
   }
 
-  .sticky-col {
+  th.sticky-col {
+    position: sticky;
+    left: 0;
+    background: #0d1319 !important;
+    color: #f1f4f8 !important;
+    z-index: 20;
+    font-weight: 700;
+    box-shadow: 2px 0 4px rgba(0, 0, 0, 0.15);
+  }
+
+  td.sticky-col {
     position: sticky;
     left: 0;
     background: #ffffff;
@@ -119,7 +129,7 @@ const Table = styled.table`
     box-shadow: 2px 0 4px rgba(0, 0, 0, 0.04);
   }
 
-  tr:hover .sticky-col {
+  tr:hover td.sticky-col {
     background: #f8fafc;
   }
 `;
@@ -686,6 +696,7 @@ export const BusinessSalesListPage: React.FC = () => {
               <th>Payment</th>
               <th>Order Status</th>
               <th>Tracking</th>
+              <th>Dollar Rate</th>
               <th style={{ textAlign: 'right' }}>Actions</th>
             </tr>
           </thead>
@@ -750,6 +761,9 @@ export const BusinessSalesListPage: React.FC = () => {
                     ) : (
                       '-'
                     )}
+                  </td>
+                  <td style={{ fontWeight: 600, color: '#475569' }}>
+                    {s.dollarRate ? Number(s.dollarRate).toFixed(2) : '94.55'}
                   </td>
                   <td style={{ textAlign: 'right' }}>
                     <div style={{ display: 'inline-flex', gap: 6 }}>

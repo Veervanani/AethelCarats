@@ -850,16 +850,23 @@ function handleGetBusinessAttendanceReport(): void {
 
     $daysInMonth = (int)date('t', strtotime("{$year}-{$month}-01"));
 
-    // Get all active employees
-    $empStmt = $pdo->query("SELECT * FROM `employee` WHERE `status` = 'ACTIVE' ORDER BY `name` ASC");
+    // Get all active employees (fallback to all employees if none marked active)
+    $empStmt = $pdo->query("SELECT * FROM `employee` ORDER BY `name` ASC");
     $employees = $empStmt->fetchAll(PDO::FETCH_ASSOC);
 
-    // Get all attendance records for this month
-    $startDate = sprintf('%04d-%02d-01', $year, $month);
-    $endDate = sprintf('%04d-%02d-%02d', $year, $month, $daysInMonth);
+    if (empty($employees)) {
+        ensureBusinessTablesExist($pdo);
+        $empStmt = $pdo->query("SELECT * FROM `employee` ORDER BY `name` ASC");
+        $employees = $empStmt->fetchAll(PDO::FETCH_ASSOC);
+    }
 
-    $attStmt = $pdo->prepare("SELECT * FROM `attendance` WHERE `date` >= ? AND `date` <= ?");
-    $attStmt->execute([$startDate, $endDate]);
+    // Get all attendance records for this month
+    $startDate = sprintf('%04d-%02d-01 00:00:00', $year, $month);
+    $endDate = sprintf('%04d-%02d-%02d 23:59:59', $year, $month, $daysInMonth);
+    $likeMonth = sprintf('%04d-%02d%%', $year, $month);
+
+    $attStmt = $pdo->prepare("SELECT * FROM `attendance` WHERE (date >= ? AND date <= ?) OR date LIKE ?");
+    $attStmt->execute([$startDate, $endDate, $likeMonth]);
     $records = $attStmt->fetchAll(PDO::FETCH_ASSOC);
 
     $recordsByEmp = [];
