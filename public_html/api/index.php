@@ -637,6 +637,8 @@ if (str_starts_with($path, '/api/v1/business/')) {
         } else {
             jsonError('Method Not Allowed', 405);
         }
+    } else if (($path === '/api/v1/business/sales/delete-all' || $path === '/api/v1/business/sales/clear') && ($method === 'POST' || $method === 'DELETE' || $method === 'GET')) {
+        handleDeleteAllSales();
     } else if ($path === '/api/v1/business/sales/batch' && ($method === 'POST' || $method === 'DELETE')) {
         handleDeleteSalesBatch();
     } else if (preg_match('#^/api/v1/business/sales/([^/]+)$#', $path, $saleMatches) && ($method === 'DELETE' || $method === 'POST')) {
@@ -651,6 +653,8 @@ if (str_starts_with($path, '/api/v1/business/')) {
         handleGetBusinessAttendance();
     } else if ($path === '/api/v1/business/attendance/today' && $method === 'GET') {
         handleGetBusinessAttendanceToday();
+    } else if ($path === '/api/v1/business/attendance/report' && $method === 'GET') {
+        handleGetBusinessAttendanceReport();
     } else if ($path === '/api/v1/business/attendance/check-in' && $method === 'POST') {
         handleBusinessCheckIn();
     } else if ($path === '/api/v1/business/attendance/check-out' && $method === 'POST') {
@@ -667,8 +671,6 @@ if (str_starts_with($path, '/api/v1/business/')) {
         handleGetBusinessTargets();
     } else if (($path === '/api/v1/business/reset' || $path === '/api/v1/business/reset-all') && ($method === 'POST' || $method === 'GET')) {
         handleResetBusinessData();
-    } else if (($path === '/api/v1/business/sales/delete-all' || $path === '/api/v1/business/sales/clear') && ($method === 'POST' || $method === 'DELETE' || $method === 'GET')) {
-        handleDeleteAllSales();
     } else {
         jsonError('Business Endpoint Not Found', 404);
     }

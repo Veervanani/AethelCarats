@@ -282,6 +282,32 @@ function computePhpFinancials(array $d): array {
 // CONTROLLER HANDLERS
 // -------------------------------------------------------------
 
+function parseFlexibleDate(?string $raw): string {
+    if (empty($raw)) return date('Y-m-d H:i:s');
+    $raw = trim($raw);
+
+    // Check DD/MM/YYYY or DD.MM.YYYY
+    if (preg_match('#^(\d{1,2})[/\.](\d{1,2})[/\.](\d{4})#', $raw, $m)) {
+        $day = (int)$m[1];
+        $month = (int)$m[2];
+        $year = (int)$m[3];
+        if ($day > 12 && $month <= 12) {
+            return sprintf('%04d-%02d-%02d 00:00:00', $year, $month, $day);
+        } else if ($month > 12 && $day <= 12) {
+            return sprintf('%04d-%02d-%02d 00:00:00', $year, $day, $month);
+        } else {
+            return sprintf('%04d-%02d-%02d 00:00:00', $year, $month, $day);
+        }
+    }
+
+    $ts = strtotime($raw);
+    if ($ts !== false && $ts > 0) {
+        return date('Y-m-d H:i:s', $ts);
+    }
+
+    return date('Y-m-d H:i:s');
+}
+
 function handleGetBusinessDashboard(): void {
     try {
         $pdo = getDatabaseConnection();
@@ -292,14 +318,18 @@ function handleGetBusinessDashboard(): void {
 
         $year = trim($_GET['year'] ?? '');
         if (!empty($year) && $year !== 'All Years' && is_numeric($year)) {
-            $where[] = "YEAR(`saleDate`) = ?";
+            $where[] = "(YEAR(`saleDate`) = ? OR `saleDate` LIKE ?)";
             $params[] = (int)$year;
+            $params[] = $year . '%';
         }
 
         $month = trim($_GET['month'] ?? '');
         if (!empty($month) && $month !== 'All Months') {
-            $where[] = "(`saleMonth` = ? OR MONTHNAME(`saleDate`) = ?)";
+            $monthNum = (int)date('m', strtotime($month . ' 1 2026'));
+            $where[] = "(`saleMonth` = ? OR `saleMonth` LIKE ? OR MONTH(`saleDate`) = ? OR MONTHNAME(`saleDate`) = ?)";
             $params[] = $month;
+            $params[] = $month . '%';
+            $params[] = $monthNum;
             $params[] = $month;
         }
 
@@ -658,7 +688,7 @@ function handleExecuteSalesImport(): void {
             ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 1, NOW(), NOW()
         )");
 
-        $saleDate = !empty($r['saleDate']) ? date('Y-m-d H:i:s', strtotime($r['saleDate'])) : date('Y-m-d H:i:s');
+        $saleDate = parseFlexibleDate($r['saleDate'] ?? '');
         $saleMonth = !empty($r['saleMonth']) ? $r['saleMonth'] : date('F', strtotime($saleDate));
 
         $stmt->execute([
@@ -808,6 +838,94 @@ function handleGetBusinessAttendanceToday(): void {
     $summary['totalEmployees'] = (int)$totalEmpStmt->fetchColumn();
     jsonResponse($summary);
 }
+
+function handleGetBusinessAttendanceReport(): void {
+    $pdo = getDatabaseConnection();
+    ensureBusinessTablesExist($pdo);
+
+    $monthStr = $_GET['month'] ?? date('Y-m');
+    $parts = explode('-', $monthStr);
+    $year = (int)($parts[0] ?? date('Y'));
+    $month = (int)($parts[1] ?? date('m'));
+
+    $daysInMonth = (int)date('t', strtotime("{$year}-{$month}-01"));
+
+    // Get all active employees
+    $empStmt = $pdo->query("SELECT * FROM `employee` WHERE `status` = 'ACTIVE' ORDER BY `name` ASC");
+    $employees = $empStmt->fetchAll(PDO::FETCH_ASSOC);
+
+    // Get all attendance records for this month
+    $startDate = sprintf('%04d-%02d-01', $year, $month);
+    $endDate = sprintf('%04d-%02d-%02d', $year, $month, $daysInMonth);
+
+    $attStmt = $pdo->prepare("SELECT * FROM `attendance` WHERE `date` >= ? AND `date` <= ?");
+    $attStmt->execute([$startDate, $endDate]);
+    $records = $attStmt->fetchAll(PDO::FETCH_ASSOC);
+
+    $recordsByEmp = [];
+    foreach ($records as $r) {
+        $day = (int)date('j', strtotime($r['date']));
+        $recordsByEmp[$r['employeeId']][$day] = $r;
+    }
+
+    $report = [];
+    foreach ($employees as $emp) {
+        $empId = $emp['id'];
+        $empRecords = $recordsByEmp[$empId] ?? [];
+        $days = [];
+        $pres = 0;
+        $abs = 0;
+        $late = 0;
+        $totalHrs = 0;
+
+        for ($d = 1; $d <= $daysInMonth; $d++) {
+            if (isset($empRecords[$d])) {
+                $rec = $empRecords[$d];
+                $st = strtoupper($rec['status'] ?? 'PRESENT');
+                $isLate = !empty($rec['lateStatus']) && ($rec['lateStatus'] === '1' || $rec['lateStatus'] === 'LATE' || $rec['lateStatus'] === 1 || $rec['lateStatus'] === true);
+                $hrs = (float)($rec['workingHours'] ?? ($st === 'PRESENT' ? 8 : ($st === 'HALF_DAY' ? 4 : 0)));
+
+                if ($st === 'PRESENT') $pres++;
+                else if ($st === 'ABSENT') $abs++;
+                if ($isLate) $late++;
+                $totalHrs += $hrs;
+
+                $days[$d] = [
+                    'status' => $st,
+                    'lateStatus' => $isLate,
+                    'workingHours' => $hrs
+                ];
+            } else {
+                $days[$d] = null;
+            }
+        }
+
+        $report[] = [
+            'employee' => [
+                'id' => $emp['id'],
+                'fullName' => $emp['name'],
+                'name' => $emp['name'],
+                'employeeCode' => $emp['employeeCode'],
+                'department' => $emp['department'],
+                'designation' => $emp['designation']
+            ],
+            'days' => $days,
+            'summary' => [
+                'present' => $pres,
+                'absent' => $abs,
+                'late' => $late,
+                'totalHours' => $totalHrs
+            ]
+        ];
+    }
+
+    jsonResponse([
+        'month' => $monthStr,
+        'daysInMonth' => $daysInMonth,
+        'report' => $report
+    ]);
+}
+
 
 function handleBusinessCheckIn(): void {
     $pdo = getDatabaseConnection();
