@@ -169,15 +169,15 @@ function ensureBusinessTablesExist(PDO $pdo): void {
         `updatedAt` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
     ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;");
 
-    // 7. SalesTarget
+    // 7. SalesTarget (Company Month-Wise)
     $pdo->exec("CREATE TABLE IF NOT EXISTS `salestarget` (
         `id` VARCHAR(191) PRIMARY KEY,
-        `employeeId` VARCHAR(191) NOT NULL,
-        `year` INT NOT NULL,
-        `month` INT NULL,
-        `quarter` INT NULL,
+        `periodType` VARCHAR(50) NOT NULL DEFAULT 'MONTHLY',
+        `periodYear` INT NOT NULL DEFAULT 2026,
+        `periodMonth` INT NOT NULL DEFAULT 1,
+        `year` INT NOT NULL DEFAULT 2026,
+        `month` INT NOT NULL DEFAULT 1,
         `targetAmount` DOUBLE NOT NULL DEFAULT 0,
-        `actualSales` DOUBLE NOT NULL DEFAULT 0,
         `notes` TEXT NULL,
         `createdAt` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
         `updatedAt` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
@@ -497,10 +497,13 @@ function handleGetBusinessDashboard(): void {
         $totalEmpStmt = $pdo->query("SELECT COUNT(*) FROM `employee` WHERE `status` = 'ACTIVE'");
         $attendanceToday['total'] = (int)$totalEmpStmt->fetchColumn();
 
-        // Sales Target
-        $tgtStmt = $pdo->query("SELECT COALESCE(SUM(monthlyTarget), 310000) FROM `employee` WHERE `status` = 'ACTIVE'");
+        // Company Monthly Sales Target
+        $curYear = (int)date('Y');
+        $curMonth = (int)date('n');
+        $tgtStmt = $pdo->prepare("SELECT targetAmount FROM `salestarget` WHERE (`year` = ? OR `periodYear` = ?) AND (`month` = ? OR `periodMonth` = ?) LIMIT 1");
+        $tgtStmt->execute([$curYear, $curYear, $curMonth, $curMonth]);
         $targetVal = (float)$tgtStmt->fetchColumn();
-        if ($targetVal <= 0) $targetVal = 310000;
+        if ($targetVal <= 0) $targetVal = 50000;
 
         $achieved = (float)$metrics['totalRevenue'];
         $achP = $targetVal > 0 ? min(100, round(($achieved / $targetVal) * 100)) : 0;
@@ -1523,8 +1526,73 @@ function handleGetBusinessCommissions(): void {
 function handleGetBusinessTargets(): void {
     $pdo = getDatabaseConnection();
     ensureBusinessTablesExist($pdo);
-    $stmt = $pdo->query("SELECT t.*, e.name as employeeName FROM `salestarget` t JOIN `employee` e ON t.employeeId = e.id");
-    jsonResponse(['targets' => $stmt->fetchAll(PDO::FETCH_ASSOC)]);
+
+    $year = (int)($_GET['year'] ?? date('Y'));
+
+    $stmt = $pdo->prepare("SELECT * FROM `salestarget` WHERE `year` = ? OR `periodYear` = ? ORDER BY `month` ASC, `periodMonth` ASC, `createdAt` DESC");
+    $stmt->execute([$year, $year]);
+    $rawTargets = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+    // If no targets exist for the current month/year, create a default $50,000 company target
+    if (empty($rawTargets)) {
+        $defaultMonth = (int)date('n');
+        $defaultYear = (int)date('Y');
+        $defId = 'tgt-company-' . $defaultYear . '-' . $defaultMonth;
+
+        $insDef = $pdo->prepare("INSERT INTO `salestarget` (`id`, `periodType`, `periodYear`, `periodMonth`, `year`, `month`, `targetAmount`, `notes`, `createdAt`, `updatedAt`)
+            VALUES (?, 'MONTHLY', ?, ?, ?, ?, 50000, 'Company Monthly Revenue Target', NOW(), NOW())
+            ON DUPLICATE KEY UPDATE `targetAmount` = VALUES(`targetAmount`)");
+        $insDef->execute([$defId, $defaultYear, $defaultMonth, $defaultYear, $defaultMonth]);
+
+        $stmt->execute([$year, $year]);
+        $rawTargets = $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+
+    $targets = [];
+    foreach ($rawTargets as $t) {
+        $tMonth = (int)($t['month'] ?? $t['periodMonth'] ?? 8);
+        $tYear = (int)($t['year'] ?? $t['periodYear'] ?? 2026);
+        $targetAmt = (float)$t['targetAmount'];
+        $monthName = date('F', mktime(0, 0, 0, $tMonth, 10));
+
+        // Calculate actual company-wide closed sales for this month/year
+        $salesStmt = $pdo->prepare("SELECT 
+            COUNT(id) as orderCount,
+            COALESCE(SUM(finalSaleAmount), 0) as actualRevenue,
+            COALESCE(SUM(netProfit), 0) as netProfit
+        FROM `internalsale`
+        WHERE (YEAR(saleDate) = ? AND MONTH(saleDate) = ?) OR LOWER(TRIM(saleMonth)) = ?");
+        $salesStmt->execute([$tYear, $tMonth, strtolower($monthName)]);
+        $metrics = $salesStmt->fetch(PDO::FETCH_ASSOC);
+
+        $actualRevenue = (float)($metrics['actualRevenue'] ?? 0);
+        $netProfit = (float)($metrics['netProfit'] ?? 0);
+        $orderCount = (int)($metrics['orderCount'] ?? 0);
+        $achievementPercent = $targetAmt > 0 ? round(($actualRevenue / $targetAmt) * 100, 1) : 0;
+        $remaining = max(0, $targetAmt - $actualRevenue);
+        $status = $actualRevenue >= $targetAmt ? 'ACHIEVED' : ($actualRevenue > 0 ? 'IN_PROGRESS' : 'PENDING');
+
+        $targets[] = [
+            'id' => $t['id'],
+            'periodType' => $t['periodType'] ?? 'MONTHLY',
+            'periodYear' => $tYear,
+            'periodMonth' => $tMonth,
+            'monthName' => $monthName,
+            'targetAmount' => $targetAmt,
+            'actualSales' => $actualRevenue,
+            'actualRevenue' => $actualRevenue,
+            'netProfit' => $netProfit,
+            'orderCount' => $orderCount,
+            'achievementPercent' => $achievementPercent,
+            'remaining' => $remaining,
+            'status' => $status,
+            'notes' => $t['notes'] ?? 'Company Monthly Target',
+            'createdAt' => $t['createdAt'] ?? null,
+            'updatedAt' => $t['updatedAt'] ?? null
+        ];
+    }
+
+    jsonResponse(['targets' => $targets]);
 }
 
 function handleCreateBusinessTarget(): void {
@@ -1534,21 +1602,43 @@ function handleCreateBusinessTarget(): void {
     $raw = file_get_contents('php://input');
     $body = json_decode($raw, true) ?? $_POST;
 
-    $id = 'tgt-' . substr(md5(uniqid()), 0, 12);
+    $tYear = (int)($body['periodYear'] ?? $body['year'] ?? date('Y'));
+    $tMonth = (int)($body['periodMonth'] ?? $body['month'] ?? date('n'));
+    $targetAmt = (float)($body['targetAmount'] ?? 0);
+    $notes = trim($body['notes'] ?? 'Company Monthly Sales Target');
+
+    if ($targetAmt <= 0) {
+        jsonError('Target amount must be greater than 0', 400);
+    }
+
+    $id = 'tgt-company-' . $tYear . '-' . $tMonth;
     $stmt = $pdo->prepare("INSERT INTO `salestarget` (
-        `id`, `employeeId`, `targetAmount`, `periodType`, `periodYear`, `periodMonth`, `createdAt`, `updatedAt`
-    ) VALUES (?, ?, ?, ?, ?, ?, NOW(), NOW())");
+        `id`, `periodType`, `periodYear`, `periodMonth`, `year`, `month`, `targetAmount`, `notes`, `createdAt`, `updatedAt`
+    ) VALUES (?, 'MONTHLY', ?, ?, ?, ?, ?, ?, NOW(), NOW())
+    ON DUPLICATE KEY UPDATE `targetAmount` = VALUES(`targetAmount`), `notes` = VALUES(`notes`), `updatedAt` = NOW()");
 
     $stmt->execute([
         $id,
-        $body['employeeId'] ?? null,
-        (float)($body['targetAmount'] ?? 0),
-        $body['periodType'] ?? 'MONTHLY',
-        (int)($body['periodYear'] ?? date('Y')),
-        (int)($body['periodMonth'] ?? date('n'))
+        $tYear,
+        $tMonth,
+        $tYear,
+        $tMonth,
+        $targetAmt,
+        $notes
     ]);
 
-    jsonResponse(['message' => 'Sales target saved', 'id' => $id, 'success' => true]);
+    recordBusinessAuditLog('SET_TARGET', 'SalesTarget', "Set company monthly sales target for {$tMonth}/{$tYear} to \${$targetAmt}");
+    jsonResponse(['message' => 'Company monthly sales target saved successfully', 'id' => $id, 'success' => true]);
+}
+
+function handleDeleteBusinessTarget(string $id): void {
+    $pdo = getDatabaseConnection();
+    ensureBusinessTablesExist($pdo);
+
+    $stmt = $pdo->prepare("DELETE FROM `salestarget` WHERE `id` = ?");
+    $stmt->execute([$id]);
+    recordBusinessAuditLog('DELETE_TARGET', 'SalesTarget', "Deleted company target {$id}");
+    jsonResponse(['message' => 'Target removed successfully', 'success' => true]);
 }
 
 function handleGetBusinessAuditLogs(): void {

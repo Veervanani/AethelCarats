@@ -468,32 +468,40 @@ export const BusinessDashboardPage: React.FC = () => {
             </div>
           </ContentCard>
 
-          {/* Sales Quota Progress */}
+          {/* Company Monthly Sales Target Progress */}
           <ContentCard>
             <div className="card-header">
-              <div className="card-title">Sales Target Quota</div>
+              <div className="card-title">Company Monthly Target</div>
               <Percent size={16} color="#2563eb" />
             </div>
 
-            <div>
-              <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.82rem', fontWeight: 700 }}>
-                <span>Achieved: ${fmt((data as any)?.salesTargetOverall?.actual || data?.targets?.actualSales || m?.totalRevenue)}</span>
-                <span>Target: ${fmt((data as any)?.salesTargetOverall?.target || data?.targets?.totalTarget || 100000)}</span>
-              </div>
-              <div style={{ height: 10, background: '#f1f5f9', borderRadius: 5, overflow: 'hidden', margin: '8px 0' }}>
-                <div
-                  style={{
-                    height: '100%',
-                    background: '#2563eb',
-                    width: `${Math.min(100, Math.round(((Number(m?.totalRevenue) || 0) / 100000) * 100))}%`,
-                  }}
-                />
-              </div>
-              <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.72rem', color: '#64748b' }}>
-                <span>Achievement: {Math.min(100, Math.round(((Number(m?.totalRevenue) || 0) / 100000) * 100))}%</span>
-                <span>Remaining: ${fmt(Math.max(0, 100000 - (Number(m?.totalRevenue) || 0)))}</span>
-              </div>
-            </div>
+            {(() => {
+              const tgtVal = Number((data as any)?.salesTargetOverall?.target || data?.targets?.totalTarget || 50000) || 50000;
+              const actVal = Number((data as any)?.salesTargetOverall?.actual || data?.targets?.actualSales || m?.totalRevenue) || 0;
+              const achPct = tgtVal > 0 ? Math.min(100, Math.round((actVal / tgtVal) * 100)) : 0;
+              const remaining = Math.max(0, tgtVal - actVal);
+              return (
+                <div>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.82rem', fontWeight: 700 }}>
+                    <span>Achieved: ${fmt(actVal)}</span>
+                    <span>Target: ${fmt(tgtVal)}</span>
+                  </div>
+                  <div style={{ height: 10, background: '#f1f5f9', borderRadius: 5, overflow: 'hidden', margin: '8px 0' }}>
+                    <div
+                      style={{
+                        height: '100%',
+                        background: achPct >= 100 ? '#16a34a' : '#2563eb',
+                        width: `${achPct}%`,
+                      }}
+                    />
+                  </div>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.72rem', color: '#64748b' }}>
+                    <span>Achievement: {achPct}%</span>
+                    <span>Remaining: ${fmt(remaining)}</span>
+                  </div>
+                </div>
+              );
+            })()}
           </ContentCard>
         </div>
       </GridTwoCol>

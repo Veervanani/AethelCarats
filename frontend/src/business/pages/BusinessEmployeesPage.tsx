@@ -344,8 +344,7 @@ export const BusinessEmployeesPage: React.FC = () => {
             <th>Email / Phone</th>
             <th>Department</th>
             <th>Designation</th>
-            <th>Target</th>
-            <th>Sales</th>
+            <th>Sales Deals</th>
             <th>Status</th>
             <th style={{ textAlign: 'right' }}>Actions</th>
           </tr>
@@ -385,8 +384,7 @@ export const BusinessEmployeesPage: React.FC = () => {
               </td>
               <td>{emp.department || 'Sales'}</td>
               <td>{emp.designation || 'Sales Executive'}</td>
-              <td style={{ fontWeight: 600 }}>${(Number(emp.monthlySalesTarget) || Number((emp as any).monthlyTarget) || Number((emp as any).targetAmount) || 0).toLocaleString()}</td>
-              <td>{emp._count?.sales || 0}</td>
+              <td>{emp._count?.sales || 0} deals</td>
               <td>
                 <StatusBadge $status={emp.status}>
                   {emp.status === 'ACTIVE' ? <CheckCircle2 size={12} /> : <XCircle size={12} />}
@@ -428,7 +426,7 @@ export const BusinessEmployeesPage: React.FC = () => {
           ))}
           {employees.length === 0 && !loading && (
             <tr>
-              <td colSpan={10} style={{ textAlign: 'center', padding: '32px', color: '#94a3b8' }}>
+              <td colSpan={9} style={{ textAlign: 'center', padding: '32px', color: '#94a3b8' }}>
                 No employees found matching criteria.
               </td>
             </tr>

@@ -700,6 +700,8 @@ if (str_starts_with($path, '/api/v1/business/')) {
         handleGetBusinessTargets();
     } else if ($path === '/api/v1/business/targets' && $method === 'POST') {
         handleCreateBusinessTarget();
+    } else if (preg_match('#^/api/v1/business/targets/([^/]+)$#', $path, $tgtMatches) && ($method === 'DELETE' || $method === 'POST')) {
+        handleDeleteBusinessTarget(urldecode($tgtMatches[1]));
     } else if (($path === '/api/v1/business/audit-logs' || $path === '/api/v1/business/audit') && $method === 'GET') {
         handleGetBusinessAuditLogs();
     } else if ($path === '/api/v1/business/backups' && $method === 'GET') {

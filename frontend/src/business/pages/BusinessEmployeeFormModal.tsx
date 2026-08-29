@@ -75,7 +75,6 @@ export const BusinessEmployeeFormModal: React.FC<{
   const [designation, setDesignation] = useState(employee?.designation || 'Sales Executive');
   const [role, setRole] = useState(employee?.role || 'SALES_EMPLOYEE');
   const [status, setStatus] = useState(employee?.status || 'ACTIVE');
-  const [monthlySalesTarget, setMonthlySalesTarget] = useState(employee?.monthlySalesTarget || 0);
   const [notes, setNotes] = useState(employee?.notes || '');
   const [createLogin, setCreateLogin] = useState(false);
   const [password, setPassword] = useState('');
@@ -99,7 +98,6 @@ export const BusinessEmployeeFormModal: React.FC<{
           designation,
           role,
           status,
-          monthlySalesTarget: Number(monthlySalesTarget),
           notes,
         });
       } else {
@@ -110,7 +108,6 @@ export const BusinessEmployeeFormModal: React.FC<{
           department,
           designation,
           role,
-          monthlySalesTarget: Number(monthlySalesTarget),
           notes,
           createLogin,
           password: createLogin ? password : undefined,
@@ -177,15 +174,6 @@ export const BusinessEmployeeFormModal: React.FC<{
                 <option value="ACCOUNTANT">Accountant (Ledgers & Commission Payouts)</option>
                 <option value="ADMIN">Admin (Full Access)</option>
               </select>
-            </FormGroup>
-
-            <FormGroup>
-              <label>Monthly Sales Quota Target ($)</label>
-              <input
-                type="number"
-                value={monthlySalesTarget}
-                onChange={(e) => setMonthlySalesTarget(Number(e.target.value))}
-              />
             </FormGroup>
 
             {isEdit && (

@@ -152,15 +152,6 @@ export const BusinessEmployeeDetailPage: React.FC = () => {
             <span>📞 {employee.phone || 'No phone'}</span>
           </div>
         </div>
-
-        <div style={{ display: 'flex', gap: 10 }}>
-          <div style={{ textAlign: 'right' }}>
-            <div style={{ fontSize: '0.72rem', color: '#64748b', fontWeight: 600 }}>MONTHLY TARGET</div>
-            <div style={{ fontSize: '1.2rem', fontWeight: 800, color: '#0f172a' }}>
-              ${(Number(employee.monthlySalesTarget) || Number(employee.monthlyTarget) || Number(employee.targetAmount) || 0).toLocaleString()}
-            </div>
-          </div>
-        </div>
       </ProfileHeader>
 
       <StatGrid>

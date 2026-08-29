@@ -217,6 +217,11 @@ export const businessApi = {
     return res.data;
   },
 
+  deleteTarget: async (id: string) => {
+    const res = await API.delete<any>(`/business/targets/${id}`);
+    return res.data;
+  },
+
   // Suppliers
   getSuppliers: async (params?: Record<string, any>) => {
     const res = await API.get<Supplier[]>('/business/suppliers', { params });

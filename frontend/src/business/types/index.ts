@@ -191,24 +191,17 @@ export interface CommissionRule {
 
 export interface SalesTarget {
   id: string;
-  employeeId: string;
-  employee?: {
-    id: string;
-    fullName: string;
-    employeeCode: string;
-    department: string;
-  };
   periodType: 'MONTHLY' | 'QUARTERLY' | 'YEARLY';
   periodYear: number;
   periodMonth?: number | null;
-  periodQuarter?: number | null;
+  monthName?: string | null;
   targetAmount: number;
   actualSales?: number;
+  actualRevenue?: number;
+  netProfit?: number;
   orderCount?: number;
   achievementPercent?: number;
   remaining?: number;
-  startDate: string;
-  endDate: string;
   status: string;
   notes?: string | null;
   createdAt: string;
