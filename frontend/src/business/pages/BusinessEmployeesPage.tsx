@@ -16,7 +16,34 @@ import {
   XCircle,
   TrendingUp,
   Award,
+  Trash2,
+  Check,
 } from 'lucide-react';
+
+const CustomCheckbox = styled.label<{ $checked?: boolean }>`
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 17px;
+  height: 17px;
+  border-radius: 4px;
+  border: 1.5px solid ${({ $checked }) => ($checked ? '#0d1319' : '#cbd5e1')};
+  background: ${({ $checked }) => ($checked ? '#0d1319' : '#ffffff')};
+  color: #ffffff;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  user-select: none;
+  vertical-align: middle;
+
+  &:hover {
+    border-color: #0d1319;
+    box-shadow: 0 0 0 2px rgba(13, 19, 25, 0.12);
+  }
+
+  input {
+    display: none;
+  }
+`;
 
 const PageHeader = styled.div`
   display: flex;
@@ -152,11 +179,11 @@ export const BusinessEmployeesPage: React.FC = () => {
     fetchEmployees();
   }, [search, department, status]);
 
-  const handleSelectAll = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (e.target.checked) {
-      setSelectedIds(new Set(employees.map((emp) => emp.id)));
-    } else {
+  const handleSelectAll = (e?: React.ChangeEvent<HTMLInputElement>) => {
+    if (selectedIds.size === employees.length && employees.length > 0) {
       setSelectedIds(new Set());
+    } else {
+      setSelectedIds(new Set(employees.map((emp) => emp.id)));
     }
   };
 
@@ -296,11 +323,21 @@ export const BusinessEmployeesPage: React.FC = () => {
         <thead>
           <tr>
             <th style={{ width: 36, textAlign: 'center' }}>
-              <input
-                type="checkbox"
-                checked={employees.length > 0 && selectedIds.size === employees.length}
-                onChange={handleSelectAll}
-              />
+              <CustomCheckbox
+                $checked={employees.length > 0 && selectedIds.size === employees.length}
+                onClick={(e) => {
+                  e.preventDefault();
+                  handleSelectAll();
+                }}
+                title="Select All Employees"
+              >
+                <input
+                  type="checkbox"
+                  checked={employees.length > 0 && selectedIds.size === employees.length}
+                  readOnly
+                />
+                {employees.length > 0 && selectedIds.size === employees.length && <Check size={11} strokeWidth={3} />}
+              </CustomCheckbox>
             </th>
             <th>Code</th>
             <th>Full Name</th>
@@ -317,11 +354,21 @@ export const BusinessEmployeesPage: React.FC = () => {
           {employees.map((emp) => (
             <tr key={emp.id}>
               <td style={{ textAlign: 'center' }}>
-                <input
-                  type="checkbox"
-                  checked={selectedIds.has(emp.id)}
-                  onChange={() => handleToggleSelect(emp.id)}
-                />
+                <CustomCheckbox
+                  $checked={selectedIds.has(emp.id)}
+                  onClick={(e) => {
+                    e.preventDefault();
+                    handleToggleSelect(emp.id);
+                  }}
+                  title={`Select ${emp.fullName || (emp as any).name}`}
+                >
+                  <input
+                    type="checkbox"
+                    checked={selectedIds.has(emp.id)}
+                    readOnly
+                  />
+                  {selectedIds.has(emp.id) && <Check size={11} strokeWidth={3} />}
+                </CustomCheckbox>
               </td>
               <td style={{ fontWeight: 700, color: '#64748b' }}>{emp.employeeCode}</td>
               <td style={{ fontWeight: 600 }}>

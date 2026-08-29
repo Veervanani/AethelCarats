@@ -23,7 +23,33 @@ import {
   ChevronRight,
   TrendingUp,
   AlertTriangle,
+  Check,
 } from 'lucide-react';
+
+const CustomCheckbox = styled.label<{ $checked?: boolean }>`
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 17px;
+  height: 17px;
+  border-radius: 4px;
+  border: 1.5px solid ${({ $checked }) => ($checked ? '#0d1319' : '#cbd5e1')};
+  background: ${({ $checked }) => ($checked ? '#0d1319' : '#ffffff')};
+  color: #ffffff;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  user-select: none;
+  vertical-align: middle;
+
+  &:hover {
+    border-color: #0d1319;
+    box-shadow: 0 0 0 2px rgba(13, 19, 25, 0.12);
+  }
+
+  input {
+    display: none;
+  }
+`;
 
 const PageHeader = styled.div`
   display: flex;
@@ -692,12 +718,21 @@ export const BusinessSalesListPage: React.FC = () => {
           <thead>
             <tr>
               <th className="sticky-col-chk">
-                <input
-                  type="checkbox"
-                  checked={sales.length > 0 && selectedIds.size === sales.length}
-                  onChange={toggleSelectAll}
-                  style={{ cursor: 'pointer' }}
-                />
+                <CustomCheckbox
+                  $checked={sales.length > 0 && selectedIds.size === sales.length}
+                  onClick={(e) => {
+                    e.preventDefault();
+                    toggleSelectAll();
+                  }}
+                  title="Select / Deselect All Sales"
+                >
+                  <input
+                    type="checkbox"
+                    checked={sales.length > 0 && selectedIds.size === sales.length}
+                    readOnly
+                  />
+                  {sales.length > 0 && selectedIds.size === sales.length && <Check size={11} strokeWidth={3} />}
+                </CustomCheckbox>
               </th>
               <th className="sticky-col-inv">Invoice No</th>
               <th>Date</th>
@@ -734,12 +769,21 @@ export const BusinessSalesListPage: React.FC = () => {
               return (
                 <tr key={s.id} style={{ background: isSelected ? '#f0fdf4' : undefined }}>
                   <td className="sticky-col-chk">
-                    <input
-                      type="checkbox"
-                      checked={isSelected}
-                      onChange={() => toggleSelectRow(s.id)}
-                      style={{ cursor: 'pointer' }}
-                    />
+                    <CustomCheckbox
+                      $checked={isSelected}
+                      onClick={(e) => {
+                        e.preventDefault();
+                        toggleSelectRow(s.id);
+                      }}
+                      title={`Select invoice ${s.invoiceNo}`}
+                    >
+                      <input
+                        type="checkbox"
+                        checked={isSelected}
+                        readOnly
+                      />
+                      {isSelected && <Check size={11} strokeWidth={3} />}
+                    </CustomCheckbox>
                   </td>
                   <td className="sticky-col-inv">
                     <Link to={`${PRIVATE_BUSINESS_PATH}/sales/${s.id}`} style={{ color: '#0d1319', textDecoration: 'none' }}>

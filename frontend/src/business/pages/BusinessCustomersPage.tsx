@@ -2,7 +2,32 @@ import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
 import { businessApi } from '../services/businessApi';
 import { BusinessCustomer, Employee } from '../types';
-import { Contact, Search, Plus, UserCheck, AlertTriangle } from 'lucide-react';
+import { Users, UserPlus, Search, Filter, Trash2, Check, Plus } from 'lucide-react';
+
+const CustomCheckbox = styled.label<{ $checked?: boolean }>`
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 17px;
+  height: 17px;
+  border-radius: 4px;
+  border: 1.5px solid ${({ $checked }) => ($checked ? '#0d1319' : '#cbd5e1')};
+  background: ${({ $checked }) => ($checked ? '#0d1319' : '#ffffff')};
+  color: #ffffff;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  user-select: none;
+  vertical-align: middle;
+
+  &:hover {
+    border-color: #0d1319;
+    box-shadow: 0 0 0 2px rgba(13, 19, 25, 0.12);
+  }
+
+  input {
+    display: none;
+  }
+`;
 
 const PageHeader = styled.div`
   display: flex;
@@ -92,11 +117,11 @@ export const BusinessCustomersPage: React.FC = () => {
     fetchCustomers();
   }, [search]);
 
-  const handleSelectAll = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (e.target.checked) {
-      setSelectedIds(new Set(customers.map((c) => c.id)));
-    } else {
+  const handleSelectAll = (e?: React.ChangeEvent<HTMLInputElement>) => {
+    if (selectedIds.size === customers.length && customers.length > 0) {
       setSelectedIds(new Set());
+    } else {
+      setSelectedIds(new Set(customers.map((c) => c.id)));
     }
   };
 
@@ -255,11 +280,21 @@ export const BusinessCustomersPage: React.FC = () => {
         <thead>
           <tr>
             <th style={{ width: 36, textAlign: 'center' }}>
-              <input
-                type="checkbox"
-                checked={customers.length > 0 && selectedIds.size === customers.length}
-                onChange={handleSelectAll}
-              />
+              <CustomCheckbox
+                $checked={customers.length > 0 && selectedIds.size === customers.length}
+                onClick={(e) => {
+                  e.preventDefault();
+                  handleSelectAll();
+                }}
+                title="Select All Clients"
+              >
+                <input
+                  type="checkbox"
+                  checked={customers.length > 0 && selectedIds.size === customers.length}
+                  readOnly
+                />
+                {customers.length > 0 && selectedIds.size === customers.length && <Check size={11} strokeWidth={3} />}
+              </CustomCheckbox>
             </th>
             <th>Client Name</th>
             <th>Country</th>
@@ -276,11 +311,21 @@ export const BusinessCustomersPage: React.FC = () => {
           {customers.map((c) => (
             <tr key={c.id}>
               <td style={{ textAlign: 'center' }}>
-                <input
-                  type="checkbox"
-                  checked={selectedIds.has(c.id)}
-                  onChange={() => handleToggleSelect(c.id)}
-                />
+                <CustomCheckbox
+                  $checked={selectedIds.has(c.id)}
+                  onClick={(e) => {
+                    e.preventDefault();
+                    handleToggleSelect(c.id);
+                  }}
+                  title={`Select client ${c.name}`}
+                >
+                  <input
+                    type="checkbox"
+                    checked={selectedIds.has(c.id)}
+                    readOnly
+                  />
+                  {selectedIds.has(c.id) && <Check size={11} strokeWidth={3} />}
+                </CustomCheckbox>
               </td>
               <td style={{ fontWeight: 600 }}>{c.name}</td>
               <td>{c.country || '-'}</td>
