@@ -155,6 +155,11 @@ export const businessApi = {
     return res.data;
   },
 
+  bulkUpdateSales: async (ids: string[], updates: Record<string, any>) => {
+    const res = await API.post<{ message: string; updatedCount: number }>('/business/sales/bulk-update', { ids, updates });
+    return res.data;
+  },
+
   deleteAllSales: async () => {
     const res = await API.post<{ message: string }>('/business/sales/delete-all');
     return res.data;

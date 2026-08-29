@@ -639,6 +639,8 @@ if (str_starts_with($path, '/api/v1/business/')) {
         }
     } else if (($path === '/api/v1/business/sales/delete-all' || $path === '/api/v1/business/sales/clear') && ($method === 'POST' || $method === 'DELETE' || $method === 'GET')) {
         handleDeleteAllSales();
+    } else if ($path === '/api/v1/business/sales/bulk-update' && ($method === 'POST' || $method === 'PUT' || $method === 'PATCH')) {
+        handleBulkUpdateBusinessSales();
     } else if ($path === '/api/v1/business/sales/batch' && ($method === 'POST' || $method === 'DELETE')) {
         handleDeleteSalesBatch();
     } else if (preg_match('#^/api/v1/business/sales/([^/]+)$#', $path, $saleMatches)) {

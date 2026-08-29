@@ -801,6 +801,67 @@ function handleUpdateBusinessSale(string $id): void {
     jsonResponse(['message' => 'Sale updated successfully', 'id' => $actualId, 'success' => true]);
 }
 
+function handleBulkUpdateBusinessSales(): void {
+    $pdo = getDatabaseConnection();
+    ensureBusinessTablesExist($pdo);
+
+    $raw = file_get_contents('php://input');
+    $body = json_decode($raw, true) ?? $_POST;
+
+    $ids = $body['ids'] ?? [];
+    $updates = $body['updates'] ?? [];
+
+    if (empty($ids) || !is_array($ids)) {
+        jsonError('No sales IDs provided for bulk update', 400);
+    }
+    if (empty($updates) || !is_array($updates)) {
+        jsonError('No update fields provided', 400);
+    }
+
+    $updatedCount = 0;
+    foreach ($ids as $id) {
+        $stmt = $pdo->prepare("SELECT * FROM `internalsale` WHERE `id` = ? OR `invoiceNo` = ? LIMIT 1");
+        $stmt->execute([$id, $id]);
+        $existing = $stmt->fetch(PDO::FETCH_ASSOC);
+        if (!$existing) continue;
+
+        $merged = array_merge($existing, $updates);
+        $fin = computePhpFinancials($merged);
+
+        $updateStmt = $pdo->prepare("UPDATE `internalsale` SET 
+            `paymentStatus` = ?, `paymentMethod` = ?, `orderStatus` = ?, `salesPersonName` = ?, 
+            `dollarRate` = ?, `discount` = ?, `finalSaleAmount` = ?, `grossProfit` = ?, 
+            `netProfit` = ?, `commissionPercent` = ?, `commissionAmount` = ?, 
+            `profitAfterCommission` = ?, `trackingNumber` = ?, `updatedAt` = NOW()
+            WHERE `id` = ?");
+
+        $updateStmt->execute([
+            $updates['paymentStatus'] ?? $existing['paymentStatus'],
+            $updates['paymentMethod'] ?? $existing['paymentMethod'],
+            $updates['orderStatus'] ?? $existing['orderStatus'],
+            $updates['salesPersonName'] ?? $existing['salesPersonName'],
+            !empty($updates['dollarRate']) ? (float)$updates['dollarRate'] : (float)$existing['dollarRate'],
+            $fin['discount'],
+            $fin['finalSaleAmount'],
+            $fin['grossProfit'],
+            $fin['netProfit'],
+            $fin['commissionPercent'],
+            $fin['commissionAmount'],
+            $fin['profitAfterCommission'],
+            $updates['trackingNumber'] ?? $existing['trackingNumber'],
+            $existing['id']
+        ]);
+        $updatedCount++;
+    }
+
+    recordBusinessAuditLog('BULK_UPDATE', 'Sale', "Bulk updated {$updatedCount} sales records");
+    jsonResponse([
+        'message' => "{$updatedCount} sales updated successfully",
+        'updatedCount' => $updatedCount,
+        'success' => true
+    ]);
+}
+
 function handleMarkAllEmployeesPresentForMonth(): void {
     $pdo = getDatabaseConnection();
     ensureBusinessTablesExist($pdo);

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Link } from 'react-router-dom';
 import styled, { keyframes } from 'styled-components';
 import * as XLSX from 'xlsx';
@@ -6,6 +6,7 @@ import { PRIVATE_BUSINESS_PATH } from '../../App';
 import { businessApi } from '../services/businessApi';
 import { InternalSale } from '../types';
 import { BusinessEditSaleModal } from './BusinessEditSaleModal';
+import { BusinessBulkEditSalesModal } from './BusinessBulkEditSalesModal';
 import {
   Plus,
   Search,
@@ -34,6 +35,10 @@ import {
   RefreshCw,
   Gem,
   Package,
+  Edit3,
+  ArrowLeft,
+  ArrowRight,
+  SlidersHorizontal,
 } from 'lucide-react';
 
 const pulse = keyframes`
@@ -117,7 +122,7 @@ const PrimaryButton = styled(Link)`
   }
 `;
 
-const SecondaryButton = styled.button<{ $variant?: 'danger' | 'success' | 'default' }>`
+const SecondaryButton = styled.button<{ $variant?: 'danger' | 'success' | 'default' | 'primary' }>`
   display: inline-flex;
   align-items: center;
   gap: 6px;
@@ -149,6 +154,15 @@ const SecondaryButton = styled.button<{ $variant?: 'danger' | 'success' | 'defau
           &:hover {
             background: #f0fdf4;
             border-color: #86efac;
+          }
+        `;
+      case 'primary':
+        return `
+          border: 1px solid #0d1319;
+          color: #ffffff;
+          background: #0d1319;
+          &:hover {
+            background: #1e293b;
           }
         `;
       default:
@@ -351,6 +365,52 @@ const FilterToolbar = styled.div`
   }
 `;
 
+const ScrollNavigatorBar = styled.div`
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  padding: 6px 12px;
+  font-size: 0.78rem;
+  color: #475569;
+
+  .hint-text {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-weight: 600;
+  }
+
+  .scroll-btn-group {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .nav-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    background: #ffffff;
+    border: 1px solid #cbd5e1;
+    color: #0f172a;
+    padding: 4px 10px;
+    border-radius: 6px;
+    font-size: 0.74rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.15s ease;
+
+    &:hover {
+      background: #0d1319;
+      color: #ffffff;
+      border-color: #0d1319;
+    }
+  }
+`;
+
 const SelectionBanner = styled.div`
   display: flex;
   justify-content: space-between;
@@ -362,12 +422,14 @@ const SelectionBanner = styled.div`
   font-size: 0.82rem;
   font-weight: 600;
   color: #166534;
-  animation: fadeIn 0.2s ease;
+  flex-wrap: wrap;
+  gap: 10px;
 
   .actions {
     display: flex;
     align-items: center;
     gap: 8px;
+    flex-wrap: wrap;
   }
 `;
 
@@ -404,6 +466,8 @@ const TableContainer = styled.div`
   box-shadow: 0 1px 4px rgba(0, 0, 0, 0.04);
   scrollbar-width: thin;
   position: relative;
+  -webkit-overflow-scrolling: touch;
+  touch-action: pan-x pan-y;
 `;
 
 const Table = styled.table`
@@ -520,6 +584,61 @@ const Badge = styled.span<{ $type?: string }>`
   }}
 `;
 
+const ActionButton = styled.button<{ $variant?: 'view' | 'edit' | 'delete' }>`
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 5px 9px;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  border: 1.5px solid transparent;
+
+  ${({ $variant }) => {
+    switch ($variant) {
+      case 'view':
+        return `
+          background: #f1f5f9;
+          border-color: #94a3b8;
+          color: #0f172a;
+          &:hover {
+            background: #0d1319;
+            color: #ffffff;
+            border-color: #0d1319;
+          }
+        `;
+      case 'edit':
+        return `
+          background: #eff6ff;
+          border-color: #60a5fa;
+          color: #1d4ed8;
+          &:hover {
+            background: #2563eb;
+            color: #ffffff;
+            border-color: #2563eb;
+          }
+        `;
+      case 'delete':
+        return `
+          background: #fff1f2;
+          border-color: #f87171;
+          color: #be123c;
+          &:hover {
+            background: #e11d48;
+            color: #ffffff;
+            border-color: #e11d48;
+          }
+        `;
+      default:
+        return `
+          background: #f8fafc;
+          border-color: #cbd5e1;
+          color: #334155;
+        `;
+    }
+  }}
+`;
+
 const EmptyStateContainer = styled.div`
   display: flex;
   flex-direction: column;
@@ -578,7 +697,18 @@ export const BusinessSalesListPage: React.FC = () => {
   const [pagination, setPagination] = useState<any>(null);
   const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
   const [editingSale, setEditingSale] = useState<InternalSale | null>(null);
+  const [isBulkEditOpen, setIsBulkEditOpen] = useState(false);
   const [fetchError, setFetchError] = useState<string | null>(null);
+
+  const tableContainerRef = useRef<HTMLDivElement>(null);
+
+  const handleScrollLeft = () => {
+    tableContainerRef.current?.scrollBy({ left: -450, behavior: 'smooth' });
+  };
+
+  const handleScrollRight = () => {
+    tableContainerRef.current?.scrollBy({ left: 450, behavior: 'smooth' });
+  };
 
   const fetchSales = async () => {
     setLoading(true);
@@ -665,6 +795,9 @@ export const BusinessSalesListPage: React.FC = () => {
       alert(e?.response?.data?.message || 'Delete all failed');
     }
   };
+
+  // Find the single selected sale if 1 is selected
+  const singleSelectedSale = selectedIds.size === 1 ? sales.find((s) => selectedIds.has(s.id)) : null;
 
   const exportCSV = () => {
     if (!sales || sales.length === 0) return;
@@ -1047,17 +1180,43 @@ export const BusinessSalesListPage: React.FC = () => {
         </div>
       </FilterToolbar>
 
-      {/* Floating Selection Banner */}
+      {/* Floating Selection Banner with Single & Bulk Edit Actions */}
       {selectedIds.size > 0 && (
         <SelectionBanner>
           <div>
-            ✨ <strong>{selectedIds.size}</strong> {selectedIds.size === 1 ? 'record' : 'records'} selected
+            ✨ <strong>{selectedIds.size}</strong> {selectedIds.size === 1 ? 'sale selected' : 'sales selected'}
+            {singleSelectedSale && <span> ({singleSelectedSale.invoiceNo} • {singleSelectedSale.customerName})</span>}
           </div>
           <div className="actions">
-            <SecondaryButton type="button" onClick={() => setSelectedIds(new Set())} style={{ padding: '4px 10px', fontSize: '0.76rem' }}>
+            {selectedIds.size === 1 && singleSelectedSale && (
+              <SecondaryButton
+                type="button"
+                $variant="primary"
+                onClick={() => setEditingSale(singleSelectedSale)}
+                style={{ padding: '5px 12px', fontSize: '0.78rem' }}
+                title="Edit full sale details"
+              >
+                <Edit2 size={13} /> Edit Sale ({singleSelectedSale.invoiceNo})
+              </SecondaryButton>
+            )}
+
+            {selectedIds.size > 1 && (
+              <SecondaryButton
+                type="button"
+                $variant="primary"
+                onClick={() => setIsBulkEditOpen(true)}
+                style={{ padding: '5px 14px', fontSize: '0.78rem' }}
+                title="Bulk edit all selected invoices"
+              >
+                <Edit3 size={13} /> Bulk Edit Selected ({selectedIds.size})
+              </SecondaryButton>
+            )}
+
+            <SecondaryButton type="button" onClick={() => setSelectedIds(new Set())} style={{ padding: '5px 10px', fontSize: '0.76rem' }}>
               Deselect All
             </SecondaryButton>
-            <SecondaryButton type="button" $variant="danger" onClick={handleDeleteSelected} style={{ padding: '4px 12px', fontSize: '0.76rem' }}>
+
+            <SecondaryButton type="button" $variant="danger" onClick={handleDeleteSelected} style={{ padding: '5px 12px', fontSize: '0.76rem' }}>
               <Trash2 size={12} /> Delete Selected ({selectedIds.size})
             </SecondaryButton>
           </div>
@@ -1074,8 +1233,24 @@ export const BusinessSalesListPage: React.FC = () => {
         </div>
       )}
 
+      {/* Top Table Scroll Navigator */}
+      <ScrollNavigatorBar>
+        <div className="hint-text">
+          <SlidersHorizontal size={14} color="#0f172a" />
+          <span>46-Column Financial Ledger • Scroll horizontally or swipe on touch screens</span>
+        </div>
+        <div className="scroll-btn-group">
+          <button type="button" className="nav-btn" onClick={handleScrollLeft} title="Scroll ledger left">
+            <ArrowLeft size={12} /> Scroll Left
+          </button>
+          <button type="button" className="nav-btn" onClick={handleScrollRight} title="Scroll ledger right">
+            Scroll Right <ArrowRight size={12} />
+          </button>
+        </div>
+      </ScrollNavigatorBar>
+
       {/* Main Data Table */}
-      <TableContainer>
+      <TableContainer ref={tableContainerRef}>
         <Table>
           <thead>
             <tr>
@@ -1122,7 +1297,7 @@ export const BusinessSalesListPage: React.FC = () => {
               <th>Order Status</th>
               <th>Tracking</th>
               <th>Dollar Rate</th>
-              <th style={{ textAlign: 'right' }}>Actions</th>
+              <th style={{ textAlign: 'center', minWidth: 110 }}>Actions</th>
             </tr>
           </thead>
           <tbody>
@@ -1254,53 +1429,36 @@ export const BusinessSalesListPage: React.FC = () => {
                     />
                   </td>
 
-                  <td style={{ textAlign: 'right' }}>
-                    <div style={{ display: 'inline-flex', gap: 6 }}>
+                  {/* Sharp, Visible Action Buttons */}
+                  <td style={{ textAlign: 'center' }}>
+                    <div style={{ display: 'inline-flex', gap: 6, alignItems: 'center', justifyContent: 'center' }}>
                       <Link to={`${PRIVATE_BUSINESS_PATH}/sales/${s.id}`}>
-                        <button
-                          style={{
-                            background: '#f8fafc',
-                            border: '1px solid #e2e8f0',
-                            padding: '4px 8px',
-                            borderRadius: 6,
-                            cursor: 'pointer',
-                            color: '#334155',
-                          }}
+                        <ActionButton
+                          type="button"
+                          $variant="view"
                           title="View Sale Detail"
                         >
-                          <Eye size={13} />
-                        </button>
+                          <Eye size={13} strokeWidth={2.2} />
+                        </ActionButton>
                       </Link>
 
-                      <button
+                      <ActionButton
+                        type="button"
+                        $variant="edit"
                         onClick={() => setEditingSale(s)}
-                        style={{
-                          background: '#f8fafc',
-                          border: '1px solid #e2e8f0',
-                          padding: '4px 8px',
-                          borderRadius: 6,
-                          cursor: 'pointer',
-                          color: '#0f172a',
-                        }}
                         title="Edit Sale Invoice"
                       >
-                        <Edit2 size={13} />
-                      </button>
+                        <Edit2 size={13} strokeWidth={2.2} />
+                      </ActionButton>
 
-                      <button
+                      <ActionButton
+                        type="button"
+                        $variant="delete"
                         onClick={() => handleDelete(s.id, s.invoiceNo)}
-                        style={{
-                          background: '#fff5f5',
-                          border: '1px solid #fee2e2',
-                          color: '#dc2626',
-                          padding: '4px 8px',
-                          borderRadius: 6,
-                          cursor: 'pointer',
-                        }}
                         title="Delete Sale Invoice"
                       >
-                        <Trash2 size={13} />
-                      </button>
+                        <Trash2 size={13} strokeWidth={2.2} />
+                      </ActionButton>
                     </div>
                   </td>
                 </tr>
@@ -1374,13 +1532,26 @@ export const BusinessSalesListPage: React.FC = () => {
         </div>
       )}
 
-      {/* Edit Sale Modal */}
+      {/* Single Sale Full Edit Modal */}
       {editingSale && (
         <BusinessEditSaleModal
           sale={editingSale}
           onClose={() => setEditingSale(null)}
           onSuccess={() => {
             setEditingSale(null);
+            fetchSales();
+          }}
+        />
+      )}
+
+      {/* Bulk Edit Modal for Multiple Selected Sales */}
+      {isBulkEditOpen && (
+        <BusinessBulkEditSalesModal
+          selectedIds={Array.from(selectedIds)}
+          onClose={() => setIsBulkEditOpen(false)}
+          onSuccess={() => {
+            setIsBulkEditOpen(false);
+            setSelectedIds(new Set());
             fetchSales();
           }}
         />
