@@ -172,6 +172,7 @@ function ensureBusinessTablesExist(PDO $pdo): void {
     // 7. SalesTarget (Company Month-Wise)
     $pdo->exec("CREATE TABLE IF NOT EXISTS `salestarget` (
         `id` VARCHAR(191) PRIMARY KEY,
+        `employeeId` VARCHAR(191) NULL DEFAULT 'COMPANY',
         `periodType` VARCHAR(50) NOT NULL DEFAULT 'MONTHLY',
         `periodYear` INT NOT NULL DEFAULT 2026,
         `periodMonth` INT NOT NULL DEFAULT 1,
@@ -182,6 +183,14 @@ function ensureBusinessTablesExist(PDO $pdo): void {
         `createdAt` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
         `updatedAt` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
     ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;");
+
+    // Self-healing columns for salestarget
+    try { $pdo->exec("ALTER TABLE `salestarget` MODIFY COLUMN `employeeId` VARCHAR(191) NULL DEFAULT 'COMPANY'"); } catch (\Throwable $e) {}
+    try { $pdo->exec("ALTER TABLE `salestarget` ADD COLUMN `periodType` VARCHAR(50) NOT NULL DEFAULT 'MONTHLY'"); } catch (\Throwable $e) {}
+    try { $pdo->exec("ALTER TABLE `salestarget` ADD COLUMN `periodYear` INT NOT NULL DEFAULT 2026"); } catch (\Throwable $e) {}
+    try { $pdo->exec("ALTER TABLE `salestarget` ADD COLUMN `periodMonth` INT NOT NULL DEFAULT 1"); } catch (\Throwable $e) {}
+    try { $pdo->exec("ALTER TABLE `salestarget` ADD COLUMN `year` INT NOT NULL DEFAULT 2026"); } catch (\Throwable $e) {}
+    try { $pdo->exec("ALTER TABLE `salestarget` ADD COLUMN `month` INT NOT NULL DEFAULT 1"); } catch (\Throwable $e) {}
 
     // 8. Business Backups
     $pdo->exec("CREATE TABLE IF NOT EXISTS `business_backups` (
@@ -1598,39 +1607,61 @@ function handleGetBusinessTargets(): void {
 }
 
 function handleCreateBusinessTarget(): void {
-    $pdo = getDatabaseConnection();
-    ensureBusinessTablesExist($pdo);
+    try {
+        $pdo = getDatabaseConnection();
+        ensureBusinessTablesExist($pdo);
 
-    $raw = file_get_contents('php://input');
-    $body = json_decode($raw, true) ?? $_POST;
+        $raw = file_get_contents('php://input');
+        $body = json_decode($raw, true) ?? $_POST;
 
-    $tYear = (int)($body['periodYear'] ?? $body['year'] ?? date('Y'));
-    $tMonth = (int)($body['periodMonth'] ?? $body['month'] ?? date('n'));
-    $targetAmt = (float)($body['targetAmount'] ?? 0);
-    $notes = trim($body['notes'] ?? 'Company Monthly Sales Target');
+        $tYear = (int)($body['periodYear'] ?? $body['year'] ?? date('Y'));
+        $tMonth = (int)($body['periodMonth'] ?? $body['month'] ?? date('n'));
+        $targetAmt = (float)($body['targetAmount'] ?? 0);
+        $notes = trim($body['notes'] ?? 'Company Monthly Sales Target');
 
-    if ($targetAmt <= 0) {
-        jsonError('Target amount must be greater than 0', 400);
+        if ($targetAmt <= 0) {
+            jsonError('Target amount must be greater than 0', 400);
+            return;
+        }
+
+        $id = 'tgt-company-' . $tYear . '-' . $tMonth;
+
+        try {
+            $stmt = $pdo->prepare("INSERT INTO `salestarget` (
+                `id`, `employeeId`, `periodType`, `periodYear`, `periodMonth`, `year`, `month`, `targetAmount`, `notes`, `createdAt`, `updatedAt`
+            ) VALUES (?, 'COMPANY', 'MONTHLY', ?, ?, ?, ?, ?, ?, NOW(), NOW())
+            ON DUPLICATE KEY UPDATE `targetAmount` = VALUES(`targetAmount`), `notes` = VALUES(`notes`), `updatedAt` = NOW()");
+
+            $stmt->execute([
+                $id,
+                $tYear,
+                $tMonth,
+                $tYear,
+                $tMonth,
+                $targetAmt,
+                $notes
+            ]);
+        } catch (\Throwable $err1) {
+            $stmt = $pdo->prepare("INSERT INTO `salestarget` (
+                `id`, `year`, `month`, `targetAmount`, `notes`, `createdAt`, `updatedAt`
+            ) VALUES (?, ?, ?, ?, ?, NOW(), NOW())
+            ON DUPLICATE KEY UPDATE `targetAmount` = VALUES(`targetAmount`), `notes` = VALUES(`notes`), `updatedAt` = NOW()");
+
+            $stmt->execute([
+                $id,
+                $tYear,
+                $tMonth,
+                $targetAmt,
+                $notes
+            ]);
+        }
+
+        recordBusinessAuditLog('SET_TARGET', 'SalesTarget', "Set company monthly sales target for {$tMonth}/{$tYear} to \${$targetAmt}");
+        jsonResponse(['message' => 'Company monthly sales target saved successfully', 'id' => $id, 'success' => true]);
+    } catch (\Throwable $e) {
+        error_log('Target creation error: ' . $e->getMessage());
+        jsonError('Failed to save target: ' . $e->getMessage(), 500);
     }
-
-    $id = 'tgt-company-' . $tYear . '-' . $tMonth;
-    $stmt = $pdo->prepare("INSERT INTO `salestarget` (
-        `id`, `periodType`, `periodYear`, `periodMonth`, `year`, `month`, `targetAmount`, `notes`, `createdAt`, `updatedAt`
-    ) VALUES (?, 'MONTHLY', ?, ?, ?, ?, ?, ?, NOW(), NOW())
-    ON DUPLICATE KEY UPDATE `targetAmount` = VALUES(`targetAmount`), `notes` = VALUES(`notes`), `updatedAt` = NOW()");
-
-    $stmt->execute([
-        $id,
-        $tYear,
-        $tMonth,
-        $tYear,
-        $tMonth,
-        $targetAmt,
-        $notes
-    ]);
-
-    recordBusinessAuditLog('SET_TARGET', 'SalesTarget', "Set company monthly sales target for {$tMonth}/{$tYear} to \${$targetAmt}");
-    jsonResponse(['message' => 'Company monthly sales target saved successfully', 'id' => $id, 'success' => true]);
 }
 
 function handleDeleteBusinessTarget(string $id): void {
