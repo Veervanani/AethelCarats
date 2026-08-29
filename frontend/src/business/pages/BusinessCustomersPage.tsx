@@ -379,13 +379,13 @@ export const BusinessCustomersPage: React.FC = () => {
                     {selectedIds.has(c.id) && <Check size={11} strokeWidth={3} />}
                   </CustomCheckbox>
                 </td>
-                <td style={{ fontWeight: 700 }}>
+                <td style={{ fontWeight: 600 }}>
                   <span
                     onClick={() => handleOpenCustomerOrders(c)}
-                    style={{ color: '#0f172a', cursor: 'pointer', display: 'inline-flex', alignItems: 'center', gap: 4 }}
-                    title="View Customer Order Details"
+                    style={{ color: '#0f172a', cursor: 'pointer' }}
+                    title={`Click to view profile and orders for ${cName}`}
                   >
-                    {cName} <ArrowUpRight size={12} color="#64748b" />
+                    {cName}
                   </span>
                 </td>
                 <td>{c.country || (c as any).customerCountry || '-'}</td>
@@ -394,25 +394,25 @@ export const BusinessCustomersPage: React.FC = () => {
                   <div style={{ fontSize: '0.72rem', color: '#64748b' }}>{c.company || (c as any).companyName || ''}</div>
                 </td>
                 <td>{(c.assignedEmployee as any)?.fullName || (c.assignedEmployee as any)?.name || (c as any).assignedStaff || 'Sales Team'}</td>
-                <td style={{ fontWeight: 700 }}>
+                <td>
                   <button
                     onClick={() => handleOpenCustomerOrders(c)}
                     style={{
-                      background: '#f1f5f9',
-                      border: '1px solid #cbd5e1',
-                      borderRadius: 6,
-                      padding: '3px 8px',
-                      fontSize: '0.78rem',
-                      fontWeight: 700,
-                      color: '#0f172a',
+                      background: '#f8fafc',
+                      border: '1px solid #e2e8f0',
+                      borderRadius: 16,
+                      padding: '3px 10px',
+                      fontSize: '0.75rem',
+                      fontWeight: 600,
+                      color: '#2563eb',
                       cursor: 'pointer',
                       display: 'inline-flex',
                       alignItems: 'center',
-                      gap: 4,
+                      gap: 5,
                     }}
                     title="Click to view all orders"
                   >
-                    <ShoppingBag size={12} color="#2563eb" /> {deals} {deals === 1 ? 'deal' : 'deals'}
+                    <ShoppingBag size={12} /> {deals} {deals === 1 ? 'deal' : 'deals'}
                   </button>
                 </td>
                 <td style={{ fontWeight: 700 }}>${Number((c as any).lifetimeVolume ?? c.totalSales ?? 0).toLocaleString()}</td>
@@ -425,28 +425,31 @@ export const BusinessCustomersPage: React.FC = () => {
                       style={{
                         display: 'inline-flex',
                         alignItems: 'center',
-                        gap: 4,
-                        padding: '5px 10px',
-                        background: '#0d1319',
-                        color: '#ffffff',
-                        border: 'none',
-                        borderRadius: 5,
-                        fontSize: '0.74rem',
-                        fontWeight: 700,
+                        justifyContent: 'center',
+                        width: 28,
+                        height: 28,
+                        background: '#ffffff',
+                        border: '1px solid #e2e8f0',
+                        color: '#475569',
+                        borderRadius: 6,
                         cursor: 'pointer',
                       }}
-                      title="View Customer Orders & History"
+                      title={`View all orders of ${cName}`}
                     >
-                      <Eye size={13} /> View Orders ({deals})
+                      <Eye size={14} />
                     </button>
                     <button
                       onClick={() => handleDeleteSingle(c.id, cName)}
                       style={{
-                        padding: '5px 8px',
+                        display: 'inline-flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        width: 28,
+                        height: 28,
                         background: '#fff1f2',
                         border: '1px solid #fecdd3',
                         color: '#e11d48',
-                        borderRadius: 5,
+                        borderRadius: 6,
                         cursor: 'pointer',
                       }}
                       title="Delete Client"
