@@ -971,3 +971,35 @@ function handleDeleteAllSales(): void {
     $pdo->exec("DELETE FROM `internalsale`");
     jsonResponse(['message' => 'All sales removed successfully', 'success' => true]);
 }
+
+function handleDeleteSaleById(string $id): void {
+    $pdo = getDatabaseConnection();
+    ensureBusinessTablesExist($pdo);
+
+    $pdo->prepare("DELETE FROM `commission` WHERE `saleId` = ?")->execute([$id]);
+    $stmt = $pdo->prepare("DELETE FROM `internalsale` WHERE `id` = ? OR `invoiceNo` = ?");
+    $stmt->execute([$id, $id]);
+
+    jsonResponse(['message' => 'Sale deleted successfully', 'success' => true]);
+}
+
+function handleDeleteSalesBatch(): void {
+    $pdo = getDatabaseConnection();
+    ensureBusinessTablesExist($pdo);
+
+    $raw = file_get_contents('php://input');
+    $body = json_decode($raw, true) ?? $_POST;
+    $ids = $body['ids'] ?? [];
+
+    if (empty($ids) || !is_array($ids)) {
+        jsonError('No sale IDs provided', 400);
+    }
+
+    $placeholders = implode(',', array_fill(0, count($ids), '?'));
+    $pdo->prepare("DELETE FROM `commission` WHERE `saleId` IN ($placeholders)")->execute($ids);
+    $stmt = $pdo->prepare("DELETE FROM `internalsale` WHERE `id` IN ($placeholders)");
+    $stmt->execute($ids);
+
+    jsonResponse(['message' => count($ids) . ' sales deleted successfully', 'success' => true]);
+}
+

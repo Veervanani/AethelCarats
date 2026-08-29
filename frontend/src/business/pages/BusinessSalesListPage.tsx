@@ -21,6 +21,7 @@ import {
   ChevronLeft,
   ChevronRight,
   TrendingUp,
+  AlertTriangle,
 } from 'lucide-react';
 
 const PageHeader = styled.div`
@@ -151,6 +152,8 @@ const Badge = styled.span<{ $type?: string }>`
   }}
 `;
 
+const fmt = (num: any) => (Number(num) || 0).toLocaleString();
+
 export const BusinessSalesListPage: React.FC = () => {
   const [sales, setSales] = useState<InternalSale[]>([]);
   const [summary, setSummary] = useState<any>(null);
@@ -161,6 +164,7 @@ export const BusinessSalesListPage: React.FC = () => {
   const [orderStatus, setOrderStatus] = useState('ALL');
   const [page, setPage] = useState(1);
   const [pagination, setPagination] = useState<any>(null);
+  const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
 
   const fetchSales = async () => {
     setLoading(true);
@@ -171,7 +175,7 @@ export const BusinessSalesListPage: React.FC = () => {
         paymentStatus: paymentStatus !== 'ALL' ? paymentStatus : undefined,
         orderStatus: orderStatus !== 'ALL' ? orderStatus : undefined,
         page,
-        limit: 25,
+        limit: 50,
       });
       setSales(res.sales || []);
       setSummary(res.summary);
@@ -187,13 +191,62 @@ export const BusinessSalesListPage: React.FC = () => {
     fetchSales();
   }, [search, productType, paymentStatus, orderStatus, page]);
 
+  const toggleSelectAll = () => {
+    if (selectedIds.size === sales.length && sales.length > 0) {
+      setSelectedIds(new Set());
+    } else {
+      setSelectedIds(new Set(sales.map((s) => s.id)));
+    }
+  };
+
+  const toggleSelectRow = (id: string) => {
+    setSelectedIds((prev) => {
+      const next = new Set(prev);
+      if (next.has(id)) next.delete(id);
+      else next.add(id);
+      return next;
+    });
+  };
+
   const handleDelete = async (id: string, inv: string) => {
-    if (!window.confirm(`Are you sure you want to delete invoice ${inv}?`)) return;
+    if (!window.confirm(`⚠️ Are you sure you want to delete invoice ${inv}?`)) return;
     try {
       await businessApi.deleteSale(id);
-      fetchSales();
+      setSelectedIds((prev) => {
+        const next = new Set(prev);
+        next.delete(id);
+        return next;
+      });
+      await fetchSales();
     } catch (e: any) {
       alert(e?.response?.data?.message || 'Delete failed');
+    }
+  };
+
+  const handleDeleteSelected = async () => {
+    if (selectedIds.size === 0) return;
+    if (!window.confirm(`⚠️ Are you sure you want to permanently delete the ${selectedIds.size} selected sales?`)) return;
+    try {
+      await businessApi.deleteSalesBatch(Array.from(selectedIds));
+      setSelectedIds(new Set());
+      await fetchSales();
+      alert(`✅ Selected sales deleted successfully.`);
+    } catch (e: any) {
+      alert(e?.response?.data?.message || 'Delete batch failed');
+    }
+  };
+
+  const handleDeleteAll = async () => {
+    if (!window.confirm('⚠️ WARNING: Are you sure you want to permanently delete ALL sales records from the database? This action cannot be undone.')) {
+      return;
+    }
+    try {
+      await businessApi.deleteAllSales();
+      setSelectedIds(new Set());
+      await fetchSales();
+      alert('✅ All sales have been deleted successfully from the database.');
+    } catch (e: any) {
+      alert(e?.response?.data?.message || 'Delete all failed');
     }
   };
 
@@ -234,7 +287,7 @@ export const BusinessSalesListPage: React.FC = () => {
 
     const rows = sales.map((s) => [
       s.invoiceNo,
-      new Date(s.saleDate).toISOString().split('T')[0],
+      s.saleDate ? new Date(s.saleDate).toISOString().split('T')[0] : '',
       `"${s.customerName}"`,
       s.customerCountry || '',
       s.productType,
@@ -269,17 +322,14 @@ export const BusinessSalesListPage: React.FC = () => {
     const encodedUri = encodeURI(csvContent);
     const link = document.createElement('a');
     link.setAttribute('href', encodedUri);
-    link.setAttribute('download', `floksy_sales_tracker_${Date.now()}.csv`);
+    link.setAttribute('download', `sales_tracker_${new Date().toISOString().split('T')[0]}.csv`);
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
   };
 
   const exportExcel = () => {
-    if (sales.length === 0) {
-      alert('No sales to export');
-      return;
-    }
+    if (!sales || sales.length === 0) return;
 
     const headers = [
       'Invoice No',
@@ -297,23 +347,23 @@ export const BusinessSalesListPage: React.FC = () => {
       'Symmetry',
       'Fluorescence',
       'Measurement',
-      'Price per Carat ',
+      'Price per Carat',
       'Carat / Weight',
       'Quantity',
       'Certificate',
       'Certificate No',
-      'Supplier ',
-      'Purchase Price ',
-      'Selling Price ',
-      'Discount ',
-      'Final Sale Amount ',
-      'Shipping Cost ',
+      'Supplier',
+      'Purchase Price',
+      'Selling Price',
+      'Discount',
+      'Final Sale Amount',
+      'Shipping Cost',
       'GST %',
       'GST Amount',
       'Final Purchase Price',
       'Payment Status',
       'Payment Method',
-      'Amount Received ',
+      'Amount Received',
       'Pending Amount',
       'Gross Profit',
       'Net Profit',
@@ -395,7 +445,48 @@ export const BusinessSalesListPage: React.FC = () => {
           </p>
         </div>
 
-        <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap', alignItems: 'center' }}>
+        <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', alignItems: 'center' }}>
+          {selectedIds.size > 0 && (
+            <button
+              onClick={handleDeleteSelected}
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                gap: 6,
+                padding: '8px 14px',
+                background: '#dc2626',
+                color: '#ffffff',
+                border: 'none',
+                borderRadius: 6,
+                fontSize: '0.82rem',
+                fontWeight: 700,
+                cursor: 'pointer',
+              }}
+            >
+              <Trash2 size={14} /> Delete Selected ({selectedIds.size})
+            </button>
+          )}
+
+          <button
+            onClick={handleDeleteAll}
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              gap: 6,
+              padding: '8px 12px',
+              background: '#fff5f5',
+              border: '1px solid #fca5a5',
+              color: '#991b1b',
+              borderRadius: 6,
+              fontSize: '0.82rem',
+              fontWeight: 600,
+              cursor: 'pointer',
+            }}
+            title="Purge all sales data from database"
+          >
+            <Trash2 size={13} color="#991b1b" /> Delete All Sales
+          </button>
+
           <Link
             to={`${PRIVATE_BUSINESS_PATH}/import`}
             style={{
@@ -481,34 +572,34 @@ export const BusinessSalesListPage: React.FC = () => {
         </SummaryPill>
         <SummaryPill>
           <div className="label">Total Revenue</div>
-          <div className="val">${(summary?.totalRevenue || 0).toLocaleString()}</div>
+          <div className="val">${fmt(summary?.totalRevenue)}</div>
         </SummaryPill>
         <SummaryPill>
           <div className="label">Purchase Costs</div>
           <div className="val" style={{ color: '#475569' }}>
-            ${(summary?.totalPurchaseCost || 0).toLocaleString()}
+            ${fmt(summary?.totalPurchaseCost)}
           </div>
         </SummaryPill>
         <SummaryPill>
           <div className="label">Gross Profit</div>
-          <div className="val">${(summary?.totalGrossProfit || 0).toLocaleString()}</div>
+          <div className="val">${fmt(summary?.totalGrossProfit)}</div>
         </SummaryPill>
         <SummaryPill>
           <div className="label">Net Profit</div>
           <div className="val" style={{ color: '#16a34a' }}>
-            ${(summary?.totalNetProfit || 0).toLocaleString()}
+            ${fmt(summary?.totalNetProfit)}
           </div>
         </SummaryPill>
         <SummaryPill>
           <div className="label">Commission Due</div>
           <div className="val" style={{ color: '#d97706' }}>
-            ${(summary?.totalCommission || 0).toLocaleString()}
+            ${fmt(summary?.totalCommission)}
           </div>
         </SummaryPill>
         <SummaryPill>
           <div className="label">Retained Profit</div>
           <div className="val" style={{ color: '#2563eb' }}>
-            ${(summary?.totalProfitAfterCommission || 0).toLocaleString()}
+            ${fmt(summary?.totalProfitAfterCommission)}
           </div>
         </SummaryPill>
       </SummaryStrip>
@@ -562,6 +653,14 @@ export const BusinessSalesListPage: React.FC = () => {
         <Table>
           <thead>
             <tr>
+              <th style={{ width: 40, textAlign: 'center' }}>
+                <input
+                  type="checkbox"
+                  checked={sales.length > 0 && selectedIds.size === sales.length}
+                  onChange={toggleSelectAll}
+                  style={{ cursor: 'pointer' }}
+                />
+              </th>
               <th className="sticky-col">Invoice No</th>
               <th>Date</th>
               <th>Customer</th>
@@ -591,78 +690,90 @@ export const BusinessSalesListPage: React.FC = () => {
             </tr>
           </thead>
           <tbody>
-            {sales.map((s) => (
-              <tr key={s.id}>
-                <td className="sticky-col">
-                  <Link to={`${PRIVATE_BUSINESS_PATH}/sales/${s.id}`} style={{ color: '#0d1319', textDecoration: 'none' }}>
-                    {s.invoiceNo}
-                  </Link>
-                </td>
-                <td>{new Date(s.saleDate).toLocaleDateString()}</td>
-                <td style={{ fontWeight: 600 }}>{s.customerName}</td>
-                <td>{s.customerCountry || '-'}</td>
-                <td>
-                  <Badge $type={s.productType}>{s.productType}</Badge>
-                </td>
-                <td>{s.productDescription || s.shape || '-'}</td>
-                <td>{s.caratWeight ? `${s.caratWeight} ct` : '-'}</td>
-                <td>{s.diamondColor ? `${s.diamondColor} / ${s.clarity || ''}` : '-'}</td>
-                <td>{s.certificateNo || '-'}</td>
-                <td>{s.supplierName || 'None'}</td>
-                <td>${s.sellingPrice.toLocaleString()}</td>
-                <td style={{ fontWeight: 700 }}>${s.finalSaleAmount.toLocaleString()}</td>
-                <td>${s.purchasePrice.toLocaleString()}</td>
-                <td>${s.gstAmount.toLocaleString()}</td>
-                <td>${s.finalPurchasePrice.toLocaleString()}</td>
-                <td>${s.grossProfit.toLocaleString()}</td>
-                <td style={{ fontWeight: 700, color: s.netProfit >= 0 ? '#16a34a' : '#dc2626' }}>
-                  ${s.netProfit.toLocaleString()}
-                </td>
-                <td>{s.salesPersonName || '-'}</td>
-                <td>{(s.commissionPercent * 100).toFixed(1)}%</td>
-                <td style={{ color: '#d97706', fontWeight: 600 }}>${s.commissionAmount.toLocaleString()}</td>
-                <td style={{ fontWeight: 700 }}>${s.profitAfterCommission.toLocaleString()}</td>
-                <td>{((s.markupPercent || 0) * 100).toFixed(1)}%</td>
-                <td>
-                  <Badge $type={s.paymentStatus}>{s.paymentStatus}</Badge>
-                </td>
-                <td>
-                  <Badge $type={s.orderStatus}>{s.orderStatus}</Badge>
-                </td>
-                <td>
-                  {s.trackingNumber ? (
-                    s.trackingLink ? (
-                      <a href={s.trackingLink} target="_blank" rel="noreferrer" style={{ display: 'inline-flex', alignItems: 'center', gap: 2, color: '#2563eb' }}>
-                        {s.trackingNumber} <ExternalLink size={10} />
-                      </a>
-                    ) : (
-                      s.trackingNumber
-                    )
-                  ) : (
-                    '-'
-                  )}
-                </td>
-                <td style={{ textAlign: 'right' }}>
-                  <div style={{ display: 'inline-flex', gap: 6 }}>
-                    <Link to={`${PRIVATE_BUSINESS_PATH}/sales/${s.id}`}>
-                      <button style={{ background: 'none', border: '1px solid #e2e8f0', padding: '4px 8px', borderRadius: 4, cursor: 'pointer' }}>
-                        <Eye size={12} />
-                      </button>
+            {sales.map((s) => {
+              const isSelected = selectedIds.has(s.id);
+              return (
+                <tr key={s.id} style={{ background: isSelected ? '#f0fdf4' : undefined }}>
+                  <td style={{ textAlign: 'center' }}>
+                    <input
+                      type="checkbox"
+                      checked={isSelected}
+                      onChange={() => toggleSelectRow(s.id)}
+                      style={{ cursor: 'pointer' }}
+                    />
+                  </td>
+                  <td className="sticky-col">
+                    <Link to={`${PRIVATE_BUSINESS_PATH}/sales/${s.id}`} style={{ color: '#0d1319', textDecoration: 'none' }}>
+                      {s.invoiceNo}
                     </Link>
-                    <button
-                      onClick={() => handleDelete(s.id, s.invoiceNo)}
-                      style={{ background: 'none', border: '1px solid #fee2e2', color: '#dc2626', padding: '4px 8px', borderRadius: 4, cursor: 'pointer' }}
-                    >
-                      <Trash2 size={12} />
-                    </button>
-                  </div>
-                </td>
-              </tr>
-            ))}
+                  </td>
+                  <td>{s.saleDate ? new Date(s.saleDate).toLocaleDateString() : '-'}</td>
+                  <td style={{ fontWeight: 600 }}>{s.customerName}</td>
+                  <td>{s.customerCountry || '-'}</td>
+                  <td>
+                    <Badge $type={s.productType}>{s.productType}</Badge>
+                  </td>
+                  <td>{s.productDescription || s.shape || '-'}</td>
+                  <td>{s.caratWeight ? `${s.caratWeight} ct` : '-'}</td>
+                  <td>{s.diamondColor ? `${s.diamondColor} / ${s.clarity || ''}` : '-'}</td>
+                  <td>{s.certificateNo || '-'}</td>
+                  <td>{s.supplierName || 'None'}</td>
+                  <td>${fmt(s.sellingPrice)}</td>
+                  <td style={{ fontWeight: 700 }}>${fmt(s.finalSaleAmount)}</td>
+                  <td>${fmt(s.purchasePrice)}</td>
+                  <td>${fmt(s.gstAmount)}</td>
+                  <td>${fmt(s.finalPurchasePrice)}</td>
+                  <td>${fmt(s.grossProfit)}</td>
+                  <td style={{ fontWeight: 700, color: (Number(s.netProfit) || 0) >= 0 ? '#16a34a' : '#dc2626' }}>
+                    ${fmt(s.netProfit)}
+                  </td>
+                  <td>{s.salesPersonName || '-'}</td>
+                  <td>{((Number(s.commissionPercent) || 0) * 100).toFixed(1)}%</td>
+                  <td style={{ color: '#d97706', fontWeight: 600 }}>${fmt(s.commissionAmount)}</td>
+                  <td style={{ fontWeight: 700 }}>${fmt(s.profitAfterCommission)}</td>
+                  <td>{((Number(s.markupPercent) || 0) * 100).toFixed(1)}%</td>
+                  <td>
+                    <Badge $type={s.paymentStatus}>{s.paymentStatus}</Badge>
+                  </td>
+                  <td>
+                    <Badge $type={s.orderStatus}>{s.orderStatus}</Badge>
+                  </td>
+                  <td>
+                    {s.trackingNumber ? (
+                      s.trackingLink ? (
+                        <a href={s.trackingLink} target="_blank" rel="noreferrer" style={{ display: 'inline-flex', alignItems: 'center', gap: 2, color: '#2563eb' }}>
+                          {s.trackingNumber} <ExternalLink size={10} />
+                        </a>
+                      ) : (
+                        s.trackingNumber
+                      )
+                    ) : (
+                      '-'
+                    )}
+                  </td>
+                  <td style={{ textAlign: 'right' }}>
+                    <div style={{ display: 'inline-flex', gap: 6 }}>
+                      <Link to={`${PRIVATE_BUSINESS_PATH}/sales/${s.id}`}>
+                        <button style={{ background: 'none', border: '1px solid #e2e8f0', padding: '4px 8px', borderRadius: 4, cursor: 'pointer' }} title="View Sale Detail">
+                          <Eye size={12} />
+                        </button>
+                      </Link>
+                      <button
+                        onClick={() => handleDelete(s.id, s.invoiceNo)}
+                        style={{ background: 'none', border: '1px solid #fee2e2', color: '#dc2626', padding: '4px 8px', borderRadius: 4, cursor: 'pointer' }}
+                        title="Delete Sale Invoice"
+                      >
+                        <Trash2 size={12} />
+                      </button>
+                    </div>
+                  </td>
+                </tr>
+              );
+            })}
             {sales.length === 0 && !loading && (
               <tr>
-                <td colSpan={26} style={{ textAlign: 'center', padding: '40px', color: '#94a3b8' }}>
-                  No sales found. Click "New Sale Invoice" to record transactions.
+                <td colSpan={27} style={{ textAlign: 'center', padding: '40px', color: '#94a3b8' }}>
+                  No sales found in the database. Click "Import Excel / File" or "New Sale Invoice" to add records.
                 </td>
               </tr>
             )}

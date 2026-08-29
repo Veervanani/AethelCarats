@@ -130,6 +130,16 @@ export const businessApi = {
     return res.data;
   },
 
+  deleteSalesBatch: async (ids: string[]) => {
+    const res = await API.post<{ message: string }>('/business/sales/batch', { ids });
+    return res.data;
+  },
+
+  deleteAllSales: async () => {
+    const res = await API.post<{ message: string }>('/business/sales/delete-all');
+    return res.data;
+  },
+
   calculateSalesPreview: async (data: any) => {
     const res = await API.post('/business/sales/calculate-preview', data);
     return res.data;
