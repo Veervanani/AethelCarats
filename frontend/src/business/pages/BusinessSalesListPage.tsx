@@ -693,6 +693,8 @@ export const BusinessSalesListPage: React.FC = () => {
   const [productType, setProductType] = useState('ALL');
   const [paymentStatus, setPaymentStatus] = useState('ALL');
   const [orderStatus, setOrderStatus] = useState('ALL');
+  const [headerDateFilter, setHeaderDateFilter] = useState('ALL');
+  const [headerCustomerFilter, setHeaderCustomerFilter] = useState('ALL');
   const [page, setPage] = useState(1);
   const [pagination, setPagination] = useState<any>(null);
   const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
@@ -720,7 +722,7 @@ export const BusinessSalesListPage: React.FC = () => {
         paymentStatus: paymentStatus !== 'ALL' ? paymentStatus : undefined,
         orderStatus: orderStatus !== 'ALL' ? orderStatus : undefined,
         page,
-        limit: 50,
+        limit: 100,
       });
       setSales(res.sales || []);
       setSummary(res.summary);
@@ -737,11 +739,67 @@ export const BusinessSalesListPage: React.FC = () => {
     fetchSales();
   }, [search, productType, paymentStatus, orderStatus, page]);
 
+  // Extract distinct dates/months and customers for header dropdowns
+  const distinctCustomers = Array.from(
+    new Set(sales.map((s) => s.customerName).filter((c): c is string => Boolean(c && c.trim())))
+  ).sort();
+
+  const distinctDates = Array.from(
+    new Set(
+      sales
+        .map((s) => {
+          if (s.saleMonth) return s.saleMonth;
+          if (s.saleDate) {
+            const d = new Date(s.saleDate);
+            return isNaN(d.getTime()) ? String(s.saleDate) : d.toLocaleDateString();
+          }
+          return '';
+        })
+        .filter(Boolean)
+    )
+  ).sort();
+
+  // Compute live filtered sales
+  const filteredSales = sales.filter((s) => {
+    if (headerDateFilter !== 'ALL') {
+      const dStr = s.saleDate ? new Date(s.saleDate).toLocaleDateString() : '';
+      const mStr = s.saleMonth || '';
+      if (!dStr.includes(headerDateFilter) && !mStr.includes(headerDateFilter) && s.saleDate !== headerDateFilter) {
+        return false;
+      }
+    }
+    if (headerCustomerFilter !== 'ALL') {
+      if (s.customerName !== headerCustomerFilter) {
+        return false;
+      }
+    }
+    if (productType !== 'ALL') {
+      if (s.productType !== productType) {
+        return false;
+      }
+    }
+    return true;
+  });
+
+  // Calculate live dynamic metrics from filtered sales
+  const isHeaderFiltered = headerDateFilter !== 'ALL' || headerCustomerFilter !== 'ALL' || productType !== 'ALL';
+  const displaySummary = isHeaderFiltered
+    ? {
+        totalOrders: filteredSales.length,
+        totalRevenue: filteredSales.reduce((acc, s) => acc + (Number(s.finalSaleAmount) || 0), 0),
+        totalPurchaseCost: filteredSales.reduce((acc, s) => acc + (Number(s.finalPurchasePrice) || 0), 0),
+        totalGrossProfit: filteredSales.reduce((acc, s) => acc + (Number(s.grossProfit) || 0), 0),
+        totalNetProfit: filteredSales.reduce((acc, s) => acc + (Number(s.netProfit) || 0), 0),
+        totalCommission: filteredSales.reduce((acc, s) => acc + (Number(s.commissionAmount) || 0), 0),
+        totalProfitAfterCommission: filteredSales.reduce((acc, s) => acc + (Number(s.profitAfterCommission) || 0), 0),
+      }
+    : summary;
+
   const toggleSelectAll = () => {
-    if (selectedIds.size === sales.length && sales.length > 0) {
+    if (selectedIds.size === filteredSales.length && filteredSales.length > 0) {
       setSelectedIds(new Set());
     } else {
-      setSelectedIds(new Set(sales.map((s) => s.id)));
+      setSelectedIds(new Set(filteredSales.map((s) => s.id)));
     }
   };
 
@@ -797,10 +855,10 @@ export const BusinessSalesListPage: React.FC = () => {
   };
 
   // Find the single selected sale if 1 is selected
-  const singleSelectedSale = selectedIds.size === 1 ? sales.find((s) => selectedIds.has(s.id)) : null;
+  const singleSelectedSale = selectedIds.size === 1 ? filteredSales.find((s) => selectedIds.has(s.id)) : null;
 
   const exportCSV = () => {
-    if (!sales || sales.length === 0) return;
+    if (!filteredSales || filteredSales.length === 0) return;
     const headers = [
       'Invoice No',
       'Sale Date',
@@ -834,7 +892,7 @@ export const BusinessSalesListPage: React.FC = () => {
       'Tracking Number',
     ];
 
-    const rows = sales.map((s) => [
+    const rows = filteredSales.map((s) => [
       s.invoiceNo,
       s.saleDate ? new Date(s.saleDate).toISOString().split('T')[0] : '',
       `"${s.customerName}"`,
@@ -878,7 +936,7 @@ export const BusinessSalesListPage: React.FC = () => {
   };
 
   const exportExcel = () => {
-    if (!sales || sales.length === 0) return;
+    if (!filteredSales || filteredSales.length === 0) return;
 
     const headers = [
       'Invoice No',
@@ -929,7 +987,7 @@ export const BusinessSalesListPage: React.FC = () => {
       'Sale Month',
     ];
 
-    const dataRows = sales.map((s) => [
+    const dataRows = filteredSales.map((s) => [
       s.invoiceNo,
       s.saleDate ? new Date(s.saleDate).toISOString().split('T')[0] : '',
       s.customerName || '',
@@ -984,13 +1042,15 @@ export const BusinessSalesListPage: React.FC = () => {
     XLSX.writeFile(workbook, `sales_ledger_${new Date().toISOString().split('T')[0]}.xlsx`);
   };
 
-  const hasActiveFilters = search || productType !== 'ALL' || paymentStatus !== 'ALL' || orderStatus !== 'ALL';
+  const hasActiveFilters = search || productType !== 'ALL' || paymentStatus !== 'ALL' || orderStatus !== 'ALL' || headerDateFilter !== 'ALL' || headerCustomerFilter !== 'ALL';
 
   const handleResetFilters = () => {
     setSearch('');
     setProductType('ALL');
     setPaymentStatus('ALL');
     setOrderStatus('ALL');
+    setHeaderDateFilter('ALL');
+    setHeaderCustomerFilter('ALL');
     setPage(1);
   };
 
@@ -1036,7 +1096,7 @@ export const BusinessSalesListPage: React.FC = () => {
 
       {/* KPI Financial Metric Cards */}
       <SummaryGrid>
-        {loading && !summary ? (
+        {loading && !displaySummary ? (
           Array.from({ length: 7 }).map((_, i) => <SkeletonKpi key={i} />)
         ) : (
           <>
@@ -1045,7 +1105,7 @@ export const BusinessSalesListPage: React.FC = () => {
                 <span className="label">Total Orders</span>
                 <span className="icon-wrap"><Receipt size={14} /></span>
               </div>
-              <div className="val">{summary?.totalOrders || 0}</div>
+              <div className="val">{displaySummary?.totalOrders || 0}</div>
               <div className="subtitle">Processed deals</div>
             </KpiCard>
 
@@ -1054,7 +1114,7 @@ export const BusinessSalesListPage: React.FC = () => {
                 <span className="label">Total Revenue</span>
                 <span className="icon-wrap"><DollarSign size={14} color="#0f172a" /></span>
               </div>
-              <div className="val">${fmt(summary?.totalRevenue)}</div>
+              <div className="val">${fmt(displaySummary?.totalRevenue)}</div>
               <div className="subtitle">Gross billed volume</div>
             </KpiCard>
 
@@ -1064,7 +1124,7 @@ export const BusinessSalesListPage: React.FC = () => {
                 <span className="icon-wrap"><Wallet size={14} /></span>
               </div>
               <div className="val" style={{ color: '#475569' }}>
-                ${fmt(summary?.totalPurchaseCost)}
+                ${fmt(displaySummary?.totalPurchaseCost)}
               </div>
               <div className="subtitle">Inventory & vendor COGS</div>
             </KpiCard>
@@ -1074,7 +1134,7 @@ export const BusinessSalesListPage: React.FC = () => {
                 <span className="label">Gross Profit</span>
                 <span className="icon-wrap"><TrendingUp size={14} /></span>
               </div>
-              <div className="val">${fmt(summary?.totalGrossProfit)}</div>
+              <div className="val">${fmt(displaySummary?.totalGrossProfit)}</div>
               <div className="subtitle">Revenue minus COGS</div>
             </KpiCard>
 
@@ -1083,7 +1143,7 @@ export const BusinessSalesListPage: React.FC = () => {
                 <span className="label">Net Profit</span>
                 <span className="icon-wrap" style={{ background: '#f0fdf4', color: '#16a34a' }}><Sparkles size={14} /></span>
               </div>
-              <div className="val">${fmt(summary?.totalNetProfit)}</div>
+              <div className="val">${fmt(displaySummary?.totalNetProfit)}</div>
               <div className="subtitle">Post-shipping & GST</div>
             </KpiCard>
 
@@ -1092,7 +1152,7 @@ export const BusinessSalesListPage: React.FC = () => {
                 <span className="label">Commission Due</span>
                 <span className="icon-wrap" style={{ background: '#fffbeb', color: '#d97706' }}><Award size={14} /></span>
               </div>
-              <div className="val">${fmt(summary?.totalCommission)}</div>
+              <div className="val">${fmt(displaySummary?.totalCommission)}</div>
               <div className="subtitle">Staff commission liability</div>
             </KpiCard>
 
@@ -1101,7 +1161,7 @@ export const BusinessSalesListPage: React.FC = () => {
                 <span className="label">Retained Profit</span>
                 <span className="icon-wrap" style={{ background: '#eff6ff', color: '#2563eb' }}><ShieldCheck size={14} /></span>
               </div>
-              <div className="val">${fmt(summary?.totalProfitAfterCommission)}</div>
+              <div className="val">${fmt(displaySummary?.totalProfitAfterCommission)}</div>
               <div className="subtitle">Retained business equity</div>
             </KpiCard>
           </>
@@ -1127,19 +1187,6 @@ export const BusinessSalesListPage: React.FC = () => {
             </button>
           )}
         </div>
-
-        <select
-          className="filter-select"
-          value={productType}
-          onChange={(e) => {
-            setProductType(e.target.value);
-            setPage(1);
-          }}
-        >
-          <option value="ALL">All Product Types</option>
-          <option value="Diamond">💎 Diamonds Only</option>
-          <option value="Jewelry">✨ Jewelry Only</option>
-        </select>
 
         <select
           className="filter-select"
@@ -1176,7 +1223,7 @@ export const BusinessSalesListPage: React.FC = () => {
         )}
 
         <div className="results-pill">
-          {loading ? 'Loading...' : `Showing ${sales.length} ${sales.length === 1 ? 'sale' : 'sales'}`}
+          {loading ? 'Loading...' : `Showing ${filteredSales.length} of ${sales.length} sales`}
         </div>
       </FilterToolbar>
 
@@ -1256,7 +1303,7 @@ export const BusinessSalesListPage: React.FC = () => {
             <tr>
               <th className="sticky-col-chk">
                 <CustomCheckbox
-                  $checked={sales.length > 0 && selectedIds.size === sales.length}
+                  $checked={filteredSales.length > 0 && selectedIds.size === filteredSales.length}
                   onClick={(e) => {
                     e.preventDefault();
                     toggleSelectAll();
@@ -1265,17 +1312,103 @@ export const BusinessSalesListPage: React.FC = () => {
                 >
                   <input
                     type="checkbox"
-                    checked={sales.length > 0 && selectedIds.size === sales.length}
+                    checked={filteredSales.length > 0 && selectedIds.size === filteredSales.length}
                     readOnly
                   />
-                  {sales.length > 0 && selectedIds.size === sales.length && <Check size={11} strokeWidth={3} />}
+                  {filteredSales.length > 0 && selectedIds.size === filteredSales.length && <Check size={11} strokeWidth={3} />}
                 </CustomCheckbox>
               </th>
               <th className="sticky-col-inv">Invoice No</th>
-              <th>Date</th>
-              <th>Customer</th>
+
+              {/* 1. Date Header with Live Filter */}
+              <th style={{ minWidth: 130 }}>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
+                  <span>Date</span>
+                  <select
+                    value={headerDateFilter}
+                    onChange={(e) => setHeaderDateFilter(e.target.value)}
+                    style={{
+                      background: '#1e293b',
+                      color: '#ffffff',
+                      border: '1px solid #475569',
+                      borderRadius: 4,
+                      fontSize: '0.72rem',
+                      padding: '2px 4px',
+                      outline: 'none',
+                      cursor: 'pointer',
+                      maxWidth: 120,
+                    }}
+                    title="Filter by Date / Month"
+                  >
+                    <option value="ALL">All Dates</option>
+                    {distinctDates.map((d) => (
+                      <option key={d} value={d}>
+                        {d}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+              </th>
+
+              {/* 2. Customer Header with Live Filter */}
+              <th style={{ minWidth: 150 }}>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
+                  <span>Customer</span>
+                  <select
+                    value={headerCustomerFilter}
+                    onChange={(e) => setHeaderCustomerFilter(e.target.value)}
+                    style={{
+                      background: '#1e293b',
+                      color: '#ffffff',
+                      border: '1px solid #475569',
+                      borderRadius: 4,
+                      fontSize: '0.72rem',
+                      padding: '2px 4px',
+                      outline: 'none',
+                      cursor: 'pointer',
+                      maxWidth: 140,
+                    }}
+                    title="Filter by Customer"
+                  >
+                    <option value="ALL">All Clients</option>
+                    {distinctCustomers.map((c) => (
+                      <option key={c} value={c}>
+                        {c}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+              </th>
+
               <th>Country</th>
-              <th>Type</th>
+
+              {/* 3. Type Header with Live Filter */}
+              <th style={{ minWidth: 120 }}>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
+                  <span>Type</span>
+                  <select
+                    value={productType}
+                    onChange={(e) => setProductType(e.target.value)}
+                    style={{
+                      background: '#1e293b',
+                      color: '#ffffff',
+                      border: '1px solid #475569',
+                      borderRadius: 4,
+                      fontSize: '0.72rem',
+                      padding: '2px 4px',
+                      outline: 'none',
+                      cursor: 'pointer',
+                      maxWidth: 110,
+                    }}
+                    title="Filter by Product Type"
+                  >
+                    <option value="ALL">All Types</option>
+                    <option value="Diamond">💎 Diamond</option>
+                    <option value="Jewelry">✨ Jewelry</option>
+                  </select>
+                </div>
+              </th>
+
               <th>Description / Shape</th>
               <th>Carat</th>
               <th>Color/Clarity</th>
@@ -1297,11 +1430,11 @@ export const BusinessSalesListPage: React.FC = () => {
               <th>Order Status</th>
               <th>Tracking</th>
               <th>Dollar Rate</th>
-              <th style={{ textAlign: 'center', minWidth: 110 }}>Actions</th>
+              <th style={{ textAlign: 'center', minWidth: 120 }}>Actions</th>
             </tr>
           </thead>
           <tbody>
-            {sales.map((s) => {
+            {filteredSales.map((s) => {
               const isSelected = selectedIds.has(s.id);
               const isDiamond = s.productType === 'Diamond';
 
@@ -1429,36 +1562,69 @@ export const BusinessSalesListPage: React.FC = () => {
                     />
                   </td>
 
-                  {/* Sharp, Visible Action Buttons */}
+                  {/* Sharp, Solid High-Contrast Action Buttons */}
                   <td style={{ textAlign: 'center' }}>
-                    <div style={{ display: 'inline-flex', gap: 6, alignItems: 'center', justifyContent: 'center' }}>
-                      <Link to={`${PRIVATE_BUSINESS_PATH}/sales/${s.id}`}>
-                        <ActionButton
+                    <div style={{ display: 'inline-flex', gap: 5, alignItems: 'center', justifyContent: 'center' }}>
+                      <Link to={`${PRIVATE_BUSINESS_PATH}/sales/${s.id}`} title="View Sale Detail">
+                        <button
                           type="button"
-                          $variant="view"
-                          title="View Sale Detail"
+                          style={{
+                            display: 'inline-flex',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            background: '#0d1319',
+                            color: '#ffffff',
+                            border: '1px solid #0d1319',
+                            borderRadius: 5,
+                            padding: '5px 8px',
+                            cursor: 'pointer',
+                            transition: 'opacity 0.15s ease',
+                          }}
+                          title="View Invoice Detail"
                         >
-                          <Eye size={13} strokeWidth={2.2} />
-                        </ActionButton>
+                          <Eye size={13} color="#ffffff" strokeWidth={2.5} />
+                        </button>
                       </Link>
 
-                      <ActionButton
+                      <button
                         type="button"
-                        $variant="edit"
                         onClick={() => setEditingSale(s)}
+                        style={{
+                          display: 'inline-flex',
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                          background: '#2563eb',
+                          color: '#ffffff',
+                          border: '1px solid #1d4ed8',
+                          borderRadius: 5,
+                          padding: '5px 8px',
+                          cursor: 'pointer',
+                          transition: 'opacity 0.15s ease',
+                        }}
                         title="Edit Sale Invoice"
                       >
-                        <Edit2 size={13} strokeWidth={2.2} />
-                      </ActionButton>
+                        <Edit2 size={13} color="#ffffff" strokeWidth={2.5} />
+                      </button>
 
-                      <ActionButton
+                      <button
                         type="button"
-                        $variant="delete"
                         onClick={() => handleDelete(s.id, s.invoiceNo)}
+                        style={{
+                          display: 'inline-flex',
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                          background: '#dc2626',
+                          color: '#ffffff',
+                          border: '1px solid #b91c1c',
+                          borderRadius: 5,
+                          padding: '5px 8px',
+                          cursor: 'pointer',
+                          transition: 'opacity 0.15s ease',
+                        }}
                         title="Delete Sale Invoice"
                       >
-                        <Trash2 size={13} strokeWidth={2.2} />
-                      </ActionButton>
+                        <Trash2 size={13} color="#ffffff" strokeWidth={2.5} />
+                      </button>
                     </div>
                   </td>
                 </tr>
@@ -1466,7 +1632,7 @@ export const BusinessSalesListPage: React.FC = () => {
             })}
 
             {/* Empty State */}
-            {sales.length === 0 && !loading && (
+            {filteredSales.length === 0 && !loading && (
               <tr>
                 <td colSpan={28} style={{ padding: 0 }}>
                   <EmptyStateContainer>
@@ -1476,7 +1642,7 @@ export const BusinessSalesListPage: React.FC = () => {
                     <h3>No sales records found</h3>
                     <p>
                       {hasActiveFilters
-                        ? 'No transactions matched your current search filters. Try clearing or broadening your search.'
+                        ? 'No transactions matched your current search and column filters. Try resetting the filters.'
                         : 'Get started by creating your first commercial invoice or importing your existing spreadsheet ledger.'}
                     </p>
                     <div className="cta-group">

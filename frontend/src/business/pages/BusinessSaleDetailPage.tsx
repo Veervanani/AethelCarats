@@ -149,8 +149,9 @@ export const BusinessSaleDetailPage: React.FC = () => {
     if (!id) return;
     setLoading(true);
     try {
-      const res = await businessApi.getSaleById(id);
-      setSale(res);
+      const res: any = await businessApi.getSaleById(id);
+      const saleObj = res?.sale || res;
+      setSale(saleObj);
     } catch (e) {
       console.error(e);
     } finally {
@@ -261,15 +262,17 @@ export const BusinessSaleDetailPage: React.FC = () => {
             <div className="sub">FINE JEWELLERY & HIGH ATELIER OPERATIONS</div>
           </div>
           <div>
-            <div className="inv-title">{sale.invoiceNo}</div>
+            <div className="inv-title">{sale.invoiceNo || 'INV-####'}</div>
             <div style={{ fontSize: '0.8rem', color: '#64748b', textAlign: 'right' }}>
-              Date: {new Date(sale.saleDate).toLocaleDateString()}
+              Date: {sale.saleDate ? (isNaN(new Date(sale.saleDate).getTime()) ? sale.saleDate : new Date(sale.saleDate).toLocaleDateString()) : '-'}
             </div>
-            <div style={{ marginTop: 6, textAlign: 'right' }}>
-              <span style={{ fontSize: '0.75rem', padding: '3px 8px', background: '#0d1319', color: '#fff', borderRadius: 4, fontWeight: 700 }}>
-                {sale.orderStatus}
-              </span>
-            </div>
+            {sale.orderStatus && (
+              <div style={{ marginTop: 6, textAlign: 'right' }}>
+                <span style={{ fontSize: '0.75rem', padding: '3px 8px', background: '#0d1319', color: '#fff', borderRadius: 4, fontWeight: 700 }}>
+                  {sale.orderStatus}
+                </span>
+              </div>
+            )}
           </div>
         </InvoiceTopBar>
 
@@ -281,7 +284,7 @@ export const BusinessSaleDetailPage: React.FC = () => {
             </div>
             <InfoRow>
               <span className="label">Customer:</span>
-              <span className="val">{sale.customerName}</span>
+              <span className="val">{sale.customerName || '-'}</span>
             </InfoRow>
             <InfoRow>
               <span className="label">Country:</span>
@@ -294,7 +297,7 @@ export const BusinessSaleDetailPage: React.FC = () => {
             <InfoRow>
               <span className="label">Payment Status:</span>
               <span className="val" style={{ color: sale.paymentStatus === 'Paid' ? '#16a34a' : '#d97706' }}>
-                {sale.paymentStatus}
+                {sale.paymentStatus || 'Pending'}
               </span>
             </InfoRow>
             <InfoRow>
@@ -322,14 +325,14 @@ export const BusinessSaleDetailPage: React.FC = () => {
           {/* Product Specifications */}
           <Box>
             <div className="box-title">
-              <Gem size={14} color="#e2b96f" /> Item Specifications ({sale.productType})
+              <Gem size={14} color="#e2b96f" /> Item Specifications ({sale.productType || 'Item'})
             </div>
             {sale.productType === 'Diamond' ? (
               <>
                 <InfoRow>
                   <span className="label">Type / Shape:</span>
                   <span className="val">
-                    {sale.stoneType || 'Natural'} {sale.shape}
+                    {sale.stoneType || 'Natural'} {sale.shape || '-'}
                   </span>
                 </InfoRow>
                 <InfoRow>
@@ -339,13 +342,13 @@ export const BusinessSaleDetailPage: React.FC = () => {
                 <InfoRow>
                   <span className="label">Color / Clarity:</span>
                   <span className="val">
-                    {sale.diamondColor} / {sale.clarity}
+                    {sale.diamondColor || '-'} / {sale.clarity || '-'}
                   </span>
                 </InfoRow>
                 <InfoRow>
                   <span className="label">Cut / Polish / Symm:</span>
                   <span className="val">
-                    {sale.cut} / {sale.polish} / {sale.symmetry}
+                    {sale.cut || '-'} / {sale.polish || '-'} / {sale.symmetry || '-'}
                   </span>
                 </InfoRow>
                 <InfoRow>
@@ -355,7 +358,7 @@ export const BusinessSaleDetailPage: React.FC = () => {
                 <InfoRow>
                   <span className="label">Certificate:</span>
                   <span className="val">
-                    {sale.certificate} {sale.certificateNo ? `#${sale.certificateNo}` : ''}
+                    {sale.certificate || '-'} {sale.certificateNo ? `#${sale.certificateNo}` : ''}
                   </span>
                 </InfoRow>
                 <InfoRow>
@@ -396,55 +399,55 @@ export const BusinessSaleDetailPage: React.FC = () => {
             <tr>
               <td>Gross Selling Price</td>
               <td style={{ color: '#64748b' }}>Original quoted catalog price</td>
-              <td style={{ textAlign: 'right', fontWeight: 600 }}>${sale.sellingPrice?.toLocaleString()}</td>
+              <td style={{ textAlign: 'right', fontWeight: 600 }}>${(Number(sale.sellingPrice) || 0).toLocaleString()}</td>
             </tr>
             <tr>
               <td>Discount Applied</td>
               <td style={{ color: '#64748b' }}>Customer negotiated reduction</td>
-              <td style={{ textAlign: 'right', color: '#dc2626' }}>-${sale.discount?.toLocaleString()}</td>
+              <td style={{ textAlign: 'right', color: '#dc2626' }}>-${(Number(sale.discount) || 0).toLocaleString()}</td>
             </tr>
             <tr className="total-row">
               <td>Final Sale Amount (Net Billed)</td>
               <td>Selling Price - Discount</td>
-              <td style={{ textAlign: 'right' }}>${sale.finalSaleAmount?.toLocaleString()}</td>
+              <td style={{ textAlign: 'right' }}>${(Number(sale.finalSaleAmount) || 0).toLocaleString()}</td>
             </tr>
             <tr>
               <td>Base Purchase Cost</td>
               <td style={{ color: '#64748b' }}>Atelier / Supplier procurement cost</td>
-              <td style={{ textAlign: 'right' }}>${sale.purchasePrice?.toLocaleString()}</td>
+              <td style={{ textAlign: 'right' }}>${(Number(sale.purchasePrice) || 0).toLocaleString()}</td>
             </tr>
             <tr>
-              <td>GST ({(sale.gstPercent * 100).toFixed(2)}%)</td>
+              <td>GST ({((Number(sale.gstPercent) || 0) * 100).toFixed(2)}%)</td>
               <td style={{ color: '#64748b' }}>Purchase Price × GST %</td>
-              <td style={{ textAlign: 'right' }}>+${sale.gstAmount?.toLocaleString()}</td>
+              <td style={{ textAlign: 'right' }}>+${(Number(sale.gstAmount) || 0).toLocaleString()}</td>
             </tr>
             <tr className="total-row">
               <td>Final Purchase Cost (COGS)</td>
               <td>Purchase Price + GST Amount</td>
-              <td style={{ textAlign: 'right' }}>${sale.finalPurchasePrice?.toLocaleString()}</td>
+              <td style={{ textAlign: 'right' }}>${(Number(sale.finalPurchasePrice) || 0).toLocaleString()}</td>
             </tr>
             <tr>
               <td>Shipping / Logistics Cost</td>
               <td style={{ color: '#64748b' }}>Courier, Armored Freight & Insurance</td>
-              <td style={{ textAlign: 'right', color: '#dc2626' }}>-${sale.shippingCost?.toLocaleString()}</td>
+              <td style={{ textAlign: 'right', color: '#dc2626' }}>-${(Number(sale.shippingCost) || 0).toLocaleString()}</td>
             </tr>
             <tr className="profit-row">
               <td>Net Profit Generated</td>
               <td>Final Sale - Final Purchase - Shipping</td>
-              <td style={{ textAlign: 'right' }}>${sale.netProfit?.toLocaleString()}</td>
+              <td style={{ textAlign: 'right' }}>${(Number(sale.netProfit) || 0).toLocaleString()}</td>
             </tr>
             <tr>
-              <td>Sales Commission ({(sale.commissionPercent * 100).toFixed(1)}%)</td>
+              <td>Sales Commission ({((Number(sale.commissionPercent) || 0) * 100).toFixed(1)}%)</td>
               <td style={{ color: '#64748b' }}>Net Profit × Commission %</td>
               <td style={{ textAlign: 'right', color: '#d97706', fontWeight: 700 }}>
-                -${sale.commissionAmount?.toLocaleString()}
+                -${(Number(sale.commissionAmount) || 0).toLocaleString()}
               </td>
             </tr>
             <tr style={{ background: '#f8fafc', fontWeight: 800 }}>
               <td>Profit Retained by Floksy Jewel</td>
               <td>Net Profit - Commission Amount</td>
               <td style={{ textAlign: 'right', color: '#0d1319', fontSize: '1rem' }}>
-                ${sale.profitAfterCommission?.toLocaleString()}
+                ${(Number(sale.profitAfterCommission) || 0).toLocaleString()}
               </td>
             </tr>
           </tbody>
