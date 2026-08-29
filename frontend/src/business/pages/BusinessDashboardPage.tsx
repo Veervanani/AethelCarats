@@ -317,7 +317,9 @@ export const BusinessDashboardPage: React.FC = () => {
           <div className="kpi-value" style={{ color: '#16a34a' }}>
             {currencyView === 'USD' ? `$${fmt(m?.totalNetProfit)}` : `₹${fmt(m?.totalNetProfitINR || (Number(m?.totalNetProfit) || 0) * dollarRate)}`}
           </div>
-          <div className="kpi-sub">Avg Markup: {((Number(m?.averageMarkupPercent) || 0) * 100).toFixed(1)}%</div>
+          <div className="kpi-sub">
+            Avg Markup: {Number(m?.averageMarkupPercent || 0) > 1 ? Number(m?.averageMarkupPercent).toFixed(1) : ((Number(m?.averageMarkupPercent) || 0) * 100).toFixed(1)}%
+          </div>
         </KpiCard>
 
         <KpiCard>

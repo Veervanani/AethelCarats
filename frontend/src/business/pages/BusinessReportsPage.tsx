@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
 import { businessApi } from '../services/businessApi';
-import { Download, FileText, TrendingUp, Users, DollarSign } from 'lucide-react';
+import { Download, FileText, TrendingUp, Users, DollarSign, Database, HardDriveDownload, PlusCircle, Trash2, ShieldCheck, RefreshCw } from 'lucide-react';
 import * as XLSX from 'xlsx';
 
 const PageHeader = styled.div`
@@ -17,15 +17,19 @@ const ControlCard = styled.div`
   background: #ffffff;
   border: 1px solid #e2e8f0;
   border-radius: 10px;
-  padding: 18px;
+  padding: 14px 18px;
   margin-bottom: 20px;
   display: flex;
+  justify-content: space-between;
   flex-wrap: wrap;
   gap: 14px;
   align-items: center;
 `;
 
 const ReportTypeButton = styled.button<{ $active: boolean }>`
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
   padding: 8px 16px;
   border-radius: 6px;
   font-size: 0.82rem;
@@ -34,6 +38,11 @@ const ReportTypeButton = styled.button<{ $active: boolean }>`
   background: ${({ $active }) => ($active ? '#0d1319' : '#ffffff')};
   color: ${({ $active }) => ($active ? '#ffffff' : '#334155')};
   cursor: pointer;
+  transition: all 0.15s ease;
+
+  &:hover {
+    border-color: #0d1319;
+  }
 `;
 
 const Table = styled.table`
@@ -64,18 +73,80 @@ const Table = styled.table`
   }
 `;
 
+const Badge = styled.span<{ $type?: string }>`
+  font-size: 0.7rem;
+  font-weight: 700;
+  padding: 3px 8px;
+  border-radius: 4px;
+  display: inline-block;
+
+  ${({ $type }) => {
+    switch ($type) {
+      case 'AUTOMATIC_WEEKLY':
+        return 'background: #ebfbee; color: #2b8a3e; border: 1px solid #b2f2bb;';
+      case 'MANUAL_SNAPSHOT':
+        return 'background: #ede9fe; color: #6d28d9; border: 1px solid #ddd6fe;';
+      default:
+        return 'background: #f1f5f9; color: #475569; border: 1px solid #cbd5e1;';
+    }
+  }}
+`;
+
 export const BusinessReportsPage: React.FC = () => {
-  const [reportType, setReportType] = useState<'sales' | 'staff' | 'profit'>('sales');
+  const [reportType, setReportType] = useState<'sales' | 'staff' | 'profit' | 'backups'>('sales');
   const [data, setData] = useState<any>(null);
+  const [backups, setBackups] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
+  const [creatingBackup, setCreatingBackup] = useState(false);
+
+  const fetchReports = async () => {
+    setLoading(true);
+    try {
+      const [dashData, backupData] = await Promise.all([
+        businessApi.getDashboardMetrics({ period: 'all' }),
+        businessApi.getBackups(),
+      ]);
+      setData(dashData);
+      setBackups(backupData.backups || []);
+    } catch (e) {
+      console.error(e);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   useEffect(() => {
-    setLoading(true);
-    businessApi
-      .getDashboardMetrics({ period: 'all' })
-      .then((res) => setData(res))
-      .finally(() => setLoading(false));
+    fetchReports();
   }, []);
+
+  const handleCreateSnapshot = async () => {
+    setCreatingBackup(true);
+    try {
+      await businessApi.createManualBackup();
+      alert('✅ Database snapshot created successfully.');
+      const bRes = await businessApi.getBackups();
+      setBackups(bRes.backups || []);
+    } catch (e: any) {
+      alert(e?.response?.data?.message || 'Failed to create backup snapshot.');
+    } finally {
+      setCreatingBackup(false);
+    }
+  };
+
+  const handleDeleteBackup = async (id: string, name: string) => {
+    if (!window.confirm(`⚠️ Are you sure you want to delete backup "${name}"?`)) return;
+    try {
+      await businessApi.deleteBackup(id);
+      setBackups((prev) => prev.filter((b) => b.id !== id));
+      alert('✅ Backup removed.');
+    } catch (e: any) {
+      alert(e?.response?.data?.message || 'Failed to delete backup.');
+    }
+  };
+
+  const handleDownloadBackup = (id: string) => {
+    window.open(`/api/v1/business/backups/${id}/download?format=json`, '_blank');
+  };
 
   const handleExport = () => {
     try {
@@ -88,7 +159,7 @@ export const BusinessReportsPage: React.FC = () => {
           Orders: data?.productDistribution?.diamond?.orders || 0,
           Revenue: data?.productDistribution?.diamond?.revenue || 0,
           NetProfit: data?.productDistribution?.diamond?.netProfit || 0,
-          ProfitMargin: ((Number(data?.metrics?.averageMarkupPercent) || 0) * 100).toFixed(1) + '%',
+          ProfitMargin: ((Number(data?.metrics?.averageMarkupPercent) || 0)).toFixed(1) + '%',
         },
         {
           Category: 'Finished Jewelry',
@@ -122,6 +193,7 @@ export const BusinessReportsPage: React.FC = () => {
         { Metric: 'Total Net Profit ($)', Value: data?.metrics?.totalNetProfit || 0 },
         { Metric: 'Total Commission Due ($)', Value: data?.metrics?.totalCommission || 0 },
         { Metric: 'Total Retained Profit ($)', Value: data?.metrics?.totalProfitAfterCommission || 0 },
+        { Metric: 'Average Markup %', Value: (data?.metrics?.averageMarkupPercent || 0) + '%' },
       ];
       const wsSummary = XLSX.utils.json_to_sheet(summaryData);
       XLSX.utils.book_append_sheet(wb, wsSummary, 'Executive Summary');
@@ -138,34 +210,56 @@ export const BusinessReportsPage: React.FC = () => {
     <div>
       <PageHeader>
         <div>
-          <h1 style={{ fontSize: '1.4rem', fontWeight: 800, color: '#0f172a', margin: 0 }}>Business & Profit Intelligence Reports</h1>
+          <h1 style={{ fontSize: '1.4rem', fontWeight: 800, color: '#0f172a', margin: 0 }}>Business Intelligence & Database Backups</h1>
           <p style={{ fontSize: '0.8rem', color: '#64748b', margin: '4px 0 0 0' }}>
-            Consolidated financial auditing, salesperson profitability analysis, and margins
+            Consolidated financial auditing, salesperson profitability analysis, and automated weekly database snapshots
           </p>
         </div>
 
-        <button
-          onClick={handleExport}
-          style={{
-            display: 'flex',
-            alignItems: 'center',
-            gap: 8,
-            padding: '8px 18px',
-            background: '#0d1319',
-            color: '#ffffff',
-            border: 'none',
-            borderRadius: 6,
-            fontWeight: 600,
-            fontSize: '0.82rem',
-            cursor: 'pointer',
-          }}
-        >
-          <Download size={15} /> Export Audit Report
-        </button>
+        <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
+          <button
+            onClick={handleCreateSnapshot}
+            disabled={creatingBackup}
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              gap: 8,
+              padding: '8px 16px',
+              background: '#ffffff',
+              color: '#0f172a',
+              border: '1px solid #cbd5e1',
+              borderRadius: 6,
+              fontWeight: 600,
+              fontSize: '0.82rem',
+              cursor: 'pointer',
+            }}
+          >
+            <Database size={15} color="#2563eb" /> {creatingBackup ? 'Creating Snapshot...' : '⚡ Create Instant Snapshot'}
+          </button>
+
+          <button
+            onClick={handleExport}
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              gap: 8,
+              padding: '8px 18px',
+              background: '#0d1319',
+              color: '#ffffff',
+              border: 'none',
+              borderRadius: 6,
+              fontWeight: 600,
+              fontSize: '0.82rem',
+              cursor: 'pointer',
+            }}
+          >
+            <Download size={15} /> Export Audit Report (.xlsx)
+          </button>
+        </div>
       </PageHeader>
 
       <ControlCard>
-        <div style={{ display: 'flex', gap: 8 }}>
+        <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
           <ReportTypeButton $active={reportType === 'sales'} onClick={() => setReportType('sales')}>
             Sales Breakdown
           </ReportTypeButton>
@@ -174,6 +268,9 @@ export const BusinessReportsPage: React.FC = () => {
           </ReportTypeButton>
           <ReportTypeButton $active={reportType === 'profit'} onClick={() => setReportType('profit')}>
             Margin & Retained Profit
+          </ReportTypeButton>
+          <ReportTypeButton $active={reportType === 'backups'} onClick={() => setReportType('backups')}>
+            <Database size={14} /> Database Backups ({backups.length})
           </ReportTypeButton>
         </div>
       </ControlCard>
@@ -297,6 +394,92 @@ export const BusinessReportsPage: React.FC = () => {
             </tr>
           </tbody>
         </Table>
+      )}
+
+      {reportType === 'backups' && (
+        <div>
+          <div style={{ background: '#f0fdf4', border: '1px solid #bbf7d0', padding: '12px 16px', borderRadius: 8, marginBottom: 16, fontSize: '0.8rem', color: '#166534', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+            <span>
+              🛡️ <strong>Automated Database Resilience:</strong> Full database snapshots of all Sales, Staff, Clients, Attendance, and Commissions are automatically archived weekly in dedicated snapshot tables.
+            </span>
+          </div>
+
+          <Table>
+            <thead>
+              <tr>
+                <th>Backup Snapshot</th>
+                <th>Type</th>
+                <th>Created At</th>
+                <th>Sales Records</th>
+                <th>Staff</th>
+                <th>Clients</th>
+                <th>Size</th>
+                <th style={{ textAlign: 'right' }}>Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              {backups.map((b) => (
+                <tr key={b.id}>
+                  <td style={{ fontWeight: 700, color: '#0f172a' }}>{b.backupName}</td>
+                  <td>
+                    <Badge $type={b.backupType}>
+                      {b.backupType === 'AUTOMATIC_WEEKLY' ? '🟢 Weekly Auto' : '🟣 Manual Snapshot'}
+                    </Badge>
+                  </td>
+                  <td>{b.createdAt ? new Date(b.createdAt).toLocaleString() : '-'}</td>
+                  <td style={{ fontWeight: 600 }}>{b.salesCount || 0} sales</td>
+                  <td>{b.employeesCount || 0} staff</td>
+                  <td>{b.customersCount || 0} clients</td>
+                  <td style={{ color: '#64748b' }}>{Math.round((b.fileSizeBytes || 1024) / 1024)} KB</td>
+                  <td style={{ textAlign: 'right' }}>
+                    <div style={{ display: 'inline-flex', gap: 6 }}>
+                      <button
+                        onClick={() => handleDownloadBackup(b.id)}
+                        style={{
+                          display: 'inline-flex',
+                          alignItems: 'center',
+                          gap: 4,
+                          padding: '5px 10px',
+                          background: '#0d1319',
+                          color: '#ffffff',
+                          border: 'none',
+                          borderRadius: 5,
+                          fontSize: '0.74rem',
+                          fontWeight: 700,
+                          cursor: 'pointer',
+                        }}
+                        title="Download JSON Snapshot"
+                      >
+                        <HardDriveDownload size={13} /> Download
+                      </button>
+                      <button
+                        onClick={() => handleDeleteBackup(b.id, b.backupName)}
+                        style={{
+                          padding: '5px 8px',
+                          background: '#fff1f2',
+                          color: '#e11d48',
+                          border: '1px solid #fecdd3',
+                          borderRadius: 5,
+                          cursor: 'pointer',
+                        }}
+                        title="Delete Backup"
+                      >
+                        <Trash2 size={13} />
+                      </button>
+                    </div>
+                  </td>
+                </tr>
+              ))}
+              {backups.length === 0 && (
+                <tr>
+                  <td colSpan={8} style={{ textAlign: 'center', padding: '32px', color: '#94a3b8' }}>
+                    No database backups found. Click "Create Instant Snapshot" to generate your first backup!
+                  </td>
+                </tr>
+              )}
+            </tbody>
+          </Table>
+        </div>
       )}
     </div>
   );

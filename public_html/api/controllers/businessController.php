@@ -183,6 +183,23 @@ function ensureBusinessTablesExist(PDO $pdo): void {
         `updatedAt` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
     ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;");
 
+    // 8. Business Backups
+    $pdo->exec("CREATE TABLE IF NOT EXISTS `business_backups` (
+        `id` VARCHAR(191) PRIMARY KEY,
+        `backupName` VARCHAR(191) NOT NULL,
+        `backupType` VARCHAR(50) NOT NULL DEFAULT 'AUTOMATIC_WEEKLY',
+        `salesCount` INT NOT NULL DEFAULT 0,
+        `employeesCount` INT NOT NULL DEFAULT 0,
+        `customersCount` INT NOT NULL DEFAULT 0,
+        `attendanceCount` INT NOT NULL DEFAULT 0,
+        `commissionsCount` INT NOT NULL DEFAULT 0,
+        `snapshotData` LONGTEXT NOT NULL,
+        `fileSizeBytes` INT NOT NULL DEFAULT 0,
+        `weekNumber` INT NOT NULL DEFAULT 0,
+        `year` INT NOT NULL DEFAULT 2026,
+        `createdAt` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP
+    ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;");
+
     // 8. Seed initial requested employees: Rutu (Sales Manager), Jyoti (Sales Employee), Twinkle (Sales Employee)
     $employeesToSeed = [
         [
@@ -337,30 +354,27 @@ function handleGetBusinessDashboard(): void {
         $period = $_GET['period'] ?? 'all';
 
         if ($period === 'today') {
-            $where[] = "(DATE(`saleDate`) = CURDATE() OR DATE(`createdAt`) = CURDATE())";
+            $where[] = "DATE(`saleDate`) = CURDATE()";
         } else if ($period === 'month' && empty($month)) {
-            $where[] = "(
-                (YEAR(`saleDate`) = YEAR(CURDATE()) AND MONTH(`saleDate`) = MONTH(CURDATE()))
-                OR (YEAR(`createdAt`) = YEAR(CURDATE()) AND MONTH(`createdAt`) = MONTH(CURDATE()))
-            )";
+            $where[] = "YEAR(`saleDate`) = YEAR(CURDATE()) AND MONTH(`saleDate`) = MONTH(CURDATE())";
         } else if ($period === 'year' && empty($year)) {
-            $where[] = "(YEAR(`saleDate`) = YEAR(CURDATE()) OR YEAR(`createdAt`) = YEAR(CURDATE()))";
+            $where[] = "YEAR(`saleDate`) = YEAR(CURDATE())";
         } else {
             // Apply Year filter
             if (!empty($year) && $year !== 'All Years' && is_numeric($year)) {
                 $shortYear = substr($year, -2);
                 $where[] = "(
-                    YEAR(`saleDate`) = ?
+                    (YEAR(`saleDate`) > 2000 AND YEAR(`saleDate`) = ?)
+                    OR `saleDate` LIKE ?
                     OR `saleDate` LIKE ?
                     OR `saleMonth` LIKE ?
                     OR `saleMonth` LIKE ?
-                    OR YEAR(`createdAt`) = ?
                 )";
                 $params[] = (int)$year;
-                $params[] = '%' . $year . '%';
+                $params[] = $year . '%';
+                $params[] = '%/' . $year . '%';
                 $params[] = '%' . $year . '%';
                 $params[] = '%' . $shortYear . '%';
-                $params[] = (int)$year;
             }
 
             // Apply Month filter
@@ -369,21 +383,19 @@ function handleGetBusinessDashboard(): void {
                 $shortMonth = date('M', strtotime($month . ' 1 2026'));
                 $paddedMonth = sprintf('%02d', $monthNum);
                 $where[] = "(
-                    MONTH(`saleDate`) = ?
+                    LOWER(TRIM(`saleMonth`)) = LOWER(?)
                     OR `saleMonth` LIKE ?
                     OR `saleMonth` LIKE ?
+                    OR (YEAR(`saleDate`) > 2000 AND MONTH(`saleDate`) = ?)
                     OR `saleDate` LIKE ?
                     OR `saleDate` LIKE ?
-                    OR `saleDate` LIKE ?
-                    OR MONTH(`createdAt`) = ?
                 )";
+                $params[] = $month;
+                $params[] = $month . '%';
+                $params[] = $shortMonth . '%';
                 $params[] = $monthNum;
-                $params[] = '%' . $month . '%';
-                $params[] = '%' . $shortMonth . '%';
                 $params[] = '%-' . $paddedMonth . '-%';
                 $params[] = '%/' . $paddedMonth . '/%';
-                $params[] = '%-' . $monthNum . '-%';
-                $params[] = $monthNum;
             }
         }
 
@@ -410,7 +422,13 @@ function handleGetBusinessDashboard(): void {
         $metrics['totalGrossProfit'] = (float)($metrics['totalGrossProfit'] ?? 0);
         $metrics['totalNetProfit'] = (float)($metrics['totalNetProfit'] ?? 0);
         $metrics['totalCommission'] = (float)($metrics['totalCommission'] ?? 0);
-        $metrics['totalProfitAfterCommission'] = (float)($metrics['totalProfitAfterCommission'] ?? 0);
+        $metrics['totalProfitAfterCommission'] = round($metrics['totalNetProfit'] - $metrics['totalCommission'], 2);
+        $metrics['totalGST'] = (float)($metrics['totalGST'] ?? 0);
+        $metrics['totalPendingReceivables'] = (float)($metrics['totalPendingReceivables'] ?? 0);
+        $metrics['totalOrders'] = (int)($metrics['totalOrders'] ?? 0);
+        $metrics['averageMarkupPercent'] = $metrics['totalPurchaseCost'] > 0 
+            ? round(($metrics['totalNetProfit'] / $metrics['totalPurchaseCost']) * 100, 1) 
+            : 0;
         $metrics['totalGST'] = (float)($metrics['totalGST'] ?? 0);
         $metrics['totalPendingReceivables'] = (float)($metrics['totalPendingReceivables'] ?? 0);
         $metrics['totalOrders'] = (int)($metrics['totalOrders'] ?? 0);
@@ -1568,5 +1586,183 @@ function handleDeleteEmployeesBatch(): void {
     $stmt->execute($ids);
     recordBusinessAuditLog('DELETE_BATCH', 'Employee', "Deleted " . count($ids) . " employees");
     jsonResponse(['message' => count($ids) . ' employees deleted successfully', 'success' => true]);
+}
+
+function performAutomatedWeeklyBackup(PDO $pdo): void {
+    try {
+        $weekNumber = (int)date('W');
+        $year = (int)date('Y');
+
+        $checkStmt = $pdo->prepare("SELECT id FROM `business_backups` WHERE `weekNumber` = ? AND `year` = ? AND `backupType` = 'AUTOMATIC_WEEKLY' LIMIT 1");
+        $checkStmt->execute([$weekNumber, $year]);
+        if ($checkStmt->fetch()) {
+            return; // Backup for this week already exists
+        }
+
+        // Generate full snapshot of all operational data
+        $sales = $pdo->query("SELECT * FROM `internalsale`")->fetchAll(PDO::FETCH_ASSOC);
+        $employees = $pdo->query("SELECT * FROM `employee`")->fetchAll(PDO::FETCH_ASSOC);
+        $customers = $pdo->query("SELECT * FROM `customer`")->fetchAll(PDO::FETCH_ASSOC);
+        $attendance = $pdo->query("SELECT * FROM `attendance`")->fetchAll(PDO::FETCH_ASSOC);
+        $commissions = $pdo->query("SELECT * FROM `commission`")->fetchAll(PDO::FETCH_ASSOC);
+        $suppliers = $pdo->query("SELECT * FROM `supplier`")->fetchAll(PDO::FETCH_ASSOC);
+        $targets = $pdo->query("SELECT * FROM `salestarget`")->fetchAll(PDO::FETCH_ASSOC);
+
+        $snapshot = [
+            'meta' => [
+                'system' => 'Floksy Jewel Business Hub',
+                'backupType' => 'AUTOMATIC_WEEKLY',
+                'weekNumber' => $weekNumber,
+                'year' => $year,
+                'timestamp' => date('Y-m-d H:i:s'),
+                'totalRecords' => count($sales) + count($employees) + count($customers) + count($attendance) + count($commissions)
+            ],
+            'sales' => $sales,
+            'employees' => $employees,
+            'customers' => $customers,
+            'attendance' => $attendance,
+            'commissions' => $commissions,
+            'suppliers' => $suppliers,
+            'targets' => $targets,
+        ];
+
+        $json = json_encode($snapshot, JSON_PRETTY_PRINT);
+        $sizeBytes = strlen($json);
+        $backupId = 'backup-week-' . $year . '-w' . $weekNumber . '-' . substr(md5(uniqid()), 0, 8);
+        $backupName = "Weekly Archive — Week {$weekNumber} ({$year})";
+
+        $insStmt = $pdo->prepare("INSERT INTO `business_backups` (
+            `id`, `backupName`, `backupType`, `salesCount`, `employeesCount`, `customersCount`, 
+            `attendanceCount`, `commissionsCount`, `snapshotData`, `fileSizeBytes`, `weekNumber`, `year`, `createdAt`
+        ) VALUES (?, ?, 'AUTOMATIC_WEEKLY', ?, ?, ?, ?, ?, ?, ?, ?, ?, NOW())");
+
+        $insStmt->execute([
+            $backupId,
+            $backupName,
+            count($sales),
+            count($employees),
+            count($customers),
+            count($attendance),
+            count($commissions),
+            $json,
+            $sizeBytes,
+            $weekNumber,
+            $year
+        ]);
+
+        recordBusinessAuditLog('AUTO_BACKUP', 'System', "Created automated weekly database snapshot for Week {$weekNumber}, {$year}");
+    } catch (\Throwable $e) {
+        error_log('Weekly backup failed: ' . $e->getMessage());
+    }
+}
+
+function handleGetBusinessBackups(): void {
+    $pdo = getDatabaseConnection();
+    ensureBusinessTablesExist($pdo);
+    performAutomatedWeeklyBackup($pdo);
+
+    $stmt = $pdo->query("SELECT `id`, `backupName`, `backupType`, `salesCount`, `employeesCount`, `customersCount`, 
+        `attendanceCount`, `commissionsCount`, `fileSizeBytes`, `weekNumber`, `year`, `createdAt` 
+        FROM `business_backups` ORDER BY `createdAt` DESC");
+    $backups = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+    jsonResponse(['backups' => $backups]);
+}
+
+function handleCreateManualBackup(): void {
+    $pdo = getDatabaseConnection();
+    ensureBusinessTablesExist($pdo);
+
+    $sales = $pdo->query("SELECT * FROM `internalsale`")->fetchAll(PDO::FETCH_ASSOC);
+    $employees = $pdo->query("SELECT * FROM `employee`")->fetchAll(PDO::FETCH_ASSOC);
+    $customers = $pdo->query("SELECT * FROM `customer`")->fetchAll(PDO::FETCH_ASSOC);
+    $attendance = $pdo->query("SELECT * FROM `attendance`")->fetchAll(PDO::FETCH_ASSOC);
+    $commissions = $pdo->query("SELECT * FROM `commission`")->fetchAll(PDO::FETCH_ASSOC);
+    $suppliers = $pdo->query("SELECT * FROM `supplier`")->fetchAll(PDO::FETCH_ASSOC);
+    $targets = $pdo->query("SELECT * FROM `salestarget`")->fetchAll(PDO::FETCH_ASSOC);
+
+    $weekNumber = (int)date('W');
+    $year = (int)date('Y');
+    $dateStr = date('Y-m-d H:i');
+
+    $snapshot = [
+        'meta' => [
+            'system' => 'Floksy Jewel Business Hub',
+            'backupType' => 'MANUAL_SNAPSHOT',
+            'timestamp' => date('Y-m-d H:i:s'),
+            'totalRecords' => count($sales) + count($employees) + count($customers) + count($attendance) + count($commissions)
+        ],
+        'sales' => $sales,
+        'employees' => $employees,
+        'customers' => $customers,
+        'attendance' => $attendance,
+        'commissions' => $commissions,
+        'suppliers' => $suppliers,
+        'targets' => $targets,
+    ];
+
+    $json = json_encode($snapshot, JSON_PRETTY_PRINT);
+    $sizeBytes = strlen($json);
+    $backupId = 'backup-manual-' . date('Ymd-His');
+    $backupName = "Manual Snapshot — " . $dateStr;
+
+    $insStmt = $pdo->prepare("INSERT INTO `business_backups` (
+        `id`, `backupName`, `backupType`, `salesCount`, `employeesCount`, `customersCount`, 
+        `attendanceCount`, `commissionsCount`, `snapshotData`, `fileSizeBytes`, `weekNumber`, `year`, `createdAt`
+    ) VALUES (?, ?, 'MANUAL_SNAPSHOT', ?, ?, ?, ?, ?, ?, ?, ?, ?, NOW())");
+
+    $insStmt->execute([
+        $backupId,
+        $backupName,
+        count($sales),
+        count($employees),
+        count($customers),
+        count($attendance),
+        count($commissions),
+        $json,
+        $sizeBytes,
+        $weekNumber,
+        $year
+    ]);
+
+    recordBusinessAuditLog('MANUAL_BACKUP', 'System', "Created manual database snapshot ({$backupName})");
+    jsonResponse([
+        'message' => 'Manual database snapshot backup created successfully',
+        'backupId' => $backupId,
+        'success' => true
+    ]);
+}
+
+function handleDownloadBusinessBackup(string $id): void {
+    $pdo = getDatabaseConnection();
+    ensureBusinessTablesExist($pdo);
+
+    $stmt = $pdo->prepare("SELECT * FROM `business_backups` WHERE `id` = ? LIMIT 1");
+    $stmt->execute([$id]);
+    $backup = $stmt->fetch(PDO::FETCH_ASSOC);
+
+    if (!$backup) {
+        jsonError('Backup not found', 404);
+    }
+
+    $format = $_GET['format'] ?? 'json';
+    if ($format === 'json') {
+        header('Content-Type: application/json');
+        header('Content-Disposition: attachment; filename="' . preg_replace('/[^a-zA-Z0-9_-]/', '_', $backup['backupName']) . '.json"');
+        echo $backup['snapshotData'];
+        exit;
+    }
+
+    jsonResponse(['backup' => $backup]);
+}
+
+function handleDeleteBusinessBackup(string $id): void {
+    $pdo = getDatabaseConnection();
+    ensureBusinessTablesExist($pdo);
+
+    $stmt = $pdo->prepare("DELETE FROM `business_backups` WHERE `id` = ?");
+    $stmt->execute([$id]);
+    recordBusinessAuditLog('DELETE_BACKUP', 'System', "Deleted backup {$id}");
+    jsonResponse(['message' => 'Backup deleted successfully', 'success' => true]);
 }
 

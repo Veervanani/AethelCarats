@@ -282,4 +282,20 @@ export const businessApi = {
     const res = await API.get<{ logs: any[]; pagination: any }>('/business/audit-logs', { params });
     return res.data;
   },
+
+  // Backups
+  getBackups: async () => {
+    const res = await API.get<{ backups: any[] }>('/business/backups');
+    return res.data;
+  },
+
+  createManualBackup: async () => {
+    const res = await API.post<{ message: string; backupId: string; success: boolean }>('/business/backups/create');
+    return res.data;
+  },
+
+  deleteBackup: async (id: string) => {
+    const res = await API.delete<{ message: string; success: boolean }>(`/business/backups/${id}`);
+    return res.data;
+  },
 };
