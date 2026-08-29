@@ -244,6 +244,11 @@ export const businessApi = {
     return res.data;
   },
 
+  getCustomerOrders: async (id: string) => {
+    const res = await API.get<{ customer: any; orders: any[]; orderCount: number; totalRevenue: number; totalProfit: number }>(`/business/customers/${encodeURIComponent(id)}/orders`);
+    return res.data;
+  },
+
   checkDuplicateCustomer: async (data: { name?: string; email?: string; phone?: string }) => {
     const res = await API.post<{ matches: Array<{ customer: any; reason: string }> }>('/business/customers/check-duplicate', data);
     return res.data;

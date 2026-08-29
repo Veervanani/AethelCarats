@@ -533,10 +533,50 @@ function handleGetBusinessDashboard(): void {
         $achieved = (float)$metrics['totalRevenue'];
         $achP = $targetVal > 0 ? min(100, round(($achieved / $targetVal) * 100)) : 0;
 
+        // Top Customers by Revenue
+        $topCustStmt = $pdo->prepare("SELECT 
+            TRIM(customerName) as name,
+            MAX(customerCountry) as country,
+            COUNT(*) as orders,
+            COALESCE(SUM(finalSaleAmount), 0) as revenue
+        FROM `internalsale`
+        {$whereSql}
+        " . (!empty($whereSql) ? "AND" : "WHERE") . " customerName IS NOT NULL AND TRIM(customerName) != ''
+        GROUP BY TRIM(customerName)
+        ORDER BY revenue DESC
+        LIMIT 10");
+        $topCustStmt->execute($params);
+        $topCustomers = [];
+        while ($tc = $topCustStmt->fetch(PDO::FETCH_ASSOC)) {
+            $tc['orders'] = (int)$tc['orders'];
+            $tc['revenue'] = (float)$tc['revenue'];
+            $topCustomers[] = $tc;
+        }
+
+        // Geographic Distribution by Country
+        $geoStmt = $pdo->prepare("SELECT 
+            COALESCE(NULLIF(TRIM(customerCountry), ''), 'Global') as country,
+            COUNT(*) as orders,
+            COALESCE(SUM(finalSaleAmount), 0) as revenue
+        FROM `internalsale`
+        {$whereSql}
+        GROUP BY COALESCE(NULLIF(TRIM(customerCountry), ''), 'Global')
+        ORDER BY revenue DESC
+        LIMIT 10");
+        $geoStmt->execute($params);
+        $countryDistribution = [];
+        while ($gc = $geoStmt->fetch(PDO::FETCH_ASSOC)) {
+            $gc['orders'] = (int)$gc['orders'];
+            $gc['revenue'] = (float)$gc['revenue'];
+            $countryDistribution[] = $gc;
+        }
+
         jsonResponse([
             'metrics' => $metrics,
             'salesPersonPerformance' => $salesPersonPerformance,
             'productDistribution' => $productDistribution,
+            'topCustomers' => $topCustomers,
+            'countryDistribution' => $countryDistribution,
             'attendanceToday' => $attendanceToday,
             'attendance' => [
                 'totalEmployees' => $attendanceToday['total'],
@@ -1478,6 +1518,34 @@ function handleGetBusinessCustomers(): void {
     }, $rawCustomers);
 
     jsonResponse(['customers' => $customers]);
+}
+
+function handleGetBusinessCustomerOrders(string $id): void {
+    $pdo = getDatabaseConnection();
+    ensureBusinessTablesExist($pdo);
+
+    $cStmt = $pdo->prepare("SELECT * FROM `customer` WHERE `id` = ? OR LOWER(TRIM(`name`)) = ? LIMIT 1");
+    $cStmt->execute([$id, strtolower(trim($id))]);
+    $customer = $cStmt->fetch(PDO::FETCH_ASSOC);
+
+    $custName = $customer['name'] ?? $id;
+
+    $salesStmt = $pdo->prepare("SELECT * FROM `internalsale` 
+        WHERE LOWER(TRIM(`customerName`)) = ? OR `customerId` = ? OR LOWER(TRIM(`customerName`)) = ?
+        ORDER BY `saleDate` DESC, `createdAt` DESC");
+    $salesStmt->execute([strtolower(trim($custName)), $id, strtolower(trim($id))]);
+    $orders = $salesStmt->fetchAll(PDO::FETCH_ASSOC);
+
+    $totalRevenue = array_reduce($orders, fn($s, $o) => $s + (float)($o['finalSaleAmount'] ?? 0), 0);
+    $totalProfit = array_reduce($orders, fn($s, $o) => $s + (float)($o['netProfit'] ?? 0), 0);
+
+    jsonResponse([
+        'customer' => $customer ?: ['id' => $id, 'name' => $custName, 'country' => $orders[0]['customerCountry'] ?? '-'],
+        'orders' => $orders,
+        'orderCount' => count($orders),
+        'totalRevenue' => $totalRevenue,
+        'totalProfit' => $totalProfit
+    ]);
 }
 
 function handleCreateBusinessCustomer(): void {

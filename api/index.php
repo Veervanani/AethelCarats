@@ -682,6 +682,8 @@ if (str_starts_with($path, '/api/v1/business/')) {
         handleDeleteAllCustomers();
     } else if ($path === '/api/v1/business/customers/batch' && ($method === 'POST' || $method === 'DELETE')) {
         handleDeleteCustomersBatch();
+    } else if (preg_match('#^/api/v1/business/customers/([^/]+)/orders$#', $path, $custOrderMatches) && $method === 'GET') {
+        handleGetBusinessCustomerOrders(urldecode($custOrderMatches[1]));
     } else if (preg_match('#^/api/v1/business/customers/([^/]+)$#', $path, $custMatches) && ($method === 'DELETE' || $method === 'POST')) {
         handleDeleteCustomerById(urldecode($custMatches[1]));
     } else if ($path === '/api/v1/business/customers' && $method === 'GET') {
