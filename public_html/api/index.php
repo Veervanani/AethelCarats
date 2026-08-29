@@ -39,6 +39,7 @@ require_once __DIR__ . '/controllers/cmsController.php';
 require_once __DIR__ . '/controllers/customRequestController.php';
 require_once __DIR__ . '/controllers/seoController.php';
 require_once __DIR__ . '/controllers/heroBannerController.php';
+require_once __DIR__ . '/controllers/businessController.php';
 
 // CORS Security Headers with Dynamic Origin Validation
 $httpOrigin = $_SERVER['HTTP_ORIGIN'] ?? ($_SERVER['HTTP_REFERER'] ?? '');
@@ -621,6 +622,39 @@ if ($path === '/api/v1/seo' || $path === '/api/v1/admin/seo') {
         jsonResponse(['message' => 'SEO settings updated'], 200);
     } else {
         jsonError('Method Not Allowed', 405);
+    }
+}
+
+// 11. Private Business Operations & ERP Hub API Routes
+if (str_starts_with($path, '/api/v1/business/')) {
+    if ($path === '/api/v1/business/dashboard' && $method === 'GET') {
+        handleGetBusinessDashboard();
+    } else if ($path === '/api/v1/business/sales') {
+        if ($method === 'GET') {
+            handleGetBusinessSales();
+        } else if ($method === 'POST') {
+            handleCreateBusinessSale();
+        } else {
+            jsonError('Method Not Allowed', 405);
+        }
+    } else if ($path === '/api/v1/business/import/execute' && $method === 'POST') {
+        handleExecuteSalesImport();
+    } else if ($path === '/api/v1/business/employees' && $method === 'GET') {
+        handleGetBusinessEmployees();
+    } else if ($path === '/api/v1/business/attendance' && $method === 'GET') {
+        handleGetBusinessAttendance();
+    } else if ($path === '/api/v1/business/customers' && $method === 'GET') {
+        handleGetBusinessCustomers();
+    } else if ($path === '/api/v1/business/suppliers' && $method === 'GET') {
+        handleGetBusinessSuppliers();
+    } else if ($path === '/api/v1/business/commissions' && $method === 'GET') {
+        handleGetBusinessCommissions();
+    } else if ($path === '/api/v1/business/targets' && $method === 'GET') {
+        handleGetBusinessTargets();
+    } else if ($path === '/api/v1/business/audit-logs' && $method === 'GET') {
+        handleGetBusinessAuditLogs();
+    } else {
+        jsonError('Business Endpoint Not Found', 404);
     }
 }
 
