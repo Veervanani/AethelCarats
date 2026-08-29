@@ -17,7 +17,7 @@ import {
   Eye,
   Edit2,
   Trash2,
-  CheckCircle,
+  CheckCircle2,
   Clock,
   ExternalLink,
   ChevronLeft,
@@ -39,27 +39,44 @@ import {
   ArrowLeft,
   ArrowRight,
   SlidersHorizontal,
+  Layers,
+  ArrowUpRight,
+  BarChart3,
+  Building2,
+  Coins,
+  Calendar,
+  User,
+  MapPin,
+  Tag,
+  Hash,
 } from 'lucide-react';
 
 const pulse = keyframes`
   0%, 100% { opacity: 1; }
-  50% { opacity: 0.4; }
+  50% { opacity: 0.45; }
 `;
 
 const PageContainer = styled.div`
   display: flex;
   flex-direction: column;
-  gap: 16px;
+  gap: 20px;
   width: 100%;
   max-width: 100%;
+  font-family: inherit;
 `;
 
+// Page Header
 const PageHeader = styled.div`
   display: flex;
   justify-content: space-between;
   align-items: center;
   flex-wrap: wrap;
   gap: 16px;
+  background: #ffffff;
+  padding: 20px 24px;
+  border-radius: 12px;
+  border: 1px solid #e2e8f0;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.03);
 
   .title-group {
     h1 {
@@ -71,24 +88,28 @@ const PageHeader = styled.div`
       display: flex;
       align-items: center;
       gap: 10px;
+      flex-wrap: wrap;
 
       .badge-tag {
-        font-size: 0.68rem;
+        font-size: 0.7rem;
         font-weight: 700;
         text-transform: uppercase;
         letter-spacing: 0.05em;
         background: #f1f5f9;
         color: #475569;
-        padding: 3px 8px;
+        padding: 3px 10px;
         border-radius: 20px;
         border: 1px solid #e2e8f0;
+        display: inline-flex;
+        align-items: center;
+        gap: 5px;
       }
     }
 
     p {
       font-size: 0.82rem;
       color: #64748b;
-      margin: 4px 0 0 0;
+      margin: 6px 0 0 0;
     }
   }
 
@@ -104,21 +125,27 @@ const PrimaryButton = styled(Link)`
   display: inline-flex;
   align-items: center;
   gap: 7px;
-  padding: 8px 18px;
+  padding: 9px 18px;
   background: #0d1319;
   color: #ffffff;
   border-radius: 8px;
   text-decoration: none;
   font-size: 0.82rem;
   font-weight: 700;
-  box-shadow: 0 2px 4px rgba(13, 19, 25, 0.15);
+  box-shadow: 0 2px 6px rgba(13, 19, 25, 0.18);
   transition: all 0.15s ease;
   white-space: nowrap;
+  border: 1px solid #0d1319;
 
   &:hover {
     background: #1e293b;
-    box-shadow: 0 4px 8px rgba(13, 19, 25, 0.2);
+    box-shadow: 0 4px 10px rgba(13, 19, 25, 0.25);
     transform: translateY(-1px);
+    color: #ffffff;
+  }
+
+  &:active {
+    transform: translateY(0);
   }
 `;
 
@@ -139,20 +166,21 @@ const SecondaryButton = styled.button<{ $variant?: 'danger' | 'success' | 'defau
     switch ($variant) {
       case 'danger':
         return `
-          border: 1px solid #fecaca;
-          color: #b91c1c;
-          background: #fff5f5;
+          border: 1px solid #fecdd3;
+          color: #e11d48;
+          background: #fff1f2;
           &:hover {
-            background: #fee2e2;
-            border-color: #f87171;
+            background: #ffe4e6;
+            border-color: #fda4af;
           }
         `;
       case 'success':
         return `
           border: 1px solid #bbf7d0;
           color: #15803d;
+          background: #f0fdf4;
           &:hover {
-            background: #f0fdf4;
+            background: #dcfce7;
             border-color: #86efac;
           }
         `;
@@ -200,17 +228,30 @@ const SecondaryLink = styled(Link)`
   }
 `;
 
+// Financial KPI Summary Cards
 const SummaryGrid = styled.div`
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  grid-template-columns: repeat(7, 1fr);
   gap: 12px;
+
+  @media (max-width: 1400px) {
+    grid-template-columns: repeat(4, 1fr);
+  }
+
+  @media (max-width: 900px) {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  @media (max-width: 500px) {
+    grid-template-columns: 1fr;
+  }
 `;
 
-const KpiCard = styled.div<{ $highlight?: 'revenue' | 'profit' | 'warning' | 'retained' }>`
+const KpiCard = styled.div<{ $theme?: 'default' | 'revenue' | 'cost' | 'gross' | 'net' | 'commission' | 'retained' }>`
   background: #ffffff;
   border: 1px solid #e2e8f0;
   border-radius: 10px;
-  padding: 12px 16px;
+  padding: 14px 16px;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.03);
   display: flex;
   flex-direction: column;
@@ -219,7 +260,7 @@ const KpiCard = styled.div<{ $highlight?: 'revenue' | 'profit' | 'warning' | 're
 
   &:hover {
     border-color: #cbd5e1;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
     transform: translateY(-1px);
   }
 
@@ -227,19 +268,19 @@ const KpiCard = styled.div<{ $highlight?: 'revenue' | 'profit' | 'warning' | 're
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 6px;
+    margin-bottom: 8px;
 
     .label {
-      font-size: 0.7rem;
+      font-size: 0.68rem;
       font-weight: 700;
       text-transform: uppercase;
-      letter-spacing: 0.03em;
+      letter-spacing: 0.04em;
       color: #64748b;
     }
 
     .icon-wrap {
-      width: 24px;
-      height: 24px;
+      width: 26px;
+      height: 26px;
       border-radius: 6px;
       display: flex;
       align-items: center;
@@ -252,16 +293,26 @@ const KpiCard = styled.div<{ $highlight?: 'revenue' | 'profit' | 'warning' | 're
   .val {
     font-size: 1.25rem;
     font-weight: 800;
-    color: ${({ $highlight }) =>
-      $highlight === 'profit'
-        ? '#16a34a'
-        : $highlight === 'warning'
-        ? '#d97706'
-        : $highlight === 'retained'
-        ? '#2563eb'
-        : '#0f172a'};
     letter-spacing: -0.02em;
     font-variant-numeric: tabular-nums;
+    color: ${({ $theme }) => {
+      switch ($theme) {
+        case 'revenue':
+          return '#0f172a';
+        case 'cost':
+          return '#475569';
+        case 'gross':
+          return '#0284c7';
+        case 'net':
+          return '#16a34a';
+        case 'commission':
+          return '#d97706';
+        case 'retained':
+          return '#2563eb';
+        default:
+          return '#0f172a';
+      }
+    }};
   }
 
   .subtitle {
@@ -275,20 +326,21 @@ const SkeletonKpi = styled.div`
   background: #f1f5f9;
   border: 1px solid #e2e8f0;
   border-radius: 10px;
-  height: 86px;
+  height: 92px;
   animation: ${pulse} 1.5s infinite;
 `;
 
+// Filter Toolbar
 const FilterToolbar = styled.div`
   background: #ffffff;
   border: 1px solid #e2e8f0;
   border-radius: 10px;
-  padding: 10px 14px;
+  padding: 12px 16px;
   display: flex;
   flex-wrap: wrap;
-  gap: 10px;
+  gap: 12px;
   align-items: center;
-  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.02);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.02);
 
   .search-wrapper {
     display: flex;
@@ -297,9 +349,9 @@ const FilterToolbar = styled.div`
     background: #f8fafc;
     border: 1px solid #cbd5e1;
     border-radius: 8px;
-    padding: 6px 12px;
+    padding: 7px 12px;
     flex: 1;
-    min-width: 240px;
+    min-width: 260px;
     transition: all 0.15s ease;
 
     &:focus-within {
@@ -337,7 +389,7 @@ const FilterToolbar = styled.div`
   }
 
   .filter-select {
-    padding: 7px 12px;
+    padding: 8px 12px;
     border-radius: 8px;
     border: 1px solid #cbd5e1;
     font-size: 0.82rem;
@@ -357,7 +409,7 @@ const FilterToolbar = styled.div`
     font-size: 0.76rem;
     font-weight: 600;
     color: #64748b;
-    padding: 4px 10px;
+    padding: 6px 12px;
     background: #f8fafc;
     border-radius: 6px;
     border: 1px solid #e2e8f0;
@@ -365,6 +417,7 @@ const FilterToolbar = styled.div`
   }
 `;
 
+// Scroll Navigator Bar
 const ScrollNavigatorBar = styled.div`
   display: flex;
   justify-content: space-between;
@@ -372,15 +425,18 @@ const ScrollNavigatorBar = styled.div`
   background: #f8fafc;
   border: 1px solid #e2e8f0;
   border-radius: 8px;
-  padding: 6px 12px;
+  padding: 8px 14px;
   font-size: 0.78rem;
   color: #475569;
+  flex-wrap: wrap;
+  gap: 8px;
 
   .hint-text {
     display: flex;
     align-items: center;
-    gap: 6px;
+    gap: 8px;
     font-weight: 600;
+    color: #334155;
   }
 
   .scroll-btn-group {
@@ -396,7 +452,7 @@ const ScrollNavigatorBar = styled.div`
     background: #ffffff;
     border: 1px solid #cbd5e1;
     color: #0f172a;
-    padding: 4px 10px;
+    padding: 5px 12px;
     border-radius: 6px;
     font-size: 0.74rem;
     font-weight: 700;
@@ -411,6 +467,7 @@ const ScrollNavigatorBar = styled.div`
   }
 `;
 
+// Floating Selection Banner
 const SelectionBanner = styled.div`
   display: flex;
   justify-content: space-between;
@@ -418,12 +475,13 @@ const SelectionBanner = styled.div`
   background: #f0fdf4;
   border: 1px solid #bbf7d0;
   border-radius: 8px;
-  padding: 8px 16px;
+  padding: 10px 18px;
   font-size: 0.82rem;
   font-weight: 600;
   color: #166534;
   flex-wrap: wrap;
-  gap: 10px;
+  gap: 12px;
+  box-shadow: 0 2px 6px rgba(22, 101, 52, 0.08);
 
   .actions {
     display: flex;
@@ -458,6 +516,7 @@ const CustomCheckbox = styled.label<{ $checked?: boolean }>`
   }
 `;
 
+// Data Table
 const TableContainer = styled.div`
   background: #ffffff;
   border: 1px solid #e2e8f0;
@@ -479,20 +538,22 @@ const Table = styled.table`
   th {
     background: #0d1319;
     color: #f8fafc;
-    padding: 11px 12px;
-    font-weight: 600;
+    padding: 12px 14px;
+    font-weight: 700;
     text-align: left;
     border-right: 1px solid rgba(255, 255, 255, 0.08);
     position: sticky;
     top: 0;
     z-index: 10;
-    letter-spacing: 0.01em;
+    letter-spacing: 0.02em;
+    font-size: 0.74rem;
+    text-transform: uppercase;
   }
 
   td {
-    padding: 9px 12px;
+    padding: 11px 14px;
     border-bottom: 1px solid #f1f5f9;
-    border-right: 1px solid #f1f5f9;
+    border-right: 1px solid #f8fafc;
     color: #1e293b;
     font-variant-numeric: tabular-nums;
   }
@@ -527,18 +588,18 @@ const Table = styled.table`
   th.sticky-col-inv {
     position: sticky;
     left: 44px;
-    min-width: 125px;
+    min-width: 135px;
     background: #0d1319 !important;
     color: #f1f4f8 !important;
     z-index: 30;
-    font-weight: 700;
+    font-weight: 800;
     box-shadow: 3px 0 6px rgba(0, 0, 0, 0.12);
   }
 
   td.sticky-col-inv {
     position: sticky;
     left: 44px;
-    min-width: 125px;
+    min-width: 135px;
     background: #ffffff;
     z-index: 20;
     font-weight: 700;
@@ -554,9 +615,11 @@ const Table = styled.table`
 const Badge = styled.span<{ $type?: string }>`
   font-size: 0.68rem;
   font-weight: 700;
-  padding: 3px 7px;
-  border-radius: 4px;
-  display: inline-block;
+  padding: 3px 8px;
+  border-radius: 5px;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
   letter-spacing: 0.02em;
 
   ${({ $type }) => {
@@ -569,72 +632,17 @@ const Badge = styled.span<{ $type?: string }>`
       case 'Unpaid':
         return 'background: #fff5f5; color: #e03131; border: 1px solid #ffc9c9;';
       case 'Delivered':
-        return 'background: #e7f5ff; color: #1c7ed6; border: 1px solid #a5d8ff;';
+        return 'background: #eff6ff; color: #1d4ed8; border: 1px solid #bfdbfe;';
       case 'Shipped':
         return 'background: #f3f0ff; color: #7950f2; border: 1px solid #d0bfff;';
       case 'Processing':
         return 'background: #fff4e6; color: #d9480f; border: 1px solid #ffd8a8;';
       case 'Diamond':
-        return 'background: #fff3bf; color: #b45309; border: 1px solid #fde68a;';
+        return 'background: #fef3c7; color: #b45309; border: 1px solid #fde68a;';
       case 'Jewelry':
         return 'background: #ede9fe; color: #6d28d9; border: 1px solid #ddd6fe;';
       default:
         return 'background: #f1f5f9; color: #64748b; border: 1px solid #e2e8f0;';
-    }
-  }}
-`;
-
-const ActionButton = styled.button<{ $variant?: 'view' | 'edit' | 'delete' }>`
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  padding: 5px 9px;
-  border-radius: 6px;
-  cursor: pointer;
-  transition: all 0.15s ease;
-  border: 1.5px solid transparent;
-
-  ${({ $variant }) => {
-    switch ($variant) {
-      case 'view':
-        return `
-          background: #f1f5f9;
-          border-color: #94a3b8;
-          color: #0f172a;
-          &:hover {
-            background: #0d1319;
-            color: #ffffff;
-            border-color: #0d1319;
-          }
-        `;
-      case 'edit':
-        return `
-          background: #eff6ff;
-          border-color: #60a5fa;
-          color: #1d4ed8;
-          &:hover {
-            background: #2563eb;
-            color: #ffffff;
-            border-color: #2563eb;
-          }
-        `;
-      case 'delete':
-        return `
-          background: #fff1f2;
-          border-color: #f87171;
-          color: #be123c;
-          &:hover {
-            background: #e11d48;
-            color: #ffffff;
-            border-color: #e11d48;
-          }
-        `;
-      default:
-        return `
-          background: #f8fafc;
-          border-color: #cbd5e1;
-          color: #334155;
-        `;
     }
   }}
 `;
@@ -648,8 +656,8 @@ const EmptyStateContainer = styled.div`
   text-align: center;
 
   .icon-circle {
-    width: 56px;
-    height: 56px;
+    width: 60px;
+    height: 60px;
     border-radius: 50%;
     background: #f8fafc;
     border: 1px solid #e2e8f0;
@@ -661,8 +669,8 @@ const EmptyStateContainer = styled.div`
   }
 
   h3 {
-    font-size: 1.1rem;
-    font-weight: 700;
+    font-size: 1.15rem;
+    font-weight: 800;
     color: #0f172a;
     margin: 0 0 6px 0;
   }
@@ -670,20 +678,20 @@ const EmptyStateContainer = styled.div`
   p {
     font-size: 0.84rem;
     color: #64748b;
-    max-width: 420px;
-    margin: 0 0 20px 0;
-    line-height: 1.4;
+    max-width: 440px;
+    margin: 0 0 24px 0;
+    line-height: 1.5;
   }
 
   .cta-group {
     display: flex;
-    gap: 10px;
+    gap: 12px;
     flex-wrap: wrap;
     justify-content: center;
   }
 `;
 
-const fmt = (num: any) => (Number(num) || 0).toLocaleString();
+const fmt = (num: any) => (Number(num) || 0).toLocaleString(undefined, { minimumFractionDigits: 0, maximumFractionDigits: 2 });
 
 export const BusinessSalesListPage: React.FC = () => {
   const [sales, setSales] = useState<InternalSale[]>([]);
@@ -854,7 +862,6 @@ export const BusinessSalesListPage: React.FC = () => {
     }
   };
 
-  // Find the single selected sale if 1 is selected
   const singleSelectedSale = selectedIds.size === 1 ? filteredSales.find((s) => selectedIds.has(s.id)) : null;
 
   const exportCSV = () => {
@@ -1061,7 +1068,10 @@ export const BusinessSalesListPage: React.FC = () => {
         <div className="title-group">
           <h1>
             Sales Management Tracker
-            <span className="badge-tag">46-Column Ledger</span>
+            <span className="badge-tag">
+              <Sparkles size={11} color="#0f172a" />
+              46-Column Financial Ledger
+            </span>
           </h1>
           <p>Authoritative financial tracking, sales performance, commissions & margins</p>
         </div>
@@ -1100,7 +1110,7 @@ export const BusinessSalesListPage: React.FC = () => {
           Array.from({ length: 7 }).map((_, i) => <SkeletonKpi key={i} />)
         ) : (
           <>
-            <KpiCard>
+            <KpiCard $theme="default">
               <div className="card-top">
                 <span className="label">Total Orders</span>
                 <span className="icon-wrap"><Receipt size={14} /></span>
@@ -1109,36 +1119,36 @@ export const BusinessSalesListPage: React.FC = () => {
               <div className="subtitle">Processed deals</div>
             </KpiCard>
 
-            <KpiCard $highlight="revenue">
+            <KpiCard $theme="revenue">
               <div className="card-top">
                 <span className="label">Total Revenue</span>
-                <span className="icon-wrap"><DollarSign size={14} color="#0f172a" /></span>
+                <span className="icon-wrap" style={{ background: '#f1f5f9' }}><DollarSign size={14} color="#0f172a" /></span>
               </div>
               <div className="val">${fmt(displaySummary?.totalRevenue)}</div>
               <div className="subtitle">Gross billed volume</div>
             </KpiCard>
 
-            <KpiCard>
+            <KpiCard $theme="cost">
               <div className="card-top">
                 <span className="label">Purchase Costs</span>
                 <span className="icon-wrap"><Wallet size={14} /></span>
               </div>
-              <div className="val" style={{ color: '#475569' }}>
+              <div className="val">
                 ${fmt(displaySummary?.totalPurchaseCost)}
               </div>
               <div className="subtitle">Inventory & vendor COGS</div>
             </KpiCard>
 
-            <KpiCard>
+            <KpiCard $theme="gross">
               <div className="card-top">
                 <span className="label">Gross Profit</span>
-                <span className="icon-wrap"><TrendingUp size={14} /></span>
+                <span className="icon-wrap" style={{ background: '#f0f9ff', color: '#0284c7' }}><TrendingUp size={14} /></span>
               </div>
               <div className="val">${fmt(displaySummary?.totalGrossProfit)}</div>
               <div className="subtitle">Revenue minus COGS</div>
             </KpiCard>
 
-            <KpiCard $highlight="profit">
+            <KpiCard $theme="net">
               <div className="card-top">
                 <span className="label">Net Profit</span>
                 <span className="icon-wrap" style={{ background: '#f0fdf4', color: '#16a34a' }}><Sparkles size={14} /></span>
@@ -1147,7 +1157,7 @@ export const BusinessSalesListPage: React.FC = () => {
               <div className="subtitle">Post-shipping & GST</div>
             </KpiCard>
 
-            <KpiCard $highlight="warning">
+            <KpiCard $theme="commission">
               <div className="card-top">
                 <span className="label">Commission Due</span>
                 <span className="icon-wrap" style={{ background: '#fffbeb', color: '#d97706' }}><Award size={14} /></span>
@@ -1156,7 +1166,7 @@ export const BusinessSalesListPage: React.FC = () => {
               <div className="subtitle">Staff commission liability</div>
             </KpiCard>
 
-            <KpiCard $highlight="retained">
+            <KpiCard $theme="retained">
               <div className="card-top">
                 <span className="label">Retained Profit</span>
                 <span className="icon-wrap" style={{ background: '#eff6ff', color: '#2563eb' }}><ShieldCheck size={14} /></span>
@@ -1410,8 +1420,8 @@ export const BusinessSalesListPage: React.FC = () => {
               </th>
 
               <th>Description / Shape</th>
-              <th>Carat</th>
-              <th>Color/Clarity</th>
+              <th>Carat / Weight</th>
+              <th>Color / Clarity</th>
               <th>Cert #</th>
               <th>Supplier</th>
               <th>Selling Price</th>
@@ -1461,9 +1471,9 @@ export const BusinessSalesListPage: React.FC = () => {
                   <td className="sticky-col-inv">
                     <Link
                       to={`${PRIVATE_BUSINESS_PATH}/sales/${s.id}`}
-                      style={{ color: '#0d1319', textDecoration: 'none', fontWeight: 700 }}
+                      style={{ color: '#0d1319', textDecoration: 'none', fontWeight: 800, display: 'inline-flex', alignItems: 'center', gap: 4 }}
                     >
-                      {s.invoiceNo}
+                      {s.invoiceNo} <ArrowUpRight size={11} color="#64748b" />
                     </Link>
                   </td>
 
@@ -1481,26 +1491,26 @@ export const BusinessSalesListPage: React.FC = () => {
                     {isDiamond ? (s.shape || s.productDescription || '-') : (s.productDescription || '-')}
                   </td>
 
-                  <td>{isDiamond && s.caratWeight ? `${s.caratWeight} ct` : isDiamond ? '-' : `Qty: ${s.quantity || 1}`}</td>
+                  <td style={{ fontWeight: 600 }}>{isDiamond && s.caratWeight ? `${s.caratWeight} ct` : isDiamond ? '-' : `Qty: ${s.quantity || 1}`}</td>
                   <td>{isDiamond && s.diamondColor ? `${s.diamondColor} / ${s.clarity || ''}` : '-'}</td>
                   <td>{isDiamond ? (s.certificateNo || '-') : '-'}</td>
                   <td>{s.supplierName || 'None'}</td>
 
                   <td>${fmt(s.sellingPrice)}</td>
-                  <td style={{ fontWeight: 700, color: '#0f172a' }}>${fmt(s.finalSaleAmount)}</td>
+                  <td style={{ fontWeight: 800, color: '#0f172a' }}>${fmt(s.finalSaleAmount)}</td>
                   <td>${fmt(s.purchasePrice)}</td>
                   <td>${fmt(s.gstAmount)}</td>
                   <td>${fmt(s.finalPurchasePrice)}</td>
                   <td>${fmt(s.grossProfit)}</td>
 
-                  <td style={{ fontWeight: 700, color: (Number(s.netProfit) || 0) >= 0 ? '#16a34a' : '#dc2626' }}>
+                  <td style={{ fontWeight: 800, color: (Number(s.netProfit) || 0) >= 0 ? '#16a34a' : '#dc2626' }}>
                     ${fmt(s.netProfit)}
                   </td>
 
                   <td>{s.salesPersonName || '-'}</td>
                   <td>{((Number(s.commissionPercent) || 0) * 100).toFixed(1)}%</td>
                   <td style={{ color: '#d97706', fontWeight: 600 }}>${fmt(s.commissionAmount)}</td>
-                  <td style={{ fontWeight: 700, color: '#2563eb' }}>${fmt(s.profitAfterCommission)}</td>
+                  <td style={{ fontWeight: 800, color: '#2563eb' }}>${fmt(s.profitAfterCommission)}</td>
                   <td>{((Number(s.markupPercent) || 0) * 100).toFixed(1)}%</td>
 
                   <td>
@@ -1549,7 +1559,7 @@ export const BusinessSalesListPage: React.FC = () => {
                         if (e.key === 'Enter') (e.target as HTMLInputElement).blur();
                       }}
                       style={{
-                        width: 70,
+                        width: 72,
                         padding: '4px 6px',
                         border: '1px solid #cbd5e1',
                         borderRadius: 6,
@@ -1562,7 +1572,7 @@ export const BusinessSalesListPage: React.FC = () => {
                     />
                   </td>
 
-                  {/* Sharp, Solid High-Contrast Action Buttons */}
+                  {/* Clean Modern Action Icons */}
                   <td style={{ textAlign: 'center' }}>
                     <div style={{ display: 'inline-flex', gap: 5, alignItems: 'center', justifyContent: 'center' }}>
                       <Link to={`${PRIVATE_BUSINESS_PATH}/sales/${s.id}`} title="View Sale Detail">
@@ -1572,17 +1582,18 @@ export const BusinessSalesListPage: React.FC = () => {
                             display: 'inline-flex',
                             alignItems: 'center',
                             justifyContent: 'center',
+                            width: 28,
+                            height: 28,
                             background: '#0d1319',
                             color: '#ffffff',
-                            border: '1px solid #0d1319',
-                            borderRadius: 5,
-                            padding: '5px 8px',
+                            border: 'none',
+                            borderRadius: 6,
                             cursor: 'pointer',
-                            transition: 'opacity 0.15s ease',
+                            transition: 'all 0.15s ease',
                           }}
                           title="View Invoice Detail"
                         >
-                          <Eye size={13} color="#ffffff" strokeWidth={2.5} />
+                          <Eye size={13} />
                         </button>
                       </Link>
 
@@ -1593,17 +1604,18 @@ export const BusinessSalesListPage: React.FC = () => {
                           display: 'inline-flex',
                           alignItems: 'center',
                           justifyContent: 'center',
-                          background: '#2563eb',
-                          color: '#ffffff',
-                          border: '1px solid #1d4ed8',
-                          borderRadius: 5,
-                          padding: '5px 8px',
+                          width: 28,
+                          height: 28,
+                          background: '#eff6ff',
+                          color: '#1d4ed8',
+                          border: '1px solid #bfdbfe',
+                          borderRadius: 6,
                           cursor: 'pointer',
-                          transition: 'opacity 0.15s ease',
+                          transition: 'all 0.15s ease',
                         }}
                         title="Edit Sale Invoice"
                       >
-                        <Edit2 size={13} color="#ffffff" strokeWidth={2.5} />
+                        <Edit2 size={13} />
                       </button>
 
                       <button
@@ -1613,17 +1625,18 @@ export const BusinessSalesListPage: React.FC = () => {
                           display: 'inline-flex',
                           alignItems: 'center',
                           justifyContent: 'center',
-                          background: '#dc2626',
-                          color: '#ffffff',
-                          border: '1px solid #b91c1c',
-                          borderRadius: 5,
-                          padding: '5px 8px',
+                          width: 28,
+                          height: 28,
+                          background: '#fff1f2',
+                          color: '#e11d48',
+                          border: '1px solid #fecdd3',
+                          borderRadius: 6,
                           cursor: 'pointer',
-                          transition: 'opacity 0.15s ease',
+                          transition: 'all 0.15s ease',
                         }}
                         title="Delete Sale Invoice"
                       >
-                        <Trash2 size={13} color="#ffffff" strokeWidth={2.5} />
+                        <Trash2 size={13} />
                       </button>
                     </div>
                   </td>
@@ -1637,7 +1650,7 @@ export const BusinessSalesListPage: React.FC = () => {
                 <td colSpan={28} style={{ padding: 0 }}>
                   <EmptyStateContainer>
                     <div className="icon-circle">
-                      <FileSpreadsheet size={26} />
+                      <FileSpreadsheet size={28} />
                     </div>
                     <h3>No sales records found</h3>
                     <p>
@@ -1725,3 +1738,4 @@ export const BusinessSalesListPage: React.FC = () => {
     </PageContainer>
   );
 };
+
