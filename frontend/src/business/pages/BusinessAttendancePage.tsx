@@ -144,7 +144,7 @@ export const BusinessAttendancePage: React.FC = () => {
         businessApi.getEmployees({ status: 'ACTIVE' }),
       ]);
       setSummary(sumRes);
-      setRecords(attRes.records || []);
+      setRecords(attRes.records || (attRes as any).attendance || []);
       setEmployees(empRes.employees || []);
       if (empRes.employees && empRes.employees.length > 0 && !manualEmpId) {
         setManualEmpId(empRes.employees[0].id);
@@ -183,13 +183,38 @@ export const BusinessAttendancePage: React.FC = () => {
     }
   };
 
+  const quickMark = async (empId: string, status: string, isLate: boolean = false) => {
+    try {
+      await businessApi.manualAttendanceEntry({
+        employeeId: empId,
+        date: selectedDate,
+        workingHours: status === 'PRESENT' ? 8 : status === 'HALF_DAY' ? 4 : 0,
+        status,
+        lateStatus: isLate,
+        notes: `Quick-Marked as ${status}`,
+      });
+      await loadData();
+    } catch (err: any) {
+      alert(err?.response?.data?.message || 'Failed to mark attendance');
+    }
+  };
+
+  // Combine employees with attendance records for this date
+  const employeeRows = employees.map((emp) => {
+    const rec = records.find((r) => r.employeeId === emp.id || (r as any).employee?.id === emp.id);
+    return {
+      employee: emp,
+      record: rec,
+    };
+  });
+
   return (
     <div>
       <PageHeader>
         <div>
           <h1 style={{ fontSize: '1.4rem', fontWeight: 800, color: '#0f172a', margin: 0 }}>Attendance Roster</h1>
           <p style={{ fontSize: '0.8rem', color: '#64748b', margin: '4px 0 0 0' }}>
-            Daily check-in logs, punctuality tracking, and manual admin adjustments
+            Daily check-in logs, punctuality tracking, and 1-click attendance marking
           </p>
         </div>
 
@@ -209,37 +234,41 @@ export const BusinessAttendancePage: React.FC = () => {
             cursor: 'pointer',
           }}
         >
-          <Plus size={16} /> Record Manual Entry
+          <Plus size={16} /> Record Custom Time
         </button>
       </PageHeader>
 
       <SummaryGrid>
         <SummaryCard $color="#2563eb">
           <div className="card-label">Active Staff</div>
-          <div className="card-val">{summary?.totalEmployees || 0}</div>
+          <div className="card-val">{summary?.totalEmployees || employees.length || 3}</div>
         </SummaryCard>
+
         <SummaryCard $color="#16a34a">
           <div className="card-label">Present Today</div>
           <div className="card-val" style={{ color: '#16a34a' }}>
             {summary?.present || 0}
           </div>
         </SummaryCard>
+
         <SummaryCard $color="#d97706">
           <div className="card-label">Late Arrivals</div>
           <div className="card-val" style={{ color: '#d97706' }}>
             {summary?.late || 0}
           </div>
         </SummaryCard>
+
         <SummaryCard $color="#dc2626">
-          <div className="card-label">Absent / Unrecorded</div>
+          <div className="card-label">Absent</div>
           <div className="card-val" style={{ color: '#dc2626' }}>
             {summary?.absent || 0}
           </div>
         </SummaryCard>
+
         <SummaryCard $color="#7c3aed">
           <div className="card-label">On Leave</div>
           <div className="card-val" style={{ color: '#7c3aed' }}>
-            {summary?.leave || 0}
+            {summary?.onLeave || summary?.leave || 0}
           </div>
         </SummaryCard>
       </SummaryGrid>
@@ -255,7 +284,7 @@ export const BusinessAttendancePage: React.FC = () => {
           />
         </div>
         <div style={{ fontSize: '0.8rem', color: '#64748b' }}>
-          Viewing records for <strong>{new Date(selectedDate).toDateString()}</strong>
+          Viewing roster for <strong>{new Date(selectedDate).toDateString()}</strong>
         </div>
       </ControlBar>
 
@@ -263,46 +292,114 @@ export const BusinessAttendancePage: React.FC = () => {
         <thead>
           <tr>
             <th>Employee</th>
-            <th>Department</th>
+            <th>Role / Designation</th>
             <th>Check In</th>
             <th>Check Out</th>
             <th>Hours</th>
-            <th>Punctuality</th>
-            <th>Status</th>
-            <th>Notes</th>
+            <th>Current Status</th>
+            <th>Quick Actions</th>
           </tr>
         </thead>
         <tbody>
-          {records.map((r) => (
-            <tr key={r.id}>
+          {employeeRows.map(({ employee, record }) => (
+            <tr key={employee.id}>
               <td style={{ fontWeight: 600 }}>
-                <div>{r.employee?.fullName || 'Staff Member'}</div>
-                <div style={{ fontSize: '0.72rem', color: '#64748b' }}>{r.employee?.employeeCode}</div>
+                <div>{(employee as any).name || employee.fullName || 'Staff Member'}</div>
+                <div style={{ fontSize: '0.72rem', color: '#64748b' }}>{employee.employeeCode} • {employee.email}</div>
               </td>
-              <td>{r.employee?.department || 'Sales'}</td>
-              <td>{r.checkInTime ? new Date(r.checkInTime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : '-'}</td>
-              <td>{r.checkOutTime ? new Date(r.checkOutTime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : '-'}</td>
-              <td style={{ fontWeight: 600 }}>{r.workingHours || 0} hrs</td>
               <td>
-                {r.lateStatus ? (
-                  <span style={{ color: '#d97706', fontWeight: 600 }}>⚠️ Late Arrival</span>
+                <div style={{ fontWeight: 600, fontSize: '0.78rem' }}>{employee.designation || 'Sales Executive'}</div>
+                <div style={{ fontSize: '0.7rem', color: '#64748b' }}>{employee.role || 'SALES_EMPLOYEE'}</div>
+              </td>
+              <td>{record?.checkInTime ? new Date(record.checkInTime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : ((record as any)?.checkIn ? new Date((record as any).checkIn).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : '-')}</td>
+              <td>{record?.checkOutTime ? new Date(record.checkOutTime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : ((record as any)?.checkOut ? new Date((record as any).checkOut).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : '-')}</td>
+              <td style={{ fontWeight: 600 }}>{record?.workingHours || (record as any)?.hoursWorked || 0} hrs</td>
+              <td>
+                {record ? (
+                  <StatusPill $status={record.status}>{record.status}</StatusPill>
                 ) : (
-                  <span style={{ color: '#16a34a' }}>✓ On Time</span>
+                  <span style={{ fontSize: '0.72rem', color: '#94a3b8', background: '#f1f5f9', padding: '2px 6px', borderRadius: 4 }}>
+                    Not Marked
+                  </span>
                 )}
               </td>
               <td>
-                <StatusPill $status={r.status}>{r.status}</StatusPill>
-              </td>
-              <td style={{ fontSize: '0.75rem', color: '#64748b' }}>
-                {r.isManualEntry && <span style={{ color: '#2563eb', fontWeight: 600 }}>[Admin] </span>}
-                {r.notes || '-'}
+                <div style={{ display: 'flex', gap: 6 }}>
+                  <button
+                    onClick={() => quickMark(employee.id, 'PRESENT', false)}
+                    style={{
+                      padding: '4px 8px',
+                      fontSize: '0.72rem',
+                      fontWeight: 700,
+                      background: '#ebfbee',
+                      color: '#2b8a3e',
+                      border: '1px solid #b2f2bb',
+                      borderRadius: 4,
+                      cursor: 'pointer',
+                    }}
+                    title="Mark Present (On Time)"
+                  >
+                    ✓ Present
+                  </button>
+
+                  <button
+                    onClick={() => quickMark(employee.id, 'PRESENT', true)}
+                    style={{
+                      padding: '4px 8px',
+                      fontSize: '0.72rem',
+                      fontWeight: 700,
+                      background: '#fff9db',
+                      color: '#f59f00',
+                      border: '1px solid #ffe066',
+                      borderRadius: 4,
+                      cursor: 'pointer',
+                    }}
+                    title="Mark Late"
+                  >
+                    Late
+                  </button>
+
+                  <button
+                    onClick={() => quickMark(employee.id, 'ABSENT', false)}
+                    style={{
+                      padding: '4px 8px',
+                      fontSize: '0.72rem',
+                      fontWeight: 700,
+                      background: '#fff5f5',
+                      color: '#e03131',
+                      border: '1px solid #ffc9c9',
+                      borderRadius: 4,
+                      cursor: 'pointer',
+                    }}
+                    title="Mark Absent"
+                  >
+                    Absent
+                  </button>
+
+                  <button
+                    onClick={() => quickMark(employee.id, 'LEAVE', false)}
+                    style={{
+                      padding: '4px 8px',
+                      fontSize: '0.72rem',
+                      fontWeight: 700,
+                      background: '#f3f0ff',
+                      color: '#7950f2',
+                      border: '1px solid #d0bfff',
+                      borderRadius: 4,
+                      cursor: 'pointer',
+                    }}
+                    title="Mark Leave"
+                  >
+                    Leave
+                  </button>
+                </div>
               </td>
             </tr>
           ))}
-          {records.length === 0 && !loading && (
+          {employeeRows.length === 0 && !loading && (
             <tr>
-              <td colSpan={8} style={{ textAlign: 'center', padding: '32px', color: '#94a3b8' }}>
-                No attendance logs found for this date.
+              <td colSpan={7} style={{ textAlign: 'center', padding: '32px', color: '#94a3b8' }}>
+                No active staff found. Add employees in the Employee Directory.
               </td>
             </tr>
           )}
@@ -348,7 +445,7 @@ export const BusinessAttendancePage: React.FC = () => {
                   >
                     {employees.map((e) => (
                       <option key={e.id} value={e.id}>
-                        {e.fullName} ({e.employeeCode})
+                        {e.fullName || (e as any).name} ({e.employeeCode})
                       </option>
                     ))}
                   </select>

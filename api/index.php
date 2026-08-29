@@ -643,6 +643,14 @@ if (str_starts_with($path, '/api/v1/business/')) {
         handleGetBusinessEmployees();
     } else if ($path === '/api/v1/business/attendance' && $method === 'GET') {
         handleGetBusinessAttendance();
+    } else if ($path === '/api/v1/business/attendance/today' && $method === 'GET') {
+        handleGetBusinessAttendanceToday();
+    } else if ($path === '/api/v1/business/attendance/check-in' && $method === 'POST') {
+        handleBusinessCheckIn();
+    } else if ($path === '/api/v1/business/attendance/check-out' && $method === 'POST') {
+        handleBusinessCheckOut();
+    } else if ($path === '/api/v1/business/attendance/manual' && $method === 'POST') {
+        handleBusinessManualAttendance();
     } else if ($path === '/api/v1/business/customers' && $method === 'GET') {
         handleGetBusinessCustomers();
     } else if ($path === '/api/v1/business/suppliers' && $method === 'GET') {

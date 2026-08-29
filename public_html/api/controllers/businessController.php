@@ -286,7 +286,35 @@ function handleGetBusinessDashboard(): void {
     $pdo = getDatabaseConnection();
     ensureBusinessTablesExist($pdo);
 
-    $stmt = $pdo->query("SELECT 
+    $where = [];
+    $params = [];
+
+    $year = $_GET['year'] ?? '';
+    if (!empty($year) && $year !== 'All Years') {
+        $where[] = "(YEAR(`saleDate`) = ? OR `saleDate` LIKE ?)";
+        $params[] = (int)$year;
+        $params[] = $year . '%';
+    }
+
+    $month = $_GET['month'] ?? '';
+    if (!empty($month) && $month !== 'All Months') {
+        $where[] = "(`saleMonth` = ? OR MONTHNAME(`saleDate`) = ?)";
+        $params[] = $month;
+        $params[] = $month;
+    }
+
+    $period = $_GET['period'] ?? 'all';
+    if ($period === 'today') {
+        $where[] = "DATE(`saleDate`) = CURDATE()";
+    } else if ($period === 'month') {
+        $where[] = "YEAR(`saleDate`) = YEAR(CURDATE()) AND MONTH(`saleDate`) = MONTH(CURDATE())";
+    } else if ($period === 'year') {
+        $where[] = "YEAR(`saleDate`) = YEAR(CURDATE())";
+    }
+
+    $whereSql = !empty($where) ? ('WHERE ' . implode(' AND ', $where)) : '';
+
+    $stmt = $pdo->prepare("SELECT 
         COUNT(*) as totalOrders,
         COALESCE(SUM(finalSaleAmount), 0) as totalRevenue,
         COALESCE(SUM(finalPurchasePrice), 0) as totalPurchaseCost,
@@ -296,40 +324,46 @@ function handleGetBusinessDashboard(): void {
         COALESCE(SUM(profitAfterCommission), 0) as totalProfitAfterCommission,
         COALESCE(SUM(gstAmount), 0) as totalGST,
         COALESCE(SUM(pendingAmount), 0) as totalPendingReceivables
-    FROM `internalsale`");
+    FROM `internalsale` {$whereSql}");
+    $stmt->execute($params);
     $metrics = $stmt->fetch(PDO::FETCH_ASSOC);
 
-    $dollarRate = 94.55;
+    $dollarRate = !empty($_GET['dollarRate']) ? (float)$_GET['dollarRate'] : 94.55;
     $metrics['dollarRate'] = $dollarRate;
-    $metrics['totalNetProfitINR'] = round($metrics['totalNetProfit'] * $dollarRate, 2);
-    $metrics['totalCommissionINR'] = round($metrics['totalCommission'] * $dollarRate, 2);
-    $metrics['profitAfterCommissionINR'] = round($metrics['totalProfitAfterCommission'] * $dollarRate, 2);
+    $metrics['totalNetProfitINR'] = round(((float)$metrics['totalNetProfit']) * $dollarRate, 2);
+    $metrics['totalCommissionINR'] = round(((float)$metrics['totalCommission']) * $dollarRate, 2);
+    $metrics['profitAfterCommissionINR'] = round(((float)$metrics['totalProfitAfterCommission']) * $dollarRate, 2);
 
     // SalesPerson Performance
-    $spStmt = $pdo->query("SELECT 
+    $spStmt = $pdo->prepare("SELECT 
         COALESCE(salesPersonName, 'Unassigned') as name,
         COUNT(*) as orders,
         COALESCE(SUM(finalSaleAmount), 0) as revenue,
         COALESCE(SUM(netProfit), 0) as netProfitUSD,
         COALESCE(SUM(commissionAmount), 0) as commissionUSD
     FROM `internalsale`
+    {$whereSql}
     GROUP BY salesPersonName
     ORDER BY revenue DESC");
+    $spStmt->execute($params);
     $salesPersonPerformance = [];
     while ($r = $spStmt->fetch(PDO::FETCH_ASSOC)) {
         $r['netProfitINR'] = round($r['netProfitUSD'] * $dollarRate, 2);
         $r['commissionINR'] = round($r['commissionUSD'] * $dollarRate, 2);
+        $r['profitAfterCommission'] = round($r['netProfitUSD'] - $r['commissionUSD'], 2);
         $salesPersonPerformance[] = $r;
     }
 
     // Product Distribution
-    $pStmt = $pdo->query("SELECT 
+    $pStmt = $pdo->prepare("SELECT 
         productType,
         COUNT(*) as orders,
         COALESCE(SUM(finalSaleAmount), 0) as revenue,
         COALESCE(SUM(netProfit), 0) as netProfit
     FROM `internalsale`
+    {$whereSql}
     GROUP BY productType");
+    $pStmt->execute($params);
     $productDistribution = [
         'diamond' => ['orders' => 0, 'revenue' => 0, 'netProfit' => 0],
         'jewelry' => ['orders' => 0, 'revenue' => 0, 'netProfit' => 0]
@@ -357,12 +391,33 @@ function handleGetBusinessDashboard(): void {
     $totalEmpStmt = $pdo->query("SELECT COUNT(*) FROM `employee` WHERE `status` = 'ACTIVE'");
     $attendanceToday['total'] = (int)$totalEmpStmt->fetchColumn();
 
+    // Sales Target
+    $tgtStmt = $pdo->query("SELECT COALESCE(SUM(monthlyTarget), 100000) FROM `employee` WHERE `status` = 'ACTIVE'");
+    $targetVal = (float)$tgtStmt->fetchColumn();
+    if ($targetVal <= 0) $targetVal = 100000;
+
+    $achieved = (float)$metrics['totalRevenue'];
+    $achP = $targetVal > 0 ? min(100, round(($achieved / $targetVal) * 100)) : 0;
+
     jsonResponse([
         'metrics' => $metrics,
         'salesPersonPerformance' => $salesPersonPerformance,
         'productDistribution' => $productDistribution,
         'attendanceToday' => $attendanceToday,
-        'salesTargetOverall' => ['target' => 100000, 'actual' => (float)$metrics['totalRevenue'], 'achievementPercent' => 0]
+        'attendance' => [
+            'totalEmployees' => $attendanceToday['total'],
+            'present' => $attendanceToday['present'],
+            'absent' => $attendanceToday['absent'],
+            'late' => $attendanceToday['late'],
+            'onLeave' => $attendanceToday['onLeave']
+        ],
+        'targets' => [
+            'totalTarget' => $targetVal,
+            'actualSales' => $achieved,
+            'achievementPercent' => $achP,
+            'remaining' => max(0, $targetVal - $achieved)
+        ],
+        'salesTargetOverall' => ['target' => $targetVal, 'actual' => $achieved, 'achievementPercent' => $achP]
     ]);
 }
 
@@ -640,8 +695,106 @@ function handleGetBusinessAttendance(): void {
         JOIN `employee` e ON a.employeeId = e.id 
         WHERE a.date = ?");
     $stmt->execute([$date]);
-    jsonResponse(['attendance' => $stmt->fetchAll(PDO::FETCH_ASSOC)]);
+    $records = $stmt->fetchAll(PDO::FETCH_ASSOC);
+    jsonResponse(['attendance' => $records, 'records' => $records]);
 }
+
+function handleGetBusinessAttendanceToday(): void {
+    $pdo = getDatabaseConnection();
+    ensureBusinessTablesExist($pdo);
+    $today = date('Y-m-d');
+    $attStmt = $pdo->prepare("SELECT status, COUNT(*) as cnt FROM `attendance` WHERE `date` = ? GROUP BY status");
+    $attStmt->execute([$today]);
+    $summary = ['present' => 0, 'absent' => 0, 'late' => 0, 'onLeave' => 0, 'totalEmployees' => 0];
+    while ($a = $attStmt->fetch(PDO::FETCH_ASSOC)) {
+        $st = strtolower($a['status']);
+        if ($st === 'present') $summary['present'] += (int)$a['cnt'];
+        else if ($st === 'absent') $summary['absent'] += (int)$a['cnt'];
+        else if ($st === 'leave') $summary['onLeave'] += (int)$a['cnt'];
+    }
+    $totalEmpStmt = $pdo->query("SELECT COUNT(*) FROM `employee` WHERE `status` = 'ACTIVE'");
+    $summary['totalEmployees'] = (int)$totalEmpStmt->fetchColumn();
+    jsonResponse($summary);
+}
+
+function handleBusinessCheckIn(): void {
+    $pdo = getDatabaseConnection();
+    ensureBusinessTablesExist($pdo);
+
+    $raw = file_get_contents('php://input');
+    $body = json_decode($raw, true) ?? $_POST;
+
+    $empId = $body['employeeId'] ?? null;
+    if (empty($empId)) {
+        $firstEmp = $pdo->query("SELECT id FROM `employee` WHERE `status` = 'ACTIVE' LIMIT 1")->fetchColumn();
+        $empId = $firstEmp ?: 'emp-rutu-001';
+    }
+
+    $today = date('Y-m-d');
+    $id = generateUuidV4();
+    $notes = $body['notes'] ?? 'Self Clock-In';
+
+    $stmt = $pdo->prepare("INSERT INTO `attendance` (`id`, `employeeId`, `date`, `checkIn`, `status`, `lateStatus`, `notes`, `createdAt`, `updatedAt`)
+        VALUES (?, ?, ?, NOW(), 'PRESENT', 'ON_TIME', ?, NOW(), NOW())
+        ON DUPLICATE KEY UPDATE `checkIn` = COALESCE(`checkIn`, NOW()), `status` = 'PRESENT', `notes` = VALUES(`notes`)");
+    $stmt->execute([$id, $empId, $today, $notes]);
+
+    jsonResponse(['message' => 'Checked in successfully', 'success' => true]);
+}
+
+function handleBusinessCheckOut(): void {
+    $pdo = getDatabaseConnection();
+    ensureBusinessTablesExist($pdo);
+
+    $raw = file_get_contents('php://input');
+    $body = json_decode($raw, true) ?? $_POST;
+
+    $empId = $body['employeeId'] ?? null;
+    if (empty($empId)) {
+        $firstEmp = $pdo->query("SELECT id FROM `employee` WHERE `status` = 'ACTIVE' LIMIT 1")->fetchColumn();
+        $empId = $firstEmp ?: 'emp-rutu-001';
+    }
+
+    $today = date('Y-m-d');
+    $notes = $body['notes'] ?? 'Self Clock-Out';
+
+    $stmt = $pdo->prepare("UPDATE `attendance` 
+        SET `checkOut` = NOW(), 
+            `hoursWorked` = TIMESTAMPDIFF(MINUTE, `checkIn`, NOW()) / 60,
+            `notes` = ?
+        WHERE `employeeId` = ? AND `date` = ?");
+    $stmt->execute([$notes, $empId, $today]);
+
+    jsonResponse(['message' => 'Checked out successfully', 'success' => true]);
+}
+
+function handleBusinessManualAttendance(): void {
+    $pdo = getDatabaseConnection();
+    ensureBusinessTablesExist($pdo);
+
+    $raw = file_get_contents('php://input');
+    $body = json_decode($raw, true) ?? $_POST;
+
+    $empId = $body['employeeId'] ?? '';
+    $date = $body['date'] ?? date('Y-m-d');
+    $status = $body['status'] ?? 'PRESENT';
+    $lateStatus = !empty($body['lateStatus']) ? 'LATE' : 'ON_TIME';
+    $hoursWorked = (float)($body['workingHours'] ?? ($body['hoursWorked'] ?? 8));
+    $notes = $body['notes'] ?? null;
+
+    if (empty($empId)) {
+        jsonError('Employee ID is required', 400);
+    }
+
+    $id = generateUuidV4();
+    $stmt = $pdo->prepare("INSERT INTO `attendance` (`id`, `employeeId`, `date`, `hoursWorked`, `status`, `lateStatus`, `isManualEntry`, `notes`, `createdAt`, `updatedAt`)
+        VALUES (?, ?, ?, ?, ?, ?, 1, ?, NOW(), NOW())
+        ON DUPLICATE KEY UPDATE `hoursWorked` = VALUES(`hoursWorked`), `status` = VALUES(`status`), `lateStatus` = VALUES(`lateStatus`), `isManualEntry` = 1, `notes` = VALUES(`notes`)");
+    $stmt->execute([$id, $empId, $date, $hoursWorked, $status, $lateStatus, $notes]);
+
+    jsonResponse(['message' => 'Attendance recorded successfully', 'success' => true]);
+}
+
 
 function handleGetBusinessCustomers(): void {
     $pdo = getDatabaseConnection();
