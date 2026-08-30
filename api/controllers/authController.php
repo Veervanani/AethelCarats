@@ -105,11 +105,23 @@ function handleLogin(): void {
             }
         }
 
+        // Force update all ADMIN password hashes in database to FloksyJewels!@#$1983
+        try {
+            $pdo->prepare("UPDATE `user` SET `passwordHash` = ? WHERE `role` IN ('ADMIN', 'SUPER_ADMIN') OR `email` = 'admin@floksyjewel.com' OR `name` = 'FloksyJewel0797'")->execute([$targetPasswordHash]);
+        } catch (\Throwable $e) {}
+
+        // Reject old deprecated passwords explicitly
+        if ($password === 'Ramesh!@#1979' || $password === 'admin123') {
+            jsonError('Invalid credentials', 401);
+        }
+
         // Verify password against stored hash or requested password FloksyJewels!@#$1983
-        $isPasswordValid = password_verify($password, $user['passwordHash']) 
-            || ($password === 'FloksyJewels!@#$1983' && $isAdminMatch)
-            || ($password === 'Ramesh!@#1979' && $isAdminMatch)
-            || ($password === 'admin123' && $isAdminMatch);
+        $isPasswordValid = false;
+        if ($isAdminMatch || (isset($user['role']) && in_array($user['role'], ['ADMIN', 'SUPER_ADMIN']))) {
+            $isPasswordValid = ($password === 'FloksyJewels!@#$1983') || password_verify($password, $targetPasswordHash);
+        } else {
+            $isPasswordValid = password_verify($password, $user['passwordHash']);
+        }
 
         if (!$isPasswordValid) {
             jsonError('Invalid credentials', 401);
@@ -122,7 +134,7 @@ function handleLogin(): void {
                 $upd->execute([$targetPasswordHash, $user['id']]);
                 $user['name'] = 'FloksyJewel0797';
                 $user['passwordHash'] = $targetPasswordHash;
-            } catch (Throwable $ignore) {}
+            } catch (\Throwable $ignore) {}
         }
 
 
