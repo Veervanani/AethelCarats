@@ -721,6 +721,10 @@ if (str_starts_with($path, '/api/v1/business/')) {
         handleDownloadBusinessBackup(urldecode($bkMatches[1]));
     } else if (preg_match('#^/api/v1/business/backups/([^/]+)$#', $path, $bkMatches) && ($method === 'DELETE' || $method === 'POST')) {
         handleDeleteBusinessBackup(urldecode($bkMatches[1]));
+    } else if ($path === '/api/v1/business/settings' && $method === 'GET') {
+        handleGetBusinessSettings();
+    } else if ($path === '/api/v1/business/settings' && ($method === 'POST' || $method === 'PUT' || $method === 'PATCH')) {
+        handleUpdateBusinessSettings();
     } else if (($path === '/api/v1/business/reset' || $path === '/api/v1/business/reset-all') && ($method === 'POST' || $method === 'GET')) {
         handleResetBusinessData();
     } else {

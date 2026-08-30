@@ -153,7 +153,26 @@ export const BusinessDashboardPage: React.FC = () => {
   const [year, setYear] = useState<string>('2026');
   const [month, setMonth] = useState<string>('All Months');
   const [currencyView, setCurrencyView] = useState<'USD' | 'INR'>('USD');
-  const [dollarRate, setDollarRate] = useState<number>(94.55);
+  const [dollarRate, setDollarRate] = useState<number>(() => {
+    const cached = localStorage.getItem('fj_biz_fx_rate');
+    return cached && !isNaN(Number(cached)) && Number(cached) > 0 ? Number(cached) : 94.55;
+  });
+
+  // Load latest exchange rate setting from database on mount
+  useEffect(() => {
+    businessApi
+      .getSettings()
+      .then((res) => {
+        if (res?.settings?.dollarRate) {
+          const dbRate = Number(res.settings.dollarRate);
+          if (!isNaN(dbRate) && dbRate > 0) {
+            setDollarRate(dbRate);
+            localStorage.setItem('fj_biz_fx_rate', String(dbRate));
+          }
+        }
+      })
+      .catch((err) => console.error('Failed to fetch settings from DB:', err));
+  }, []);
 
   const fetchDashboard = async () => {
     setLoading(true);
@@ -165,6 +184,12 @@ export const BusinessDashboardPage: React.FC = () => {
         dollarRate,
       });
       setData(res);
+      if (res?.metrics?.dollarRate) {
+        const metricRate = Number(res.metrics.dollarRate);
+        if (!isNaN(metricRate) && metricRate > 0) {
+          localStorage.setItem('fj_biz_fx_rate', String(metricRate));
+        }
+      }
     } catch (e) {
       console.error(e);
     } finally {
@@ -175,6 +200,17 @@ export const BusinessDashboardPage: React.FC = () => {
   useEffect(() => {
     fetchDashboard();
   }, [period, year, month, dollarRate]);
+
+  const handleDollarRateChange = (newVal: number) => {
+    setDollarRate(newVal);
+    if (!isNaN(newVal) && newVal > 0) {
+      localStorage.setItem('fj_biz_fx_rate', String(newVal));
+      // Immediately persist to MySQL database
+      businessApi.updateSettings({ dollarRate: newVal, defaultFxRate: newVal }).catch((err) => {
+        console.error('Failed to sync dollar rate to database:', err);
+      });
+    }
+  };
 
   const m = data?.metrics;
   const fmt = (val: any) => (Number(val) || 0).toLocaleString();
@@ -280,9 +316,10 @@ export const BusinessDashboardPage: React.FC = () => {
             <span style={{ fontSize: '0.72rem', color: '#64748b' }}>Rate:</span>
             <input
               type="number"
+              step="0.01"
               value={dollarRate}
-              onChange={(e) => setDollarRate(Number(e.target.value))}
-              style={{ width: 60, padding: '4px 6px', fontSize: '0.75rem', border: '1px solid #cbd5e1', borderRadius: 4 }}
+              onChange={(e) => handleDollarRateChange(Number(e.target.value))}
+              style={{ width: 65, padding: '4px 6px', fontSize: '0.75rem', border: '1px solid #cbd5e1', borderRadius: 4 }}
             />
           </div>
 

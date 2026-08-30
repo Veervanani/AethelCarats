@@ -229,7 +229,20 @@ function ensureBusinessTablesExist(PDO $pdo): void {
         `createdAt` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP
     ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;");
 
-    // 8. Seed initial requested employees: Rutu (Sales Manager), Jyoti (Sales Employee), Twinkle (Sales Employee)
+    // 9. Business Settings (Persistent system parameters, fx rates, currency)
+    $pdo->exec("CREATE TABLE IF NOT EXISTS `business_settings` (
+        `settingKey` VARCHAR(191) PRIMARY KEY,
+        `settingValue` TEXT NOT NULL,
+        `updatedAt` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+    ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;");
+
+    try {
+        $pdo->exec("INSERT IGNORE INTO `business_settings` (`settingKey`, `settingValue`, `updatedAt`) VALUES ('dollarRate', '94.55', NOW())");
+        $pdo->exec("INSERT IGNORE INTO `business_settings` (`settingKey`, `settingValue`, `updatedAt`) VALUES ('gstRate', '0.015', NOW())");
+        $pdo->exec("INSERT IGNORE INTO `business_settings` (`settingKey`, `settingValue`, `updatedAt`) VALUES ('baseCurrency', 'USD', NOW())");
+    } catch (\Throwable $e) {}
+
+    // 10. Seed initial requested employees: Rutu (Sales Manager), Jyoti (Sales Employee), Twinkle (Sales Employee)
     $employeesToSeed = [
         [
             'id' => 'emp-rutu-001',
@@ -373,6 +386,81 @@ function parseFlexibleDate(?string $raw): string {
     return date('Y-m-d H:i:s');
 }
 
+function getBusinessSetting(PDO $pdo, string $key, string $default = ''): string {
+    try {
+        $stmt = $pdo->prepare("SELECT `settingValue` FROM `business_settings` WHERE `settingKey` = ? LIMIT 1");
+        $stmt->execute([$key]);
+        $val = $stmt->fetchColumn();
+        return ($val !== false && $val !== null && $val !== '') ? (string)$val : $default;
+    } catch (\Throwable $e) {
+        return $default;
+    }
+}
+
+function setBusinessSetting(PDO $pdo, string $key, string $value): void {
+    try {
+        $stmt = $pdo->prepare("INSERT INTO `business_settings` (`settingKey`, `settingValue`, `updatedAt`) 
+            VALUES (?, ?, NOW()) 
+            ON DUPLICATE KEY UPDATE `settingValue` = VALUES(`settingValue`), `updatedAt` = NOW()");
+        $stmt->execute([$key, $value]);
+    } catch (\Throwable $e) {
+        error_log("Error saving setting {$key}: " . $e->getMessage());
+    }
+}
+
+function handleGetBusinessSettings(): void {
+    $pdo = getDatabaseConnection();
+    ensureBusinessTablesExist($pdo);
+    $dollarRate = (float)getBusinessSetting($pdo, 'dollarRate', '94.55');
+    $gstRate = (float)getBusinessSetting($pdo, 'gstRate', '0.015');
+    $baseCurrency = getBusinessSetting($pdo, 'baseCurrency', 'USD');
+    jsonResponse([
+        'settings' => [
+            'dollarRate' => $dollarRate,
+            'defaultFxRate' => $dollarRate,
+            'defaultGstRate' => $gstRate,
+            'baseCurrency' => $baseCurrency
+        ]
+    ]);
+}
+
+function handleUpdateBusinessSettings(): void {
+    $callingUser = requireBusinessAccess(['SALES_HR_MANAGER']);
+    $pdo = getDatabaseConnection();
+    ensureBusinessTablesExist($pdo);
+    $raw = file_get_contents('php://input');
+    $body = json_decode($raw, true) ?? $_POST;
+
+    if (isset($body['dollarRate']) || isset($body['rate']) || isset($body['defaultFxRate'])) {
+        $rateVal = (float)($body['dollarRate'] ?? $body['rate'] ?? $body['defaultFxRate']);
+        if ($rateVal > 0) {
+            setBusinessSetting($pdo, 'dollarRate', (string)$rateVal);
+            recordBusinessAuditLog('UPDATE_SETTING', 'ExchangeRate', "Updated USD to INR exchange rate to {$rateVal}");
+        }
+    }
+    if (isset($body['gstRate']) || isset($body['defaultGstRate'])) {
+        $gstVal = (float)($body['gstRate'] ?? $body['defaultGstRate']);
+        setBusinessSetting($pdo, 'gstRate', (string)$gstVal);
+    }
+    if (isset($body['baseCurrency'])) {
+        setBusinessSetting($pdo, 'baseCurrency', trim($body['baseCurrency']));
+    }
+
+    $dollarRate = (float)getBusinessSetting($pdo, 'dollarRate', '94.55');
+    $gstRate = (float)getBusinessSetting($pdo, 'gstRate', '0.015');
+    $baseCurrency = getBusinessSetting($pdo, 'baseCurrency', 'USD');
+
+    jsonResponse([
+        'message' => 'Settings saved successfully',
+        'settings' => [
+            'dollarRate' => $dollarRate,
+            'defaultFxRate' => $dollarRate,
+            'defaultGstRate' => $gstRate,
+            'baseCurrency' => $baseCurrency
+        ]
+    ]);
+}
+
 function handleGetBusinessDashboard(): void {
     try {
         $pdo = getDatabaseConnection();
@@ -444,7 +532,16 @@ function handleGetBusinessDashboard(): void {
         $stmt->execute($params);
         $metrics = $stmt->fetch(PDO::FETCH_ASSOC) ?: [];
 
-        $dollarRate = !empty($_GET['dollarRate']) ? (float)$_GET['dollarRate'] : 94.55;
+        $dbDollarRate = (float)getBusinessSetting($pdo, 'dollarRate', '94.55');
+        if (isset($_GET['dollarRate']) && is_numeric($_GET['dollarRate']) && (float)$_GET['dollarRate'] > 0) {
+            $dollarRate = (float)$_GET['dollarRate'];
+            if ($dollarRate !== $dbDollarRate) {
+                setBusinessSetting($pdo, 'dollarRate', (string)$dollarRate);
+            }
+        } else {
+            $dollarRate = $dbDollarRate;
+        }
+
         $metrics['dollarRate'] = $dollarRate;
         $metrics['totalRevenue'] = (float)($metrics['totalRevenue'] ?? 0);
         $metrics['totalPurchaseCost'] = (float)($metrics['totalPurchaseCost'] ?? 0);

@@ -1,7 +1,8 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
 import { Settings, Save, Shield, ShieldAlert } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
+import { businessApi } from '../services/businessApi';
 
 const PageHeader = styled.div`
   margin-bottom: 24px;
@@ -43,6 +44,26 @@ export const BusinessSettingsPage: React.FC = () => {
   const [defaultFxRate, setDefaultFxRate] = useState<string>(() => localStorage.getItem('fj_biz_fx_rate') || '94.55');
   const [defaultGstRate, setDefaultGstRate] = useState<string>(() => localStorage.getItem('fj_biz_gst_rate') || '0.015');
   const [baseCurrency, setBaseCurrency] = useState<string>('USD');
+  const [saving, setSaving] = useState(false);
+
+  useEffect(() => {
+    if (!isAdmin) return;
+    businessApi.getSettings().then((res) => {
+      if (res?.settings) {
+        if (res.settings.dollarRate) {
+          setDefaultFxRate(String(res.settings.dollarRate));
+          localStorage.setItem('fj_biz_fx_rate', String(res.settings.dollarRate));
+        }
+        if (res.settings.defaultGstRate) {
+          setDefaultGstRate(String(res.settings.defaultGstRate));
+          localStorage.setItem('fj_biz_gst_rate', String(res.settings.defaultGstRate));
+        }
+        if (res.settings.baseCurrency) {
+          setBaseCurrency(res.settings.baseCurrency);
+        }
+      }
+    }).catch((err) => console.error(err));
+  }, [isAdmin]);
 
   if (!isAdmin) {
     return (
@@ -56,12 +77,26 @@ export const BusinessSettingsPage: React.FC = () => {
     );
   }
 
-  const handleSave = (e: React.FormEvent) => {
+  const handleSave = async (e: React.FormEvent) => {
     e.preventDefault();
-    localStorage.setItem('fj_biz_fx_rate', defaultFxRate);
-    localStorage.setItem('fj_biz_gst_rate', defaultGstRate);
-    alert('✅ Settings updated successfully');
+    setSaving(true);
+    try {
+      await businessApi.updateSettings({
+        dollarRate: Number(defaultFxRate),
+        defaultFxRate: Number(defaultFxRate),
+        defaultGstRate: Number(defaultGstRate),
+        baseCurrency,
+      });
+      localStorage.setItem('fj_biz_fx_rate', defaultFxRate);
+      localStorage.setItem('fj_biz_gst_rate', defaultGstRate);
+      alert('✅ Settings updated and saved to database successfully');
+    } catch (err: any) {
+      alert(err?.response?.data?.message || 'Failed to save settings to database');
+    } finally {
+      setSaving(false);
+    }
   };
+
 
   return (
     <div>

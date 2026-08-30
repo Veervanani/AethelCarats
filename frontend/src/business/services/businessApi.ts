@@ -319,4 +319,16 @@ export const businessApi = {
     link.click();
     link.remove();
   },
+
+  // Settings
+  getSettings: async () => {
+    const res = await API.get<{ settings: { dollarRate: number; defaultFxRate: number; defaultGstRate: number; baseCurrency: string } }>('/business/settings');
+    return res.data;
+  },
+
+  updateSettings: async (payload: { dollarRate?: number; defaultFxRate?: number; defaultGstRate?: number; baseCurrency?: string; rate?: number }) => {
+    const res = await API.post<{ message: string; settings: { dollarRate: number; defaultFxRate: number; defaultGstRate: number; baseCurrency: string } }>('/business/settings', payload);
+    return res.data;
+  },
 };
+
