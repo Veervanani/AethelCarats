@@ -2734,4 +2734,195 @@ function handleDeleteBusinessBackup(string $id): void {
     jsonResponse(['message' => 'Backup deleted successfully', 'success' => true]);
 }
 
+function handleRestoreBusinessBackup(string $id): void {
+    requireAdminOnly();
+    $pdo = getDatabaseConnection();
+    ensureBusinessTablesExist($pdo);
+
+    $stmt = $pdo->prepare("SELECT * FROM `business_backups` WHERE `id` = ? LIMIT 1");
+    $stmt->execute([$id]);
+    $backup = $stmt->fetch(PDO::FETCH_ASSOC);
+
+    if (!$backup || empty($backup['snapshotData'])) {
+        jsonError('Backup snapshot not found or empty', 404);
+    }
+
+    $snapshot = json_decode($backup['snapshotData'], true);
+    if (!is_array($snapshot)) {
+        jsonError('Corrupted backup snapshot JSON data', 400);
+    }
+
+    $restoredSales = 0;
+    $restoredEmployees = 0;
+    $restoredCustomers = 0;
+    $restoredAttendance = 0;
+
+    // 1. Restore Employees
+    if (!empty($snapshot['employees']) && is_array($snapshot['employees'])) {
+        foreach ($snapshot['employees'] as $emp) {
+            $eStmt = $pdo->prepare("INSERT INTO `employee` (
+                `id`, `employeeCode`, `name`, `email`, `phone`, `department`, `designation`, `role`, 
+                `status`, `monthlyTarget`, `notes`, `createdAt`, `updatedAt`
+            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, NOW(), NOW())
+            ON DUPLICATE KEY UPDATE 
+                `name` = VALUES(`name`), `email` = VALUES(`email`), `phone` = VALUES(`phone`),
+                `department` = VALUES(`department`), `designation` = VALUES(`designation`),
+                `role` = VALUES(`role`), `status` = VALUES(`status`), `monthlyTarget` = VALUES(`monthlyTarget`),
+                `notes` = VALUES(`notes`), `updatedAt` = NOW()");
+            $eStmt->execute([
+                $emp['id'],
+                $emp['employeeCode'] ?? ('EMP-' . substr(md5($emp['id']), 0, 4)),
+                $emp['name'],
+                $emp['email'],
+                $emp['phone'] ?? null,
+                $emp['department'] ?? 'Sales',
+                $emp['designation'] ?? 'Sales Executive',
+                $emp['role'] ?? 'SALES_EMPLOYEE',
+                $emp['status'] ?? 'ACTIVE',
+                (float)($emp['monthlyTarget'] ?? 0),
+                $emp['notes'] ?? null
+            ]);
+            $restoredEmployees++;
+        }
+    }
+
+    // 2. Restore Sales
+    if (!empty($snapshot['sales']) && is_array($snapshot['sales'])) {
+        foreach ($snapshot['sales'] as $s) {
+            $sDate = parseFlexibleDate($s['saleDate'] ?? null);
+            $fin = computePhpFinancials($s);
+            $sStmt = $pdo->prepare("INSERT INTO `internalsale` (
+                `id`, `invoiceNo`, `saleDate`, `customerName`, `customerCountry`, `customerId`, `productType`,
+                `productDescription`, `stoneType`, `shape`, `diamondColor`, `clarity`, `cut`, `polish`,
+                `symmetry`, `fluorescence`, `measurement`, `pricePerCarat`, `caratWeight`, `quantity`,
+                `certificate`, `certificateNo`, `supplierName`, `supplierId`, `purchasePrice`, `sellingPrice`,
+                `discount`, `finalSaleAmount`, `shippingCost`, `gstPercent`, `gstAmount`, `finalPurchasePrice`,
+                `paymentStatus`, `paymentMethod`, `amountReceived`, `pendingAmount`, `grossProfit`, `netProfit`,
+                `salesPersonName`, `employeeId`, `commissionPercent`, `commissionAmount`, `profitAfterCommission`,
+                `markupPercent`, `finalProfitPercent`, `orderStatus`, `trackingNumber`, `trackingLink`, `dollarRate`,
+                `saleMonth`, `createdAt`, `updatedAt`
+            ) VALUES (
+                ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, NOW(), NOW()
+            ) ON DUPLICATE KEY UPDATE 
+                `customerName` = VALUES(`customerName`), `finalSaleAmount` = VALUES(`finalSaleAmount`),
+                `netProfit` = VALUES(`netProfit`), `paymentStatus` = VALUES(`paymentStatus`),
+                `orderStatus` = VALUES(`orderStatus`), `updatedAt` = NOW()");
+            
+            $sStmt->execute([
+                $s['id'],
+                $s['invoiceNo'],
+                $sDate,
+                $s['customerName'],
+                $s['customerCountry'] ?? null,
+                $s['customerId'] ?? null,
+                $s['productType'] ?? 'Diamond',
+                $s['productDescription'] ?? null,
+                $s['stoneType'] ?? null,
+                $s['shape'] ?? null,
+                $s['diamondColor'] ?? null,
+                $s['clarity'] ?? null,
+                $s['cut'] ?? null,
+                $s['polish'] ?? null,
+                $s['symmetry'] ?? null,
+                $s['fluorescence'] ?? null,
+                $s['measurement'] ?? null,
+                $s['pricePerCarat'] ?? null,
+                $s['caratWeight'] ?? null,
+                $s['quantity'] ?? 1,
+                $s['certificate'] ?? null,
+                $s['certificateNo'] ?? null,
+                $s['supplierName'] ?? null,
+                $s['supplierId'] ?? null,
+                $fin['purchasePrice'],
+                $fin['sellingPrice'],
+                $fin['discount'],
+                $fin['finalSaleAmount'],
+                $fin['shippingCost'],
+                $fin['gstPercent'],
+                $fin['gstAmount'],
+                $fin['finalPurchasePrice'],
+                $fin['paymentStatus'],
+                $s['paymentMethod'] ?? null,
+                $fin['amountReceived'],
+                $fin['pendingAmount'],
+                $fin['grossProfit'],
+                $fin['netProfit'],
+                $s['salesPersonName'] ?? null,
+                $s['employeeId'] ?? null,
+                $fin['commissionPercent'],
+                $fin['commissionAmount'],
+                $fin['profitAfterCommission'],
+                $fin['markupPercent'],
+                $fin['finalProfitPercent'],
+                $s['orderStatus'] ?? 'Delivered',
+                $s['trackingNumber'] ?? null,
+                $s['trackingLink'] ?? null,
+                $s['dollarRate'] ?? 94.55,
+                $s['saleMonth'] ?? date('F', strtotime($sDate))
+            ]);
+            $restoredSales++;
+        }
+    }
+
+    // 3. Restore Customers
+    if (!empty($snapshot['customers']) && is_array($snapshot['customers'])) {
+        foreach ($snapshot['customers'] as $c) {
+            $cStmt = $pdo->prepare("INSERT INTO `customer` (
+                `id`, `name`, `email`, `phone`, `country`, `company`, `assignedEmployeeId`, `notes`, `createdAt`, `updatedAt`
+            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, NOW(), NOW())
+            ON DUPLICATE KEY UPDATE 
+                `name` = VALUES(`name`), `email` = VALUES(`email`), `phone` = VALUES(`phone`),
+                `country` = VALUES(`country`), `company` = VALUES(`company`), `notes` = VALUES(`notes`), `updatedAt` = NOW()");
+            $cStmt->execute([
+                $c['id'],
+                $c['name'],
+                $c['email'] ?? null,
+                $c['phone'] ?? null,
+                $c['country'] ?? null,
+                $c['company'] ?? null,
+                $c['assignedEmployeeId'] ?? null,
+                $c['notes'] ?? null
+            ]);
+            $restoredCustomers++;
+        }
+    }
+
+    // 4. Restore Attendance
+    if (!empty($snapshot['attendance']) && is_array($snapshot['attendance'])) {
+        foreach ($snapshot['attendance'] as $att) {
+            $aStmt = $pdo->prepare("INSERT INTO `attendance` (
+                `id`, `employeeId`, `date`, `status`, `checkIn`, `checkOut`, `hoursWorked`, `lateStatus`, `isManualEntry`, `notes`, `createdAt`, `updatedAt`
+            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, NOW(), NOW())
+            ON DUPLICATE KEY UPDATE 
+                `status` = VALUES(`status`), `checkIn` = VALUES(`checkIn`), `checkOut` = VALUES(`checkOut`),
+                `hoursWorked` = VALUES(`hoursWorked`), `lateStatus` = VALUES(`lateStatus`), `updatedAt` = NOW()");
+            $aStmt->execute([
+                $att['id'],
+                $att['employeeId'],
+                $att['date'],
+                $att['status'] ?? 'PRESENT',
+                $att['checkIn'] ?? null,
+                $att['checkOut'] ?? null,
+                (float)($att['hoursWorked'] ?? 0),
+                $att['lateStatus'] ?? 'ON_TIME',
+                (int)($att['isManualEntry'] ?? 0),
+                $att['notes'] ?? null
+            ]);
+            $restoredAttendance++;
+        }
+    }
+
+    recordBusinessAuditLog('RESTORE_BACKUP', 'System', "Restored database from snapshot {$backup['backupName']} ($restoredSales sales, $restoredEmployees staff, $restoredCustomers clients)");
+    jsonResponse([
+        'message' => "Database snapshot '{$backup['backupName']}' restored successfully",
+        'restored' => [
+            'sales' => $restoredSales,
+            'employees' => $restoredEmployees,
+            'customers' => $restoredCustomers,
+            'attendance' => $restoredAttendance
+        ],
+        'success' => true
+    ]);
+}
+
 

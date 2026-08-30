@@ -309,6 +309,11 @@ export const businessApi = {
     return res.data;
   },
 
+  restoreBackup: async (id: string) => {
+    const res = await API.post<{ message: string; restored: any; success: boolean }>(`/business/backups/${id}/restore`);
+    return res.data;
+  },
+
   downloadBackup: async (id: string, backupName?: string) => {
     const res = await API.get(`/business/backups/${id}/download?format=json`, { responseType: 'blob' });
     const url = window.URL.createObjectURL(new Blob([res.data], { type: 'application/json' }));

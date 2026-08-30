@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
 import { businessApi } from '../services/businessApi';
-import { Download, FileText, TrendingUp, Users, DollarSign, Database, HardDriveDownload, PlusCircle, Trash2, ShieldCheck, RefreshCw } from 'lucide-react';
+import { Download, FileText, TrendingUp, Users, DollarSign, Database, HardDriveDownload, PlusCircle, Trash2, ShieldCheck, RefreshCw, RotateCcw } from 'lucide-react';
 import * as XLSX from 'xlsx';
 
 const PageHeader = styled.div`
@@ -162,6 +162,17 @@ export const BusinessReportsPage: React.FC = () => {
       await businessApi.downloadBackup(id, name);
     } catch (err: any) {
       alert('Failed to download backup snapshot.');
+    }
+  };
+
+  const handleRestoreBackup = async (id: string, name: string) => {
+    if (!window.confirm(`⚠️ CAUTION: Are you sure you want to restore database snapshot "${name}"? This will sync all records from this backup snapshot point.`)) return;
+    try {
+      const res = await businessApi.restoreBackup(id);
+      alert(`✅ ${res.message || 'Database restored successfully!'}`);
+      window.location.reload();
+    } catch (e: any) {
+      alert(e?.response?.data?.message || 'Failed to restore backup snapshot.');
     }
   };
 
@@ -475,6 +486,25 @@ export const BusinessReportsPage: React.FC = () => {
                           title="Download JSON Snapshot"
                         >
                           <HardDriveDownload size={13} /> Download
+                        </button>
+                        <button
+                          onClick={() => handleRestoreBackup(b.id, b.backupName)}
+                          style={{
+                            display: 'inline-flex',
+                            alignItems: 'center',
+                            gap: 4,
+                            padding: '5px 10px',
+                            background: '#eff6ff',
+                            color: '#1d4ed8',
+                            border: '1px solid #bfdbfe',
+                            borderRadius: 5,
+                            fontSize: '0.74rem',
+                            fontWeight: 700,
+                            cursor: 'pointer',
+                          }}
+                          title="Restore Database from this Snapshot"
+                        >
+                          <RotateCcw size={13} /> Restore
                         </button>
                         <button
                           onClick={() => handleDeleteBackup(b.id, b.backupName)}
