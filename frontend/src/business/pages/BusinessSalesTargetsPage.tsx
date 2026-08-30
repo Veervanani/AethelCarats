@@ -321,36 +321,46 @@ export const BusinessSalesTargetsPage: React.FC = () => {
                       {isAchieved ? '🟢 Achieved' : actRev > 0 ? '🔵 In Progress' : '🟡 Pending'}
                     </span>
                     <button
+                      type="button"
                       onClick={() => handleOpenEdit(t)}
                       style={{
                         background: '#f8fafc',
                         border: '1px solid #cbd5e1',
-                        color: '#334155',
-                        borderRadius: 5,
-                        padding: '4px 6px',
+                        color: '#0f172a',
+                        borderRadius: 6,
+                        width: 30,
+                        height: 30,
+                        minWidth: 30,
                         cursor: 'pointer',
                         display: 'inline-flex',
                         alignItems: 'center',
+                        justifyContent: 'center',
+                        flexShrink: 0,
                       }}
                       title="Edit Target"
                     >
-                      <Edit2 size={13} />
+                      <Edit2 size={14} color="#0f172a" />
                     </button>
                     <button
+                      type="button"
                       onClick={() => handleDeleteTarget(t.id, `${mName} ${t.periodYear}`)}
                       style={{
                         background: '#fff1f2',
                         border: '1px solid #fecdd3',
                         color: '#e11d48',
-                        borderRadius: 5,
-                        padding: '4px 6px',
+                        borderRadius: 6,
+                        width: 30,
+                        height: 30,
+                        minWidth: 30,
                         cursor: 'pointer',
                         display: 'inline-flex',
                         alignItems: 'center',
+                        justifyContent: 'center',
+                        flexShrink: 0,
                       }}
                       title="Delete Target"
                     >
-                      <Trash2 size={13} />
+                      <Trash2 size={14} color="#e11d48" />
                     </button>
                   </div>
                 </div>

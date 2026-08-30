@@ -1574,26 +1574,28 @@ export const BusinessSalesListPage: React.FC = () => {
 
                   {/* Clean Modern Action Icons */}
                   <td style={{ textAlign: 'center' }}>
-                    <div style={{ display: 'inline-flex', gap: 5, alignItems: 'center', justifyContent: 'center' }}>
-                      <Link to={`${PRIVATE_BUSINESS_PATH}/sales/${s.id}`} title="View Sale Detail">
+                    <div style={{ display: 'inline-flex', gap: 6, alignItems: 'center', justifyContent: 'center' }}>
+                      <Link to={`${PRIVATE_BUSINESS_PATH}/sales/${s.id}`} title="View Sale Detail" style={{ textDecoration: 'none' }}>
                         <button
                           type="button"
                           style={{
                             display: 'inline-flex',
                             alignItems: 'center',
                             justifyContent: 'center',
-                            width: 28,
-                            height: 28,
+                            width: 32,
+                            height: 32,
+                            minWidth: 32,
                             background: '#0d1319',
                             color: '#ffffff',
                             border: 'none',
                             borderRadius: 6,
                             cursor: 'pointer',
                             transition: 'all 0.15s ease',
+                            flexShrink: 0,
                           }}
                           title="View Invoice Detail"
                         >
-                          <Eye size={13} />
+                          <Eye size={15} color="#ffffff" />
                         </button>
                       </Link>
 
@@ -1604,18 +1606,20 @@ export const BusinessSalesListPage: React.FC = () => {
                           display: 'inline-flex',
                           alignItems: 'center',
                           justifyContent: 'center',
-                          width: 28,
-                          height: 28,
+                          width: 32,
+                          height: 32,
+                          minWidth: 32,
                           background: '#eff6ff',
                           color: '#1d4ed8',
                           border: '1px solid #bfdbfe',
                           borderRadius: 6,
                           cursor: 'pointer',
                           transition: 'all 0.15s ease',
+                          flexShrink: 0,
                         }}
                         title="Edit Sale Invoice"
                       >
-                        <Edit2 size={13} />
+                        <Edit2 size={15} color="#1d4ed8" />
                       </button>
 
                       <button
@@ -1625,18 +1629,20 @@ export const BusinessSalesListPage: React.FC = () => {
                           display: 'inline-flex',
                           alignItems: 'center',
                           justifyContent: 'center',
-                          width: 28,
-                          height: 28,
+                          width: 32,
+                          height: 32,
+                          minWidth: 32,
                           background: '#fff1f2',
                           color: '#e11d48',
                           border: '1px solid #fecdd3',
                           borderRadius: 6,
                           cursor: 'pointer',
                           transition: 'all 0.15s ease',
+                          flexShrink: 0,
                         }}
                         title="Delete Sale Invoice"
                       >
-                        <Trash2 size={13} />
+                        <Trash2 size={15} color="#e11d48" />
                       </button>
                     </div>
                   </td>

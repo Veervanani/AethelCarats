@@ -65,6 +65,12 @@ const ControlBar = styled.div`
   margin-bottom: 20px;
   flex-wrap: wrap;
   gap: 12px;
+
+  @media (max-width: 640px) {
+    padding: 10px 12px;
+    flex-direction: column;
+    align-items: stretch;
+  }
 `;
 
 const SearchInputWrapper = styled.div`
@@ -76,6 +82,11 @@ const SearchInputWrapper = styled.div`
   padding: 6px 12px;
   border-radius: 6px;
   width: 280px;
+
+  @media (max-width: 640px) {
+    width: 100%;
+    box-sizing: border-box;
+  }
 
   input {
     border: none;
@@ -128,7 +139,6 @@ const Table = styled.table`
   }
 `;
 
-
 const StatusBadge = styled.span<{ $status: string }>`
   font-size: 0.72rem;
   font-weight: 700;
@@ -143,21 +153,57 @@ const StatusBadge = styled.span<{ $status: string }>`
 `;
 
 const ActionBtn = styled.button`
-  background: none;
+  background: #ffffff;
   border: 1px solid #e2e8f0;
-  padding: 6px 10px;
-  border-radius: 4px;
+  height: 32px;
+  min-width: 32px;
+  padding: 0 10px;
+  border-radius: 6px;
   cursor: pointer;
   display: inline-flex;
   align-items: center;
-  gap: 4px;
-  font-size: 0.75rem;
+  justify-content: center;
+  gap: 6px;
+  font-size: 0.76rem;
+  font-weight: 600;
   color: #334155;
   transition: all 0.15s ease;
+  white-space: nowrap;
+  flex-shrink: 0;
 
   &:hover {
     background: #f1f5f9;
     color: #0f172a;
+    border-color: #cbd5e1;
+  }
+`;
+
+const ActionIconButton = styled.button<{ $danger?: boolean }>`
+  background: ${({ $danger }) => ($danger ? '#fff1f2' : '#ffffff')};
+  border: 1px solid ${({ $danger }) => ($danger ? '#fecdd3' : '#e2e8f0')};
+  color: ${({ $danger }) => ($danger ? '#e11d48' : '#475569')};
+  width: 32px;
+  height: 32px;
+  min-width: 32px;
+  border-radius: 6px;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.15s ease;
+  flex-shrink: 0;
+
+  &:hover {
+    background: ${({ $danger }) => ($danger ? '#ffe4e6' : '#f1f5f9')};
+    color: ${({ $danger }) => ($danger ? '#be123c' : '#0f172a')};
+    border-color: ${({ $danger }) => ($danger ? '#fda4af' : '#cbd5e1')};
+  }
+
+  svg {
+    width: 15px;
+    height: 15px;
+    display: block;
+    stroke-width: 2.2;
   }
 `;
 
@@ -406,34 +452,42 @@ export const BusinessEmployeesPage: React.FC = () => {
                 </StatusBadge>
               </td>
               <td style={{ textAlign: 'right' }}>
-                <div style={{ display: 'inline-flex', gap: 6 }}>
-                  <Link to={`${PRIVATE_BUSINESS_PATH}/employees/${emp.id}`}>
-                    <ActionBtn title="View Profile">
-                      <Eye size={13} />
-                    </ActionBtn>
+                <div style={{ display: 'inline-flex', gap: 6, alignItems: 'center' }}>
+                  <Link to={`${PRIVATE_BUSINESS_PATH}/employees/${emp.id}`} style={{ textDecoration: 'none' }}>
+                    <ActionIconButton title="View Profile" type="button">
+                      <Eye size={15} color="#2563eb" />
+                    </ActionIconButton>
                   </Link>
-                  <ActionBtn
+                  <ActionIconButton
                     title="Edit Details"
+                    type="button"
                     onClick={() => {
                       setEditingEmp(emp);
                       setIsModalOpen(true);
                     }}
                   >
-                    <Edit2 size={13} />
-                  </ActionBtn>
+                    <Edit2 size={15} color="#0f172a" />
+                  </ActionIconButton>
                   <ActionBtn
+                    type="button"
                     title={emp.status === 'ACTIVE' ? 'Deactivate' : 'Activate'}
                     onClick={() => handleToggleStatus(emp.id)}
+                    style={{
+                      background: emp.status === 'ACTIVE' ? '#fff7ed' : '#f0fdf4',
+                      borderColor: emp.status === 'ACTIVE' ? '#ffedd5' : '#bbf7d0',
+                      color: emp.status === 'ACTIVE' ? '#c2410c' : '#16a34a',
+                    }}
                   >
                     {emp.status === 'ACTIVE' ? 'Deactivate' : 'Activate'}
                   </ActionBtn>
-                  <ActionBtn
+                  <ActionIconButton
+                    $danger
+                    type="button"
                     title="Delete Staff"
                     onClick={() => handleDeleteSingle(emp.id, emp.fullName || (emp as any).name || emp.employeeCode)}
-                    style={{ color: '#e11d48', borderColor: '#fecdd3', background: '#fff1f2' }}
                   >
-                    🗑️
-                  </ActionBtn>
+                    <Trash2 size={15} />
+                  </ActionIconButton>
                 </div>
               </td>
             </tr>

@@ -52,6 +52,12 @@ const ControlBar = styled.div`
   margin-bottom: 20px;
   flex-wrap: wrap;
   gap: 12px;
+
+  @media (max-width: 640px) {
+    padding: 10px 12px;
+    flex-direction: column;
+    align-items: stretch;
+  }
 `;
 
 const TableContainer = styled.div`
@@ -324,7 +330,7 @@ export const BusinessCustomersPage: React.FC = () => {
       </PageHeader>
 
       <ControlBar>
-        <div style={{ display: 'flex', alignItems: 'center', gap: 8, background: '#f1f5f9', padding: '6px 12px', borderRadius: 6, width: 320 }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 8, background: '#f1f5f9', padding: '6px 12px', borderRadius: 6, width: '100%', maxWidth: 360, boxSizing: 'border-box' }}>
           <Search size={16} color="#64748b" />
           <input
             type="text"
@@ -434,40 +440,46 @@ export const BusinessCustomersPage: React.FC = () => {
                 <td style={{ textAlign: 'center' }}>
                   <div style={{ display: 'inline-flex', gap: 6, alignItems: 'center', justifyContent: 'center' }}>
                     <button
+                      type="button"
                       onClick={() => handleOpenCustomerOrders(c)}
                       style={{
                         display: 'inline-flex',
                         alignItems: 'center',
                         justifyContent: 'center',
-                        width: 28,
-                        height: 28,
+                        width: 32,
+                        height: 32,
+                        minWidth: 32,
                         background: '#ffffff',
                         border: '1px solid #e2e8f0',
-                        color: '#475569',
+                        color: '#2563eb',
                         borderRadius: 6,
                         cursor: 'pointer',
+                        flexShrink: 0,
                       }}
                       title={`View all orders of ${cName}`}
                     >
-                      <Eye size={14} />
+                      <Eye size={15} color="#2563eb" />
                     </button>
                     <button
+                      type="button"
                       onClick={() => handleDeleteSingle(c.id, cName)}
                       style={{
                         display: 'inline-flex',
                         alignItems: 'center',
                         justifyContent: 'center',
-                        width: 28,
-                        height: 28,
+                        width: 32,
+                        height: 32,
+                        minWidth: 32,
                         background: '#fff1f2',
                         border: '1px solid #fecdd3',
                         color: '#e11d48',
                         borderRadius: 6,
                         cursor: 'pointer',
+                        flexShrink: 0,
                       }}
                       title="Delete Client"
                     >
-                      <Trash2 size={13} />
+                      <Trash2 size={15} color="#e11d48" />
                     </button>
                   </div>
                 </td>

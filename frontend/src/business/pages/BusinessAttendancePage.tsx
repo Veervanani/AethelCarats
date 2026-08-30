@@ -61,6 +61,12 @@ const ControlBar = styled.div`
   margin-bottom: 20px;
   flex-wrap: wrap;
   gap: 12px;
+
+  @media (max-width: 640px) {
+    padding: 10px 12px;
+    flex-direction: column;
+    align-items: stretch;
+  }
 `;
 
 const TableContainer = styled.div`

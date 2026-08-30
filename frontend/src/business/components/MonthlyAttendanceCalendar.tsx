@@ -4,7 +4,8 @@ import { ChevronLeft, ChevronRight, Play, Calendar as CalendarIcon } from 'lucid
 
 const CalendarCard = styled.div`
   flex: 1;
-  min-width: 320px;
+  width: 100%;
+  min-width: 0;
   background: #1f1f21;
   color: #ffffff;
   border: 1px solid rgba(255, 255, 255, 0.12);
