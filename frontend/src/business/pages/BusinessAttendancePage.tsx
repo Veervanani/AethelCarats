@@ -439,7 +439,8 @@ export const BusinessAttendancePage: React.FC = () => {
             display: 'flex',
             justifyContent: 'center',
             alignItems: 'center',
-            padding: 16,
+            padding: 10,
+            boxSizing: 'border-box',
           }}
           onClick={() => setShowManualModal(false)}
         >
@@ -451,12 +452,36 @@ export const BusinessAttendancePage: React.FC = () => {
               maxWidth: 500,
               maxHeight: '92vh',
               overflowY: 'auto',
-              padding: 24,
+              overflowX: 'hidden',
+              padding: 20,
               boxSizing: 'border-box',
             }}
             onClick={(e) => e.stopPropagation()}
           >
-            <h2 style={{ fontSize: '1.15rem', fontWeight: 700, margin: '0 0 16px 0' }}>Manual Attendance Adjustment</h2>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16, flexWrap: 'nowrap', gap: 10, width: '100%', boxSizing: 'border-box' }}>
+              <h2 style={{ fontSize: '1.15rem', fontWeight: 800, color: '#0f172a', margin: 0, minWidth: 0, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>Manual Attendance Adjustment</h2>
+              <button
+                type="button"
+                onClick={() => setShowManualModal(false)}
+                style={{
+                  background: '#f1f5f9',
+                  border: 'none',
+                  borderRadius: 6,
+                  width: 32,
+                  height: 32,
+                  minWidth: 32,
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  cursor: 'pointer',
+                  fontSize: '1rem',
+                  color: '#64748b',
+                  flexShrink: 0,
+                }}
+              >
+                ✕
+              </button>
+            </div>
             <form onSubmit={handleManualSave}>
               <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
                 <div>

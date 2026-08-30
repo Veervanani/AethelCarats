@@ -532,60 +532,65 @@ export const BusinessCustomersPage: React.FC = () => {
             {/* Modal Header */}
             <div
               style={{
-                padding: '16px 20px',
+                padding: '12px 16px',
                 borderBottom: '1px solid #e2e8f0',
                 display: 'flex',
                 justifyContent: 'space-between',
                 alignItems: 'center',
                 background: '#f8fafc',
-                flexWrap: 'wrap',
-                gap: 12,
+                flexWrap: 'nowrap',
+                gap: 10,
+                width: '100%',
+                boxSizing: 'border-box',
+                flexShrink: 0,
               }}
             >
-              <div style={{ display: 'flex', alignItems: 'center', gap: 12, minWidth: 0, flex: 1 }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 10, minWidth: 0, flex: 1, overflow: 'hidden' }}>
                 <div
                   style={{
-                    width: 42,
-                    height: 42,
-                    borderRadius: 10,
+                    width: 36,
+                    height: 36,
+                    minWidth: 36,
+                    borderRadius: 8,
                     background: '#0d1319',
                     color: '#ffffff',
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'center',
                     fontWeight: 800,
-                    fontSize: '1.1rem',
+                    fontSize: '1rem',
                     flexShrink: 0,
                   }}
                 >
                   {(selectedCustomerForOrders.name || 'C').charAt(0).toUpperCase()}
                 </div>
-                <div style={{ minWidth: 0 }}>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: 8, flexWrap: 'wrap' }}>
-                    <h2 style={{ fontSize: '1.15rem', fontWeight: 800, color: '#0f172a', margin: 0, wordBreak: 'break-word' }}>
+                <div style={{ minWidth: 0, flex: 1, overflow: 'hidden' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 6, flexWrap: 'nowrap', overflow: 'hidden' }}>
+                    <h2 style={{ fontSize: '1.05rem', fontWeight: 800, color: '#0f172a', margin: 0, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
                       {selectedCustomerForOrders.name || selectedCustomerForOrders.clientName || 'Client Profile'}
                     </h2>
                     {selectedCustomerForOrders.country && (
                       <span
                         style={{
-                          fontSize: '0.72rem',
+                          fontSize: '0.68rem',
                           fontWeight: 700,
-                          padding: '2px 8px',
+                          padding: '1px 6px',
                           background: '#eff6ff',
                           color: '#1d4ed8',
                           border: '1px solid #bfdbfe',
-                          borderRadius: 6,
+                          borderRadius: 4,
                           whiteSpace: 'nowrap',
+                          flexShrink: 0,
                         }}
                       >
                         {selectedCustomerForOrders.country}
                       </span>
                     )}
                   </div>
-                  <div style={{ fontSize: '0.76rem', color: '#64748b', marginTop: 2, display: 'flex', gap: 10, flexWrap: 'wrap' }}>
+                  <div style={{ fontSize: '0.72rem', color: '#64748b', marginTop: 2, display: 'flex', gap: 8, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
                     <span>Rep: <strong>{selectedCustomerForOrders.assignedStaff || 'Sales Team'}</strong></span>
                     {selectedCustomerForOrders.email && selectedCustomerForOrders.email !== '-' && (
-                      <span>Email: {selectedCustomerForOrders.email}</span>
+                      <span style={{ color: '#94a3b8' }}>• {selectedCustomerForOrders.email}</span>
                     )}
                   </div>
                 </div>
@@ -615,7 +620,7 @@ export const BusinessCustomersPage: React.FC = () => {
             </div>
 
             {/* Modal Body */}
-            <div style={{ padding: '16px 20px', overflowY: 'auto', flex: 1, WebkitOverflowScrolling: 'touch', boxSizing: 'border-box' }}>
+            <div style={{ padding: '14px 16px', overflowY: 'auto', overflowX: 'hidden', flex: 1, WebkitOverflowScrolling: 'touch', boxSizing: 'border-box', width: '100%', maxWidth: '100%' }}>
               {/* Summary KPIs */}
               <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(140px, 1fr))', gap: 10, marginBottom: 18 }}>
                 <div style={{ background: '#f8fafc', padding: '10px 14px', borderRadius: 8, border: '1px solid #e2e8f0' }}>

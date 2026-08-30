@@ -429,7 +429,8 @@ export const BusinessSalesTargetsPage: React.FC = () => {
             display: 'flex',
             justifyContent: 'center',
             alignItems: 'center',
-            padding: 16,
+            padding: 10,
+            boxSizing: 'border-box',
           }}
           onClick={() => setShowModal(false)}
         >
@@ -441,17 +442,36 @@ export const BusinessSalesTargetsPage: React.FC = () => {
               maxWidth: 480,
               maxHeight: '92vh',
               overflowY: 'auto',
-              padding: 24,
+              overflowX: 'hidden',
+              padding: 20,
               boxShadow: '0 20px 25px -5px rgba(0,0,0,0.1)',
               boxSizing: 'border-box',
             }}
             onClick={(e) => e.stopPropagation()}
           >
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16 }}>
-              <h2 style={{ fontSize: '1.15rem', fontWeight: 800, color: '#0f172a', margin: 0 }}>
-                {editingTarget ? 'Edit Company Monthly Target' : 'Set Company Monthly Target'}
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16, flexWrap: 'nowrap', gap: 10, width: '100%', boxSizing: 'border-box' }}>
+              <h2 style={{ fontSize: '1.15rem', fontWeight: 800, color: '#0f172a', margin: 0, minWidth: 0, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                {editingTarget ? 'Edit Company Target' : 'Set Company Target'}
               </h2>
-              <button onClick={() => setShowModal(false)} style={{ background: 'none', border: 'none', cursor: 'pointer', fontSize: '1.1rem' }}>
+              <button
+                type="button"
+                onClick={() => setShowModal(false)}
+                style={{
+                  background: '#f1f5f9',
+                  border: 'none',
+                  borderRadius: 6,
+                  width: 32,
+                  height: 32,
+                  minWidth: 32,
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  cursor: 'pointer',
+                  fontSize: '1rem',
+                  color: '#64748b',
+                  flexShrink: 0,
+                }}
+              >
                 ✕
               </button>
             </div>

@@ -13,7 +13,8 @@ const Overlay = styled.div`
   display: flex;
   justify-content: center;
   align-items: center;
-  padding: 16px;
+  padding: 10px;
+  box-sizing: border-box;
 `;
 
 const Modal = styled.div`
@@ -21,26 +22,80 @@ const Modal = styled.div`
   border-radius: 12px;
   width: 100%;
   max-width: 800px;
-  max-height: 90vh;
+  max-height: 92vh;
   display: flex;
   flex-direction: column;
   box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.2);
   overflow: hidden;
+  box-sizing: border-box;
 `;
 
 const ModalHeader = styled.div`
-  padding: 16px 24px;
+  padding: 14px 18px;
   border-bottom: 1px solid #e2e8f0;
   display: flex;
   justify-content: space-between;
   align-items: center;
   background: #f8fafc;
+  flex-wrap: nowrap;
+  gap: 12px;
+  width: 100%;
+  box-sizing: border-box;
+  flex-shrink: 0;
+
+  .header-info {
+    min-width: 0;
+    flex: 1;
+    overflow: hidden;
+
+    h2 {
+      font-size: 1.1rem;
+      font-weight: 800;
+      color: #0f172a;
+      margin: 0;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    p {
+      font-size: 0.72rem;
+      color: #64748b;
+      margin: 2px 0 0 0;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+  }
+
+  .close-btn {
+    background: #f1f5f9;
+    border: none;
+    border-radius: 6px;
+    width: 32px;
+    height: 32px;
+    min-width: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    color: #64748b;
+    flex-shrink: 0;
+  }
 `;
 
 const ModalBody = styled.div`
-  padding: 24px;
+  padding: 18px;
   overflow-y: auto;
+  overflow-x: hidden;
   flex: 1;
+  box-sizing: border-box;
+  width: 100%;
+  max-width: 100%;
+
+  @media (max-width: 480px) {
+    padding: 14px;
+  }
 `;
 
 const ModalFooter = styled.div`
@@ -185,16 +240,12 @@ export const BusinessEditSaleModal: React.FC<Props> = ({ sale, onClose, onSucces
     <Overlay onClick={onClose}>
       <Modal onClick={(e) => e.stopPropagation()}>
         <ModalHeader>
-          <div>
-            <h2 style={{ fontSize: '1.15rem', fontWeight: 800, color: '#0f172a', margin: 0 }}>
-              Edit Sale Invoice — {sale.invoiceNo}
-            </h2>
-            <p style={{ fontSize: '0.75rem', color: '#64748b', margin: '2px 0 0 0' }}>
-              Modify commercial details, client information, pricing ledger, and exchange rates
-            </p>
+          <div className="header-info">
+            <h2>Edit Sale Invoice — {sale.invoiceNo}</h2>
+            <p>Modify commercial details, client information, pricing ledger, and exchange rates</p>
           </div>
-          <button onClick={onClose} style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#64748b' }}>
-            <X size={20} />
+          <button type="button" onClick={onClose} className="close-btn" title="Close">
+            <X size={18} />
           </button>
         </ModalHeader>
 

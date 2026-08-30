@@ -260,18 +260,25 @@ const MobileMenuButton = styled.button`
 const TopBarActions = styled.div`
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 8px;
 
   .user-badge {
     display: flex;
     align-items: center;
-    gap: 8px;
-    padding: 4px 10px;
+    gap: 6px;
+    padding: 4px 8px;
     background: #f1f5f9;
     border-radius: 6px;
+    font-size: 0.78rem;
 
-    @media (max-width: 480px) {
-      display: none;
+    @media (max-width: 520px) {
+      padding: 3px 6px;
+      gap: 4px;
+      font-size: 0.72rem;
+
+      .user-name-text {
+        display: none;
+      }
     }
   }
 `;
@@ -502,7 +509,7 @@ export const BusinessLayout: React.FC = () => {
 
             <div className="user-badge">
               <Briefcase size={14} color="#0f172a" />
-              <span style={{ fontSize: '0.8rem', fontWeight: 600, color: '#0f172a' }}>{user?.name || user?.email || 'Authorized User'}</span>
+              <span className="user-name-text" style={{ fontSize: '0.8rem', fontWeight: 600, color: '#0f172a' }}>{user?.name || user?.email || 'Authorized User'}</span>
               <span style={{ fontSize: '0.68rem', padding: '2px 6px', background: '#e2b96f', color: '#0d1319', fontWeight: 700, borderRadius: 4 }}>
                 {user?.role || 'STAFF'}
               </span>

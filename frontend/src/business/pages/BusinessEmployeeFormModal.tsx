@@ -14,7 +14,8 @@ const ModalOverlay = styled.div`
   display: flex;
   justify-content: center;
   align-items: center;
-  padding: 16px;
+  padding: 10px;
+  box-sizing: border-box;
 `;
 
 const ModalCard = styled.div`
@@ -22,10 +23,16 @@ const ModalCard = styled.div`
   border-radius: 12px;
   width: 100%;
   max-width: 640px;
-  max-height: 90vh;
+  max-height: 92vh;
   overflow-y: auto;
-  padding: 26px;
+  overflow-x: hidden;
+  padding: 24px;
+  box-sizing: border-box;
   box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+
+  @media (max-width: 480px) {
+    padding: 16px;
+  }
 `;
 
 const FormGrid = styled.div`
@@ -232,11 +239,29 @@ export const BusinessEmployeeFormModal: React.FC<{
   return (
     <ModalOverlay onClick={onClose}>
       <ModalCard onClick={(e) => e.stopPropagation()}>
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16 }}>
-          <h2 style={{ fontSize: '1.2rem', fontWeight: 800, color: '#0f172a', margin: 0 }}>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16, flexWrap: 'nowrap', gap: 10, width: '100%', boxSizing: 'border-box' }}>
+          <h2 style={{ fontSize: '1.15rem', fontWeight: 800, color: '#0f172a', margin: 0, minWidth: 0, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
             {isEdit ? 'Edit Employee Details' : 'Register New Employee'}
           </h2>
-          <button onClick={onClose} style={{ background: 'none', border: 'none', cursor: 'pointer', fontSize: '1.1rem', color: '#64748b' }}>
+          <button
+            type="button"
+            onClick={onClose}
+            style={{
+              background: '#f1f5f9',
+              border: 'none',
+              borderRadius: 6,
+              width: 32,
+              height: 32,
+              minWidth: 32,
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              cursor: 'pointer',
+              fontSize: '1rem',
+              color: '#64748b',
+              flexShrink: 0,
+            }}
+          >
             ✕
           </button>
         </div>

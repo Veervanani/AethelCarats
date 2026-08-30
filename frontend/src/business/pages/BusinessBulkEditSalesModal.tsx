@@ -12,7 +12,8 @@ const Overlay = styled.div`
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 16px;
+  padding: 10px;
+  box-sizing: border-box;
 `;
 
 const Modal = styled.div`
@@ -20,10 +21,12 @@ const Modal = styled.div`
   border-radius: 12px;
   width: 100%;
   max-width: 500px;
+  max-height: 92vh;
   box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
   overflow: hidden;
   display: flex;
   flex-direction: column;
+  box-sizing: border-box;
   animation: scaleUp 0.15s ease-out;
 
   @keyframes scaleUp {
@@ -39,12 +42,17 @@ const Modal = styled.div`
 `;
 
 const Header = styled.div`
-  padding: 16px 20px;
+  padding: 14px 16px;
   background: #0d1319;
   color: #ffffff;
   display: flex;
   justify-content: space-between;
   align-items: center;
+  flex-wrap: nowrap;
+  gap: 10px;
+  width: 100%;
+  box-sizing: border-box;
+  flex-shrink: 0;
 
   h2 {
     font-size: 1.05rem;
@@ -53,6 +61,10 @@ const Header = styled.div`
     display: flex;
     align-items: center;
     gap: 8px;
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
   }
 `;
 
@@ -64,8 +76,11 @@ const CloseButton = styled.button`
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 4px;
+  padding: 6px;
   border-radius: 6px;
+  flex-shrink: 0;
+  min-width: 32px;
+  height: 32px;
 
   &:hover {
     color: #ffffff;
@@ -74,12 +89,16 @@ const CloseButton = styled.button`
 `;
 
 const Body = styled.div`
-  padding: 20px;
+  padding: 16px;
   display: flex;
   flex-direction: column;
   gap: 14px;
   max-height: 75vh;
   overflow-y: auto;
+  overflow-x: hidden;
+  box-sizing: border-box;
+  width: 100%;
+  max-width: 100%;
 `;
 
 const FormGroup = styled.div`
