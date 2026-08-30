@@ -8,16 +8,42 @@ const PageHeader = styled.div`
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 24px;
+  margin-bottom: 20px;
   flex-wrap: wrap;
-  gap: 16px;
+  gap: 12px;
+
+  h1 {
+    font-size: 1.35rem;
+    font-weight: 800;
+    color: #0f172a;
+    margin: 0;
+
+    @media (max-width: 640px) {
+      font-size: 1.15rem;
+    }
+  }
+
+  p {
+    font-size: 0.78rem;
+    color: #64748b;
+    margin: 3px 0 0 0;
+
+    @media (max-width: 640px) {
+      font-size: 0.72rem;
+    }
+  }
 `;
 
 const SummaryGrid = styled.div`
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-  gap: 14px;
-  margin-bottom: 24px;
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  gap: 12px;
+  margin-bottom: 20px;
+
+  @media (max-width: 640px) {
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+  }
 `;
 
 const StatCard = styled.div<{ $highlight?: boolean }>`

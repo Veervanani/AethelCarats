@@ -22,69 +22,132 @@ const PageHeader = styled.div`
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 24px;
+  margin-bottom: 20px;
   flex-wrap: wrap;
-  gap: 16px;
+  gap: 12px;
+
+  h1 {
+    font-size: 1.4rem;
+    font-weight: 800;
+    color: #0f172a;
+    margin: 0;
+
+    @media (max-width: 640px) {
+      font-size: 1.15rem;
+    }
+  }
+
+  p {
+    font-size: 0.8rem;
+    color: #64748b;
+    margin: 3px 0 0 0;
+
+    @media (max-width: 640px) {
+      font-size: 0.72rem;
+    }
+  }
 `;
 
 const FilterBar = styled.div`
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 8px;
   flex-wrap: wrap;
   background: #ffffff;
-  padding: 10px 16px;
+  padding: 8px 12px;
   border-radius: 8px;
   border: 1px solid #e2e8f0;
+  box-sizing: border-box;
+
+  @media (max-width: 768px) {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+    padding: 10px;
+    width: 100%;
+  }
 `;
 
 const SelectInput = styled.select`
-  padding: 6px 12px;
+  padding: 6px 28px 6px 10px;
   border: 1px solid #cbd5e1;
   border-radius: 6px;
-  font-size: 0.82rem;
+  font-size: 0.8rem;
   background: #ffffff;
   color: #0f172a;
   outline: none;
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23475569' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+  background-repeat: no-repeat;
+  background-position: right 8px center;
+  background-size: 13px;
+  cursor: pointer;
+  box-sizing: border-box;
+  width: auto;
+
+  @media (max-width: 768px) {
+    width: 100%;
+  }
+
+  &:focus {
+    border-color: #0f172a;
+  }
 `;
 
 const KpiGrid = styled.div`
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-  gap: 16px;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 14px;
   margin-bottom: 24px;
+
+  @media (max-width: 640px) {
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+  }
 `;
 
 const KpiCard = styled.div<{ $highlight?: boolean }>`
   background: ${({ $highlight }) => ($highlight ? 'linear-gradient(135deg, #0d1319 0%, #1a2530 100%)' : '#ffffff')};
   color: ${({ $highlight }) => ($highlight ? '#ffffff' : '#0f172a')};
   border: 1px solid ${({ $highlight }) => ($highlight ? '#0d1319' : '#e2e8f0')};
-  padding: 20px;
+  padding: 16px;
   border-radius: 10px;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
   position: relative;
   overflow: hidden;
+  box-sizing: border-box;
+
+  @media (max-width: 640px) {
+    padding: 12px;
+  }
 
   .kpi-title {
-    font-size: 0.72rem;
+    font-size: 0.7rem;
     font-weight: 700;
     text-transform: uppercase;
-    letter-spacing: 0.08em;
+    letter-spacing: 0.06em;
     color: ${({ $highlight }) => ($highlight ? '#e2b96f' : '#64748b')};
-    margin-bottom: 8px;
+    margin-bottom: 6px;
     display: flex;
     justify-content: space-between;
     align-items: center;
   }
   .kpi-value {
-    font-size: 1.6rem;
-    font-weight: 700;
+    font-size: 1.35rem;
+    font-weight: 800;
     font-family: 'Inter', sans-serif;
+    word-break: break-word;
+
+    @media (max-width: 640px) {
+      font-size: 1.15rem;
+    }
   }
   .kpi-sub {
-    font-size: 0.75rem;
+    font-size: 0.72rem;
     color: ${({ $highlight }) => ($highlight ? '#9bb0bf' : '#64748b')};
-    margin-top: 6px;
+    margin-top: 4px;
   }
 `;
 
@@ -278,33 +341,34 @@ export const BusinessDashboardPage: React.FC = () => {
             )}
           </SelectInput>
 
-          <div style={{ display: 'flex', alignItems: 'center', gap: 6, borderLeft: '1px solid #e2e8f0', paddingLeft: 10 }}>
-            <span style={{ fontSize: '0.75rem', fontWeight: 600, color: '#475569' }}>Currency:</span>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 6, flexWrap: 'wrap' }}>
             <button
+              type="button"
               onClick={() => setCurrencyView('USD')}
               style={{
-                padding: '4px 8px',
-                fontSize: '0.72rem',
+                padding: '5px 10px',
+                fontSize: '0.74rem',
                 fontWeight: 700,
                 background: currencyView === 'USD' ? '#0d1319' : '#f1f5f9',
                 color: currencyView === 'USD' ? '#fff' : '#475569',
                 border: 'none',
-                borderRadius: 4,
+                borderRadius: 5,
                 cursor: 'pointer',
               }}
             >
               USD ($)
             </button>
             <button
+              type="button"
               onClick={() => setCurrencyView('INR')}
               style={{
-                padding: '4px 8px',
-                fontSize: '0.72rem',
+                padding: '5px 10px',
+                fontSize: '0.74rem',
                 fontWeight: 700,
                 background: currencyView === 'INR' ? '#0d1319' : '#f1f5f9',
                 color: currencyView === 'INR' ? '#fff' : '#475569',
                 border: 'none',
-                borderRadius: 4,
+                borderRadius: 5,
                 cursor: 'pointer',
               }}
             >
@@ -312,24 +376,24 @@ export const BusinessDashboardPage: React.FC = () => {
             </button>
           </div>
 
-          <div style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
-            <span style={{ fontSize: '0.72rem', color: '#64748b' }}>Rate:</span>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 6, justifyContent: 'flex-start' }}>
+            <span style={{ fontSize: '0.72rem', color: '#64748b', fontWeight: 600 }}>Rate:</span>
             <input
               type="number"
               step="0.01"
               value={dollarRate}
               onChange={(e) => handleDollarRateChange(Number(e.target.value))}
-              style={{ width: 65, padding: '4px 6px', fontSize: '0.75rem', border: '1px solid #cbd5e1', borderRadius: 4 }}
+              style={{ width: 62, padding: '5px 6px', fontSize: '0.76rem', border: '1px solid #cbd5e1', borderRadius: 5, textAlign: 'center' }}
             />
+            <button
+              type="button"
+              onClick={fetchDashboard}
+              style={{ background: '#f1f5f9', border: '1px solid #e2e8f0', borderRadius: 5, padding: '5px 8px', cursor: 'pointer', color: '#475569', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+              title="Refresh Metrics"
+            >
+              <RefreshCw size={14} />
+            </button>
           </div>
-
-          <button
-            onClick={fetchDashboard}
-            style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#64748b', display: 'flex', alignItems: 'center' }}
-            title="Refresh Metrics"
-          >
-            <RefreshCw size={16} />
-          </button>
         </FilterBar>
       </PageHeader>
 

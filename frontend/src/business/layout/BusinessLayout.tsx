@@ -299,16 +299,22 @@ const ContentContainer = styled.div`
 const CheckInButton = styled.button<{ $isCheckedIn?: boolean }>`
   display: flex;
   align-items: center;
-  gap: 6px;
-  padding: 6px 14px;
+  gap: 5px;
+  padding: 6px 12px;
   background: ${({ $isCheckedIn }) => ($isCheckedIn ? '#ebfbee' : '#f0f7ff')};
   color: ${({ $isCheckedIn }) => ($isCheckedIn ? '#2b8a3e' : '#1971c2')};
   border: 1px solid ${({ $isCheckedIn }) => ($isCheckedIn ? '#b2f2bb' : '#a5d8ff')};
   border-radius: 6px;
-  font-size: 0.78rem;
+  font-size: 0.76rem;
   font-weight: 600;
   cursor: pointer;
+  white-space: nowrap;
   transition: all 0.15s ease;
+
+  @media (max-width: 480px) {
+    padding: 4px 8px;
+    font-size: 0.7rem;
+  }
 
   &:hover {
     filter: brightness(0.96);

@@ -71,52 +71,66 @@ const PageHeader = styled.div`
   justify-content: space-between;
   align-items: center;
   flex-wrap: wrap;
-  gap: 16px;
+  gap: 12px;
   background: #ffffff;
-  padding: 20px 24px;
+  padding: 16px 20px;
   border-radius: 12px;
   border: 1px solid #e2e8f0;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.03);
 
+  @media (max-width: 640px) {
+    padding: 12px 14px;
+    gap: 10px;
+  }
+
   .title-group {
     h1 {
-      font-size: 1.45rem;
+      font-size: 1.35rem;
       font-weight: 800;
       color: #0f172a;
       letter-spacing: -0.02em;
       margin: 0;
       display: flex;
       align-items: center;
-      gap: 10px;
+      gap: 8px;
       flex-wrap: wrap;
 
+      @media (max-width: 640px) {
+        font-size: 1.15rem;
+      }
+
       .badge-tag {
-        font-size: 0.7rem;
+        font-size: 0.68rem;
         font-weight: 700;
         text-transform: uppercase;
         letter-spacing: 0.05em;
         background: #f1f5f9;
         color: #475569;
-        padding: 3px 10px;
-        border-radius: 20px;
+        padding: 2px 8px;
+        border-radius: 16px;
         border: 1px solid #e2e8f0;
         display: inline-flex;
         align-items: center;
-        gap: 5px;
+        gap: 4px;
       }
     }
 
     p {
-      font-size: 0.82rem;
+      font-size: 0.78rem;
       color: #64748b;
-      margin: 6px 0 0 0;
+      margin: 4px 0 0 0;
+
+      @media (max-width: 640px) {
+        font-size: 0.72rem;
+        margin: 2px 0 0 0;
+      }
     }
   }
 
   .action-toolbar {
     display: flex;
     align-items: center;
-    gap: 8px;
+    gap: 6px;
     flex-wrap: wrap;
   }
 `;
@@ -242,8 +256,9 @@ const SummaryGrid = styled.div`
     grid-template-columns: repeat(2, 1fr);
   }
 
-  @media (max-width: 500px) {
-    grid-template-columns: 1fr;
+  @media (max-width: 640px) {
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
   }
 `;
 
@@ -251,12 +266,17 @@ const KpiCard = styled.div<{ $theme?: 'default' | 'revenue' | 'cost' | 'gross' |
   background: #ffffff;
   border: 1px solid #e2e8f0;
   border-radius: 10px;
-  padding: 14px 16px;
+  padding: 12px 14px;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.03);
   display: flex;
   flex-direction: column;
   justify-content: space-between;
   transition: all 0.15s ease;
+  box-sizing: border-box;
+
+  @media (max-width: 640px) {
+    padding: 10px 12px;
+  }
 
   &:hover {
     border-color: #cbd5e1;
@@ -268,10 +288,10 @@ const KpiCard = styled.div<{ $theme?: 'default' | 'revenue' | 'cost' | 'gross' |
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 8px;
+    margin-bottom: 6px;
 
     .label {
-      font-size: 0.68rem;
+      font-size: 0.65rem;
       font-weight: 700;
       text-transform: uppercase;
       letter-spacing: 0.04em;
@@ -279,8 +299,8 @@ const KpiCard = styled.div<{ $theme?: 'default' | 'revenue' | 'cost' | 'gross' |
     }
 
     .icon-wrap {
-      width: 26px;
-      height: 26px;
+      width: 24px;
+      height: 24px;
       border-radius: 6px;
       display: flex;
       align-items: center;
@@ -291,10 +311,16 @@ const KpiCard = styled.div<{ $theme?: 'default' | 'revenue' | 'cost' | 'gross' |
   }
 
   .val {
-    font-size: 1.25rem;
+    font-size: 1.15rem;
     font-weight: 800;
     letter-spacing: -0.02em;
     font-variant-numeric: tabular-nums;
+    word-break: break-word;
+
+    @media (max-width: 640px) {
+      font-size: 1.05rem;
+    }
+
     color: ${({ $theme }) => {
       switch ($theme) {
         case 'revenue':
@@ -316,9 +342,9 @@ const KpiCard = styled.div<{ $theme?: 'default' | 'revenue' | 'cost' | 'gross' |
   }
 
   .subtitle {
-    font-size: 0.68rem;
+    font-size: 0.65rem;
     color: #94a3b8;
-    margin-top: 4px;
+    margin-top: 2px;
   }
 `;
 
@@ -326,7 +352,7 @@ const SkeletonKpi = styled.div`
   background: #f1f5f9;
   border: 1px solid #e2e8f0;
   border-radius: 10px;
-  height: 92px;
+  height: 80px;
   animation: ${pulse} 1.5s infinite;
 `;
 
@@ -335,12 +361,31 @@ const FilterToolbar = styled.div`
   background: #ffffff;
   border: 1px solid #e2e8f0;
   border-radius: 10px;
-  padding: 12px 16px;
+  padding: 10px 14px;
   display: flex;
   flex-wrap: wrap;
-  gap: 12px;
+  gap: 8px;
   align-items: center;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.02);
+  box-sizing: border-box;
+
+  @media (max-width: 768px) {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+    padding: 10px;
+
+    .search-wrapper {
+      grid-column: 1 / -1;
+      min-width: 100%;
+    }
+
+    .results-pill {
+      grid-column: 1 / -1;
+      margin-left: 0;
+      text-align: center;
+    }
+  }
 
   .search-wrapper {
     display: flex;
@@ -351,7 +396,8 @@ const FilterToolbar = styled.div`
     border-radius: 8px;
     padding: 7px 12px;
     flex: 1;
-    min-width: 260px;
+    min-width: 240px;
+    box-sizing: border-box;
     transition: all 0.15s ease;
 
     &:focus-within {
@@ -364,7 +410,7 @@ const FilterToolbar = styled.div`
       border: none;
       background: transparent;
       outline: none;
-      font-size: 0.82rem;
+      font-size: 0.8rem;
       color: #0f172a;
       width: 100%;
 
@@ -389,16 +435,28 @@ const FilterToolbar = styled.div`
   }
 
   .filter-select {
-    padding: 8px 12px;
+    padding: 7px 28px 7px 10px;
     border-radius: 8px;
     border: 1px solid #cbd5e1;
-    font-size: 0.82rem;
+    font-size: 0.8rem;
     font-weight: 500;
     color: #334155;
     background: #ffffff;
     cursor: pointer;
     outline: none;
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23475569' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+    background-repeat: no-repeat;
+    background-position: right 8px center;
+    background-size: 13px;
+    box-sizing: border-box;
     transition: border-color 0.15s ease;
+
+    @media (max-width: 768px) {
+      width: 100%;
+    }
 
     &:focus {
       border-color: #0d1319;
@@ -406,10 +464,10 @@ const FilterToolbar = styled.div`
   }
 
   .results-pill {
-    font-size: 0.76rem;
+    font-size: 0.74rem;
     font-weight: 600;
     color: #64748b;
-    padding: 6px 12px;
+    padding: 6px 10px;
     background: #f8fafc;
     border-radius: 6px;
     border: 1px solid #e2e8f0;

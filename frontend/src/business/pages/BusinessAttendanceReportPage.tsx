@@ -16,27 +16,36 @@ const PageHeader = styled.div`
   justify-content: space-between;
   align-items: center;
   flex-wrap: wrap;
-  gap: 16px;
+  gap: 12px;
 
   .title-group {
     h1 {
-      font-size: 1.45rem;
+      font-size: 1.35rem;
       font-weight: 800;
       color: #0f172a;
       letter-spacing: -0.02em;
       margin: 0;
+
+      @media (max-width: 640px) {
+        font-size: 1.15rem;
+      }
     }
     p {
-      font-size: 0.82rem;
+      font-size: 0.78rem;
       color: #64748b;
       margin: 4px 0 0 0;
+
+      @media (max-width: 640px) {
+        font-size: 0.72rem;
+        margin: 2px 0 0 0;
+      }
     }
   }
 
   .action-toolbar {
     display: flex;
     align-items: center;
-    gap: 8px;
+    gap: 6px;
     flex-wrap: wrap;
   }
 `;

@@ -8,36 +8,64 @@ const PageHeader = styled.div`
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 24px;
+  margin-bottom: 20px;
   flex-wrap: wrap;
-  gap: 16px;
+  gap: 12px;
+
+  h1 {
+    font-size: 1.35rem;
+    font-weight: 800;
+    color: #0f172a;
+    margin: 0;
+
+    @media (max-width: 640px) {
+      font-size: 1.15rem;
+    }
+  }
+
+  p {
+    font-size: 0.78rem;
+    color: #64748b;
+    margin: 3px 0 0 0;
+
+    @media (max-width: 640px) {
+      font-size: 0.72rem;
+    }
+  }
 `;
 
 const ControlCard = styled.div`
   background: #ffffff;
   border: 1px solid #e2e8f0;
   border-radius: 10px;
-  padding: 14px 18px;
+  padding: 12px 14px;
   margin-bottom: 20px;
   display: flex;
   justify-content: space-between;
   flex-wrap: wrap;
-  gap: 14px;
+  gap: 10px;
   align-items: center;
+  box-sizing: border-box;
+
+  @media (max-width: 640px) {
+    padding: 10px 12px;
+  }
 `;
 
 const ReportTypeButton = styled.button<{ $active: boolean }>`
   display: inline-flex;
   align-items: center;
-  gap: 6px;
-  padding: 8px 16px;
+  gap: 5px;
+  padding: 7px 12px;
   border-radius: 6px;
-  font-size: 0.82rem;
+  font-size: 0.78rem;
   font-weight: 700;
   border: 1px solid ${({ $active }) => ($active ? '#0d1319' : '#cbd5e1')};
   background: ${({ $active }) => ($active ? '#0d1319' : '#ffffff')};
   color: ${({ $active }) => ($active ? '#ffffff' : '#334155')};
   cursor: pointer;
+  white-space: nowrap;
+  flex-shrink: 0;
   transition: all 0.15s ease;
 
   &:hover {

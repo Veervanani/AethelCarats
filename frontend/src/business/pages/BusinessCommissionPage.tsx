@@ -18,16 +18,42 @@ const PageHeader = styled.div`
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 24px;
+  margin-bottom: 20px;
   flex-wrap: wrap;
-  gap: 16px;
+  gap: 12px;
+
+  h1 {
+    font-size: 1.35rem;
+    font-weight: 800;
+    color: #0f172a;
+    margin: 0;
+
+    @media (max-width: 640px) {
+      font-size: 1.15rem;
+    }
+  }
+
+  p {
+    font-size: 0.78rem;
+    color: #64748b;
+    margin: 3px 0 0 0;
+
+    @media (max-width: 640px) {
+      font-size: 0.72rem;
+    }
+  }
 `;
 
 const StatGrid = styled.div`
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-  gap: 14px;
-  margin-bottom: 24px;
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  gap: 12px;
+  margin-bottom: 20px;
+
+  @media (max-width: 640px) {
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+  }
 `;
 
 const StatCard = styled.div<{ $color?: string }>`
@@ -35,24 +61,34 @@ const StatCard = styled.div<{ $color?: string }>`
   border: 1px solid #e2e8f0;
   border-left: 4px solid ${({ $color }) => $color || '#0d1319'};
   border-radius: 8px;
-  padding: 16px;
+  padding: 12px 14px;
+  box-sizing: border-box;
+
+  @media (max-width: 640px) {
+    padding: 10px 12px;
+  }
 
   .label {
-    font-size: 0.72rem;
+    font-size: 0.68rem;
     font-weight: 700;
     text-transform: uppercase;
     color: #64748b;
   }
   .val {
-    font-size: 1.4rem;
+    font-size: 1.25rem;
     font-weight: 800;
     color: #0f172a;
-    margin-top: 4px;
+    margin-top: 3px;
+    word-break: break-word;
+
+    @media (max-width: 640px) {
+      font-size: 1.1rem;
+    }
   }
   .sub {
-    font-size: 0.72rem;
+    font-size: 0.68rem;
     color: #64748b;
-    margin-top: 4px;
+    margin-top: 2px;
   }
 `;
 

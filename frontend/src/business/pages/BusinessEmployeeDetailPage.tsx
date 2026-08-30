@@ -20,59 +20,88 @@ const ProfileHeader = styled.div`
   background: #ffffff;
   border: 1px solid #e2e8f0;
   border-radius: 12px;
-  padding: 24px;
-  margin-bottom: 24px;
+  padding: 18px 20px;
+  margin-bottom: 20px;
   display: flex;
   justify-content: space-between;
   align-items: center;
   flex-wrap: wrap;
-  gap: 16px;
+  gap: 12px;
+  box-sizing: border-box;
+
+  @media (max-width: 640px) {
+    padding: 12px 14px;
+  }
 `;
 
 const StatGrid = styled.div`
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-  gap: 14px;
-  margin-bottom: 24px;
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  gap: 12px;
+  margin-bottom: 20px;
+
+  @media (max-width: 640px) {
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+  }
 `;
 
 const StatCard = styled.div`
   background: #ffffff;
   border: 1px solid #e2e8f0;
   border-radius: 8px;
-  padding: 16px;
+  padding: 14px;
+  box-sizing: border-box;
+
+  @media (max-width: 640px) {
+    padding: 10px 12px;
+  }
 
   .stat-label {
-    font-size: 0.72rem;
-    font-weight: 600;
+    font-size: 0.68rem;
+    font-weight: 700;
     text-transform: uppercase;
     color: #64748b;
     margin-bottom: 4px;
   }
   .stat-val {
-    font-size: 1.3rem;
-    font-weight: 700;
+    font-size: 1.25rem;
+    font-weight: 800;
     color: #0f172a;
+    word-break: break-word;
+
+    @media (max-width: 640px) {
+      font-size: 1.1rem;
+    }
   }
 `;
 
 const TabContainer = styled.div`
   display: flex;
-  gap: 8px;
+  gap: 6px;
   border-bottom: 2px solid #e2e8f0;
-  margin-bottom: 20px;
+  margin-bottom: 16px;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  white-space: nowrap;
+  scrollbar-width: none;
+  &::-webkit-scrollbar {
+    display: none;
+  }
 `;
 
 const TabButton = styled.button<{ $active: boolean }>`
-  padding: 10px 18px;
+  padding: 8px 14px;
   background: none;
   border: none;
   border-bottom: 2px solid ${({ $active }) => ($active ? '#0d1319' : 'transparent')};
   color: ${({ $active }) => ($active ? '#0d1319' : '#64748b')};
   font-weight: ${({ $active }) => ($active ? '700' : '500')};
-  font-size: 0.85rem;
+  font-size: 0.8rem;
   cursor: pointer;
   margin-bottom: -2px;
+  white-space: nowrap;
+  flex-shrink: 0;
 `;
 
 const TableContainer = styled.div`
