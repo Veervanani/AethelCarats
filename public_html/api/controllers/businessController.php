@@ -242,68 +242,72 @@ function ensureBusinessTablesExist(PDO $pdo): void {
         $pdo->exec("INSERT IGNORE INTO `business_settings` (`settingKey`, `settingValue`, `updatedAt`) VALUES ('baseCurrency', 'USD', NOW())");
     } catch (\Throwable $e) {}
 
-    // 10. Seed initial requested employees: Rutu (Sales Manager), Jyoti (Sales Employee), Twinkle (Sales Employee)
-    $employeesToSeed = [
-        [
-            'id' => 'emp-rutu-001',
-            'employeeCode' => 'EMP-1001',
-            'name' => 'Rutu',
-            'email' => 'rutu@floksyjewel.com',
-            'phone' => '+91 98765 43210',
-            'department' => 'Sales',
-            'designation' => 'Sales Manager',
-            'role' => 'SALES_MANAGER',
-            'status' => 'ACTIVE',
-            'monthlyTarget' => 150000,
-            'notes' => 'Sales Manager leading retail and high jewellery sales'
-        ],
-        [
-            'id' => 'emp-jyoti-002',
-            'employeeCode' => 'EMP-1002',
-            'name' => 'Jyoti',
-            'email' => 'jyoti@floksyjewel.com',
-            'phone' => '+91 98765 43211',
-            'department' => 'Sales',
-            'designation' => 'Sales Executive',
-            'role' => 'SALES_EMPLOYEE',
-            'status' => 'ACTIVE',
-            'monthlyTarget' => 80000,
-            'notes' => 'Sales Executive specializing in diamond and custom jewelry'
-        ],
-        [
-            'id' => 'emp-twinkle-003',
-            'employeeCode' => 'EMP-1003',
-            'name' => 'Twinkle',
-            'email' => 'twinkle@floksyjewel.com',
-            'phone' => '+91 98765 43212',
-            'department' => 'Sales',
-            'designation' => 'Sales Executive',
-            'role' => 'SALES_EMPLOYEE',
-            'status' => 'ACTIVE',
-            'monthlyTarget' => 80000,
-            'notes' => 'Sales Executive handling fine jewellery and solitaire sales'
-        ]
-    ];
+    // 10. Seed initial requested employees ONLY IF EMPLOYEE TABLE IS TOTALLY EMPTY
+    try {
+        $empCount = (int)$pdo->query("SELECT COUNT(*) FROM `employee`")->fetchColumn();
+        if ($empCount === 0) {
+            $employeesToSeed = [
+                [
+                    'id' => 'emp-rutu-001',
+                    'employeeCode' => 'EMP-1001',
+                    'name' => 'Rutu',
+                    'email' => 'rutu@floksyjewel.com',
+                    'phone' => '+91 98765 43210',
+                    'department' => 'Sales',
+                    'designation' => 'Sales Manager',
+                    'role' => 'SALES_MANAGER',
+                    'status' => 'ACTIVE',
+                    'monthlyTarget' => 150000,
+                    'notes' => 'Sales Manager leading retail and high jewellery sales'
+                ],
+                [
+                    'id' => 'emp-jyoti-002',
+                    'employeeCode' => 'EMP-1002',
+                    'name' => 'Jyoti',
+                    'email' => 'jyoti@floksyjewel.com',
+                    'phone' => '+91 98765 43211',
+                    'department' => 'Sales',
+                    'designation' => 'Sales Executive',
+                    'role' => 'SALES_EMPLOYEE',
+                    'status' => 'ACTIVE',
+                    'monthlyTarget' => 80000,
+                    'notes' => 'Sales Executive specializing in diamond and custom jewelry'
+                ],
+                [
+                    'id' => 'emp-twinkle-003',
+                    'employeeCode' => 'EMP-1003',
+                    'name' => 'Twinkle',
+                    'email' => 'twinkle@floksyjewel.com',
+                    'phone' => '+91 98765 43212',
+                    'department' => 'Sales',
+                    'designation' => 'Sales Executive',
+                    'role' => 'SALES_EMPLOYEE',
+                    'status' => 'ACTIVE',
+                    'monthlyTarget' => 80000,
+                    'notes' => 'Sales Executive handling fine jewellery and solitaire sales'
+                ]
+            ];
 
-    $seedStmt = $pdo->prepare("INSERT INTO `employee` (`id`, `employeeCode`, `name`, `email`, `phone`, `department`, `designation`, `role`, `status`, `monthlyTarget`, `notes`, `createdAt`, `updatedAt`) 
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, NOW(), NOW()) 
-        ON DUPLICATE KEY UPDATE `name` = VALUES(`name`), `role` = VALUES(`role`), `designation` = VALUES(`designation`), `monthlyTarget` = VALUES(`monthlyTarget`)");
+            $seedStmt = $pdo->prepare("INSERT IGNORE INTO `employee` (`id`, `employeeCode`, `name`, `email`, `phone`, `department`, `designation`, `role`, `status`, `monthlyTarget`, `notes`, `createdAt`, `updatedAt`) 
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, NOW(), NOW())");
 
-    foreach ($employeesToSeed as $e) {
-        $seedStmt->execute([
-            $e['id'],
-            $e['employeeCode'],
-            $e['name'],
-            $e['email'],
-            $e['phone'],
-            $e['department'],
-            $e['designation'],
-            $e['role'],
-            $e['status'],
-            $e['monthlyTarget'],
-            $e['notes']
-        ]);
-    }
+            foreach ($employeesToSeed as $e) {
+                $seedStmt->execute([
+                    $e['id'],
+                    $e['employeeCode'],
+                    $e['name'],
+                    $e['email'],
+                    $e['phone'],
+                    $e['department'],
+                    $e['designation'],
+                    $e['role'],
+                    $e['status'],
+                    $e['monthlyTarget'],
+                    $e['notes']
+                ]);
+            }
+        }
+    } catch (\Throwable $e) {}
 }
 
 function computePhpFinancials(array $d): array {
@@ -469,6 +473,9 @@ function handleGetBusinessDashboard(): void {
         $year = trim($_GET['year'] ?? '');
         $month = trim($_GET['month'] ?? '');
         $period = $_GET['period'] ?? 'all';
+
+        $where = [];
+        $params = [];
 
         if ($period === 'today') {
             $where[] = "DATE(`saleDate`) = CURDATE()";
