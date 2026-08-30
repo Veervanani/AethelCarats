@@ -146,22 +146,35 @@ export const GoogleAnalyticsTracker: React.FC = () => {
           document.head.appendChild(fbScript);
         }
 
-        // 5. Inject custom head scripts if configured
+        // 5. Inject custom head scripts if configured (isolated in try-catch to protect against broken user scripts)
         if (settings.custom_head_scripts && !document.getElementById('floksy-custom-head-scripts')) {
-          const headContainer = document.createElement('div');
-          headContainer.id = 'floksy-custom-head-scripts';
-          headContainer.style.display = 'none';
-          headContainer.innerHTML = settings.custom_head_scripts;
-          document.head.appendChild(headContainer);
+          try {
+            const headContainer = document.createElement('div');
+            headContainer.id = 'floksy-custom-head-scripts';
+            headContainer.style.display = 'none';
+            headContainer.innerHTML = settings.custom_head_scripts;
+            document.head.appendChild(headContainer);
 
-          // Execute script tags inside custom_head_scripts
-          const scripts = headContainer.getElementsByTagName('script');
-          for (let i = 0; i < scripts.length; i++) {
-            const oldScript = scripts[i];
-            const newScript = document.createElement('script');
-            Array.from(oldScript.attributes).forEach((attr) => newScript.setAttribute(attr.name, attr.value));
-            newScript.appendChild(document.createTextNode(oldScript.innerHTML));
-            oldScript.parentNode?.replaceChild(newScript, oldScript);
+            // Execute script tags safely
+            const scripts = headContainer.getElementsByTagName('script');
+            for (let i = 0; i < scripts.length; i++) {
+              const oldScript = scripts[i];
+              if (!oldScript || !oldScript.parentNode) continue;
+              try {
+                const newScript = document.createElement('script');
+                Array.from(oldScript.attributes).forEach((attr) => newScript.setAttribute(attr.name, attr.value));
+                if (oldScript.src) {
+                  newScript.src = oldScript.src;
+                } else if (oldScript.innerHTML) {
+                  newScript.text = oldScript.innerHTML;
+                }
+                oldScript.parentNode.replaceChild(newScript, oldScript);
+              } catch (scriptErr) {
+                console.warn('[Analytics] Skipped invalid custom script node:', scriptErr);
+              }
+            }
+          } catch (headErr) {
+            console.warn('[Analytics] Failed to inject custom head scripts:', headErr);
           }
         }
 
