@@ -1,24 +1,24 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
-import { ChevronUp, ChevronDown, Calendar as CalendarIcon, Play, Check, X, Clock, AlertCircle } from 'lucide-react';
+import { ChevronLeft, ChevronRight, Play, Calendar as CalendarIcon } from 'lucide-react';
 
 const CalendarCard = styled.div`
-  width: 320px;
+  flex: 1;
+  min-width: 320px;
   background: #1f1f21;
   color: #ffffff;
   border: 1px solid rgba(255, 255, 255, 0.12);
   border-radius: 14px;
   box-shadow: 0 16px 36px rgba(0, 0, 0, 0.45), 0 0 0 1px rgba(0, 0, 0, 0.2);
-  padding: 16px 14px 12px 14px;
+  padding: 20px;
   user-select: none;
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
   display: flex;
   flex-direction: column;
   box-sizing: border-box;
 
-  @media (max-width: 480px) {
-    width: 100%;
-    max-width: 320px;
+  @media (max-width: 640px) {
+    padding: 14px 10px;
   }
 `;
 
@@ -26,33 +26,28 @@ const TopHeader = styled.div`
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 14px;
-  padding-bottom: 10px;
+  margin-bottom: 16px;
+  padding-bottom: 12px;
   border-bottom: 1px solid rgba(255, 255, 255, 0.08);
 
   .top-date {
-    font-size: 0.95rem;
-    font-weight: 600;
+    font-size: 1.05rem;
+    font-weight: 700;
     color: #f4f4f5;
     letter-spacing: -0.01em;
-  }
-
-  .chevron-box {
-    width: 26px;
-    height: 26px;
-    background: #2b2b2f;
-    border-radius: 6px;
     display: flex;
     align-items: center;
-    justify-content: center;
-    cursor: pointer;
-    color: #a1a1aa;
-    transition: all 0.15s ease;
+    gap: 8px;
+  }
 
-    &:hover {
-      background: #38383e;
-      color: #ffffff;
-    }
+  .today-pill {
+    font-size: 0.68rem;
+    font-weight: 700;
+    background: rgba(216, 180, 226, 0.18);
+    color: #d8b4e2;
+    border: 1px solid rgba(216, 180, 226, 0.35);
+    padding: 2px 8px;
+    border-radius: 12px;
   }
 `;
 
@@ -60,36 +55,38 @@ const MonthNavRow = styled.div`
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 12px;
+  margin-bottom: 14px;
 
   .month-title {
-    font-size: 1rem;
-    font-weight: 700;
+    font-size: 1.12rem;
+    font-weight: 800;
     color: #ffffff;
-    letter-spacing: -0.01em;
+    letter-spacing: -0.02em;
   }
 
   .nav-arrows {
     display: flex;
     align-items: center;
-    gap: 8px;
+    gap: 6px;
   }
 
   .arrow-btn {
-    background: transparent;
-    border: none;
-    color: #a1a1aa;
+    background: #2b2b2f;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    color: #d4d4d8;
     cursor: pointer;
     display: flex;
     align-items: center;
     justify-content: center;
-    padding: 3px;
-    border-radius: 4px;
+    width: 32px;
+    height: 32px;
+    border-radius: 8px;
     transition: all 0.15s ease;
 
     &:hover {
       color: #ffffff;
-      background: rgba(255, 255, 255, 0.1);
+      background: #38383e;
+      border-color: rgba(255, 255, 255, 0.18);
     }
   }
 `;
@@ -98,25 +95,33 @@ const WeekdaysRow = styled.div`
   display: grid;
   grid-template-columns: repeat(7, 1fr);
   text-align: center;
-  margin-bottom: 6px;
+  margin-bottom: 8px;
+  padding-bottom: 4px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
 
   span {
-    font-size: 0.76rem;
-    font-weight: 600;
+    font-size: 0.78rem;
+    font-weight: 700;
     color: #a1a1aa;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+
+    &.sun {
+      color: #f87171;
+    }
   }
 `;
 
 const DaysGrid = styled.div`
   display: grid;
   grid-template-columns: repeat(7, 1fr);
-  row-gap: 3px;
-  column-gap: 2px;
-  margin-bottom: 14px;
+  row-gap: 6px;
+  column-gap: 4px;
+  margin-bottom: 16px;
 `;
 
-const DayCellWrapper = styled.div<{ $isCurrentMonth?: boolean; $isSelected?: boolean }>`
-  min-height: 42px;
+const DayCellWrapper = styled.div<{ $isCurrentMonth?: boolean; $isSelected?: boolean; $isToday?: boolean; $isSunday?: boolean }>`
+  min-height: 48px;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -125,29 +130,46 @@ const DayCellWrapper = styled.div<{ $isCurrentMonth?: boolean; $isSelected?: boo
   border-radius: 8px;
   transition: all 0.12s ease;
   position: relative;
-  padding: 2px 0;
+  padding: 3px 1px;
+  background: ${({ $isSelected }) => ($isSelected ? 'transparent' : 'rgba(255, 255, 255, 0.02)')};
+  border: 1px solid ${({ $isSelected, $isToday }) =>
+    $isSelected ? 'transparent' : $isToday ? 'rgba(216, 180, 226, 0.4)' : 'transparent'};
 
   &:hover {
     background: rgba(255, 255, 255, 0.08);
   }
 
   .day-number {
-    width: 28px;
-    height: 28px;
+    width: 30px;
+    height: 30px;
     display: flex;
     align-items: center;
     justify-content: center;
     border-radius: 50%;
-    font-size: 0.82rem;
-    font-weight: ${({ $isSelected }) => ($isSelected ? '800' : '500')};
-    color: ${({ $isCurrentMonth, $isSelected }) =>
-      $isSelected ? '#09090b' : $isCurrentMonth ? '#f4f4f5' : '#52525b'};
+    font-size: 0.88rem;
+    font-weight: ${({ $isSelected, $isToday }) => ($isSelected || $isToday ? '800' : '600')};
+    color: ${({ $isCurrentMonth, $isSelected, $isSunday }) =>
+      $isSelected
+        ? '#09090b'
+        : !$isCurrentMonth
+        ? '#52525b'
+        : $isSunday
+        ? '#fca5a5'
+        : '#f4f4f5'};
 
     ${({ $isSelected }) =>
       $isSelected &&
       `
       background: #d8b4e2;
-      box-shadow: 0 0 12px rgba(216, 180, 226, 0.4);
+      box-shadow: 0 0 14px rgba(216, 180, 226, 0.5);
+    `}
+
+    ${({ $isToday, $isSelected }) =>
+      $isToday &&
+      !$isSelected &&
+      `
+      border: 1.5px solid #d8b4e2;
+      color: #ffffff;
     `}
   }
 
@@ -156,12 +178,13 @@ const DayCellWrapper = styled.div<{ $isCurrentMonth?: boolean; $isSelected?: boo
     align-items: center;
     justify-content: center;
     gap: 3px;
-    margin-top: 1px;
-    height: 9px;
+    margin-top: 2px;
+    min-height: 12px;
+    flex-wrap: wrap;
   }
 
   .att-dot {
-    font-size: 0.6rem;
+    font-size: 0.64rem;
     line-height: 1;
     font-weight: 700;
     display: inline-flex;
@@ -180,6 +203,10 @@ const DayCellWrapper = styled.div<{ $isCurrentMonth?: boolean; $isSelected?: boo
     &.leave {
       color: #c084fc;
     }
+    &.empty {
+      color: #52525b;
+      font-size: 0.58rem;
+    }
   }
 `;
 
@@ -187,19 +214,22 @@ const BottomBar = styled.div`
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding-top: 8px;
+  padding-top: 12px;
   border-top: 1px solid rgba(255, 255, 255, 0.08);
+  flex-wrap: wrap;
+  gap: 8px;
 
   .stepper {
     display: flex;
     align-items: center;
-    gap: 8px;
+    gap: 6px;
     background: #2b2b2f;
-    padding: 3px 8px;
+    padding: 4px 10px;
     border-radius: 6px;
-    font-size: 0.74rem;
-    font-weight: 600;
+    font-size: 0.78rem;
+    font-weight: 700;
     color: #e4e4e7;
+    border: 1px solid rgba(255, 255, 255, 0.06);
   }
 
   .step-btn {
@@ -207,9 +237,10 @@ const BottomBar = styled.div`
     border: none;
     color: #a1a1aa;
     cursor: pointer;
-    font-size: 0.85rem;
-    font-weight: 700;
-    padding: 0 2px;
+    font-size: 0.9rem;
+    font-weight: 800;
+    padding: 0 4px;
+    line-height: 1;
 
     &:hover {
       color: #ffffff;
@@ -219,19 +250,21 @@ const BottomBar = styled.div`
   .focus-btn {
     display: flex;
     align-items: center;
-    gap: 5px;
+    gap: 6px;
     background: #2b2b2f;
-    border: none;
+    border: 1px solid rgba(255, 255, 255, 0.08);
     color: #f4f4f5;
-    padding: 4px 10px;
+    padding: 6px 14px;
     border-radius: 6px;
-    font-size: 0.76rem;
-    font-weight: 600;
+    font-size: 0.78rem;
+    font-weight: 700;
     cursor: pointer;
-    transition: background 0.15s ease;
+    transition: all 0.15s ease;
 
     &:hover {
       background: #38383e;
+      color: #d8b4e2;
+      border-color: rgba(216, 180, 226, 0.3);
     }
   }
 `;
@@ -279,7 +312,15 @@ export const MonthlyAttendanceCalendar: React.FC<Props> = ({
     'July', 'August', 'September', 'October', 'November', 'December'
   ];
 
-  const daysOfWeek = ['Su', 'Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa'];
+  const daysOfWeek = [
+    { key: 'Su', label: 'Sun', isSun: true },
+    { key: 'Mo', label: 'Mon', isSun: false },
+    { key: 'Tu', label: 'Tue', isSun: false },
+    { key: 'We', label: 'Wed', isSun: false },
+    { key: 'Th', label: 'Thu', isSun: false },
+    { key: 'Fr', label: 'Fri', isSun: false },
+    { key: 'Sa', label: 'Sat', isSun: false },
+  ];
 
   // Navigate months
   const handlePrevMonth = () => {
@@ -366,39 +407,51 @@ export const MonthlyAttendanceCalendar: React.FC<Props> = ({
 
   // Calendar Grid Calculation
   const daysInCurrentMonth = new Date(viewYear, viewMonth, 0).getDate();
-  const firstDayIndex = new Date(viewYear, viewMonth - 1, 1).getDay(); // 0 - 6
+  const firstDayIndex = new Date(viewYear, viewMonth - 1, 1).getDay(); // 0 - 6 (Sunday = 0)
   const prevMonthDaysCount = new Date(viewYear, viewMonth - 1, 0).getDate();
 
-  const calendarDays: Array<{ day: number; isCurrentMonth: boolean; offsetMonth: number }> = [];
+  const calendarDays: Array<{ day: number; isCurrentMonth: boolean; offsetMonth: number; dayOfWeek: number }> = [];
 
   // Trailing previous month days
   for (let i = firstDayIndex - 1; i >= 0; i--) {
+    const d = prevMonthDaysCount - i;
+    const dObj = new Date(viewYear, viewMonth - 2, d);
     calendarDays.push({
-      day: prevMonthDaysCount - i,
+      day: d,
       isCurrentMonth: false,
       offsetMonth: -1,
+      dayOfWeek: dObj.getDay(),
     });
   }
 
   // Current month days
   for (let d = 1; d <= daysInCurrentMonth; d++) {
+    const dObj = new Date(viewYear, viewMonth - 1, d);
     calendarDays.push({
       day: d,
       isCurrentMonth: true,
       offsetMonth: 0,
+      dayOfWeek: dObj.getDay(),
     });
   }
 
-  // Leading next month days (up to 35 or 42 cells)
+  // Leading next month days (fill out grid to 35 or 42 cells)
   const totalCells = calendarDays.length > 35 ? 42 : 35;
   const remaining = totalCells - calendarDays.length;
   for (let d = 1; d <= remaining; d++) {
+    const dObj = new Date(viewYear, viewMonth, d);
     calendarDays.push({
       day: d,
       isCurrentMonth: false,
       offsetMonth: 1,
+      dayOfWeek: dObj.getDay(),
     });
   }
+
+  // Check if today matches view month and year
+  const today = new Date();
+  const isTodayInView = today.getFullYear() === viewYear && today.getMonth() + 1 === viewMonth;
+  const todayDateNumber = today.getDate();
 
   // Top header date string
   const getTopHeaderDateString = () => {
@@ -407,7 +460,7 @@ export const MonthlyAttendanceCalendar: React.FC<Props> = ({
       const dayName = [
         'Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'
       ][dObj.getDay()];
-      return `${dayName}, ${selectedDay || 1} ${monthNames[viewMonth - 1]}`;
+      return `${dayName}, ${selectedDay || 1} ${monthNames[viewMonth - 1]} ${viewYear}`;
     } catch {
       return `${monthNames[viewMonth - 1]} ${viewYear}`;
     }
@@ -417,23 +470,26 @@ export const MonthlyAttendanceCalendar: React.FC<Props> = ({
     <CalendarCard>
       {/* Top Header */}
       <TopHeader>
-        <div className="top-date">{getTopHeaderDateString()}</div>
-        <div className="chevron-box" onClick={handleNextMonth} title="Next month">
-          <ChevronDown size={15} />
+        <div className="top-date">
+          <CalendarIcon size={16} color="#d8b4e2" />
+          {getTopHeaderDateString()}
         </div>
+        {isTodayInView && selectedDay === todayDateNumber && (
+          <span className="today-pill">Today</span>
+        )}
       </TopHeader>
 
       {/* Month Title & Nav Arrows */}
       <MonthNavRow>
         <div className="month-title">
-          {monthNames[viewMonth - 1]}, {viewYear}
+          {monthNames[viewMonth - 1]} {viewYear}
         </div>
         <div className="nav-arrows">
-          <button type="button" className="arrow-btn" onClick={handlePrevMonth} title="Previous month">
-            <ChevronUp size={16} />
+          <button type="button" className="arrow-btn" onClick={handlePrevMonth} title="Previous Month">
+            <ChevronLeft size={18} />
           </button>
-          <button type="button" className="arrow-btn" onClick={handleNextMonth} title="Next month">
-            <ChevronDown size={16} />
+          <button type="button" className="arrow-btn" onClick={handleNextMonth} title="Next Month">
+            <ChevronRight size={18} />
           </button>
         </div>
       </MonthNavRow>
@@ -441,7 +497,9 @@ export const MonthlyAttendanceCalendar: React.FC<Props> = ({
       {/* Weekdays Row */}
       <WeekdaysRow>
         {daysOfWeek.map((d) => (
-          <span key={d}>{d}</span>
+          <span key={d.key} className={d.isSun ? 'sun' : ''}>
+            {d.label}
+          </span>
         ))}
       </WeekdaysRow>
 
@@ -449,30 +507,38 @@ export const MonthlyAttendanceCalendar: React.FC<Props> = ({
       <DaysGrid>
         {calendarDays.map((c, idx) => {
           const isSelected = c.isCurrentMonth && c.day === selectedDay;
+          const isToday = isTodayInView && c.isCurrentMonth && c.day === todayDateNumber;
           const stats = c.isCurrentMonth ? getAttendanceForDay(c.day) : null;
+          const isSun = c.dayOfWeek === 0;
 
           return (
             <DayCellWrapper
               key={idx}
               $isCurrentMonth={c.isCurrentMonth}
               $isSelected={isSelected}
+              $isToday={isToday}
+              $isSunday={isSun}
               onClick={() => handleCellClick(c.day, c.isCurrentMonth, c.offsetMonth)}
               title={
-                c.isCurrentMonth && stats
-                  ? `Day ${c.day}: ${stats.present} Present, ${stats.absent} Absent, ${stats.halfDay} Half Day, ${stats.leave} Leave`
+                c.isCurrentMonth
+                  ? stats
+                    ? `Day ${c.day}: ${stats.present} Present, ${stats.absent} Absent, ${stats.halfDay} Half Day, ${stats.leave} Leave`
+                    : `Day ${c.day}: No attendance recorded`
                   : undefined
               }
             >
               <div className="day-number">{c.day}</div>
               <div className="attendance-pills">
-                {stats && (
+                {c.isCurrentMonth && stats ? (
                   <>
                     {stats.present > 0 && <span className="att-dot present">●{stats.present}</span>}
                     {stats.absent > 0 && <span className="att-dot absent">●{stats.absent}</span>}
                     {stats.halfDay > 0 && <span className="att-dot half">●{stats.halfDay}</span>}
                     {stats.leave > 0 && <span className="att-dot leave">●{stats.leave}</span>}
                   </>
-                )}
+                ) : c.isCurrentMonth ? (
+                  <span className="att-dot empty">●0</span>
+                ) : null}
               </div>
             </DayCellWrapper>
           );
@@ -492,9 +558,10 @@ export const MonthlyAttendanceCalendar: React.FC<Props> = ({
         </div>
 
         <button type="button" className="focus-btn" onClick={handleJumpToToday}>
-          <Play size={10} fill="#ffffff" /> Today
+          <Play size={11} fill="#ffffff" /> Today
         </button>
       </BottomBar>
     </CalendarCard>
   );
 };
+
