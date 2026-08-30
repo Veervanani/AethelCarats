@@ -22,28 +22,28 @@ const PageHeader = styled.div`
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 20px;
+  margin-bottom: 16px;
   flex-wrap: wrap;
-  gap: 12px;
+  gap: 10px;
 
   h1 {
-    font-size: 1.4rem;
+    font-size: 1.35rem;
     font-weight: 800;
     color: #0f172a;
     margin: 0;
 
     @media (max-width: 640px) {
-      font-size: 1.15rem;
+      font-size: 1.05rem;
     }
   }
 
   p {
-    font-size: 0.8rem;
+    font-size: 0.78rem;
     color: #64748b;
-    margin: 3px 0 0 0;
+    margin: 2px 0 0 0;
 
     @media (max-width: 640px) {
-      font-size: 0.72rem;
+      display: none;
     }
   }
 `;
@@ -69,30 +69,35 @@ const FilterBar = styled.div`
 `;
 
 const SelectInput = styled.select`
-  padding: 6px 28px 6px 10px;
-  border: 1px solid #cbd5e1;
-  border-radius: 6px;
-  font-size: 0.8rem;
+  height: 38px;
+  padding: 6px 32px 6px 12px;
+  border: 1.5px solid #cbd5e1;
+  border-radius: 7px;
+  font-size: 0.86rem;
+  font-weight: 600;
   background: #ffffff;
   color: #0f172a;
   outline: none;
   appearance: none;
   -webkit-appearance: none;
   -moz-appearance: none;
-  background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23475569' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+  background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23334155' stroke-width='2.2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
   background-repeat: no-repeat;
-  background-position: right 8px center;
-  background-size: 13px;
+  background-position: right 10px center;
+  background-size: 14px;
   cursor: pointer;
   box-sizing: border-box;
   width: auto;
 
   @media (max-width: 768px) {
     width: 100%;
+    height: 40px;
+    font-size: 0.88rem;
   }
 
   &:focus {
     border-color: #0f172a;
+    box-shadow: 0 0 0 2px rgba(15, 23, 42, 0.08);
   }
 `;
 
@@ -100,7 +105,7 @@ const KpiGrid = styled.div`
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
   gap: 14px;
-  margin-bottom: 24px;
+  margin-bottom: 20px;
 
   @media (max-width: 640px) {
     grid-template-columns: 1fr 1fr;
@@ -154,11 +159,12 @@ const KpiCard = styled.div<{ $highlight?: boolean }>`
 const GridTwoCol = styled.div`
   display: grid;
   grid-template-columns: 2fr 1fr;
-  gap: 20px;
-  margin-bottom: 24px;
+  gap: 16px;
+  margin-bottom: 20px;
 
   @media (max-width: 1024px) {
     grid-template-columns: 1fr;
+    gap: 14px;
   }
 `;
 
@@ -166,28 +172,49 @@ const ContentCard = styled.div`
   background: #ffffff;
   border: 1px solid #e2e8f0;
   border-radius: 10px;
-  padding: 20px;
+  padding: 18px 20px;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.03);
+  box-sizing: border-box;
+  width: 100%;
+  max-width: 100%;
+  overflow: hidden;
+
+  @media (max-width: 640px) {
+    padding: 14px 12px;
+  }
 
   .card-header {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 16px;
-    padding-bottom: 12px;
+    margin-bottom: 14px;
+    padding-bottom: 10px;
     border-bottom: 1px solid #f1f5f9;
   }
   .card-title {
-    font-size: 0.95rem;
+    font-size: 0.92rem;
     font-weight: 700;
     color: #0f172a;
   }
 `;
 
-const Table = styled.table`
+const TableContainer = styled.div`
   width: 100%;
+  max-width: 100%;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  touch-action: pan-x pan-y;
+  scrollbar-width: thin;
+  box-sizing: border-box;
+  margin-top: 4px;
+`;
+
+const Table = styled.table<{ $minWidth?: number }>`
+  width: 100%;
+  min-width: ${({ $minWidth }) => ($minWidth ? `${$minWidth}px` : '540px')};
   border-collapse: collapse;
   font-size: 0.82rem;
+  white-space: nowrap;
 
   th {
     text-align: left;
@@ -202,6 +229,7 @@ const Table = styled.table`
     padding: 10px 12px;
     border-bottom: 1px solid #f1f5f9;
     color: #1e293b;
+    vertical-align: middle;
   }
 
   tr:hover td {
@@ -461,8 +489,8 @@ export const BusinessDashboardPage: React.FC = () => {
             </span>
           </div>
 
-          <div style={{ overflowX: 'auto' }}>
-            <Table>
+          <TableContainer>
+            <Table $minWidth={580}>
               <thead>
                 <tr>
                   <th>Sales Person</th>
@@ -509,7 +537,7 @@ export const BusinessDashboardPage: React.FC = () => {
                 )}
               </tbody>
             </Table>
-          </div>
+          </TableContainer>
         </ContentCard>
 
         {/* Product & Quota Distribution */}
@@ -634,64 +662,68 @@ export const BusinessDashboardPage: React.FC = () => {
           <div className="card-header">
             <div className="card-title">Top Clients by Revenue</div>
           </div>
-          <Table>
-            <thead>
-              <tr>
-                <th>Client Name</th>
-                <th>Country</th>
-                <th>Orders</th>
-                <th>Total Revenue</th>
-              </tr>
-            </thead>
-            <tbody>
-              {data?.topCustomers?.map((c, i) => (
-                <tr key={i}>
-                  <td style={{ fontWeight: 600 }}>{c.name}</td>
-                  <td>{c.country || '-'}</td>
-                  <td>{c.orders}</td>
-                  <td style={{ fontWeight: 700 }}>${fmt(c.revenue)}</td>
-                </tr>
-              ))}
-              {(!data?.topCustomers || data.topCustomers.length === 0) && (
+          <TableContainer>
+            <Table $minWidth={440}>
+              <thead>
                 <tr>
-                  <td colSpan={4} style={{ textAlign: 'center', padding: '16px', color: '#94a3b8' }}>
-                    No client revenue records yet.
-                  </td>
+                  <th>Client Name</th>
+                  <th>Country</th>
+                  <th>Orders</th>
+                  <th>Total Revenue</th>
                 </tr>
-              )}
-            </tbody>
-          </Table>
+              </thead>
+              <tbody>
+                {data?.topCustomers?.map((c, i) => (
+                  <tr key={i}>
+                    <td style={{ fontWeight: 600 }}>{c.name}</td>
+                    <td>{c.country || '-'}</td>
+                    <td>{c.orders}</td>
+                    <td style={{ fontWeight: 700 }}>${fmt(c.revenue)}</td>
+                  </tr>
+                ))}
+                {(!data?.topCustomers || data.topCustomers.length === 0) && (
+                  <tr>
+                    <td colSpan={4} style={{ textAlign: 'center', padding: '16px', color: '#94a3b8' }}>
+                      No client revenue records yet.
+                    </td>
+                  </tr>
+                )}
+              </tbody>
+            </Table>
+          </TableContainer>
         </ContentCard>
 
         <ContentCard>
           <div className="card-header">
             <div className="card-title">Geographic Sales</div>
           </div>
-          <Table>
-            <thead>
-              <tr>
-                <th>Country</th>
-                <th>Orders</th>
-                <th>Revenue</th>
-              </tr>
-            </thead>
-            <tbody>
-              {data?.countryDistribution?.map((c, i) => (
-                <tr key={i}>
-                  <td style={{ fontWeight: 600 }}>{c.country}</td>
-                  <td>{c.orders}</td>
-                  <td style={{ fontWeight: 700 }}>${fmt(c.revenue)}</td>
-                </tr>
-              ))}
-              {(!data?.countryDistribution || data.countryDistribution.length === 0) && (
+          <TableContainer>
+            <Table $minWidth={360}>
+              <thead>
                 <tr>
-                  <td colSpan={3} style={{ textAlign: 'center', padding: '16px', color: '#94a3b8' }}>
-                    No geographic distribution data yet.
-                  </td>
+                  <th>Country</th>
+                  <th>Orders</th>
+                  <th>Revenue</th>
                 </tr>
-              )}
-            </tbody>
-          </Table>
+              </thead>
+              <tbody>
+                {data?.countryDistribution?.map((c, i) => (
+                  <tr key={i}>
+                    <td style={{ fontWeight: 600 }}>{c.country}</td>
+                    <td>{c.orders}</td>
+                    <td style={{ fontWeight: 700 }}>${fmt(c.revenue)}</td>
+                  </tr>
+                ))}
+                {(!data?.countryDistribution || data.countryDistribution.length === 0) && (
+                  <tr>
+                    <td colSpan={3} style={{ textAlign: 'center', padding: '16px', color: '#94a3b8' }}>
+                      No geographic distribution data yet.
+                    </td>
+                  </tr>
+                )}
+              </tbody>
+            </Table>
+          </TableContainer>
         </ContentCard>
       </GridTwoCol>
     </div>

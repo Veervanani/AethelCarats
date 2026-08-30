@@ -229,7 +229,7 @@ const TopBar = styled.header`
   z-index: 90;
   background-color: #ffffff;
   border-bottom: 1px solid #e2e8f0;
-  padding: 12px 28px;
+  padding: 10px 24px;
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -237,7 +237,11 @@ const TopBar = styled.header`
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.02);
 
   @media (max-width: 768px) {
-    padding: 10px 14px;
+    padding: 8px 12px;
+
+    .hub-subtitle {
+      display: none;
+    }
   }
 `;
 
@@ -260,12 +264,12 @@ const MobileMenuButton = styled.button`
 const TopBarActions = styled.div`
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 6px;
 
   .user-badge {
     display: flex;
     align-items: center;
-    gap: 6px;
+    gap: 5px;
     padding: 4px 8px;
     background: #f1f5f9;
     border-radius: 6px;
@@ -273,8 +277,8 @@ const TopBarActions = styled.div`
 
     @media (max-width: 520px) {
       padding: 3px 6px;
-      gap: 4px;
-      font-size: 0.72rem;
+      gap: 3px;
+      font-size: 0.7rem;
 
       .user-name-text {
         display: none;
@@ -284,14 +288,14 @@ const TopBarActions = styled.div`
 `;
 
 const ContentContainer = styled.div`
-  padding: 24px 28px;
+  padding: 20px 24px;
   flex: 1;
   width: 100%;
   max-width: 100%;
   box-sizing: border-box;
 
   @media (max-width: 768px) {
-    padding: 14px 12px;
+    padding: 10px 8px;
   }
 `;
 
@@ -500,10 +504,10 @@ export const BusinessLayout: React.FC = () => {
               <MenuIcon size={20} />
             </MobileMenuButton>
             <div>
-              <div style={{ fontSize: '0.72rem', color: '#64748b', fontWeight: 600, letterSpacing: '0.04em' }}>
+              <div className="hub-subtitle" style={{ fontSize: '0.68rem', color: '#64748b', fontWeight: 600, letterSpacing: '0.04em' }}>
                 FLOKSY JEWEL BUSINESS HUB
               </div>
-              <div style={{ fontSize: '1.05rem', fontWeight: 700, color: '#0f172a' }}>{getPageTitle()}</div>
+              <div style={{ fontSize: '1rem', fontWeight: 700, color: '#0f172a' }}>{getPageTitle()}</div>
             </div>
           </div>
 
