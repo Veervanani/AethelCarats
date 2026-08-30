@@ -54,14 +54,25 @@ const ControlBar = styled.div`
   gap: 12px;
 `;
 
-const Table = styled.table`
+const TableContainer = styled.div`
   width: 100%;
-  border-collapse: collapse;
+  max-width: 100%;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  touch-action: pan-x pan-y;
   background: #ffffff;
   border-radius: 8px;
-  overflow: hidden;
   border: 1px solid #e2e8f0;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+  margin-bottom: 20px;
+  scrollbar-width: thin;
+`;
+
+const Table = styled.table`
+  width: 100%;
+  min-width: 860px;
+  border-collapse: collapse;
+  white-space: nowrap;
 
   th {
     background: #f8fafc;
@@ -87,6 +98,7 @@ const Table = styled.table`
     background: #f8fafc;
   }
 `;
+
 
 export const BusinessCustomersPage: React.FC = () => {
   const [customers, setCustomers] = useState<BusinessCustomer[]>([]);
@@ -325,7 +337,8 @@ export const BusinessCustomersPage: React.FC = () => {
         <div style={{ fontSize: '0.8rem', color: '#64748b' }}>Showing {customers.length} clients</div>
       </ControlBar>
 
-      <Table>
+      <TableContainer>
+        <Table>
         <thead>
           <tr>
             <th style={{ width: 36, textAlign: 'center' }}>
@@ -469,7 +482,8 @@ export const BusinessCustomersPage: React.FC = () => {
             </tr>
           )}
         </tbody>
-      </Table>
+        </Table>
+      </TableContainer>
 
       {/* Customer Orders & Profile Modal */}
       {selectedCustomerForOrders && (

@@ -45,14 +45,26 @@ const ReportTypeButton = styled.button<{ $active: boolean }>`
   }
 `;
 
-const Table = styled.table`
+const TableContainer = styled.div`
   width: 100%;
-  border-collapse: collapse;
-  font-size: 0.82rem;
+  max-width: 100%;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  touch-action: pan-x pan-y;
   background: #ffffff;
   border-radius: 8px;
-  overflow: hidden;
   border: 1px solid #e2e8f0;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.02);
+  margin-bottom: 20px;
+  scrollbar-width: thin;
+`;
+
+const Table = styled.table`
+  width: 100%;
+  min-width: 680px;
+  border-collapse: collapse;
+  font-size: 0.82rem;
+  white-space: nowrap;
 
   th {
     text-align: left;
@@ -72,6 +84,7 @@ const Table = styled.table`
     background: #f8fafc;
   }
 `;
+
 
 const Badge = styled.span<{ $type?: string }>`
   font-size: 0.7rem;
@@ -280,124 +293,130 @@ export const BusinessReportsPage: React.FC = () => {
       </ControlCard>
 
       {reportType === 'sales' && (
-        <Table>
-          <thead>
-            <tr>
-              <th>Category</th>
-              <th>Orders</th>
-              <th>Total Revenue</th>
-              <th>Net Profit</th>
-              <th>Profit Margin</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-              <td style={{ fontWeight: 600 }}>Loose Diamonds</td>
-              <td>{data?.productDistribution?.diamond?.orders || 0}</td>
-              <td style={{ fontWeight: 700 }}>${(data?.productDistribution?.diamond?.revenue || 0).toLocaleString()}</td>
-              <td style={{ color: '#16a34a', fontWeight: 600 }}>${(data?.productDistribution?.diamond?.netProfit || 0).toLocaleString()}</td>
-              <td>
-                {(data?.productDistribution?.diamond?.revenue || 0) > 0
-                  ? (((data?.productDistribution?.diamond?.netProfit || 0) / (data?.productDistribution?.diamond?.revenue || 1)) * 100).toFixed(1)
-                  : 0}
-                %
-              </td>
-            </tr>
-            <tr>
-              <td style={{ fontWeight: 600 }}>Finished Jewelry</td>
-              <td>{data?.productDistribution?.jewelry?.orders || 0}</td>
-              <td style={{ fontWeight: 700 }}>${(data?.productDistribution?.jewelry?.revenue || 0).toLocaleString()}</td>
-              <td style={{ color: '#16a34a', fontWeight: 600 }}>${(data?.productDistribution?.jewelry?.netProfit || 0).toLocaleString()}</td>
-              <td>
-                {(data?.productDistribution?.jewelry?.revenue || 0) > 0
-                  ? (((data?.productDistribution?.jewelry?.netProfit || 0) / (data?.productDistribution?.jewelry?.revenue || 1)) * 100).toFixed(1)
-                  : 0}
-                %
-              </td>
-            </tr>
-          </tbody>
-        </Table>
+        <TableContainer>
+          <Table>
+            <thead>
+              <tr>
+                <th>Category</th>
+                <th>Orders</th>
+                <th>Total Revenue</th>
+                <th>Net Profit</th>
+                <th>Profit Margin</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td style={{ fontWeight: 600 }}>Loose Diamonds</td>
+                <td>{data?.productDistribution?.diamond?.orders || 0}</td>
+                <td style={{ fontWeight: 700 }}>${(data?.productDistribution?.diamond?.revenue || 0).toLocaleString()}</td>
+                <td style={{ color: '#16a34a', fontWeight: 600 }}>${(data?.productDistribution?.diamond?.netProfit || 0).toLocaleString()}</td>
+                <td>
+                  {(data?.productDistribution?.diamond?.revenue || 0) > 0
+                    ? (((data?.productDistribution?.diamond?.netProfit || 0) / (data?.productDistribution?.diamond?.revenue || 1)) * 100).toFixed(1)
+                    : 0}
+                  %
+                </td>
+              </tr>
+              <tr>
+                <td style={{ fontWeight: 600 }}>Finished Jewelry</td>
+                <td>{data?.productDistribution?.jewelry?.orders || 0}</td>
+                <td style={{ fontWeight: 700 }}>${(data?.productDistribution?.jewelry?.revenue || 0).toLocaleString()}</td>
+                <td style={{ color: '#16a34a', fontWeight: 600 }}>${(data?.productDistribution?.jewelry?.netProfit || 0).toLocaleString()}</td>
+                <td>
+                  {(data?.productDistribution?.jewelry?.revenue || 0) > 0
+                    ? (((data?.productDistribution?.jewelry?.netProfit || 0) / (data?.productDistribution?.jewelry?.revenue || 1)) * 100).toFixed(1)
+                    : 0}
+                  %
+                </td>
+              </tr>
+            </tbody>
+          </Table>
+        </TableContainer>
       )}
 
       {reportType === 'staff' && (
-        <Table>
-          <thead>
-            <tr>
-              <th>Sales Representative</th>
-              <th>Total Orders</th>
-              <th>Sales Volume (USD)</th>
-              <th>Net Profit (USD)</th>
-              <th>Commission (USD)</th>
-              <th>Net Profit (INR)</th>
-            </tr>
-          </thead>
-          <tbody>
-            {data?.salesPersonPerformance?.map((sp: any, i: number) => {
-              const rev = Number(sp.revenue) || 0;
-              const npUSD = Number(sp.netProfitUSD) || 0;
-              const npINR = Number(sp.netProfitINR) || npUSD * (data?.metrics?.dollarRate || 94.55);
-              const commUSD = Number(sp.commissionUSD) || 0;
-              const fmt = (v: any) => (Number(v) || 0).toLocaleString();
-
-              return (
-                <tr key={i}>
-                  <td style={{ fontWeight: 600 }}>{sp.name || 'Unassigned'}</td>
-                  <td>{sp.orders || 0}</td>
-                  <td style={{ fontWeight: 700 }}>${fmt(rev)}</td>
-                  <td style={{ color: '#16a34a', fontWeight: 600 }}>${fmt(npUSD)}</td>
-                  <td style={{ color: '#d97706' }}>${fmt(commUSD)}</td>
-                  <td>₹{fmt(npINR)}</td>
-                </tr>
-              );
-            })}
-            {(!data?.salesPersonPerformance || data.salesPersonPerformance.length === 0) && (
+        <TableContainer>
+          <Table>
+            <thead>
               <tr>
-                <td colSpan={6} style={{ textAlign: 'center', padding: '24px', color: '#94a3b8' }}>
-                  No staff performance records available.
-                </td>
+                <th>Sales Representative</th>
+                <th>Total Orders</th>
+                <th>Sales Volume (USD)</th>
+                <th>Net Profit (USD)</th>
+                <th>Commission (USD)</th>
+                <th>Net Profit (INR)</th>
               </tr>
-            )}
-          </tbody>
-        </Table>
+            </thead>
+            <tbody>
+              {data?.salesPersonPerformance?.map((sp: any, i: number) => {
+                const rev = Number(sp.revenue) || 0;
+                const npUSD = Number(sp.netProfitUSD) || 0;
+                const npINR = Number(sp.netProfitINR) || npUSD * (data?.metrics?.dollarRate || 94.55);
+                const commUSD = Number(sp.commissionUSD) || 0;
+                const fmt = (v: any) => (Number(v) || 0).toLocaleString();
+
+                return (
+                  <tr key={i}>
+                    <td style={{ fontWeight: 600 }}>{sp.name || 'Unassigned'}</td>
+                    <td>{sp.orders || 0}</td>
+                    <td style={{ fontWeight: 700 }}>${fmt(rev)}</td>
+                    <td style={{ color: '#16a34a', fontWeight: 600 }}>${fmt(npUSD)}</td>
+                    <td style={{ color: '#d97706' }}>${fmt(commUSD)}</td>
+                    <td>₹{fmt(npINR)}</td>
+                  </tr>
+                );
+              })}
+              {(!data?.salesPersonPerformance || data.salesPersonPerformance.length === 0) && (
+                <tr>
+                  <td colSpan={6} style={{ textAlign: 'center', padding: '24px', color: '#94a3b8' }}>
+                    No staff performance records available.
+                  </td>
+                </tr>
+              )}
+            </tbody>
+          </Table>
+        </TableContainer>
       )}
 
       {reportType === 'profit' && (
-        <Table>
-          <thead>
-            <tr>
-              <th>Financial Metric</th>
-              <th>Value (USD)</th>
-              <th>Value (INR @ {data?.metrics?.dollarRate || 94.55})</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-              <td style={{ fontWeight: 600 }}>Total Billed Revenue</td>
-              <td style={{ fontWeight: 700 }}>${(Number(data?.metrics?.totalRevenue) || 0).toLocaleString()}</td>
-              <td>₹{((Number(data?.metrics?.totalRevenue) || 0) * (data?.metrics?.dollarRate || 94.55)).toLocaleString()}</td>
-            </tr>
-            <tr>
-              <td style={{ fontWeight: 600 }}>Procurement Cost (COGS)</td>
-              <td>${(Number(data?.metrics?.totalPurchaseCost) || 0).toLocaleString()}</td>
-              <td>₹{((Number(data?.metrics?.totalPurchaseCost) || 0) * (data?.metrics?.dollarRate || 94.55)).toLocaleString()}</td>
-            </tr>
-            <tr>
-              <td style={{ fontWeight: 600 }}>Net Operational Profit</td>
-              <td style={{ color: '#16a34a', fontWeight: 700 }}>${(Number(data?.metrics?.totalNetProfit) || 0).toLocaleString()}</td>
-              <td style={{ color: '#16a34a', fontWeight: 700 }}>₹{(Number(data?.metrics?.totalNetProfitINR) || (Number(data?.metrics?.totalNetProfit) || 0) * (data?.metrics?.dollarRate || 94.55)).toLocaleString()}</td>
-            </tr>
-            <tr>
-              <td style={{ fontWeight: 600 }}>Total Sales Commission</td>
-              <td style={{ color: '#d97706', fontWeight: 700 }}>${(Number(data?.metrics?.totalCommission) || 0).toLocaleString()}</td>
-              <td style={{ color: '#d97706', fontWeight: 700 }}>₹{(Number(data?.metrics?.totalCommissionINR) || (Number(data?.metrics?.totalCommission) || 0) * (data?.metrics?.dollarRate || 94.55)).toLocaleString()}</td>
-            </tr>
-            <tr style={{ background: '#f8fafc' }}>
-              <td style={{ fontWeight: 800 }}>Retained Company Profit</td>
-              <td style={{ color: '#0d1319', fontWeight: 800 }}>${(Number(data?.metrics?.totalProfitAfterCommission) || 0).toLocaleString()}</td>
-              <td style={{ color: '#0d1319', fontWeight: 800 }}>₹{(Number(data?.metrics?.profitAfterCommissionINR) || (Number(data?.metrics?.totalProfitAfterCommission) || 0) * (data?.metrics?.dollarRate || 94.55)).toLocaleString()}</td>
-            </tr>
-          </tbody>
-        </Table>
+        <TableContainer>
+          <Table>
+            <thead>
+              <tr>
+                <th>Financial Metric</th>
+                <th>Value (USD)</th>
+                <th>Value (INR @ {data?.metrics?.dollarRate || 94.55})</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td style={{ fontWeight: 600 }}>Total Billed Revenue</td>
+                <td style={{ fontWeight: 700 }}>${(Number(data?.metrics?.totalRevenue) || 0).toLocaleString()}</td>
+                <td>₹{((Number(data?.metrics?.totalRevenue) || 0) * (data?.metrics?.dollarRate || 94.55)).toLocaleString()}</td>
+              </tr>
+              <tr>
+                <td style={{ fontWeight: 600 }}>Procurement Cost (COGS)</td>
+                <td>${(Number(data?.metrics?.totalPurchaseCost) || 0).toLocaleString()}</td>
+                <td>₹{((Number(data?.metrics?.totalPurchaseCost) || 0) * (data?.metrics?.dollarRate || 94.55)).toLocaleString()}</td>
+              </tr>
+              <tr>
+                <td style={{ fontWeight: 600 }}>Net Operational Profit</td>
+                <td style={{ color: '#16a34a', fontWeight: 700 }}>${(Number(data?.metrics?.totalNetProfit) || 0).toLocaleString()}</td>
+                <td style={{ color: '#16a34a', fontWeight: 700 }}>₹{(Number(data?.metrics?.totalNetProfitINR) || (Number(data?.metrics?.totalNetProfit) || 0) * (data?.metrics?.dollarRate || 94.55)).toLocaleString()}</td>
+              </tr>
+              <tr>
+                <td style={{ fontWeight: 600 }}>Total Sales Commission</td>
+                <td style={{ color: '#d97706', fontWeight: 700 }}>${(Number(data?.metrics?.totalCommission) || 0).toLocaleString()}</td>
+                <td style={{ color: '#d97706', fontWeight: 700 }}>₹{(Number(data?.metrics?.totalCommissionINR) || (Number(data?.metrics?.totalCommission) || 0) * (data?.metrics?.dollarRate || 94.55)).toLocaleString()}</td>
+              </tr>
+              <tr style={{ background: '#f8fafc' }}>
+                <td style={{ fontWeight: 800 }}>Retained Company Profit</td>
+                <td style={{ color: '#0d1319', fontWeight: 800 }}>${(Number(data?.metrics?.totalProfitAfterCommission) || 0).toLocaleString()}</td>
+                <td style={{ color: '#0d1319', fontWeight: 800 }}>₹{(Number(data?.metrics?.profitAfterCommissionINR) || (Number(data?.metrics?.totalProfitAfterCommission) || 0) * (data?.metrics?.dollarRate || 94.55)).toLocaleString()}</td>
+              </tr>
+            </tbody>
+          </Table>
+        </TableContainer>
       )}
 
       {reportType === 'backups' && (
@@ -408,81 +427,83 @@ export const BusinessReportsPage: React.FC = () => {
             </span>
           </div>
 
-          <Table>
-            <thead>
-              <tr>
-                <th>Backup Snapshot</th>
-                <th>Type</th>
-                <th>Created At</th>
-                <th>Sales Records</th>
-                <th>Staff</th>
-                <th>Clients</th>
-                <th>Size</th>
-                <th style={{ textAlign: 'right' }}>Actions</th>
-              </tr>
-            </thead>
-            <tbody>
-              {backups.map((b) => (
-                <tr key={b.id}>
-                  <td style={{ fontWeight: 700, color: '#0f172a' }}>{b.backupName}</td>
-                  <td>
-                    <Badge $type={b.backupType}>
-                      {b.backupType === 'AUTOMATIC_WEEKLY' ? '🟢 Weekly Auto' : '🟣 Manual Snapshot'}
-                    </Badge>
-                  </td>
-                  <td>{b.createdAt ? new Date(b.createdAt).toLocaleString() : '-'}</td>
-                  <td style={{ fontWeight: 600 }}>{b.salesCount || 0} sales</td>
-                  <td>{b.employeesCount || 0} staff</td>
-                  <td>{b.customersCount || 0} clients</td>
-                  <td style={{ color: '#64748b' }}>{Math.round((b.fileSizeBytes || 1024) / 1024)} KB</td>
-                  <td style={{ textAlign: 'right' }}>
-                    <div style={{ display: 'inline-flex', gap: 6 }}>
-                      <button
-                        onClick={() => handleDownloadBackup(b.id, b.backupName)}
-                        style={{
-                          display: 'inline-flex',
-                          alignItems: 'center',
-                          gap: 4,
-                          padding: '5px 10px',
-                          background: '#0d1319',
-                          color: '#ffffff',
-                          border: 'none',
-                          borderRadius: 5,
-                          fontSize: '0.74rem',
-                          fontWeight: 700,
-                          cursor: 'pointer',
-                        }}
-                        title="Download JSON Snapshot"
-                      >
-                        <HardDriveDownload size={13} /> Download
-                      </button>
-                      <button
-                        onClick={() => handleDeleteBackup(b.id, b.backupName)}
-                        style={{
-                          padding: '5px 8px',
-                          background: '#fff1f2',
-                          color: '#e11d48',
-                          border: '1px solid #fecdd3',
-                          borderRadius: 5,
-                          cursor: 'pointer',
-                        }}
-                        title="Delete Backup"
-                      >
-                        <Trash2 size={13} />
-                      </button>
-                    </div>
-                  </td>
-                </tr>
-              ))}
-              {backups.length === 0 && (
+          <TableContainer>
+            <Table>
+              <thead>
                 <tr>
-                  <td colSpan={8} style={{ textAlign: 'center', padding: '32px', color: '#94a3b8' }}>
-                    No database backups found. Click "Create Instant Snapshot" to generate your first backup!
-                  </td>
+                  <th>Backup Snapshot</th>
+                  <th>Type</th>
+                  <th>Created At</th>
+                  <th>Sales Records</th>
+                  <th>Staff</th>
+                  <th>Clients</th>
+                  <th>Size</th>
+                  <th style={{ textAlign: 'right' }}>Actions</th>
                 </tr>
-              )}
-            </tbody>
-          </Table>
+              </thead>
+              <tbody>
+                {backups.map((b) => (
+                  <tr key={b.id}>
+                    <td style={{ fontWeight: 700, color: '#0f172a' }}>{b.backupName}</td>
+                    <td>
+                      <Badge $type={b.backupType}>
+                        {b.backupType === 'AUTOMATIC_WEEKLY' ? '🟢 Weekly Auto' : '🟣 Manual Snapshot'}
+                      </Badge>
+                    </td>
+                    <td>{b.createdAt ? new Date(b.createdAt).toLocaleString() : '-'}</td>
+                    <td style={{ fontWeight: 600 }}>{b.salesCount || 0} sales</td>
+                    <td>{b.employeesCount || 0} staff</td>
+                    <td>{b.customersCount || 0} clients</td>
+                    <td style={{ color: '#64748b' }}>{Math.round((b.fileSizeBytes || 1024) / 1024)} KB</td>
+                    <td style={{ textAlign: 'right' }}>
+                      <div style={{ display: 'inline-flex', gap: 6 }}>
+                        <button
+                          onClick={() => handleDownloadBackup(b.id, b.backupName)}
+                          style={{
+                            display: 'inline-flex',
+                            alignItems: 'center',
+                            gap: 4,
+                            padding: '5px 10px',
+                            background: '#0d1319',
+                            color: '#ffffff',
+                            border: 'none',
+                            borderRadius: 5,
+                            fontSize: '0.74rem',
+                            fontWeight: 700,
+                            cursor: 'pointer',
+                          }}
+                          title="Download JSON Snapshot"
+                        >
+                          <HardDriveDownload size={13} /> Download
+                        </button>
+                        <button
+                          onClick={() => handleDeleteBackup(b.id, b.backupName)}
+                          style={{
+                            padding: '5px 8px',
+                            background: '#fff1f2',
+                            color: '#e11d48',
+                            border: '1px solid #fecdd3',
+                            borderRadius: 5,
+                            cursor: 'pointer',
+                          }}
+                          title="Delete Backup"
+                        >
+                          <Trash2 size={13} />
+                        </button>
+                      </div>
+                    </td>
+                  </tr>
+                ))}
+                {backups.length === 0 && !loading && (
+                  <tr>
+                    <td colSpan={8} style={{ textAlign: 'center', padding: '32px', color: '#94a3b8' }}>
+                      No database backups found.
+                    </td>
+                  </tr>
+                )}
+              </tbody>
+            </Table>
+          </TableContainer>
         </div>
       )}
     </div>

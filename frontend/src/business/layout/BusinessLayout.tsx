@@ -218,6 +218,7 @@ const MainContent = styled.main`
   overflow-y: auto;
   overflow-x: hidden;
   min-width: 0;
+  -webkit-overflow-scrolling: touch;
   scrollbar-width: thin;
   scrollbar-color: #cbd5e1 #f7f9fc;
 `;
@@ -278,11 +279,15 @@ const TopBarActions = styled.div`
 const ContentContainer = styled.div`
   padding: 24px 28px;
   flex: 1;
+  width: 100%;
+  max-width: 100%;
+  box-sizing: border-box;
 
   @media (max-width: 768px) {
     padding: 14px 12px;
   }
 `;
+
 
 const CheckInButton = styled.button<{ $isCheckedIn?: boolean }>`
   display: flex;

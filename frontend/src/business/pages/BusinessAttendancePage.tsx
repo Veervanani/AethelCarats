@@ -63,14 +63,26 @@ const ControlBar = styled.div`
   gap: 12px;
 `;
 
-const Table = styled.table`
+const TableContainer = styled.div`
   width: 100%;
-  border-collapse: collapse;
-  font-size: 0.82rem;
+  max-width: 100%;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  touch-action: pan-x pan-y;
   background: #ffffff;
   border-radius: 8px;
-  overflow: hidden;
   border: 1px solid #e2e8f0;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.02);
+  margin-bottom: 20px;
+  scrollbar-width: thin;
+`;
+
+const Table = styled.table`
+  width: 100%;
+  min-width: 780px;
+  border-collapse: collapse;
+  font-size: 0.82rem;
+  white-space: nowrap;
 
   th {
     text-align: left;
@@ -92,6 +104,7 @@ const Table = styled.table`
     background: #f8fafc;
   }
 `;
+
 
 const StatusPill = styled.span<{ $status: string }>`
   font-size: 0.72rem;
@@ -288,7 +301,8 @@ export const BusinessAttendancePage: React.FC = () => {
         </div>
       </ControlBar>
 
-      <Table>
+      <TableContainer>
+        <Table>
         <thead>
           <tr>
             <th>Employee</th>
@@ -404,7 +418,8 @@ export const BusinessAttendancePage: React.FC = () => {
             </tr>
           )}
         </tbody>
-      </Table>
+        </Table>
+      </TableContainer>
 
       {/* Manual Entry Modal */}
       {showManualModal && (

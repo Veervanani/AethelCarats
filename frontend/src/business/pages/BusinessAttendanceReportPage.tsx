@@ -306,11 +306,16 @@ const MatrixCard = styled.div`
 `;
 
 const MatrixContainer = styled.div`
+  width: 100%;
+  max-width: 100%;
   overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  touch-action: pan-x pan-y;
   scrollbar-width: thin;
   border: 1px solid #e2e8f0;
   border-radius: 8px;
 `;
+
 
 const MatrixTable = styled.table`
   border-collapse: collapse;
