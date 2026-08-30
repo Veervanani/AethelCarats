@@ -197,7 +197,10 @@ export const BusinessSuppliersPage: React.FC = () => {
               borderRadius: 12,
               width: '100%',
               maxWidth: 480,
+              maxHeight: '92vh',
+              overflowY: 'auto',
               padding: 24,
+              boxSizing: 'border-box',
             }}
             onClick={(e) => e.stopPropagation()}
           >

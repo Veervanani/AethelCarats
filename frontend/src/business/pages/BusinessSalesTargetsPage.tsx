@@ -439,8 +439,11 @@ export const BusinessSalesTargetsPage: React.FC = () => {
               borderRadius: 12,
               width: '100%',
               maxWidth: 480,
+              maxHeight: '92vh',
+              overflowY: 'auto',
               padding: 24,
               boxShadow: '0 20px 25px -5px rgba(0,0,0,0.1)',
+              boxSizing: 'border-box',
             }}
             onClick={(e) => e.stopPropagation()}
           >

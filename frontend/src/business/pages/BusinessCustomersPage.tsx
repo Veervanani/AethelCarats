@@ -3,7 +3,7 @@ import styled from 'styled-components';
 import { Link } from 'react-router-dom';
 import { businessApi } from '../services/businessApi';
 import { BusinessCustomer, Employee } from '../types';
-import { Users, UserPlus, Search, Filter, Trash2, Check, Plus, Eye, ShoppingBag, DollarSign, TrendingUp, Calendar, ExternalLink, Package, X, ArrowUpRight } from 'lucide-react';
+import { Users, UserPlus, Search, Filter, Trash2, Check, Plus, Eye, ShoppingBag, DollarSign, TrendingUp, Calendar, ExternalLink, Package, X, ArrowUpRight, ArrowRightLeft } from 'lucide-react';
 
 const PRIVATE_BUSINESS_PATH = '/flk-business-vault-8R2Lp9Kx7Qm4Nw6T';
 
@@ -509,7 +509,8 @@ export const BusinessCustomersPage: React.FC = () => {
             display: 'flex',
             justifyContent: 'center',
             alignItems: 'center',
-            padding: 16,
+            padding: 10,
+            boxSizing: 'border-box',
           }}
           onClick={() => setSelectedCustomerForOrders(null)}
         >
@@ -518,31 +519,34 @@ export const BusinessCustomersPage: React.FC = () => {
               background: '#ffffff',
               borderRadius: 14,
               width: '100%',
-              maxWidth: 960,
-              maxHeight: '90vh',
+              maxWidth: 1020,
+              maxHeight: '92vh',
               display: 'flex',
               flexDirection: 'column',
               boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.25)',
               overflow: 'hidden',
+              boxSizing: 'border-box',
             }}
             onClick={(e) => e.stopPropagation()}
           >
             {/* Modal Header */}
             <div
               style={{
-                padding: '20px 24px',
+                padding: '16px 20px',
                 borderBottom: '1px solid #e2e8f0',
                 display: 'flex',
                 justifyContent: 'space-between',
                 alignItems: 'center',
                 background: '#f8fafc',
+                flexWrap: 'wrap',
+                gap: 12,
               }}
             >
-              <div style={{ display: 'flex', alignItems: 'center', gap: 14 }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 12, minWidth: 0, flex: 1 }}>
                 <div
                   style={{
-                    width: 44,
-                    height: 44,
+                    width: 42,
+                    height: 42,
                     borderRadius: 10,
                     background: '#0d1319',
                     color: '#ffffff',
@@ -551,13 +555,14 @@ export const BusinessCustomersPage: React.FC = () => {
                     justifyContent: 'center',
                     fontWeight: 800,
                     fontSize: '1.1rem',
+                    flexShrink: 0,
                   }}
                 >
                   {(selectedCustomerForOrders.name || 'C').charAt(0).toUpperCase()}
                 </div>
-                <div>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                    <h2 style={{ fontSize: '1.2rem', fontWeight: 800, color: '#0f172a', margin: 0 }}>
+                <div style={{ minWidth: 0 }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 8, flexWrap: 'wrap' }}>
+                    <h2 style={{ fontSize: '1.15rem', fontWeight: 800, color: '#0f172a', margin: 0, wordBreak: 'break-word' }}>
                       {selectedCustomerForOrders.name || selectedCustomerForOrders.clientName || 'Client Profile'}
                     </h2>
                     {selectedCustomerForOrders.country && (
@@ -570,13 +575,14 @@ export const BusinessCustomersPage: React.FC = () => {
                           color: '#1d4ed8',
                           border: '1px solid #bfdbfe',
                           borderRadius: 6,
+                          whiteSpace: 'nowrap',
                         }}
                       >
                         {selectedCustomerForOrders.country}
                       </span>
                     )}
                   </div>
-                  <div style={{ fontSize: '0.78rem', color: '#64748b', marginTop: 2, display: 'flex', gap: 12 }}>
+                  <div style={{ fontSize: '0.76rem', color: '#64748b', marginTop: 2, display: 'flex', gap: 10, flexWrap: 'wrap' }}>
                     <span>Rep: <strong>{selectedCustomerForOrders.assignedStaff || 'Sales Team'}</strong></span>
                     {selectedCustomerForOrders.email && selectedCustomerForOrders.email !== '-' && (
                       <span>Email: {selectedCustomerForOrders.email}</span>
@@ -586,6 +592,7 @@ export const BusinessCustomersPage: React.FC = () => {
               </div>
 
               <button
+                type="button"
                 onClick={() => setSelectedCustomerForOrders(null)}
                 style={{
                   background: '#f1f5f9',
@@ -593,53 +600,56 @@ export const BusinessCustomersPage: React.FC = () => {
                   borderRadius: 6,
                   width: 32,
                   height: 32,
+                  minWidth: 32,
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'center',
                   cursor: 'pointer',
                   color: '#64748b',
+                  flexShrink: 0,
                 }}
+                title="Close"
               >
                 <X size={18} />
               </button>
             </div>
 
             {/* Modal Body */}
-            <div style={{ padding: 24, overflowY: 'auto', flex: 1 }}>
+            <div style={{ padding: '16px 20px', overflowY: 'auto', flex: 1, WebkitOverflowScrolling: 'touch', boxSizing: 'border-box' }}>
               {/* Summary KPIs */}
-              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))', gap: 12, marginBottom: 20 }}>
-                <div style={{ background: '#f8fafc', padding: 14, borderRadius: 8, border: '1px solid #e2e8f0' }}>
-                  <div style={{ fontSize: '0.7rem', fontWeight: 700, color: '#64748b', textTransform: 'uppercase' }}>Total Invoiced Orders</div>
-                  <div style={{ fontSize: '1.3rem', fontWeight: 800, color: '#0f172a', marginTop: 4 }}>
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(140px, 1fr))', gap: 10, marginBottom: 18 }}>
+                <div style={{ background: '#f8fafc', padding: '10px 14px', borderRadius: 8, border: '1px solid #e2e8f0' }}>
+                  <div style={{ fontSize: '0.68rem', fontWeight: 700, color: '#64748b', textTransform: 'uppercase' }}>Invoiced Orders</div>
+                  <div style={{ fontSize: '1.15rem', fontWeight: 800, color: '#0f172a', marginTop: 2 }}>
                     {customerOrders.length} Deals
                   </div>
                 </div>
-                <div style={{ background: '#f8fafc', padding: 14, borderRadius: 8, border: '1px solid #e2e8f0' }}>
-                  <div style={{ fontSize: '0.7rem', fontWeight: 700, color: '#64748b', textTransform: 'uppercase' }}>Lifetime Revenue</div>
-                  <div style={{ fontSize: '1.3rem', fontWeight: 800, color: '#0f172a', marginTop: 4 }}>
+                <div style={{ background: '#f8fafc', padding: '10px 14px', borderRadius: 8, border: '1px solid #e2e8f0' }}>
+                  <div style={{ fontSize: '0.68rem', fontWeight: 700, color: '#64748b', textTransform: 'uppercase' }}>Lifetime Revenue</div>
+                  <div style={{ fontSize: '1.15rem', fontWeight: 800, color: '#0f172a', marginTop: 2 }}>
                     ${customerOrders.reduce((sum, o) => sum + (Number(o.finalSaleAmount) || 0), 0).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                   </div>
                 </div>
-                <div style={{ background: '#f8fafc', padding: 14, borderRadius: 8, border: '1px solid #e2e8f0' }}>
-                  <div style={{ fontSize: '0.7rem', fontWeight: 700, color: '#64748b', textTransform: 'uppercase' }}>Total Net Profit</div>
-                  <div style={{ fontSize: '1.3rem', fontWeight: 800, color: '#16a34a', marginTop: 4 }}>
+                <div style={{ background: '#f8fafc', padding: '10px 14px', borderRadius: 8, border: '1px solid #e2e8f0' }}>
+                  <div style={{ fontSize: '0.68rem', fontWeight: 700, color: '#64748b', textTransform: 'uppercase' }}>Total Net Profit</div>
+                  <div style={{ fontSize: '1.15rem', fontWeight: 800, color: '#16a34a', marginTop: 2 }}>
                     ${customerOrders.reduce((sum, o) => sum + (Number(o.netProfit) || 0), 0).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                   </div>
                 </div>
-                <div style={{ background: '#f8fafc', padding: 14, borderRadius: 8, border: '1px solid #e2e8f0' }}>
-                  <div style={{ fontSize: '0.7rem', fontWeight: 700, color: '#64748b', textTransform: 'uppercase' }}>Average Deal Size</div>
-                  <div style={{ fontSize: '1.3rem', fontWeight: 800, color: '#0f172a', marginTop: 4 }}>
+                <div style={{ background: '#f8fafc', padding: '10px 14px', borderRadius: 8, border: '1px solid #e2e8f0' }}>
+                  <div style={{ fontSize: '0.68rem', fontWeight: 700, color: '#64748b', textTransform: 'uppercase' }}>Avg Deal Size</div>
+                  <div style={{ fontSize: '1.15rem', fontWeight: 800, color: '#0f172a', marginTop: 2 }}>
                     ${customerOrders.length > 0 ? (customerOrders.reduce((sum, o) => sum + (Number(o.finalSaleAmount) || 0), 0) / customerOrders.length).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 }) : '0.00'}
                   </div>
                 </div>
               </div>
 
-              {/* Order History Table */}
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 12 }}>
-                <h3 style={{ fontSize: '0.95rem', fontWeight: 800, color: '#0f172a', margin: 0 }}>
+              {/* Order History Table Controls */}
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 10, flexWrap: 'wrap', gap: 8 }}>
+                <h3 style={{ fontSize: '0.92rem', fontWeight: 800, color: '#0f172a', margin: 0 }}>
                   Order Transaction History ({customerOrders.length})
                 </h3>
-                <div style={{ display: 'flex', alignItems: 'center', gap: 6, background: '#f8fafc', border: '1px solid #e2e8f0', padding: '6px 12px', borderRadius: 6, width: 240 }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: 6, background: '#f8fafc', border: '1px solid #e2e8f0', padding: '6px 12px', borderRadius: 6, width: '100%', maxWidth: 260, boxSizing: 'border-box' }}>
                   <Search size={14} color="#94a3b8" />
                   <input
                     type="text"
@@ -651,65 +661,93 @@ export const BusinessCustomersPage: React.FC = () => {
                 </div>
               </div>
 
-              <div style={{ border: '1px solid #e2e8f0', borderRadius: 8, overflow: 'hidden' }}>
-                <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '0.78rem' }}>
+              {/* Touch Scroll Hint for Mobile */}
+              <div style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: '0.72rem', color: '#475569', background: '#f1f5f9', padding: '6px 10px', borderRadius: 6, marginBottom: 10, border: '1px solid #e2e8f0' }}>
+                <ArrowRightLeft size={13} color="#2563eb" />
+                <span>Swipe / slide table horizontally to see all specs, carat, profit & salesperson details</span>
+              </div>
+
+              {/* Horizontally Scrollable Table Container */}
+              <div
+                style={{
+                  width: '100%',
+                  maxWidth: '100%',
+                  overflowX: 'auto',
+                  WebkitOverflowScrolling: 'touch',
+                  touchAction: 'pan-x pan-y',
+                  border: '1px solid #e2e8f0',
+                  borderRadius: 8,
+                  background: '#ffffff',
+                  scrollbarWidth: 'thin',
+                  boxSizing: 'border-box',
+                }}
+              >
+                <table
+                  style={{
+                    width: '100%',
+                    minWidth: 880,
+                    borderCollapse: 'collapse',
+                    fontSize: '0.8rem',
+                    whiteSpace: 'nowrap',
+                  }}
+                >
                   <thead>
                     <tr style={{ background: '#f8fafc', borderBottom: '1px solid #e2e8f0', textAlign: 'left', color: '#475569', fontWeight: 700 }}>
-                      <th style={{ padding: '10px 12px' }}>Invoice No</th>
-                      <th style={{ padding: '10px 12px' }}>Date</th>
-                      <th style={{ padding: '10px 12px' }}>Product Specs</th>
-                      <th style={{ padding: '10px 12px' }}>Carat</th>
-                      <th style={{ padding: '10px 12px' }}>Cert No</th>
-                      <th style={{ padding: '10px 12px', textAlign: 'right' }}>Final Amount</th>
-                      <th style={{ padding: '10px 12px', textAlign: 'right' }}>Net Profit</th>
-                      <th style={{ padding: '10px 12px', textAlign: 'center' }}>Payment</th>
-                      <th style={{ padding: '10px 12px', textAlign: 'center' }}>Status</th>
-                      <th style={{ padding: '10px 12px' }}>Salesperson</th>
+                      <th style={{ padding: '10px 14px' }}>Invoice No</th>
+                      <th style={{ padding: '10px 14px' }}>Date</th>
+                      <th style={{ padding: '10px 14px' }}>Product Specs</th>
+                      <th style={{ padding: '10px 14px' }}>Carat</th>
+                      <th style={{ padding: '10px 14px' }}>Cert No</th>
+                      <th style={{ padding: '10px 14px', textAlign: 'right' }}>Final Amount</th>
+                      <th style={{ padding: '10px 14px', textAlign: 'right' }}>Net Profit</th>
+                      <th style={{ padding: '10px 14px', textAlign: 'center' }}>Payment</th>
+                      <th style={{ padding: '10px 14px', textAlign: 'center' }}>Status</th>
+                      <th style={{ padding: '10px 14px' }}>Salesperson</th>
                     </tr>
                   </thead>
                   <tbody>
                     {filteredOrders.map((o) => (
                       <tr key={o.id} style={{ borderBottom: '1px solid #f1f5f9' }}>
-                        <td style={{ padding: '10px 12px', fontWeight: 700 }}>
+                        <td style={{ padding: '10px 14px', fontWeight: 700 }}>
                           <Link
                             to={`${PRIVATE_BUSINESS_PATH}/sales/${o.id}`}
                             target="_blank"
                             style={{ color: '#0d1319', textDecoration: 'none', display: 'inline-flex', alignItems: 'center', gap: 4 }}
                           >
-                            {o.invoiceNo} <ExternalLink size={11} color="#64748b" />
+                            {o.invoiceNo} <ExternalLink size={12} color="#64748b" />
                           </Link>
                         </td>
-                        <td style={{ padding: '10px 12px', color: '#64748b' }}>
+                        <td style={{ padding: '10px 14px', color: '#64748b' }}>
                           {o.saleDate ? new Date(o.saleDate).toLocaleDateString() : '-'}
                         </td>
-                        <td style={{ padding: '10px 12px' }}>
+                        <td style={{ padding: '10px 14px' }}>
                           <div style={{ fontWeight: 600, color: '#0f172a' }}>{o.shape || o.productType}</div>
-                          <div style={{ fontSize: '0.7rem', color: '#64748b' }}>{o.diamondColor ? `${o.diamondColor} / ${o.clarity || ''} ${o.cut || ''}` : (o.productDescription || '-')}</div>
+                          <div style={{ fontSize: '0.72rem', color: '#64748b' }}>{o.diamondColor ? `${o.diamondColor} / ${o.clarity || ''} ${o.cut || ''}` : (o.productDescription || '-')}</div>
                         </td>
-                        <td style={{ padding: '10px 12px', fontWeight: 600 }}>{o.caratWeight ? `${o.caratWeight} ct` : '-'}</td>
-                        <td style={{ padding: '10px 12px', color: '#64748b' }}>{o.certificateNo || '-'}</td>
-                        <td style={{ padding: '10px 12px', textAlign: 'right', fontWeight: 700, color: '#0f172a' }}>
+                        <td style={{ padding: '10px 14px', fontWeight: 600 }}>{o.caratWeight ? `${o.caratWeight} ct` : '-'}</td>
+                        <td style={{ padding: '10px 14px', color: '#64748b' }}>{o.certificateNo || '-'}</td>
+                        <td style={{ padding: '10px 14px', textAlign: 'right', fontWeight: 700, color: '#0f172a' }}>
                           ${Number(o.finalSaleAmount || o.sellingPrice || 0).toLocaleString()}
                         </td>
-                        <td style={{ padding: '10px 12px', textAlign: 'right', fontWeight: 700, color: '#16a34a' }}>
+                        <td style={{ padding: '10px 14px', textAlign: 'right', fontWeight: 700, color: '#16a34a' }}>
                           ${Number(o.netProfit || 0).toLocaleString()}
                         </td>
-                        <td style={{ padding: '10px 12px', textAlign: 'center' }}>
-                          <span style={{ fontSize: '0.68rem', fontWeight: 700, padding: '2px 6px', borderRadius: 4, background: o.paymentStatus === 'Paid' ? '#ebfbee' : '#fff7ed', color: o.paymentStatus === 'Paid' ? '#2b8a3e' : '#c2410c' }}>
+                        <td style={{ padding: '10px 14px', textAlign: 'center' }}>
+                          <span style={{ fontSize: '0.7rem', fontWeight: 700, padding: '3px 8px', borderRadius: 4, background: o.paymentStatus === 'Paid' ? '#ebfbee' : '#fff7ed', color: o.paymentStatus === 'Paid' ? '#2b8a3e' : '#c2410c' }}>
                             {o.paymentStatus || 'Paid'}
                           </span>
                         </td>
-                        <td style={{ padding: '10px 12px', textAlign: 'center' }}>
-                          <span style={{ fontSize: '0.68rem', fontWeight: 700, padding: '2px 6px', borderRadius: 4, background: '#eff6ff', color: '#1d4ed8' }}>
+                        <td style={{ padding: '10px 14px', textAlign: 'center' }}>
+                          <span style={{ fontSize: '0.7rem', fontWeight: 700, padding: '3px 8px', borderRadius: 4, background: '#eff6ff', color: '#1d4ed8' }}>
                             {o.orderStatus || 'Delivered'}
                           </span>
                         </td>
-                        <td style={{ padding: '10px 12px', color: '#64748b' }}>{o.salesPersonName || '-'}</td>
+                        <td style={{ padding: '10px 14px', color: '#64748b' }}>{o.salesPersonName || '-'}</td>
                       </tr>
                     ))}
                     {filteredOrders.length === 0 && !loadingOrders && (
                       <tr>
-                        <td colSpan={10} style={{ padding: 24, textAlign: 'center', color: '#94a3b8' }}>
+                        <td colSpan={10} style={{ padding: 28, textAlign: 'center', color: '#94a3b8' }}>
                           No orders found matching your search.
                         </td>
                       </tr>
@@ -720,10 +758,11 @@ export const BusinessCustomersPage: React.FC = () => {
             </div>
 
             {/* Modal Footer */}
-            <div style={{ padding: '14px 24px', borderTop: '1px solid #e2e8f0', background: '#f8fafc', display: 'flex', justifyContent: 'flex-end' }}>
+            <div style={{ padding: '12px 20px', borderTop: '1px solid #e2e8f0', background: '#f8fafc', display: 'flex', justifyContent: 'flex-end' }}>
               <button
+                type="button"
                 onClick={() => setSelectedCustomerForOrders(null)}
-                style={{ padding: '8px 20px', background: '#0d1319', color: '#ffffff', border: 'none', borderRadius: 6, fontWeight: 700, fontSize: '0.82rem', cursor: 'pointer' }}
+                style={{ padding: '8px 22px', background: '#0d1319', color: '#ffffff', border: 'none', borderRadius: 6, fontWeight: 700, fontSize: '0.82rem', cursor: 'pointer' }}
               >
                 Close Profile
               </button>

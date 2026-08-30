@@ -449,7 +449,10 @@ export const BusinessAttendancePage: React.FC = () => {
               borderRadius: 12,
               width: '100%',
               maxWidth: 500,
+              maxHeight: '92vh',
+              overflowY: 'auto',
               padding: 24,
+              boxSizing: 'border-box',
             }}
             onClick={(e) => e.stopPropagation()}
           >

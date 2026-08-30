@@ -188,7 +188,10 @@ export const BusinessCommissionPlansPage: React.FC = () => {
               borderRadius: 12,
               width: '100%',
               maxWidth: 540,
+              maxHeight: '92vh',
+              overflowY: 'auto',
               padding: 24,
+              boxSizing: 'border-box',
             }}
             onClick={(e) => e.stopPropagation()}
           >
