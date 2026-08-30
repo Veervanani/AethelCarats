@@ -75,26 +75,37 @@ const TabButton = styled.button<{ $active: boolean }>`
   margin-bottom: -2px;
 `;
 
+const TableContainer = styled.div`
+  width: 100%;
+  max-width: 100%;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  touch-action: pan-x pan-y;
+  background: #ffffff;
+  border-radius: 8px;
+  border: 1px solid #e2e8f0;
+  margin-bottom: 20px;
+`;
+
 const Table = styled.table`
   width: 100%;
+  min-width: 720px;
   border-collapse: collapse;
   font-size: 0.82rem;
   background: #ffffff;
-  border-radius: 8px;
-  overflow: hidden;
-  border: 1px solid #e2e8f0;
+  white-space: nowrap;
 
   th {
     text-align: left;
-    padding: 10px 14px;
+    padding: 12px 16px;
     background: #f8fafc;
     color: #475569;
-    font-weight: 600;
+    font-weight: 700;
     border-bottom: 1px solid #e2e8f0;
   }
 
   td {
-    padding: 10px 14px;
+    padding: 12px 16px;
     border-bottom: 1px solid #f1f5f9;
     color: #1e293b;
   }
@@ -111,8 +122,15 @@ export const BusinessEmployeeDetailPage: React.FC = () => {
     if (!id) return;
     businessApi
       .getEmployeeById(id)
-      .then((res) => {
-        setEmployee(res.employee);
+      .then((res: any) => {
+        const emp = res.employee || {};
+        const sales = emp.sales || res.sales || res.recentOrders || [];
+        const attendances = emp.attendances || res.attendances || [];
+        const commissions = emp.commissions || res.commissions || [];
+        emp.sales = sales;
+        emp.attendances = attendances;
+        emp.commissions = commissions;
+        setEmployee(emp);
         setStats(res.stats);
       })
       .finally(() => setLoading(false));
@@ -231,92 +249,130 @@ export const BusinessEmployeeDetailPage: React.FC = () => {
       )}
 
       {activeTab === 'sales' && (
-        <Table>
-          <thead>
-            <tr>
-              <th>Invoice</th>
-              <th>Date</th>
-              <th>Customer</th>
-              <th>Type</th>
-              <th>Sale Amount</th>
-              <th>Net Profit</th>
-              <th>Commission</th>
-              <th>Status</th>
-            </tr>
-          </thead>
-          <tbody>
-            {employee.sales?.map((s: any) => (
-              <tr key={s.id}>
-                <td style={{ fontWeight: 700 }}>
-                  <Link to={`${PRIVATE_BUSINESS_PATH}/sales/${s.id}`} style={{ color: '#0f172a' }}>
-                    {s.invoiceNo}
-                  </Link>
-                </td>
-                <td>{new Date(s.saleDate).toLocaleDateString()}</td>
-                <td>{s.customerName}</td>
-                <td>{s.productType}</td>
-                <td style={{ fontWeight: 600 }}>${s.finalSaleAmount?.toLocaleString()}</td>
-                <td style={{ color: '#16a34a' }}>${s.netProfit?.toLocaleString()}</td>
-                <td style={{ color: '#d97706' }}>${s.commissionAmount?.toLocaleString()}</td>
-                <td>{s.orderStatus}</td>
+        <TableContainer>
+          <Table>
+            <thead>
+              <tr>
+                <th>Invoice</th>
+                <th>Date</th>
+                <th>Customer</th>
+                <th>Type</th>
+                <th>Sale Amount</th>
+                <th>Net Profit</th>
+                <th>Commission</th>
+                <th>Status</th>
               </tr>
-            ))}
-          </tbody>
-        </Table>
+            </thead>
+            <tbody>
+              {employee.sales && employee.sales.length > 0 ? (
+                employee.sales.map((s: any) => (
+                  <tr key={s.id}>
+                    <td style={{ fontWeight: 700 }}>
+                      <Link to={`${PRIVATE_BUSINESS_PATH}/sales/${s.id}`} style={{ color: '#0f172a' }}>
+                        {s.invoiceNo}
+                      </Link>
+                    </td>
+                    <td>{new Date(s.saleDate).toLocaleDateString()}</td>
+                    <td>{s.customerName}</td>
+                    <td>{s.productType}</td>
+                    <td style={{ fontWeight: 600 }}>${(Number(s.finalSaleAmount) || 0).toLocaleString()}</td>
+                    <td style={{ color: '#16a34a', fontWeight: 600 }}>${(Number(s.netProfit) || 0).toLocaleString()}</td>
+                    <td style={{ color: '#d97706', fontWeight: 600 }}>${(Number(s.commissionAmount) || 0).toLocaleString()}</td>
+                    <td>
+                      <span style={{ padding: '3px 8px', borderRadius: 4, background: s.orderStatus === 'Delivered' ? '#f0fdf4' : '#f8fafc', color: s.orderStatus === 'Delivered' ? '#16a34a' : '#475569', fontWeight: 600, fontSize: '0.75rem' }}>
+                        {s.orderStatus || 'Delivered'}
+                      </span>
+                    </td>
+                  </tr>
+                ))
+              ) : (
+                <tr>
+                  <td colSpan={8} style={{ textAlign: 'center', padding: '36px 16px', color: '#94a3b8' }}>
+                    No recorded sales found for this employee yet.
+                  </td>
+                </tr>
+              )}
+            </tbody>
+          </Table>
+        </TableContainer>
       )}
 
       {activeTab === 'attendance' && (
-        <Table>
-          <thead>
-            <tr>
-              <th>Date</th>
-              <th>Status</th>
-              <th>Check In</th>
-              <th>Check Out</th>
-              <th>Hours</th>
-              <th>Late</th>
-            </tr>
-          </thead>
-          <tbody>
-            {employee.attendances?.map((a: any) => (
-              <tr key={a.id}>
-                <td>{new Date(a.date).toLocaleDateString()}</td>
-                <td style={{ fontWeight: 600 }}>{a.status}</td>
-                <td>{a.checkInTime ? new Date(a.checkInTime).toLocaleTimeString() : '-'}</td>
-                <td>{a.checkOutTime ? new Date(a.checkOutTime).toLocaleTimeString() : '-'}</td>
-                <td>{a.workingHours || 0} hrs</td>
-                <td>{a.lateStatus ? '⚠️ Late' : 'On Time'}</td>
+        <TableContainer>
+          <Table>
+            <thead>
+              <tr>
+                <th>Date</th>
+                <th>Status</th>
+                <th>Check In</th>
+                <th>Check Out</th>
+                <th>Hours</th>
+                <th>Late</th>
               </tr>
-            ))}
-          </tbody>
-        </Table>
+            </thead>
+            <tbody>
+              {employee.attendances && employee.attendances.length > 0 ? (
+                employee.attendances.map((a: any) => (
+                  <tr key={a.id}>
+                    <td>{new Date(a.date).toLocaleDateString()}</td>
+                    <td style={{ fontWeight: 600 }}>{a.status}</td>
+                    <td>{a.checkInTime ? new Date(a.checkInTime).toLocaleTimeString() : '-'}</td>
+                    <td>{a.checkOutTime ? new Date(a.checkOutTime).toLocaleTimeString() : '-'}</td>
+                    <td>{a.workingHours || 0} hrs</td>
+                    <td>{a.lateStatus ? '⚠️ Late' : 'On Time'}</td>
+                  </tr>
+                ))
+              ) : (
+                <tr>
+                  <td colSpan={6} style={{ textAlign: 'center', padding: '36px 16px', color: '#94a3b8' }}>
+                    No attendance records logged for this employee yet.
+                  </td>
+                </tr>
+              )}
+            </tbody>
+          </Table>
+        </TableContainer>
       )}
 
       {activeTab === 'commissions' && (
-        <Table>
-          <thead>
-            <tr>
-              <th>Sale Invoice</th>
-              <th>Rate %</th>
-              <th>Amount</th>
-              <th>Status</th>
-              <th>Approved At</th>
-              <th>Paid At</th>
-            </tr>
-          </thead>
-          <tbody>
-            {employee.commissions?.map((c: any) => (
-              <tr key={c.id}>
-                <td>{c.saleId}</td>
-                <td>{((c.commissionRate || 0) * 100).toFixed(1)}%</td>
-                <td style={{ fontWeight: 700, color: '#d97706' }}>${c.commissionAmount?.toLocaleString()}</td>
-                <td>{c.status}</td>
-                <td>{c.approvedAt ? new Date(c.approvedAt).toLocaleDateString() : '-'}</td>
-                <td>{c.paidAt ? new Date(c.paidAt).toLocaleDateString() : '-'}</td>
+        <TableContainer>
+          <Table>
+            <thead>
+              <tr>
+                <th>Sale Invoice</th>
+                <th>Rate %</th>
+                <th>Amount</th>
+                <th>Status</th>
+                <th>Approved At</th>
+                <th>Paid At</th>
               </tr>
-            ))}
-          </tbody>
-        </Table>
+            </thead>
+            <tbody>
+              {employee.commissions && employee.commissions.length > 0 ? (
+                employee.commissions.map((c: any) => (
+                  <tr key={c.id}>
+                    <td style={{ fontWeight: 700 }}>{c.saleInvoice || c.saleId}</td>
+                    <td>{((Number(c.commissionRate) || 0) * 100).toFixed(1)}%</td>
+                    <td style={{ fontWeight: 700, color: '#d97706' }}>${(Number(c.commissionAmount) || 0).toLocaleString()}</td>
+                    <td>
+                      <span style={{ padding: '3px 8px', borderRadius: 4, background: c.status === 'PAID' ? '#f0fdf4' : c.status === 'APPROVED' ? '#eff6ff' : '#fefce8', color: c.status === 'PAID' ? '#16a34a' : c.status === 'APPROVED' ? '#2563eb' : '#d97706', fontWeight: 600, fontSize: '0.75rem' }}>
+                        {c.status || 'PENDING'}
+                      </span>
+                    </td>
+                    <td>{c.approvedAt ? new Date(c.approvedAt).toLocaleDateString() : '-'}</td>
+                    <td>{c.paidAt ? new Date(c.paidAt).toLocaleDateString() : '-'}</td>
+                  </tr>
+                ))
+              ) : (
+                <tr>
+                  <td colSpan={6} style={{ textAlign: 'center', padding: '36px 16px', color: '#94a3b8' }}>
+                    No commissions recorded for this employee yet.
+                  </td>
+                </tr>
+              )}
+            </tbody>
+          </Table>
+        </TableContainer>
       )}
     </div>
   );

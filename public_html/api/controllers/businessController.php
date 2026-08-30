@@ -1317,18 +1317,107 @@ function handleGetBusinessEmployeeDetail(string $id): void {
     FROM `internalsale`
     WHERE `employeeId` = ? OR LOWER(`salesPersonName`) = LOWER(?)");
     $salesStmt->execute([$emp['id'], $emp['name']]);
-    $stats = $salesStmt->fetch(PDO::FETCH_ASSOC);
+    $stats = $salesStmt->fetch(PDO::FETCH_ASSOC) ?: [
+        'totalOrders' => 0,
+        'totalSalesAmount' => 0,
+        'netProfit' => 0,
+        'totalCommission' => 0
+    ];
 
-    // Recent orders
-    $ordersStmt = $pdo->prepare("SELECT * FROM `internalsale` WHERE `employeeId` = ? OR LOWER(`salesPersonName`) = LOWER(?) ORDER BY `saleDate` DESC LIMIT 10");
+    // Query full sales history for this employee
+    $ordersStmt = $pdo->prepare("SELECT * FROM `internalsale` WHERE `employeeId` = ? OR LOWER(`salesPersonName`) = LOWER(?) ORDER BY `saleDate` DESC");
     $ordersStmt->execute([$emp['id'], $emp['name']]);
-    $recentOrders = $ordersStmt->fetchAll(PDO::FETCH_ASSOC);
+    $sales = $ordersStmt->fetchAll(PDO::FETCH_ASSOC);
+
+    // Query attendance records for this employee
+    $attStmt = $pdo->prepare("SELECT * FROM `attendance` WHERE `employeeId` = ? ORDER BY `date` DESC LIMIT 100");
+    $attStmt->execute([$emp['id']]);
+    $rawAtt = $attStmt->fetchAll(PDO::FETCH_ASSOC);
+    $attendances = array_map(function($a) {
+        return [
+            'id' => $a['id'],
+            'date' => $a['date'],
+            'status' => $a['status'] ?? 'PRESENT',
+            'checkInTime' => $a['checkIn'] ?? null,
+            'checkOutTime' => $a['checkOut'] ?? null,
+            'workingHours' => (float)($a['hoursWorked'] ?? 0),
+            'lateStatus' => ($a['lateStatus'] === 'LATE' || $a['lateStatus'] === '1' || $a['lateStatus'] === 1),
+            'isManualEntry' => (bool)($a['isManualEntry'] ?? 0),
+            'notes' => $a['notes'] ?? ''
+        ];
+    }, $rawAtt);
+
+    // Query commission ledger for this employee
+    $commStmt = $pdo->prepare("SELECT c.*, s.`invoiceNo` as saleInvoice, s.`finalSaleAmount`, s.`netProfit` 
+        FROM `commission` c 
+        LEFT JOIN `internalsale` s ON c.`saleId` = s.`id` OR c.`saleId` = s.`invoiceNo`
+        WHERE c.`employeeId` = ? 
+        ORDER BY c.`createdAt` DESC");
+    $commStmt->execute([$emp['id']]);
+    $commissions = $commStmt->fetchAll(PDO::FETCH_ASSOC);
+
+    // If commission table is empty, generate commissions directly from sales
+    if (empty($commissions) && !empty($sales)) {
+        foreach ($sales as $s) {
+            $commRate = (float)($s['commissionPercent'] ?? 0);
+            $commAmt = (float)($s['commissionAmount'] ?? 0);
+            if ($commAmt > 0 || $commRate > 0) {
+                $commissions[] = [
+                    'id' => 'comm-' . $s['id'],
+                    'saleId' => $s['invoiceNo'] ?? $s['id'],
+                    'saleInvoice' => $s['invoiceNo'] ?? $s['id'],
+                    'commissionRate' => $commRate,
+                    'commissionAmount' => $commAmt,
+                    'status' => ($s['paymentStatus'] === 'Paid') ? 'APPROVED' : 'PENDING',
+                    'approvedAt' => ($s['paymentStatus'] === 'Paid') ? $s['saleDate'] : null,
+                    'paidAt' => null
+                ];
+            }
+        }
+    }
+
+    // Compute distribution and breakdown stats
+    $diamondCount = 0;
+    $jewelryCount = 0;
+    $pendingComm = 0;
+    $approvedComm = 0;
+    $paidComm = 0;
+
+    foreach ($sales as $s) {
+        $pType = strtolower($s['productType'] ?? '');
+        if (strpos($pType, 'diamond') !== false) {
+            $diamondCount++;
+        } else {
+            $jewelryCount++;
+        }
+        $cAmount = (float)($s['commissionAmount'] ?? 0);
+        if ($s['paymentStatus'] === 'Paid') {
+            $approvedComm += $cAmount;
+        } else {
+            $pendingComm += $cAmount;
+        }
+    }
+
+    $stats['diamondSalesCount'] = $diamondCount;
+    $stats['jewelrySalesCount'] = $jewelryCount;
+    $stats['commissionSummary'] = [
+        'pending' => $pendingComm,
+        'approved' => $approvedComm,
+        'paid' => $paidComm
+    ];
+
+    $emp['sales'] = $sales;
+    $emp['recentOrders'] = $sales;
+    $emp['attendances'] = $attendances;
+    $emp['commissions'] = $commissions;
 
     jsonResponse([
         'employee' => $emp,
         'stats' => $stats,
-        'recentOrders' => $recentOrders,
-        'sales' => $recentOrders
+        'sales' => $sales,
+        'recentOrders' => $sales,
+        'attendances' => $attendances,
+        'commissions' => $commissions
     ]);
 }
 
