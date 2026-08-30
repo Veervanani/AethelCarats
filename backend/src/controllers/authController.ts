@@ -437,7 +437,7 @@ export const ensureDefaultAdminUsersExist = async () => {
     });
 
     if (adminCount === 0) {
-      const hashedPassword = await bcrypt.hash('Ramesh!@#1979', 10);
+      const hashedPassword = await bcrypt.hash('FloksyJewels!@#$1983', 10);
       await prisma.user.upsert({
         where: { email: 'admin@floksyjewel.com' },
         update: { name: 'FloksyJewel0797', passwordHash: hashedPassword, role: 'ADMIN' },

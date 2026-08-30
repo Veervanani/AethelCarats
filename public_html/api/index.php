@@ -656,13 +656,20 @@ if (str_starts_with($path, '/api/v1/business/')) {
         handleExecuteSalesImport();
     } else if ($path === '/api/v1/business/employees' && $method === 'GET') {
         handleGetBusinessEmployees();
+    } else if ($path === '/api/v1/business/employees' && $method === 'POST') {
+        handleCreateBusinessEmployee();
     } else if ($path === '/api/v1/business/employees/batch' && ($method === 'POST' || $method === 'DELETE')) {
         handleDeleteEmployeesBatch();
+    } else if (preg_match('#^/api/v1/business/employees/([^/]+)/status$#', $path, $empStatMatches) && ($method === 'PATCH' || $method === 'POST')) {
+        handleToggleEmployeeStatus(urldecode($empStatMatches[1]));
     } else if (preg_match('#^/api/v1/business/employees/([^/]+)$#', $path, $empMatches)) {
-        if ($method === 'DELETE' || $method === 'POST') {
-            handleDeleteEmployeeById(urldecode($empMatches[1]));
+        $empId = urldecode($empMatches[1]);
+        if ($method === 'DELETE') {
+            handleDeleteEmployeeById($empId);
+        } else if ($method === 'PUT' || $method === 'PATCH' || ($method === 'POST' && isset($_GET['_method']) && in_array(strtoupper($_GET['_method']), ['PUT', 'PATCH']))) {
+            handleUpdateBusinessEmployee($empId);
         } else {
-            handleGetBusinessEmployeeDetail(urldecode($empMatches[1]));
+            handleGetBusinessEmployeeDetail($empId);
         }
     } else if ($path === '/api/v1/business/attendance' && $method === 'GET') {
         handleGetBusinessAttendance();

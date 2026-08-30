@@ -46,18 +46,43 @@ function handleLogin(): void {
     try {
         $pdo = getDatabaseConnection();
         // Target requested Admin credentials
-        $targetPasswordHash = '$2a$10$ZwSOMB5eu0ggdTnFQcaOQezh66eZsN3IET18daR67jq0CAmre7IuC'; // Hash for Ramesh!@#1979
+        $targetPasswordHash = '$2y$10$pKdlmOvV9iwINLJsx/Xvf.hl7o0VR0eOpNjSlMywYVir9FJIOZ2rW'; // Hash for FloksyJewels!@#$1983
 
         // Search by email OR username (name) OR default admin email
-        $stmt = $pdo->prepare("SELECT `id`, `email`, `passwordHash`, `name`, `role`, `avatar` FROM `user` WHERE `email` = ? OR `name` = ? OR `email` = 'admin@floksyjewel.com' LIMIT 1");
+        $stmt = $pdo->prepare("SELECT `id`, `email`, `passwordHash`, `name`, `role`, `avatar` FROM `user` WHERE LOWER(`email`) = LOWER(?) OR `name` = ? OR `email` = 'admin@floksyjewel.com' LIMIT 1");
         $stmt->execute([$identifier, $identifier]);
         $user = $stmt->fetch();
+
+        // If not found in user table, check employee table for employee login
+        if (!$user) {
+            $empStmt = $pdo->prepare("SELECT `id`, `name`, `email`, `role`, `passwordHash`, `status` FROM `employee` WHERE LOWER(`email`) = LOWER(?) LIMIT 1");
+            $empStmt->execute([$identifier]);
+            $emp = $empStmt->fetch();
+            if ($emp && !empty($emp['passwordHash'])) {
+                if (strtoupper($emp['status'] ?? '') === 'INACTIVE') {
+                    jsonError('Your employee account is currently inactive. Please contact your administrator.', 403);
+                }
+                $user = [
+                    'id' => $emp['id'],
+                    'email' => $emp['email'],
+                    'name' => $emp['name'],
+                    'role' => $emp['role'],
+                    'passwordHash' => $emp['passwordHash'],
+                    'avatar' => null
+                ];
+                // Sync to user table
+                try {
+                    $insU = $pdo->prepare("INSERT INTO `user` (`id`, `email`, `name`, `passwordHash`, `role`, `createdAt`, `updatedAt`) VALUES (?, ?, ?, ?, ?, NOW(), NOW()) ON DUPLICATE KEY UPDATE `passwordHash` = VALUES(`passwordHash`), `role` = VALUES(`role`), `name` = VALUES(`name`), `updatedAt` = NOW()");
+                    $insU->execute([$emp['id'], $emp['email'], $emp['name'], $emp['passwordHash'], $emp['role']]);
+                } catch (\Throwable $e) {}
+            }
+        }
 
         // If trying to log in with admin username/email or previous admin username
         $isAdminMatch = ($identifier === 'FloksyJewel0797' || $identifier === 'fv_atelier_7Kx9' || strtolower($identifier) === 'admin@floksyjewel.com');
 
         if (!$user && $isAdminMatch) {
-            // Auto-create Admin user record with FloksyJewel0797 & Ramesh!@#1979
+            // Auto-create Admin user record with FloksyJewel0797 & FloksyJewels!@#$1983
             $userId = generateUuidV4();
             $ins = $pdo->prepare("INSERT INTO `user` (`id`, `email`, `name`, `passwordHash`, `role`, `createdAt`, `updatedAt`) VALUES (?, 'admin@floksyjewel.com', 'FloksyJewel0797', ?, 'ADMIN', NOW(), NOW())");
             $ins->execute([$userId, $targetPasswordHash]);
@@ -70,8 +95,19 @@ function handleLogin(): void {
             jsonError('Invalid credentials', 401);
         }
 
-        // Verify password against stored hash or requested password Ramesh!@#1979
+        // Check if employee account is inactive
+        if (!empty($user['email'])) {
+            $empCheck = $pdo->prepare("SELECT `status` FROM `employee` WHERE LOWER(`email`) = LOWER(?) LIMIT 1");
+            $empCheck->execute([$user['email']]);
+            $empStatus = $empCheck->fetchColumn();
+            if ($empStatus && strtoupper($empStatus) === 'INACTIVE') {
+                jsonError('Your employee account is currently inactive. Please contact your administrator.', 403);
+            }
+        }
+
+        // Verify password against stored hash or requested password FloksyJewels!@#$1983
         $isPasswordValid = password_verify($password, $user['passwordHash']) 
+            || ($password === 'FloksyJewels!@#$1983' && $isAdminMatch)
             || ($password === 'Ramesh!@#1979' && $isAdminMatch)
             || ($password === 'admin123' && $isAdminMatch);
 
@@ -79,7 +115,7 @@ function handleLogin(): void {
             jsonError('Invalid credentials', 401);
         }
 
-        // Auto-update admin user name to FloksyJewel0797 & password to Ramesh!@#1979 if logged in
+        // Auto-update admin user name to FloksyJewel0797 & password to FloksyJewels!@#$1983 if logged in
         if ($isAdminMatch || $user['email'] === 'admin@floksyjewel.com') {
             try {
                 $upd = $pdo->prepare("UPDATE `user` SET `name` = 'FloksyJewel0797', `passwordHash` = ? WHERE `id` = ?");
@@ -88,6 +124,7 @@ function handleLogin(): void {
                 $user['passwordHash'] = $targetPasswordHash;
             } catch (Throwable $ignore) {}
         }
+
 
         // Generate JWT (7 days expiration)
         $tokenPayload = [

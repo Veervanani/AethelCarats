@@ -95,6 +95,10 @@ function ensureBusinessTablesExist(PDO $pdo): void {
         `updatedAt` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
     ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;");
 
+    // Self-healing columns for employee table (authentication & user linkage)
+    try { $pdo->exec("ALTER TABLE `employee` ADD COLUMN `passwordHash` VARCHAR(255) NULL"); } catch (\Throwable $e) {}
+    try { $pdo->exec("ALTER TABLE `employee` ADD COLUMN `userId` VARCHAR(191) NULL"); } catch (\Throwable $e) {}
+
     // Self-healing columns for customer table (supports all legacy & prisma schemas)
     try { $pdo->exec("ALTER TABLE `customer` MODIFY COLUMN `email` VARCHAR(191) NULL DEFAULT NULL"); } catch (\Throwable $e) {}
     try { $pdo->exec("ALTER TABLE `customer` DROP INDEX `Customer_email_key`"); } catch (\Throwable $e) {}
@@ -1166,12 +1170,14 @@ function handleExecuteSalesImport(): void {
 }
 
 function handleGetBusinessEmployees(): void {
+    requireBusinessAccess(['SALES_HR_MANAGER']);
     $pdo = getDatabaseConnection();
     ensureBusinessTablesExist($pdo);
     $stmt = $pdo->query("SELECT * FROM `employee` ORDER BY `name` ASC");
     $raw = $stmt->fetchAll(PDO::FETCH_ASSOC);
     $employees = [];
     foreach ($raw as $e) {
+        unset($e['passwordHash']);
         $e['fullName'] = $e['name'];
         $e['monthlySalesTarget'] = (float)$e['monthlyTarget'];
         $e['targetAmount'] = (float)$e['monthlyTarget'];
@@ -1181,6 +1187,7 @@ function handleGetBusinessEmployees(): void {
 }
 
 function handleGetBusinessEmployeeDetail(string $id): void {
+    requireBusinessAccess(['SALES_HR_MANAGER']);
     $pdo = getDatabaseConnection();
     ensureBusinessTablesExist($pdo);
 
@@ -1192,6 +1199,7 @@ function handleGetBusinessEmployeeDetail(string $id): void {
         jsonError('Employee not found', 404);
     }
 
+    unset($emp['passwordHash']);
     $emp['fullName'] = $emp['name'];
     $emp['monthlySalesTarget'] = (float)$emp['monthlyTarget'];
     $emp['targetAmount'] = (float)$emp['monthlyTarget'];
@@ -1219,6 +1227,300 @@ function handleGetBusinessEmployeeDetail(string $id): void {
         'sales' => $recentOrders
     ]);
 }
+
+function handleCreateBusinessEmployee(): void {
+    $callingUser = requireBusinessAccess(['SALES_HR_MANAGER']);
+    $callerRole = strtoupper($callingUser['role'] ?? 'CUSTOMER');
+    $isFullAdmin = ($callerRole === 'SUPER_ADMIN' || $callerRole === 'ADMIN');
+
+    $pdo = getDatabaseConnection();
+    ensureBusinessTablesExist($pdo);
+
+    $rawInput = file_get_contents('php://input');
+    $body = json_decode($rawInput, true) ?? $_POST;
+
+    $fullName     = trim($body['fullName'] ?? $body['name'] ?? '');
+    $email        = trim(strtolower($body['email'] ?? ''));
+    $phone        = trim($body['phone'] ?? '');
+    $department   = trim($body['department'] ?? 'Sales');
+    $designation  = trim($body['designation'] ?? 'Sales Executive');
+    $role         = trim($body['role'] ?? 'SALES_EMPLOYEE');
+    $monthlyTarget = (float)($body['monthlyTarget'] ?? $body['monthlySalesTarget'] ?? $body['targetAmount'] ?? 0);
+    $notes        = trim($body['notes'] ?? '');
+    $password     = $body['password'] ?? '';
+    $confirmPassword = $body['confirmPassword'] ?? '';
+    $createLogin  = !empty($body['createLogin']) || ($role === 'SALES_HR_MANAGER') || !empty($password);
+
+    if (empty($fullName) || empty($email)) {
+        jsonError('Full name and email address are required.', 400);
+    }
+
+    if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+        jsonError('Invalid email address format.', 400);
+    }
+
+    // Role assignment security: only Admin / Super Admin can assign privileged roles
+    if (in_array($role, ['SUPER_ADMIN', 'ADMIN', 'SALES_HR_MANAGER'], true) && !$isFullAdmin) {
+        jsonError('Only Administrators can assign Manager or Admin roles.', 403);
+    }
+
+    // Check duplicate email in employee table
+    $chkEmp = $pdo->prepare("SELECT `id` FROM `employee` WHERE LOWER(`email`) = ? LIMIT 1");
+    $chkEmp->execute([$email]);
+    if ($chkEmp->fetch()) {
+        jsonError('An employee with this email address already exists.', 400);
+    }
+
+    $passwordHash = null;
+    if ($role === 'SALES_HR_MANAGER' || $createLogin || !empty($password)) {
+        if (empty($password)) {
+            jsonError('Password is required for this role/account.', 400);
+        }
+        if (strlen($password) < 6) {
+            jsonError('Password must be at least 6 characters long.', 400);
+        }
+        if (!empty($confirmPassword) && $password !== $confirmPassword) {
+            jsonError('Password and Confirm Password do not match.', 400);
+        }
+        $passwordHash = password_hash($password, PASSWORD_BCRYPT, ['cost' => 10]);
+    }
+
+    // Generate Unique Employee Code
+    $codeStmt = $pdo->query("SELECT MAX(CAST(SUBSTRING(`employeeCode`, 5) AS UNSIGNED)) as maxNum FROM `employee` WHERE `employeeCode` LIKE 'EMP-%'");
+    $maxNum = (int)($codeStmt->fetchColumn() ?: 1000);
+    $nextCode = 'EMP-' . max($maxNum + 1, 1001);
+
+    $empId = generateUuidV4();
+    $userId = generateUuidV4();
+
+    $stmt = $pdo->prepare("INSERT INTO `employee` (
+        `id`, `employeeCode`, `name`, `email`, `phone`, `department`, `designation`, `role`,
+        `status`, `monthlyTarget`, `passwordHash`, `userId`, `notes`, `createdAt`, `updatedAt`
+    ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, 'ACTIVE', ?, ?, ?, ?, NOW(), NOW())");
+
+    $stmt->execute([
+        $empId,
+        $nextCode,
+        $fullName,
+        $email,
+        $phone,
+        $department,
+        $designation,
+        $role,
+        $monthlyTarget,
+        $passwordHash,
+        $userId,
+        $notes
+    ]);
+
+    // If login is created, sync to user table
+    if ($passwordHash) {
+        try {
+            $uStmt = $pdo->prepare("INSERT INTO `user` (`id`, `email`, `name`, `passwordHash`, `role`, `createdAt`, `updatedAt`) 
+                VALUES (?, ?, ?, ?, ?, NOW(), NOW()) 
+                ON DUPLICATE KEY UPDATE `name` = VALUES(`name`), `passwordHash` = VALUES(`passwordHash`), `role` = VALUES(`role`), `updatedAt` = NOW()");
+            $uStmt->execute([$userId, $email, $fullName, $passwordHash, $role]);
+        } catch (\Throwable $e) {
+            error_log("Failed to sync user table: " . $e->getMessage());
+        }
+    }
+
+    recordBusinessAuditLog('CREATE', 'Employee', "Created employee {$fullName} ({$email}) with role {$role}");
+
+    jsonResponse([
+        'message' => 'Employee created successfully',
+        'employee' => [
+            'id' => $empId,
+            'employeeCode' => $nextCode,
+            'fullName' => $fullName,
+            'name' => $fullName,
+            'email' => $email,
+            'phone' => $phone,
+            'department' => $department,
+            'designation' => $designation,
+            'role' => $role,
+            'status' => 'ACTIVE',
+            'monthlySalesTarget' => $monthlyTarget,
+            'targetAmount' => $monthlyTarget,
+            'notes' => $notes,
+            'createdAt' => date('Y-m-d H:i:s')
+        ]
+    ], 201);
+}
+
+function handleUpdateBusinessEmployee(string $id): void {
+    $callingUser = requireBusinessAccess(['SALES_HR_MANAGER']);
+    $callerRole = strtoupper($callingUser['role'] ?? 'CUSTOMER');
+    $isFullAdmin = ($callerRole === 'SUPER_ADMIN' || $callerRole === 'ADMIN');
+
+    $pdo = getDatabaseConnection();
+    ensureBusinessTablesExist($pdo);
+
+    $getStmt = $pdo->prepare("SELECT * FROM `employee` WHERE `id` = ? OR `employeeCode` = ? LIMIT 1");
+    $getStmt->execute([$id, $id]);
+    $existing = $getStmt->fetch(PDO::FETCH_ASSOC);
+
+    if (!$existing) {
+        jsonError('Employee not found', 404);
+    }
+
+    $rawInput = file_get_contents('php://input');
+    $body = json_decode($rawInput, true) ?? $_POST;
+
+    $fullName     = trim($body['fullName'] ?? $body['name'] ?? $existing['name']);
+    $email        = trim(strtolower($body['email'] ?? $existing['email']));
+    $phone        = trim($body['phone'] ?? $existing['phone'] ?? '');
+    $department   = trim($body['department'] ?? $existing['department']);
+    $designation  = trim($body['designation'] ?? $existing['designation']);
+    $role         = trim($body['role'] ?? $existing['role']);
+    $status       = strtoupper(trim($body['status'] ?? $existing['status']));
+    $monthlyTarget = isset($body['monthlyTarget']) ? (float)$body['monthlyTarget'] : (isset($body['monthlySalesTarget']) ? (float)$body['monthlySalesTarget'] : (float)$existing['monthlyTarget']);
+    $notes        = trim($body['notes'] ?? $existing['notes'] ?? '');
+    $password     = $body['password'] ?? '';
+    $confirmPassword = $body['confirmPassword'] ?? '';
+
+    if (empty($fullName) || empty($email)) {
+        jsonError('Full name and email address are required.', 400);
+    }
+
+    if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+        jsonError('Invalid email address format.', 400);
+    }
+
+    // Role assignment security
+    if (($role !== $existing['role']) && in_array($role, ['SUPER_ADMIN', 'ADMIN', 'SALES_HR_MANAGER'], true) && !$isFullAdmin) {
+        jsonError('Only Administrators can assign Administrator or Manager roles.', 403);
+    }
+
+    // Check duplicate email
+    if ($email !== strtolower($existing['email'])) {
+        $chkEmp = $pdo->prepare("SELECT `id` FROM `employee` WHERE LOWER(`email`) = ? AND `id` != ? LIMIT 1");
+        $chkEmp->execute([$email, $existing['id']]);
+        if ($chkEmp->fetch()) {
+            jsonError('Another employee with this email address already exists.', 400);
+        }
+    }
+
+    // Handle password update
+    $passwordHash = $existing['passwordHash'] ?? null;
+    $passwordUpdated = false;
+
+    if (!empty($password)) {
+        if (strlen($password) < 6) {
+            jsonError('New password must be at least 6 characters long.', 400);
+        }
+        if (!empty($confirmPassword) && $password !== $confirmPassword) {
+            jsonError('New Password and Confirm Password do not match.', 400);
+        }
+        $passwordHash = password_hash($password, PASSWORD_BCRYPT, ['cost' => 10]);
+        $passwordUpdated = true;
+    } else if ($role === 'SALES_HR_MANAGER' && empty($passwordHash)) {
+        // If changing to SALES_HR_MANAGER and no password existed previously
+        jsonError('A password is required for SALES_HR_MANAGER.', 400);
+    }
+
+    $updStmt = $pdo->prepare("UPDATE `employee` SET 
+        `name` = ?, 
+        `email` = ?, 
+        `phone` = ?, 
+        `department` = ?, 
+        `designation` = ?, 
+        `role` = ?, 
+        `status` = ?, 
+        `monthlyTarget` = ?, 
+        `passwordHash` = ?, 
+        `notes` = ?, 
+        `updatedAt` = NOW() 
+        WHERE `id` = ?");
+
+    $updStmt->execute([
+        $fullName,
+        $email,
+        $phone,
+        $department,
+        $designation,
+        $role,
+        $status,
+        $monthlyTarget,
+        $passwordHash,
+        $notes,
+        $existing['id']
+    ]);
+
+    // Sync to user table
+    if ($passwordHash || $role === 'SALES_HR_MANAGER' || $existing['role'] === 'SALES_HR_MANAGER') {
+        try {
+            $userCheck = $pdo->prepare("SELECT `id` FROM `user` WHERE LOWER(`email`) = ? OR `email` = ? LIMIT 1");
+            $userCheck->execute([$email, $existing['email']]);
+            $uRow = $userCheck->fetch(PDO::FETCH_ASSOC);
+
+            if ($uRow) {
+                if ($passwordUpdated) {
+                    $uUpd = $pdo->prepare("UPDATE `user` SET `email` = ?, `name` = ?, `passwordHash` = ?, `role` = ?, `updatedAt` = NOW() WHERE `id` = ?");
+                    $uUpd->execute([$email, $fullName, $passwordHash, $role, $uRow['id']]);
+                } else {
+                    $uUpd = $pdo->prepare("UPDATE `user` SET `email` = ?, `name` = ?, `role` = ?, `updatedAt` = NOW() WHERE `id` = ?");
+                    $uUpd->execute([$email, $fullName, $role, $uRow['id']]);
+                }
+            } else if ($passwordHash) {
+                $newUserId = generateUuidV4();
+                $uIns = $pdo->prepare("INSERT INTO `user` (`id`, `email`, `name`, `passwordHash`, `role`, `createdAt`, `updatedAt`) VALUES (?, ?, ?, ?, ?, NOW(), NOW())");
+                $uIns->execute([$newUserId, $email, $fullName, $passwordHash, $role]);
+            }
+        } catch (\Throwable $e) {
+            error_log("Failed to sync user table on update: " . $e->getMessage());
+        }
+    }
+
+    recordBusinessAuditLog('UPDATE', 'Employee', "Updated employee {$fullName} ({$existing['id']})");
+
+    jsonResponse([
+        'message' => 'Employee updated successfully',
+        'employee' => [
+            'id' => $existing['id'],
+            'employeeCode' => $existing['employeeCode'],
+            'fullName' => $fullName,
+            'name' => $fullName,
+            'email' => $email,
+            'phone' => $phone,
+            'department' => $department,
+            'designation' => $designation,
+            'role' => $role,
+            'status' => $status,
+            'monthlySalesTarget' => $monthlyTarget,
+            'targetAmount' => $monthlyTarget,
+            'notes' => $notes,
+            'updatedAt' => date('Y-m-d H:i:s')
+        ]
+    ]);
+}
+
+function handleToggleEmployeeStatus(string $id): void {
+    requireBusinessAccess(['SALES_HR_MANAGER']);
+    $pdo = getDatabaseConnection();
+    ensureBusinessTablesExist($pdo);
+
+    $stmt = $pdo->prepare("SELECT * FROM `employee` WHERE `id` = ? OR `employeeCode` = ? LIMIT 1");
+    $stmt->execute([$id, $id]);
+    $emp = $stmt->fetch(PDO::FETCH_ASSOC);
+
+    if (!$emp) {
+        jsonError('Employee not found', 404);
+    }
+
+    $newStatus = ($emp['status'] === 'ACTIVE') ? 'INACTIVE' : 'ACTIVE';
+    $upd = $pdo->prepare("UPDATE `employee` SET `status` = ?, `updatedAt` = NOW() WHERE `id` = ?");
+    $upd->execute([$newStatus, $emp['id']]);
+
+    recordBusinessAuditLog('STATUS_CHANGE', 'Employee', "Changed employee {$emp['name']} status to {$newStatus}");
+
+    jsonResponse([
+        'message' => "Employee status changed to {$newStatus}",
+        'status' => $newStatus,
+        'id' => $emp['id']
+    ]);
+}
+
 
 
 function handleGetBusinessAttendance(): void {
@@ -1843,12 +2145,14 @@ function handleDeleteBusinessTarget(string $id): void {
 }
 
 function handleGetBusinessAuditLogs(): void {
+    requireAdminOnly();
     $pdo = getDatabaseConnection();
     $stmt = $pdo->query("SELECT * FROM `activitylog` ORDER BY `createdAt` DESC LIMIT 100");
     jsonResponse(['logs' => $stmt->fetchAll(PDO::FETCH_ASSOC)]);
 }
 
 function handleResetBusinessData(): void {
+    requireAdminOnly();
     $pdo = getDatabaseConnection();
     ensureBusinessTablesExist($pdo);
 
@@ -1931,6 +2235,7 @@ function handleResetBusinessData(): void {
 }
 
 function handleDeleteAllSales(): void {
+    requireAdminOnly();
     $pdo = getDatabaseConnection();
     ensureBusinessTablesExist($pdo);
     $pdo->exec("DELETE FROM `commission`");
@@ -1940,6 +2245,7 @@ function handleDeleteAllSales(): void {
 }
 
 function handleDeleteSaleById(string $id): void {
+    requireBusinessAccess(['SALES_HR_MANAGER']);
     $pdo = getDatabaseConnection();
     ensureBusinessTablesExist($pdo);
 
@@ -1963,6 +2269,7 @@ function recordBusinessAuditLog(string $action, string $object, ?string $details
 }
 
 function handleDeleteAllCustomers(): void {
+    requireAdminOnly();
     $pdo = getDatabaseConnection();
     ensureBusinessTablesExist($pdo);
     $pdo->exec("DELETE FROM `customer`");
@@ -1971,6 +2278,7 @@ function handleDeleteAllCustomers(): void {
 }
 
 function handleDeleteCustomerById(string $id): void {
+    requireBusinessAccess(['SALES_HR_MANAGER']);
     $pdo = getDatabaseConnection();
     ensureBusinessTablesExist($pdo);
     $stmt = $pdo->prepare("DELETE FROM `customer` WHERE `id` = ?");
@@ -1980,6 +2288,7 @@ function handleDeleteCustomerById(string $id): void {
 }
 
 function handleDeleteCustomersBatch(): void {
+    requireBusinessAccess(['SALES_HR_MANAGER']);
     $pdo = getDatabaseConnection();
     ensureBusinessTablesExist($pdo);
     $raw = file_get_contents('php://input');
@@ -1998,8 +2307,21 @@ function handleDeleteCustomersBatch(): void {
 }
 
 function handleDeleteEmployeeById(string $id): void {
+    $callingUser = requireBusinessAccess(['SALES_HR_MANAGER']);
+    $callerRole = strtoupper($callingUser['role'] ?? 'CUSTOMER');
+    $isFullAdmin = ($callerRole === 'SUPER_ADMIN' || $callerRole === 'ADMIN');
+
     $pdo = getDatabaseConnection();
     ensureBusinessTablesExist($pdo);
+
+    $chkStmt = $pdo->prepare("SELECT `role`, `email` FROM `employee` WHERE `id` = ? OR `employeeCode` = ? LIMIT 1");
+    $chkStmt->execute([$id, $id]);
+    $emp = $chkStmt->fetch(PDO::FETCH_ASSOC);
+
+    if ($emp && in_array($emp['role'], ['SUPER_ADMIN', 'ADMIN', 'SALES_HR_MANAGER'], true) && !$isFullAdmin) {
+        jsonError('Only Administrators can delete Manager or Administrator employee records', 403);
+    }
+
     $stmt = $pdo->prepare("DELETE FROM `employee` WHERE `id` = ? OR `employeeCode` = ?");
     $stmt->execute([$id, $id]);
     recordBusinessAuditLog('DELETE', 'Employee', "Deleted employee ID {$id}");
@@ -2007,6 +2329,10 @@ function handleDeleteEmployeeById(string $id): void {
 }
 
 function handleDeleteEmployeesBatch(): void {
+    $callingUser = requireBusinessAccess(['SALES_HR_MANAGER']);
+    $callerRole = strtoupper($callingUser['role'] ?? 'CUSTOMER');
+    $isFullAdmin = ($callerRole === 'SUPER_ADMIN' || $callerRole === 'ADMIN');
+
     $pdo = getDatabaseConnection();
     ensureBusinessTablesExist($pdo);
     $raw = file_get_contents('php://input');
@@ -2015,6 +2341,15 @@ function handleDeleteEmployeesBatch(): void {
 
     if (empty($ids) || !is_array($ids)) {
         jsonError('No employee IDs provided', 400);
+    }
+
+    if (!$isFullAdmin) {
+        $placeholders = implode(',', array_fill(0, count($ids), '?'));
+        $roleStmt = $pdo->prepare("SELECT COUNT(*) FROM `employee` WHERE `id` IN ($placeholders) AND `role` IN ('SUPER_ADMIN', 'ADMIN', 'SALES_HR_MANAGER')");
+        $roleStmt->execute($ids);
+        if ((int)$roleStmt->fetchColumn() > 0) {
+            jsonError('Only Administrators can delete Manager or Administrator records', 403);
+        }
     }
 
     $placeholders = implode(',', array_fill(0, count($ids), '?'));
@@ -2093,6 +2428,7 @@ function performAutomatedWeeklyBackup(PDO $pdo): void {
 }
 
 function handleGetBusinessBackups(): void {
+    requireAdminOnly();
     $pdo = getDatabaseConnection();
     ensureBusinessTablesExist($pdo);
     performAutomatedWeeklyBackup($pdo);
@@ -2106,6 +2442,7 @@ function handleGetBusinessBackups(): void {
 }
 
 function handleCreateManualBackup(): void {
+    requireAdminOnly();
     $pdo = getDatabaseConnection();
     ensureBusinessTablesExist($pdo);
 
@@ -2170,6 +2507,7 @@ function handleCreateManualBackup(): void {
 }
 
 function handleDownloadBusinessBackup(string $id): void {
+    requireAdminOnly();
     $pdo = getDatabaseConnection();
     ensureBusinessTablesExist($pdo);
 
@@ -2193,6 +2531,7 @@ function handleDownloadBusinessBackup(string $id): void {
 }
 
 function handleDeleteBusinessBackup(string $id): void {
+    requireAdminOnly();
     $pdo = getDatabaseConnection();
     ensureBusinessTablesExist($pdo);
 
@@ -2201,4 +2540,5 @@ function handleDeleteBusinessBackup(string $id): void {
     recordBusinessAuditLog('DELETE_BACKUP', 'System', "Deleted backup {$id}");
     jsonResponse(['message' => 'Backup deleted successfully', 'success' => true]);
 }
+
 
