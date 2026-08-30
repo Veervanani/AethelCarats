@@ -448,12 +448,16 @@ export const BusinessLayout: React.FC = () => {
           <NavLinkItem to={`${PRIVATE_BUSINESS_PATH}/import`} $active={isCurrent(`${PRIVATE_BUSINESS_PATH}/import`)} $collapsed={isCollapsed} title="Excel Migration Tool">
             <UploadCloud size={18} /> <span className="nav-text">Excel Sales Migration</span>
           </NavLinkItem>
-          <NavLinkItem to={`${PRIVATE_BUSINESS_PATH}/audit-logs`} $active={isCurrent(`${PRIVATE_BUSINESS_PATH}/audit-logs`)} $collapsed={isCollapsed} title="Activity Audit Logs">
-            <History size={18} /> <span className="nav-text">Activity Audit Logs</span>
-          </NavLinkItem>
-          <NavLinkItem to={`${PRIVATE_BUSINESS_PATH}/settings`} $active={isCurrent(`${PRIVATE_BUSINESS_PATH}/settings`)} $collapsed={isCollapsed} title="Settings">
-            <Settings size={18} /> <span className="nav-text">Business Settings</span>
-          </NavLinkItem>
+          {(user?.role === 'ADMIN' || user?.role === 'SUPER_ADMIN') && (
+            <>
+              <NavLinkItem to={`${PRIVATE_BUSINESS_PATH}/audit-logs`} $active={isCurrent(`${PRIVATE_BUSINESS_PATH}/audit-logs`)} $collapsed={isCollapsed} title="Activity Audit Logs">
+                <History size={18} /> <span className="nav-text">Activity Audit Logs</span>
+              </NavLinkItem>
+              <NavLinkItem to={`${PRIVATE_BUSINESS_PATH}/settings`} $active={isCurrent(`${PRIVATE_BUSINESS_PATH}/settings`)} $collapsed={isCollapsed} title="Settings">
+                <Settings size={18} /> <span className="nav-text">Business Settings</span>
+              </NavLinkItem>
+            </>
+          )}
         </NavList>
 
         <SidebarFooter $collapsed={isCollapsed}>

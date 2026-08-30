@@ -44,7 +44,7 @@ function authenticateToken(): array {
 
 function requireRole(array $allowedRoles): array {
     $user = authenticateToken();
-    $role = $user['role'] ?? 'CUSTOMER';
+    $role = strtoupper($user['role'] ?? 'CUSTOMER');
 
     if ($role === 'SUPER_ADMIN' || $role === 'ADMIN') {
         return $user;
@@ -56,3 +56,35 @@ function requireRole(array $allowedRoles): array {
 
     return $user;
 }
+
+function requireBusinessAccess(?array $allowedRoles = null): array {
+    $user = authenticateToken();
+    $role = strtoupper($user['role'] ?? 'CUSTOMER');
+
+    // Super Admin & Admin have full access
+    if ($role === 'SUPER_ADMIN' || $role === 'ADMIN') {
+        return $user;
+    }
+
+    if ($allowedRoles === null) {
+        $allowedRoles = ['SALES_HR_MANAGER', 'SALES_MANAGER', 'SALES_EMPLOYEE', 'ACCOUNTANT'];
+    }
+
+    if (in_array($role, $allowedRoles, true)) {
+        return $user;
+    }
+
+    jsonError('Access denied: insufficient permissions for business operations', 403);
+}
+
+function requireAdminOnly(): array {
+    $user = authenticateToken();
+    $role = strtoupper($user['role'] ?? 'CUSTOMER');
+
+    if ($role === 'SUPER_ADMIN' || $role === 'ADMIN') {
+        return $user;
+    }
+
+    jsonError('Access denied: Administrator privileges required', 403);
+}
+

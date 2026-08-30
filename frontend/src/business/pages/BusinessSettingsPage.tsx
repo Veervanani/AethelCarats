@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import styled from 'styled-components';
-import { Settings, Save, Shield } from 'lucide-react';
+import { Settings, Save, Shield, ShieldAlert } from 'lucide-react';
+import { useAuth } from '../../context/AuthContext';
 
 const PageHeader = styled.div`
   margin-bottom: 24px;
@@ -36,9 +37,24 @@ const FormGroup = styled.div`
 `;
 
 export const BusinessSettingsPage: React.FC = () => {
+  const { user } = useAuth();
+  const isAdmin = user?.role === 'ADMIN' || user?.role === 'SUPER_ADMIN';
+
   const [defaultFxRate, setDefaultFxRate] = useState<string>(() => localStorage.getItem('fj_biz_fx_rate') || '94.55');
   const [defaultGstRate, setDefaultGstRate] = useState<string>(() => localStorage.getItem('fj_biz_gst_rate') || '0.015');
   const [baseCurrency, setBaseCurrency] = useState<string>('USD');
+
+  if (!isAdmin) {
+    return (
+      <div style={{ maxWidth: '540px', margin: '40px auto', padding: '36px', background: '#fff', border: '1px solid #e2e8f0', borderRadius: '12px', textAlign: 'center', boxShadow: '0 8px 24px rgba(15,23,42,0.06)' }}>
+        <ShieldAlert size={42} color="#dc2626" style={{ marginBottom: 12 }} />
+        <h2 style={{ fontSize: '1.35rem', fontWeight: 800, color: '#0f172a', margin: '0 0 8px 0' }}>403 — Restricted Area</h2>
+        <p style={{ color: '#64748b', fontSize: '0.86rem', lineHeight: '1.5', margin: 0 }}>
+          Business System Settings are reserved for Administrators. Your account ({user?.email}) with role <strong>{user?.role}</strong> is not authorized to modify system parameters.
+        </p>
+      </div>
+    );
+  }
 
   const handleSave = (e: React.FormEvent) => {
     e.preventDefault();

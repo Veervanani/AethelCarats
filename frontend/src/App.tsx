@@ -172,7 +172,7 @@ const ProtectedBusinessLayout: React.FC = () => {
     return <AdminLoginPage onSuccess={() => window.location.reload()} />;
   }
 
-  const allowedRoles = ['ADMIN', 'SUPER_ADMIN', 'SALES_MANAGER', 'SALES_EMPLOYEE', 'ACCOUNTANT'];
+  const allowedRoles = ['ADMIN', 'SUPER_ADMIN', 'SALES_HR_MANAGER', 'SALES_MANAGER', 'SALES_EMPLOYEE', 'ACCOUNTANT'];
   if (user && (!user.role || !allowedRoles.includes(user.role as string))) {
     return (
       <div style={{ maxWidth: '600px', margin: '80px auto', padding: '48px 32px', background: '#fff', border: '1px solid #e2e8f0', borderRadius: '12px', textAlign: 'center', boxShadow: '0 12px 36px rgba(15,23,42,0.08)' }}>
