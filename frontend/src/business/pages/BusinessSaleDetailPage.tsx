@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+﻿import React, { useState, useEffect } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
 import { PRIVATE_BUSINESS_PATH } from '../../App';
@@ -258,7 +258,7 @@ export const BusinessSaleDetailPage: React.FC = () => {
       <InvoiceCard>
         <InvoiceTopBar>
           <div>
-            <div className="brand">FLOKSY JEWEL</div>
+            <div className="brand">AURA DIAMOND ATELIER</div>
             <div className="sub">FINE JEWELLERY & HIGH ATELIER OPERATIONS</div>
           </div>
           <div>
@@ -444,7 +444,7 @@ export const BusinessSaleDetailPage: React.FC = () => {
               </td>
             </tr>
             <tr style={{ background: '#f8fafc', fontWeight: 800 }}>
-              <td>Profit Retained by Floksy Jewel</td>
+              <td>Profit Retained by Aura Diamond Atelier</td>
               <td>Net Profit - Commission Amount</td>
               <td style={{ textAlign: 'right', color: '#0d1319', fontSize: '1rem' }}>
                 ${(Number(sale.profitAfterCommission) || 0).toLocaleString()}

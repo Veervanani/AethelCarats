@@ -203,7 +203,7 @@ export const createHeroBanner = async (req: AuthRequest, res: Response) => {
     const banner = await prisma.heroBanner.create({
       data: {
         title: title || 'Timeless Luxury Fine Jewellery',
-        subtitle: subtitle || 'FLOKSY JEWEL ATELIER',
+        subtitle: subtitle || 'AURA DIAMOND ATELIER',
         description: description || '',
         primaryCtaText: primaryCtaText || 'EXPLORE COLLECTION',
         primaryCtaLink: primaryCtaLink || '/rings',
@@ -212,7 +212,7 @@ export const createHeroBanner = async (req: AuthRequest, res: Response) => {
         productType: productType || 'Engagement Ring',
         imagePath,
         mobileImagePath: mobileImagePath || null,
-        imageAlt: imageAlt || title || 'Floksy Jewel High Jewellery',
+        imageAlt: imageAlt || title || 'Aura Diamond Atelier High Jewellery',
         isActive: isActive === undefined ? true : String(isActive) === 'true' || isActive === true,
         displayOrder: nextOrder,
       },

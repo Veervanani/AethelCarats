@@ -38,7 +38,7 @@ import {
 // ==========================================
 
 const PageOuterWrapper = styled.div`
-  background-color: #F9F7F2;
+  background-color: #0B0B0B;
   min-height: 100vh;
   width: 100%;
 `;
@@ -48,7 +48,7 @@ const PageWrapper = styled.div`
   max-width: 1600px;
   margin: 0 auto;
   padding: 32px 48px 80px 48px;
-  background-color: #F9F7F2;
+  background-color: #0B0B0B;
   box-sizing: border-box;
 
   @media (max-width: 1024px) {
@@ -61,23 +61,23 @@ const PageWrapper = styled.div`
 
 const BreadcrumbsBar = styled.div`
   font-size: 0.78rem;
-  color: #77736c;
+  color: #A8A8A8;
   margin-bottom: 28px;
-  letter-spacing: 0.05em;
+  letter-spacing: 0.08em;
   text-transform: uppercase;
 
   a {
-    color: #77736c;
+    color: #A8A8A8;
     text-decoration: none;
     transition: color 0.2s;
 
     &:hover {
-      color: #19202a;
+      color: #C9A96E;
     }
   }
 
   span.current {
-    color: #19202a;
+    color: #F5F1E8;
     font-weight: 600;
   }
 `;
@@ -140,11 +140,12 @@ const GalleryImageCard = styled.div`
   position: relative;
   width: 100%;
   aspect-ratio: 1 / 1;
-  background: #faf8f5;
-  border-radius: 6px;
+  background: #0B0B0B;
+  border-radius: 4px;
   overflow: hidden;
   cursor: pointer;
-  border: 1px solid #f2ede4;
+  border: 1px solid rgba(140, 116, 75, 0.25);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.5);
 
   img {
     width: 100%;
@@ -161,11 +162,12 @@ const GalleryImageCard = styled.div`
     position: absolute;
     bottom: 16px;
     right: 16px;
-    background: rgba(255, 255, 255, 0.92);
-    backdrop-filter: blur(4px);
-    color: #19202a;
+    background: rgba(21, 21, 21, 0.92);
+    backdrop-filter: blur(6px);
+    color: #F5F1E8;
     padding: 8px 14px;
     border-radius: 20px;
+    border: 1px solid rgba(140, 116, 75, 0.3);
     font-size: 0.75rem;
     font-weight: 600;
     display: flex;
@@ -173,7 +175,7 @@ const GalleryImageCard = styled.div`
     gap: 6px;
     opacity: 0;
     transition: opacity 0.3s;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
   }
 
   &:hover .zoom-hint {
@@ -215,10 +217,10 @@ const MobileSlideCard = styled.div`
   scroll-snap-align: center;
   scroll-snap-stop: always;
   position: relative;
-  background: #faf8f5;
-  border-radius: 6px;
+  background: #0B0B0B;
+  border-radius: 4px;
   overflow: hidden;
-  border: 1px solid #f2ede4;
+  border: 1px solid rgba(140, 116, 75, 0.25);
 
   img {
     width: 100%;
@@ -237,16 +239,16 @@ const MobileArrowBtn = styled.button<{ $dir: 'left' | 'right' }>`
   width: 36px;
   height: 36px;
   border-radius: 50%;
-  background: rgba(255, 255, 255, 0.9);
+  background: rgba(21, 21, 21, 0.9);
   backdrop-filter: blur(4px);
-  border: 1px solid #e8e3d9;
+  border: 1px solid rgba(140, 116, 75, 0.3);
   display: flex;
   align-items: center;
   justify-content: center;
-  color: #19202a;
+  color: #F5F1E8;
   z-index: 10;
   cursor: pointer;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.12);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.5);
   transition: transform 0.2s ease;
 
   &:active {
@@ -258,17 +260,17 @@ const MobileCounterBadge = styled.div`
   position: absolute;
   top: 12px;
   right: 12px;
-  background: rgba(255, 255, 255, 0.9);
+  background: rgba(21, 21, 21, 0.9);
   backdrop-filter: blur(4px);
-  color: #19202a;
+  color: #C9A96E;
   padding: 4px 10px;
   border-radius: 14px;
   font-size: 0.72rem;
-  font-weight: 600;
-  letter-spacing: 0.04em;
+  font-weight: 700;
+  letter-spacing: 0.06em;
   z-index: 10;
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
-  border: 1px solid #e8e3d9;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.4);
+  border: 1px solid rgba(140, 116, 75, 0.3);
 `;
 
 const MobileDots = styled.div`
@@ -281,12 +283,12 @@ const MobileDots = styled.div`
     width: 8px;
     height: 8px;
     border-radius: 50%;
-    background: #d9d3c7;
+    background: rgba(255, 255, 255, 0.25);
     cursor: pointer;
     transition: all 0.2s ease;
 
     &.active {
-      background: #19202a;
+      background: #C9A96E;
       width: 24px;
       border-radius: 4px;
     }
@@ -303,28 +305,17 @@ const RightConfigPanel = styled.div`
   gap: 0;
   box-sizing: border-box;
   z-index: 10;
+  width: 100%;
+  min-width: 0;
 
   @media (min-width: 769px) {
-    position: -webkit-sticky; /* Added for Safari support */
+    position: -webkit-sticky;
     position: sticky;
-    top: 120px; /* Increased slightly to ensure it clears your top navigation bar */
+    top: 100px;
     align-self: start;
-
-    height: fit-content; /* CRITICAL FIX: Stops the column from stretching to the image gallery height */
-    
-    max-height: calc(100vh - 130px); 
-    min-height: 0;
-
-    overflow-y: auto;
-    /* Removed overflow-x: hidden as it can sometimes conflict with sticky */
-
-    scrollbar-width: none;
-    -ms-overflow-style: none;
-
-    &::-webkit-scrollbar {
-      width: 0;
-      height: 0;
-    }
+    height: auto;
+    max-height: none;
+    overflow: visible;
   }
 
   @media (max-width: 768px) {
@@ -332,7 +323,7 @@ const RightConfigPanel = styled.div`
     top: auto;
     height: auto;
     max-height: none;
-    overflow-y: visible;
+    overflow: visible;
   }
 `;
 
@@ -342,12 +333,13 @@ const ProductHeaderArea = styled.div`
   align-items: flex-start;
 
   h1 {
-    font-family: 'Cormorant Garamond', serif;
+    font-family: 'Cormorant Garamond', Georgia, serif;
     font-size: 2.2rem;
     font-weight: 500;
-    color: #19202a;
+    color: #F5F1E8;
     margin: 0 0 8px 0;
     line-height: 1.15;
+    letter-spacing: 0.02em;
   }
 
   .wishlist-btn {
@@ -355,15 +347,15 @@ const ProductHeaderArea = styled.div`
     border: none;
     cursor: pointer;
     padding: 8px;
-    color: #77736c;
+    color: #A8A8A8;
     transition: color 0.2s;
 
     &:hover {
-      color: #c5221f;
+      color: #E53E3E;
     }
 
     &.active {
-      color: #c5221f;
+      color: #E53E3E;
     }
   }
 `;
@@ -373,10 +365,10 @@ const RatingRow = styled.div`
   align-items: center;
   gap: 8px;
   font-size: 0.82rem;
-  color: #77736c;
+  color: #A8A8A8;
 
   .stars {
-    color: #c9a45c;
+    color: #C9A96E;
     letter-spacing: 2px;
   }
 `;
@@ -388,15 +380,18 @@ const PriceDisplayBox = styled.div`
   margin-top: 4px;
 
   .current-price {
-    font-family: 'Cormorant Garamond', serif;
-    font-size: 2.1rem;
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+    font-size: 1.85rem;
     font-weight: 600;
-    color: #19202a;
+    color: #C9A96E;
+    letter-spacing: -0.01em;
   }
 
   .compare-price {
-    font-size: 1.1rem;
-    color: #a39e93;
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+    font-size: 1.15rem;
+    font-weight: 400;
+    color: #777777;
     text-decoration: line-through;
   }
 `;
@@ -404,7 +399,7 @@ const PriceDisplayBox = styled.div`
 const SectionDividerBlock = styled.div`
   padding-bottom: 14px;
   margin-bottom: 14px;
-  border-bottom: 1px solid #f2ede4;
+  border-bottom: 1px solid rgba(140, 116, 75, 0.2);
 `;
 
 const MetalHeaderTitle = styled.div`
@@ -415,52 +410,43 @@ const MetalHeaderTitle = styled.div`
   margin-bottom: 10px;
 
   .label {
-    color: #77736c;
+    color: #A8A8A8;
     text-transform: uppercase;
-    letter-spacing: 0.05em;
+    letter-spacing: 0.06em;
   }
 
   .value {
-    color: #19202a;
+    color: #F5F1E8;
     font-weight: 700;
   }
 `;
 
 const MetalTilesRow = styled.div`
   display: flex;
-  gap: 8px;
+  gap: 10px;
   flex-wrap: wrap;
 `;
 
-const MetalRectTile = styled.button<{ $isSelected: boolean; $circleBorderColor: string }>`
-  height: 44px;
-  min-width: 52px;
-  padding: 0 14px;
-  background: #ffffff;
-  border: 1.5px solid ${({ $isSelected }) => ($isSelected ? '#19202a' : '#e8e3d9')};
-  border-radius: 2px;
+const MetalPillButton = styled.button<{ $isSelected: boolean }>`
+  padding: 8px 16px;
+  background: ${({ $isSelected }) => ($isSelected ? 'rgba(201, 169, 110, 0.12)' : '#151515')};
+  border: 1.5px solid ${({ $isSelected }) => ($isSelected ? '#C9A96E' : 'rgba(140, 116, 75, 0.25)')};
+  border-radius: 4px;
   cursor: pointer;
-  display: flex;
+  display: inline-flex;
   align-items: center;
   justify-content: center;
+  font-family: inherit;
+  font-size: 0.84rem;
+  font-weight: 600;
+  color: ${({ $isSelected }) => ($isSelected ? '#F5F1E8' : '#D8D2C5')};
   transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
-
-  .circle-ring {
-    width: 28px;
-    height: 28px;
-    border-radius: 50%;
-    border: 2px solid ${({ $circleBorderColor }) => $circleBorderColor || '#cbd5e1'};
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 0.75rem;
-    font-weight: 700;
-    color: #19202a;
-    letter-spacing: 0.02em;
-  }
+  letter-spacing: 0.02em;
 
   &:hover {
-    border-color: #19202a;
+    border-color: #C9A96E;
+    color: #F5F1E8;
+    background: ${({ $isSelected }) => ($isSelected ? 'rgba(201, 169, 110, 0.18)' : '#1c1c1c')};
   }
 `;
 
@@ -475,7 +461,7 @@ const RingSizeReferenceContainer = styled.div`
     font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
     font-size: 0.95rem;
     font-weight: 700;
-    color: #0c1938;
+    color: #F5F1E8;
     letter-spacing: -0.01em;
   }
 
@@ -483,13 +469,13 @@ const RingSizeReferenceContainer = styled.div`
     font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
     font-size: 0.9rem;
     font-weight: 500;
-    color: #0c1938;
+    color: #C9A96E;
     text-decoration: underline;
     white-space: nowrap;
     transition: color 0.15s ease;
 
     &:hover {
-      color: #c9a45c;
+      color: #DFCA9B;
     }
   }
 `;
@@ -504,7 +490,7 @@ const MinimalSelectTrigger = styled.button`
   padding: 4px 0 6px 0;
   background: transparent;
   border: none;
-  border-bottom: 1px solid #b0b8c4;
+  border-bottom: 1px solid rgba(140, 116, 75, 0.35);
   border-radius: 0;
   display: flex;
   justify-content: space-between;
@@ -516,22 +502,23 @@ const MinimalSelectTrigger = styled.button`
 
   .selected-val {
     font-weight: 600;
-    color: #0c1938;
+    color: #F5F1E8;
   }
 
   .placeholder-val {
-    color: #6b7280;
+    color: #A8A8A8;
     font-weight: 400;
   }
 
   &:hover {
-    border-bottom-color: #0c1938;
+    border-bottom-color: #C9A96E;
   }
 
   .arrow-icon {
     display: flex;
     align-items: center;
     margin-left: 8px;
+    color: #C9A96E;
   }
 `;
 
@@ -541,10 +528,10 @@ const CustomDropdownMenu = styled.div`
   left: 0;
   right: 0;
   margin-top: 4px;
-  background: #ffffff;
-  border: 1px solid #d9d3c7;
+  background: #151515;
+  border: 1px solid rgba(140, 116, 75, 0.25);
   border-radius: 4px;
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.75);
   z-index: 100;
   max-height: 220px;
   overflow-y: auto;
@@ -554,15 +541,17 @@ const CustomDropdownMenu = styled.div`
     font-family: 'Inter', sans-serif;
     font-size: 0.88rem;
     cursor: pointer;
-    color: #0c1938;
+    color: #F5F1E8;
     transition: background 0.15s ease;
 
     &:hover {
-      background: #f3f4f6;
+      background: #222222;
+      color: #C9A96E;
     }
 
     &.selected {
-      background: #e5e7eb;
+      background: #2A241A;
+      color: #C9A96E;
       font-weight: 700;
     }
   }
@@ -575,7 +564,7 @@ const EngravingRow = styled.div`
 const EngravingToggleButton = styled.button`
   background: none;
   border: none;
-  color: #0c1938;
+  color: #F5F1E8;
   font-weight: 600;
   font-size: 0.88rem;
   font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
@@ -587,11 +576,11 @@ const EngravingToggleButton = styled.button`
   transition: color 0.18s ease;
 
   &:hover {
-    color: #c9a45c;
+    color: #C9A96E;
 
     .info-circle {
-      border-color: #c9a45c;
-      color: #c9a45c;
+      border-color: #C9A96E;
+      color: #C9A96E;
     }
   }
 
@@ -602,7 +591,8 @@ const EngravingToggleButton = styled.button`
     width: 14px;
     height: 14px;
     border-radius: 50%;
-    border: 1px solid #0c1938;
+    border: 1px solid #C9A96E;
+    color: #C9A96E;
     font-size: 0.65rem;
     font-weight: 700;
     font-style: italic;
@@ -615,23 +605,23 @@ const EngravingInputField = styled.input`
   width: 100%;
   height: 46px;
   padding: 0 16px;
-  border: 1px solid #d9d3c7;
+  border: 1px solid rgba(140, 116, 75, 0.25);
   border-radius: 4px;
   font-size: 0.88rem;
   font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
-  background: #ffffff;
-  color: #0c1938;
+  background: #111111;
+  color: #F5F1E8;
   outline: none;
   box-sizing: border-box;
   margin-top: 10px;
   transition: border-color 0.18s ease;
 
   &::placeholder {
-    color: #999388;
+    color: #777777;
   }
 
   &:focus {
-    border-color: #0c1938;
+    border-color: #C9A96E;
   }
 `;
 
@@ -645,7 +635,7 @@ const CustomOptionLabel = styled.div`
   font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
   font-size: 0.88rem;
   font-weight: 600;
-  color: #0c1938;
+  color: #F5F1E8;
   margin-bottom: 6px;
   display: flex;
   align-items: center;
@@ -656,35 +646,35 @@ const CustomOptionInput = styled.input<{ $hasError?: boolean }>`
   width: 100%;
   height: 44px;
   padding: 0 14px;
-  border: 1px solid ${({ $hasError }) => ($hasError ? '#c5221f' : '#d9d3c7')};
+  border: 1px solid ${({ $hasError }) => ($hasError ? '#E53E3E' : 'rgba(140, 116, 75, 0.25)')};
   border-radius: 4px;
   font-size: 0.88rem;
   font-family: 'Inter', sans-serif;
-  background: #ffffff;
-  color: #0c1938;
+  background: #111111;
+  color: #F5F1E8;
   outline: none;
   box-sizing: border-box;
 
   &:focus {
-    border-color: #0c1938;
+    border-color: #C9A96E;
   }
 `;
 
 const CustomOptionTextarea = styled.textarea<{ $hasError?: boolean }>`
   width: 100%;
   padding: 10px 14px;
-  border: 1px solid ${({ $hasError }) => ($hasError ? '#c5221f' : '#d9d3c7')};
+  border: 1px solid ${({ $hasError }) => ($hasError ? '#E53E3E' : 'rgba(140, 116, 75, 0.25)')};
   border-radius: 4px;
   font-size: 0.88rem;
   font-family: 'Inter', sans-serif;
-  background: #ffffff;
-  color: #0c1938;
+  background: #111111;
+  color: #F5F1E8;
   outline: none;
   box-sizing: border-box;
   resize: vertical;
 
   &:focus {
-    border-color: #0c1938;
+    border-color: #C9A96E;
   }
 `;
 
@@ -692,12 +682,12 @@ const CustomOptionSelect = styled.select<{ $hasError?: boolean }>`
   width: 100%;
   height: 44px;
   padding: 0 14px;
-  border: 1px solid ${({ $hasError }) => ($hasError ? '#c5221f' : '#d9d3c7')};
+  border: 1px solid ${({ $hasError }) => ($hasError ? '#E53E3E' : 'rgba(140, 116, 75, 0.25)')};
   border-radius: 4px;
   font-size: 0.88rem;
   font-family: 'Inter', sans-serif;
-  background: #ffffff;
-  color: #0c1938;
+  background: #111111;
+  color: #F5F1E8;
   outline: none;
   box-sizing: border-box;
   cursor: pointer;
@@ -714,8 +704,8 @@ const OptionRectTile = styled.button<{ $isSelected: boolean }>`
   height: 44px;
   min-width: 48px;
   padding: 0 16px;
-  background: #ffffff;
-  border: ${({ $isSelected }) => ($isSelected ? '1.5px solid #0c1938' : '1px solid #d9d3c7')};
+  background: #151515;
+  border: ${({ $isSelected }) => ($isSelected ? '1.5px solid #C9A96E' : '1px solid rgba(140, 116, 75, 0.25)')};
   border-radius: 2px;
   cursor: pointer;
   display: inline-flex;
@@ -724,11 +714,11 @@ const OptionRectTile = styled.button<{ $isSelected: boolean }>`
   font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
   font-size: 0.88rem;
   font-weight: ${({ $isSelected }) => ($isSelected ? '600' : '400')};
-  color: #0c1938;
+  color: ${({ $isSelected }) => ($isSelected ? '#C9A96E' : '#F5F1E8')};
   transition: all 0.15s ease;
 
   &:hover {
-    border-color: #0c1938;
+    border-color: #C9A96E;
   }
 `;
 
@@ -753,10 +743,10 @@ const MainCtaRow = styled.div`
 const QuantitySelectorContainer = styled.div`
   display: flex;
   align-items: center;
-  border: 1px solid #d9d3c7;
+  border: 1px solid rgba(140, 116, 75, 0.25);
   border-radius: 4px;
   height: 50px;
-  background: #faf8f5;
+  background: #151515;
 
   button {
     background: none;
@@ -764,14 +754,15 @@ const QuantitySelectorContainer = styled.div`
     width: 38px;
     height: 100%;
     cursor: pointer;
-    color: #1f1f1f;
+    color: #F5F1E8;
     display: flex;
     align-items: center;
     justify-content: center;
     transition: background 0.15s ease;
 
     &:hover {
-      background: #faf5eb;
+      background: #222222;
+      color: #C9A96E;
     }
   }
 
@@ -779,7 +770,7 @@ const QuantitySelectorContainer = styled.div`
     padding: 0 4px;
     font-weight: 700;
     font-size: 0.9rem;
-    color: #1f1f1f;
+    color: #F5F1E8;
     min-width: 18px;
     text-align: center;
   }
@@ -788,25 +779,25 @@ const QuantitySelectorContainer = styled.div`
 const PrimaryCtaBtn = styled.button`
   width: 100%;
   height: 50px;
-  background: #1f1f1f;
-  color: #ffffff;
-  border: 1px solid #1f1f1f;
+  background: #C9A96E;
+  color: #0B0B0B;
+  border: 1px solid #C9A96E;
   border-radius: 4px;
   font-family: 'Inter', sans-serif;
   font-size: 0.8rem;
   font-weight: 700;
-  letter-spacing: 0.1em;
+  letter-spacing: 0.12em;
   text-transform: uppercase;
   cursor: pointer;
   white-space: nowrap;
   transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.4);
 
   &:hover {
-    background: #333333;
-    border-color: #333333;
+    background: #DFCA9B;
+    border-color: #DFCA9B;
     transform: translateY(-1px);
-    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+    box-shadow: 0 8px 24px rgba(201, 169, 110, 0.3);
   }
 
   @media (max-width: 576px) {
@@ -819,14 +810,14 @@ const PrimaryCtaBtn = styled.button`
 const BuyNowCtaBtn = styled.button`
   width: 100%;
   height: 50px;
-  background: #c9a45c;
-  color: #ffffff;
-  border: 1px solid #c9a45c;
+  background: transparent;
+  color: #F5F1E8;
+  border: 1px solid #8C744B;
   border-radius: 4px;
   font-family: 'Inter', sans-serif;
   font-size: 0.8rem;
   font-weight: 700;
-  letter-spacing: 0.1em;
+  letter-spacing: 0.12em;
   text-transform: uppercase;
   cursor: pointer;
   white-space: nowrap;
@@ -835,13 +826,14 @@ const BuyNowCtaBtn = styled.button`
   justify-content: center;
   gap: 6px;
   transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
-  box-shadow: 0 4px 16px rgba(201, 164, 92, 0.25);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
   box-sizing: border-box;
 
   &:hover {
-    background: #b59048;
-    border-color: #b59048;
-    box-shadow: 0 6px 20px rgba(201, 164, 92, 0.4);
+    background: #C9A96E;
+    color: #0B0B0B;
+    border-color: #C9A96E;
+    box-shadow: 0 6px 20px rgba(201, 169, 110, 0.3);
     transform: translateY(-1px);
   }
 
@@ -856,20 +848,20 @@ const SecondaryCtaBtn = styled.button`
   width: 100%;
   height: 48px;
   background: transparent;
-  color: #19202a;
-  border: 1px solid #d9d3c7;
+  color: #C9A96E;
+  border: 1px solid rgba(140, 116, 75, 0.4);
   border-radius: 4px;
   font-family: 'Inter', sans-serif;
   font-size: 0.78rem;
   font-weight: 700;
-  letter-spacing: 0.1em;
+  letter-spacing: 0.12em;
   text-transform: uppercase;
   cursor: pointer;
   transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
 
   &:hover {
-    border-color: #19202a;
-    background: #faf8f5;
+    border-color: #C9A96E;
+    background: rgba(201, 169, 110, 0.08);
   }
 `;
 
@@ -878,15 +870,15 @@ const BenefitsRow = styled.div`
   justify-content: space-between;
   gap: 12px;
   padding: 16px 0;
-  border-top: 1px solid #f2ede4;
-  border-bottom: 1px solid #f2ede4;
+  border-top: 1px solid rgba(140, 116, 75, 0.2);
+  border-bottom: 1px solid rgba(140, 116, 75, 0.2);
 
   .benefit-item {
     display: flex;
     align-items: center;
     gap: 6px;
     font-size: 0.75rem;
-    color: #55524d;
+    color: #D8D2C5;
     font-weight: 500;
   }
 `;
@@ -894,7 +886,7 @@ const BenefitsRow = styled.div`
 const AccordionsContainer = styled.div`
   display: flex;
   flex-direction: column;
-  border-top: 1px solid #f2ede4;
+  border-top: 1px solid rgba(140, 116, 75, 0.2);
 `;
 
 const AccordionHeader = styled.div`
@@ -902,17 +894,17 @@ const AccordionHeader = styled.div`
   justify-content: space-between;
   align-items: center;
   padding: 16px 0;
-  border-bottom: 1px solid #f2ede4;
+  border-bottom: 1px solid rgba(140, 116, 75, 0.2);
   cursor: pointer;
   font-size: 0.82rem;
   font-weight: 700;
-  letter-spacing: 0.06em;
+  letter-spacing: 0.08em;
   text-transform: uppercase;
-  color: #19202a;
+  color: #F5F1E8;
   user-select: none;
 
   &:hover {
-    color: #c9a45c;
+    color: #C9A96E;
   }
 `;
 
@@ -920,7 +912,7 @@ const AccordionBody = styled.div<{ $open: boolean }>`
   display: ${({ $open }) => ($open ? 'block' : 'none')};
   padding: 0 0 16px 0;
   font-size: 0.88rem;
-  color: #55524d;
+  color: #D8D2C5;
   line-height: 1.6;
 `;
 
@@ -930,9 +922,9 @@ const StickyBottomBar = styled.div<{ $show: boolean }>`
   left: 0;
   right: 0;
   z-index: 9999;
-  background: #ffffff;
-  border-top: 1px solid #e8e3d9;
-  box-shadow: 0 -6px 28px rgba(0, 0, 0, 0.12);
+  background: #111111;
+  border-top: 1px solid rgba(140, 116, 75, 0.25);
+  box-shadow: 0 -8px 30px rgba(0, 0, 0, 0.85);
   padding: 12px 24px;
   transform: ${({ $show }) => ($show ? 'translateY(0)' : 'translateY(110%)')};
   transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1);
@@ -955,7 +947,7 @@ const StickyBottomBar = styled.div<{ $show: boolean }>`
       width: 48px;
       height: 48px;
       object-fit: cover;
-      border: 1px solid #e8e3d9;
+      border: 1px solid rgba(140, 116, 75, 0.25);
       border-radius: 4px;
     }
 
@@ -967,7 +959,7 @@ const StickyBottomBar = styled.div<{ $show: boolean }>`
         font-family: 'Cormorant Garamond', serif;
         font-size: 1.15rem;
         font-weight: 600;
-        color: #1f1f1f;
+        color: #F5F1E8;
         white-space: nowrap;
         overflow: hidden;
         text-overflow: ellipsis;
@@ -976,7 +968,7 @@ const StickyBottomBar = styled.div<{ $show: boolean }>`
 
       .meta-price {
         font-size: 0.85rem;
-        color: #c9a45c;
+        color: #C9A96E;
         font-weight: 700;
       }
     }
@@ -990,10 +982,10 @@ const StickyBottomBar = styled.div<{ $show: boolean }>`
     .sticky-qty {
       display: flex;
       align-items: center;
-      border: 1px solid #d9d3c7;
+      border: 1px solid rgba(140, 116, 75, 0.25);
       border-radius: 4px;
       height: 40px;
-      background: #faf8f5;
+      background: #151515;
 
       button {
         background: none;
@@ -1001,15 +993,16 @@ const StickyBottomBar = styled.div<{ $show: boolean }>`
         padding: 0 10px;
         height: 100%;
         cursor: pointer;
-        color: #1f1f1f;
+        color: #F5F1E8;
 
-        &:hover { background: #f0e9dc; }
+        &:hover { background: #222222; }
       }
 
       span {
         padding: 0 8px;
         font-weight: 700;
         font-size: 0.85rem;
+        color: #F5F1E8;
       }
     }
 
@@ -1027,17 +1020,18 @@ const StickyBottomBar = styled.div<{ $show: boolean }>`
     }
 
     .add-bag {
-      background: #1f1f1f;
-      color: #ffffff;
-      border: 1px solid #1f1f1f;
-      &:hover { background: #333; }
+      background: #C9A96E;
+      color: #0B0B0B;
+      border: none;
+      font-weight: 700;
+      &:hover { background: #DFCA9B; }
     }
 
     .buy-now {
-      background: #c9a45c;
-      color: #ffffff;
-      border: 1px solid #c9a45c;
-      &:hover { background: #b59048; }
+      background: transparent;
+      color: #F5F1E8;
+      border: 1px solid #8C744B;
+      &:hover { background: #C9A96E; color: #0B0B0B; }
     }
   }
 
@@ -1095,9 +1089,9 @@ const ToastNotificationContainer = styled.div<{ $show: boolean; $type: 'success'
   gap: 12px;
   padding: 12px 22px;
   border-radius: 30px;
-  background: #ffffff;
-  border: 1px solid ${({ $type }) => ($type === 'warning' ? '#f59e0b' : $type === 'error' ? '#ef4444' : '#10b981')};
-  box-shadow: 0 12px 36px rgba(0, 0, 0, 0.16), 0 0 0 1px rgba(201, 164, 92, 0.2);
+  background: #151515;
+  border: 1px solid ${({ $type }) => ($type === 'warning' ? '#f59e0b' : $type === 'error' ? '#ef4444' : '#C9A96E')};
+  box-shadow: 0 12px 36px rgba(0, 0, 0, 0.4), 0 0 0 1px rgba(201, 169, 110, 0.2);
   opacity: ${({ $show }) => ($show ? 1 : 0)};
   visibility: ${({ $show }) => ($show ? 'visible' : 'hidden')};
   transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1);
@@ -1112,7 +1106,7 @@ const ToastNotificationContainer = styled.div<{ $show: boolean; $type: 'success'
   }
 
   .toast-icon {
-    color: ${({ $type }) => ($type === 'warning' ? '#f59e0b' : $type === 'error' ? '#ef4444' : '#10b981')};
+    color: ${({ $type }) => ($type === 'warning' ? '#f59e0b' : $type === 'error' ? '#ef4444' : '#C9A96E')};
     display: flex;
     align-items: center;
   }
@@ -1121,7 +1115,7 @@ const ToastNotificationContainer = styled.div<{ $show: boolean; $type: 'success'
     font-family: 'Inter', sans-serif;
     font-size: 0.86rem;
     font-weight: 500;
-    color: #19202a;
+    color: #F5F1E8;
     line-height: 1.4;
   }
 
@@ -1129,21 +1123,21 @@ const ToastNotificationContainer = styled.div<{ $show: boolean; $type: 'success'
     background: none;
     border: none;
     cursor: pointer;
-    color: #999388;
+    color: #A8A8A8;
     padding: 2px;
     margin-left: auto;
     display: flex;
     align-items: center;
 
     &:hover {
-      color: #19202a;
+      color: #F5F1E8;
     }
   }
 `;
 
 const SaleCountdownTimerBox = styled.div`
-  background: #FAF7F2;
-  border: 1px solid #E6DEC2;
+  background: #151515;
+  border: 1px solid rgba(140, 116, 75, 0.25);
   border-radius: 6px;
   padding: 10px 14px;
   margin-top: 14px;
@@ -1163,7 +1157,7 @@ const SaleCountdownTimerBox = styled.div`
     font-family: 'Cormorant Garamond', Georgia, serif;
     font-size: 0.95rem;
     font-weight: 600;
-    color: #7E6325;
+    color: #C9A96E;
     letter-spacing: 0.02em;
     display: flex;
     align-items: center;
@@ -1177,20 +1171,20 @@ const SaleCountdownTimerBox = styled.div`
   }
 
   .unit-card {
-    background: #ffffff;
-    border: 1px solid #DFD5C2;
+    background: #111111;
+    border: 1px solid rgba(140, 116, 75, 0.2);
     border-radius: 4px;
     padding: 3px 8px;
     text-align: center;
     min-width: 42px;
-    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.03);
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
   }
 
   .unit-num {
     font-family: 'Inter', sans-serif;
     font-size: 0.95rem;
     font-weight: 700;
-    color: #1a1a1a;
+    color: #F5F1E8;
     line-height: 1.15;
   }
 
@@ -1198,7 +1192,7 @@ const SaleCountdownTimerBox = styled.div`
     font-size: 0.55rem;
     text-transform: uppercase;
     letter-spacing: 0.06em;
-    color: #8C7E6A;
+    color: #A8A8A8;
     font-weight: 600;
     margin-top: 1px;
   }
@@ -1211,7 +1205,8 @@ const NotFoundWrapper = styled.div`
   justify-content: center;
   padding: 80px 24px 100px 24px;
   text-align: center;
-  background-color: #F9F7F2;
+  background-color: #0B0B0B;
+  color: #F5F1E8;
   min-height: 50vh;
   box-sizing: border-box;
 
@@ -1219,12 +1214,12 @@ const NotFoundWrapper = styled.div`
     width: 64px;
     height: 64px;
     border-radius: 50%;
-    background: #faf5eb;
-    border: 1px solid #e8e3d9;
+    background: #151515;
+    border: 1px solid rgba(140, 116, 75, 0.25);
     display: flex;
     align-items: center;
     justify-content: center;
-    color: #c9a45c;
+    color: #C9A96E;
     margin-bottom: 24px;
   }
 
@@ -1232,7 +1227,7 @@ const NotFoundWrapper = styled.div`
     font-family: 'Cormorant Garamond', Georgia, serif;
     font-size: 2.4rem;
     font-weight: 500;
-    color: #19202a;
+    color: #F5F1E8;
     letter-spacing: 0.06em;
     margin: 0 0 16px 0;
     text-transform: uppercase;
@@ -1245,7 +1240,7 @@ const NotFoundWrapper = styled.div`
   p {
     font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
     font-size: 0.98rem;
-    color: #55524d;
+    color: #D8D2C5;
     max-width: 480px;
     line-height: 1.6;
     margin: 0 0 32px 0;
@@ -1263,9 +1258,9 @@ const NotFoundWrapper = styled.div`
     align-items: center;
     justify-content: center;
     padding: 14px 32px;
-    background: #1f1f1f;
-    color: #ffffff;
-    border: 1px solid #1f1f1f;
+    background: #C9A96E;
+    color: #0B0B0B;
+    border: 1px solid #C9A96E;
     border-radius: 4px;
     font-family: 'Inter', sans-serif;
     font-size: 0.82rem;
@@ -1274,13 +1269,13 @@ const NotFoundWrapper = styled.div`
     text-transform: uppercase;
     text-decoration: none;
     transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
-    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
 
     &:hover {
-      background: #333333;
-      border-color: #333333;
+      background: #DFBA73;
+      border-color: #DFBA73;
       transform: translateY(-2px);
-      box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+      box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
     }
   }
 
@@ -1289,9 +1284,9 @@ const NotFoundWrapper = styled.div`
     align-items: center;
     justify-content: center;
     padding: 14px 32px;
-    background: transparent;
-    color: #1f1f1f;
-    border: 1px solid #d9d3c7;
+    background: #151515;
+    color: #F5F1E8;
+    border: 1px solid rgba(140, 116, 75, 0.3);
     border-radius: 4px;
     font-family: 'Inter', sans-serif;
     font-size: 0.82rem;
@@ -1302,9 +1297,9 @@ const NotFoundWrapper = styled.div`
     transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
 
     &:hover {
-      border-color: #c9a45c;
-      color: #c9a45c;
-      background: #faf5eb;
+      border-color: #C9A96E;
+      color: #C9A96E;
+      background: #1F1F1F;
       transform: translateY(-2px);
     }
   }
@@ -1323,13 +1318,13 @@ const SafeImage: React.FC<{ src: string; alt: string; style?: React.CSSPropertie
 
   return (
     <img
-      src={imgSrc || '/assets/floksy_rings_cat.png'}
+      src={imgSrc || '/assets/gem_rings_cat.png'}
       alt={alt}
       style={style}
       onLoad={onLoad}
       onError={() => {
-        if (imgSrc !== '/assets/floksy_rings_cat.png') {
-          setImgSrc('/assets/floksy_rings_cat.png');
+        if (imgSrc !== '/assets/gem_rings_cat.png') {
+          setImgSrc('/assets/gem_rings_cat.png');
         }
       }}
     />
@@ -1339,7 +1334,7 @@ const SafeImage: React.FC<{ src: string; alt: string; style?: React.CSSPropertie
 const DEFAULT_ACCORDIONS = [
   {
     id: 'exp',
-    title: 'YOUR FLOKSY JEWEL EXPERIENCE',
+    title: 'YOUR AETHELCARATS EXPERIENCE',
     content: 'Every creation is handcrafted in our Surat atelier using certified conflict-free materials and 100% recycled precious metals. Includes complimentary sizing, insured shipping, and lifetime cleaning.',
     enabled: true,
     defaultOpen: true,
@@ -1425,9 +1420,9 @@ const SaleCountdownTimer: React.FC<{ saleEndsAt: string }> = ({ saleEndsAt }) =>
 
 const getCleanFullDescription = (text: string | undefined, title: string | undefined): string => {
   let dbFull = (text || '').trim();
-  const standardSuffix = "\n\n💎 Handcrafted & Made to Order\nEvery piece we make is done to order right here in our Surat workshop. We never grab pre-made items off a shelf. Our team casts the metal and sets your stones one by one, which means your jewelry gets a proper, secure setting that can handle everyday life. If you need an engagement ring or just want a new piece for yourself, we put it together the right way.\n━━━━━━━━━━━━━━━━━━\n🎨 Customize Your Design\nWe handle both loose diamond sourcing and finished custom jewelry in-house, so changing up a design is no problem at all.\n✔️ Want a bigger center stone?\n✔️ Need a different prong style?\n✔️ Looking for a matching band?\n✔️ Need help sourcing a specific stone?\n✔️ Want a totally new custom design?\nSend over a message and we can work out the details.\n━━━━━━━━━━━━━━━━━━\n🚚 Production & Delivery\n⏱️ Crafting Time: Give us 7 to 12 business days to make it.\n🌐 Delivery: Secure shipping anywhere in the world.\n🎁 Packaging: Arrives packed and ready to gift.\n━━━━━━━━━━━━━━━━━━\n📋 Cancellations & Returns\n* Canceled within 3 hours: 10% fee applies.\n* Canceled after 6 hours: 20% fee applies.\n* Returns: Let us know within 7 days of delivery. Keep in mind that anything custom-made, personalized, or engraved is a final sale.\n━━━━━━━━━━━━━━━━━━\n❤️ About Floksy Jewel\nFloksy Jewel is an actual manufacturing workshop based in Surat. We do not use middlemen. We source the loose lab-grown and natural diamonds ourselves, and we cast and polish the final custom jewelry right here. That means you get the piece straight from the source.\n📩 Reach out if you need advice on picking a stone or want to start a custom build!";
+  const standardSuffix = "\n\n💎 Handcrafted & Made to Order\nEvery piece we make is done to order right here in our Surat workshop. We never grab pre-made items off a shelf. Our team casts the metal and sets your stones one by one, which means your jewelry gets a proper, secure setting that can handle everyday life. If you need an engagement ring or just want a new piece for yourself, we put it together the right way.\n━━━━━━━━━━━━━━━━━━\n🎨 Customize Your Design\nWe handle both loose diamond sourcing and finished custom jewelry in-house, so changing up a design is no problem at all.\n✔️ Want a bigger center stone?\n✔️ Need a different prong style?\n✔️ Looking for a matching band?\n✔️ Need help sourcing a specific stone?\n✔️ Want a totally new custom design?\nSend over a message and we can work out the details.\n━━━━━━━━━━━━━━━━━━\n🚚 Production & Delivery\n⏱️ Crafting Time: Give us 7 to 12 business days to make it.\n🌐 Delivery: Secure shipping anywhere in the world.\n🎁 Packaging: Arrives packed and ready to gift.\n━━━━━━━━━━━━━━━━━━\n📋 Cancellations & Returns\n* Canceled within 3 hours: 10% fee applies.\n* Canceled after 6 hours: 20% fee applies.\n* Returns: Let us know within 7 days of delivery. Keep in mind that anything custom-made, personalized, or engraved is a final sale.\n━━━━━━━━━━━━━━━━━━\n❤️ About AethelCarats Fine Jewellery Atelier\nAethelCarats Fine Jewellery Atelier is an actual manufacturing workshop based in Surat. We do not use middlemen. We source the loose lab-grown and natural diamonds ourselves, and we cast and polish the final custom jewelry right here. That means you get the piece straight from the source.\n📩 Reach out if you need advice on picking a stone or want to start a custom build!";
 
-  if (dbFull.length > 500 && dbFull.includes('Floksy Jewel') && dbFull.includes('Surat')) {
+  if (dbFull.length > 500 && (dbFull.includes('AethelCarats') || dbFull.includes('Aura Diamond Atelier')) && dbFull.includes('Surat')) {
     return dbFull;
   }
 
@@ -1452,7 +1447,7 @@ const getCleanFullDescription = (text: string | undefined, title: string | undef
   }
 
   if (!cleanBase) {
-    cleanBase = title || 'Floksy Jewel Fine Jewelry Piece';
+    cleanBase = title || 'AethelCarats Fine Jewellery Atelier Fine Jewelry Piece';
   }
 
   return cleanBase + standardSuffix;
@@ -1505,11 +1500,11 @@ export const ProductDetailPage: React.FC = () => {
 
   const [siteSettings, setSiteSettings] = useState<Record<string, any>>({
     enableConsultAtelierExpert: 'true',
-    consultTitle: 'Consult a Floksy Atelier Expert',
-    consultDescription: 'Speak directly with our Floksy Jewel specialists regarding custom design, diamond selection, or sizing guidance.',
+    consultTitle: 'Consult an AethelCarats Atelier Expert',
+    consultDescription: 'Speak directly with our AethelCarats Fine Jewellery Atelier specialists regarding custom design, diamond selection, or sizing guidance.',
     consultPhone: '+91973785306',
     consultPhoneLabel: 'Call Atelier',
-    consultEmail: 'contact@floksyjewel.com',
+    consultEmail: 'concierge@aethelcarats.com',
     consultEmailLabel: 'Email Concierge',
     consultCloseLabel: 'Close',
   });
@@ -1586,7 +1581,7 @@ export const ProductDetailPage: React.FC = () => {
             setFetchStatus('success');
 
             try {
-              const rawStored = localStorage.getItem('fj_recently_viewed');
+              const rawStored = localStorage.getItem('app_recently_viewed');
               const storedList = rawStored ? JSON.parse(rawStored) : [];
               const targetTitle = (fetchedProduct.title || fetchedProduct.name || '').trim().toLowerCase();
               const filtered = storedList.filter((item: any) => {
@@ -1598,13 +1593,26 @@ export const ProductDetailPage: React.FC = () => {
                 return true;
               });
               const updatedList = [fetchedProduct, ...filtered].slice(0, 10);
-              localStorage.setItem('fj_recently_viewed', JSON.stringify(updatedList));
+              localStorage.setItem('app_recently_viewed', JSON.stringify(updatedList));
             } catch (e) {}
 
             if (fetchedProduct.metal) {
               const initMetal = fetchedProduct.metal.includes('Silver') ? '14K White Gold' : fetchedProduct.metal;
               setSelectedMetal(initMetal);
               setSelectedMetalCode(initMetal.includes('18K') ? '18k' : '14k');
+            } else if (fetchedProduct.metalsConfig) {
+              let mList = fetchedProduct.metalsConfig;
+              if (typeof mList === 'string') {
+                try { mList = JSON.parse(mList); } catch (e) {}
+              }
+              if (Array.isArray(mList) && mList.length > 0) {
+                const first = mList[0];
+                const firstLabel = typeof first === 'string' ? first : (first.label || first.name);
+                if (firstLabel) {
+                  setSelectedMetal(firstLabel);
+                  setSelectedMetalCode(String(firstLabel).includes('18K') ? '18k' : '14k');
+                }
+              }
             }
 
             api.get(`/product-page-content/${fetchedProduct.id}`).then((res) => {
@@ -1746,7 +1754,7 @@ export const ProductDetailPage: React.FC = () => {
     return (
       <PageWrapper style={{ textAlign: 'center', padding: 80 }}>
         <div style={{ fontFamily: 'Cormorant Garamond, serif', fontSize: '1.6rem', color: '#c9a45c', letterSpacing: '0.08em' }}>
-          LOADING FLOKSY JEWEL ATELIER PRODUCT...
+          LOADING AETHELCARATS PRODUCT...
         </div>
       </PageWrapper>
     );
@@ -1827,48 +1835,75 @@ export const ProductDetailPage: React.FC = () => {
   );
 
   // Variation & Total Price Calculations
+  const isProductOnSale = Boolean(
+    product.onSale === true && (
+      (product.comparePrice && Number(product.comparePrice) > Number(product.price)) ||
+      (product.salePrice && Number(product.salePrice) > 0)
+    )
+  );
+
+  const activeComparePrice = (isProductOnSale && product.comparePrice && Number(product.comparePrice) > Number(product.price))
+    ? Number(product.comparePrice)
+    : (isProductOnSale && product.salePrice && Number(product.price) > Number(product.salePrice)
+        ? Number(product.price)
+        : null);
+
+  let parsedMetalsList: any = product.metalsConfig;
+  if (typeof parsedMetalsList === 'string') {
+    try {
+      parsedMetalsList = JSON.parse(parsedMetalsList);
+    } catch (e) {
+      parsedMetalsList = [];
+    }
+  }
+
+  const availableMetals = (!Array.isArray(parsedMetalsList) || parsedMetalsList.length === 0)
+    ? [
+        { label: '14K Yellow Gold', code: '14k', priceAdjustment: 0 },
+        { label: '14K White Gold', code: '14k', priceAdjustment: 0 },
+        { label: '14K Rose Gold', code: '14k', priceAdjustment: 0 },
+        { label: '18K Yellow Gold', code: '18k', priceAdjustment: 250 },
+        { label: '18K White Gold', code: '18k', priceAdjustment: 350 },
+        { label: '18K Rose Gold', code: '18k', priceAdjustment: 350 },
+      ]
+    : parsedMetalsList.map((m: any) => {
+        if (typeof m === 'string') {
+          return {
+            label: m,
+            code: m.toLowerCase().includes('18k') ? '18k' : '14k',
+            priceAdjustment: 0,
+          };
+        }
+        return {
+          label: m.label || m.name || String(m),
+          code: m.code || (String(m.label || '').toLowerCase().includes('18k') ? '18k' : '14k'),
+          priceAdjustment: typeof m.priceAdjustment === 'number' ? m.priceAdjustment : 0,
+        };
+      });
+
   const matchingVariation = (product.variations || []).find((v: any) => {
     const matchMetal = v.metal ? v.metal.toLowerCase() === selectedMetal.toLowerCase() : true;
     const matchSize = isRingProduct && selectedSize !== 'Select' ? (v.ringSize ? String(v.ringSize) === String(selectedSize) : true) : true;
     return matchMetal && matchSize;
   });
 
-  const isProductOnSale = Boolean(product.onSale || (product.salePrice && Number(product.salePrice) > 0));
-  const activeComparePrice = product.comparePrice ? Number(product.comparePrice) : (isProductOnSale && product.salePrice ? Number((product as any).originalPublicPrice || product.price) : null);
-
   let baseVariationPrice = matchingVariation?.price;
   if (!baseVariationPrice) {
-    const metalObj = (product.metalsConfig || []).find((m: any) => m.label === selectedMetal);
-    baseVariationPrice = (product.price || 2500) + (metalObj?.priceAdjustment || 0);
+    const metalObj = availableMetals.find((m: any) => m.label.toLowerCase() === selectedMetal.toLowerCase());
+    const effectiveBasePrice = (isProductOnSale && product.salePrice && Number(product.salePrice) > 0)
+      ? Number(product.salePrice)
+      : (product.price || 2500);
+    baseVariationPrice = effectiveBasePrice + (metalObj?.priceAdjustment || 0);
   }
 
   const customOptionsTotal = Object.values(selectedCustomOptions).reduce((sum, item) => sum + (item.priceAdjustment || 0), 0);
   const totalPrice = baseVariationPrice + customOptionsTotal;
 
   let compareTotalPrice: number | null = null;
-  if (activeComparePrice && activeComparePrice > product.price) {
-    const metalObj = (product.metalsConfig || []).find((m: any) => m.label === selectedMetal);
+  if (isProductOnSale && activeComparePrice && activeComparePrice > totalPrice) {
+    const metalObj = availableMetals.find((m: any) => m.label.toLowerCase() === selectedMetal.toLowerCase());
     compareTotalPrice = activeComparePrice + (metalObj?.priceAdjustment || 0) + customOptionsTotal;
   }
-
-  const rawMetalsList = (product.metalsConfig && product.metalsConfig.length > 0)
-    ? product.metalsConfig.filter((m: any) => {
-        const lbl = String(m.label || m || '').toLowerCase();
-        return !lbl.includes('platinum') && !lbl.includes('silver') && !lbl.includes('ag');
-      })
-    : [
-        { label: '14K Yellow Gold', code: '14k', circleColor: '#E8C872' },
-        { label: '14K White Gold', code: '14k', circleColor: '#CBD5E1' },
-        { label: '14K Rose Gold', code: '14k', circleColor: '#E4A8A5' },
-        { label: '18K Yellow Gold', code: '18k', circleColor: '#E8C872' },
-        { label: '18K White Gold', code: '18k', circleColor: '#CBD5E1' },
-        { label: '18K Rose Gold', code: '18k', circleColor: '#E4A8A5' },
-      ];
-
-  const REFERENCE_METALS_LIST = rawMetalsList.filter((m: any) => {
-    const lbl = String(m.label || m || '').toLowerCase();
-    return !lbl.includes('9k') && !lbl.includes('10k') && !lbl.includes('platinum') && !lbl.includes('silver') && !lbl.includes('ag');
-  });
 
   const RING_SIZES = ['Select', 'US 4', 'US 4.5', 'US 5', 'US 5.5', 'US 6', 'US 6.5', 'US 7', 'US 7.5', 'US 8', 'US 8.5', 'US 9', 'US 9.5', 'US 10', 'US 10.5', 'US 11', 'US 11.5', 'US 12'];
 
@@ -2104,11 +2139,11 @@ export const ProductDetailPage: React.FC = () => {
 
             <SectionDividerBlock>
               <PriceDisplayBox style={{ marginTop: 0, display: 'flex', alignItems: 'center', gap: 14, flexWrap: 'wrap' }}>
-                <span className="current-price" style={{ color: isProductOnSale ? '#d93838' : '#1f1f1f', fontWeight: 700 }}>
+                <span className="current-price" style={{ color: isProductOnSale ? '#E53E3E' : '#C9A96E' }}>
                   ${totalPrice.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                 </span>
-                {compareTotalPrice && compareTotalPrice > totalPrice && (
-                  <span className="compare-price" style={{ fontSize: '1.2rem', color: '#999388', textDecoration: 'line-through' }}>
+                {isProductOnSale && compareTotalPrice !== null && compareTotalPrice > totalPrice && (
+                  <span className="compare-price">
                     ${compareTotalPrice.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                   </span>
                 )}
@@ -2132,29 +2167,19 @@ export const ProductDetailPage: React.FC = () => {
                   <span className="value">{selectedMetal}</span>
                 </MetalHeaderTitle>
                 <MetalTilesRow>
-                  {(
-                    (product as any).metalsConfig && Array.isArray((product as any).metalsConfig) && (product as any).metalsConfig.length > 0
-                      ? REFERENCE_METALS_LIST.filter((rm) =>
-                          (product as any).metalsConfig.some(
-                            (pm: any) =>
-                              (pm.label || pm.name || String(pm)).toLowerCase() === rm.label.toLowerCase() ||
-                              (pm.code || String(pm)).toLowerCase() === rm.code.toLowerCase()
-                          )
-                        )
-                      : REFERENCE_METALS_LIST
-                  ).map((m, i) => (
-                    <MetalRectTile
+                  {availableMetals.map((m: any, i: number) => (
+                    <MetalPillButton
                       key={i}
-                      $isSelected={selectedMetal === m.label}
-                      $circleBorderColor={m.circleColor}
+                      type="button"
+                      $isSelected={selectedMetal.toLowerCase() === m.label.toLowerCase()}
                       onClick={() => {
                         setSelectedMetal(m.label);
                         setSelectedMetalCode(m.code);
                       }}
                       title={m.label}
                     >
-                      <div className="circle-ring">{m.code}</div>
-                    </MetalRectTile>
+                      {m.label}
+                    </MetalPillButton>
                   ))}
                 </MetalTilesRow>
               </SectionDividerBlock>
@@ -2208,27 +2233,7 @@ export const ProductDetailPage: React.FC = () => {
               </SectionDividerBlock>
             )}
 
-            {/* FREE ENGRAVING */}
-            <SectionDividerBlock>
-              <EngravingRow>
-                <EngravingToggleButton
-                  type="button"
-                  onClick={() => setShowEngravingInput(!showEngravingInput)}
-                >
-                  <span>{showEngravingInput ? '−' : '+'} Add Free Engraving</span>
-                  <span className="info-circle">i</span>
-                </EngravingToggleButton>
-                {showEngravingInput && (
-                  <EngravingInputField
-                    type="text"
-                    maxLength={25}
-                    placeholder="Enter custom laser text (Max 25 characters)"
-                    value={engravingText}
-                    onChange={(e) => setEngravingText(e.target.value.slice(0, 25))}
-                  />
-                )}
-              </EngravingRow>
-            </SectionDividerBlock>
+
 
             {/* CUSTOM OPTIONS */}
             {Boolean(product.enableCustomOptions) && parsedCustomOptions.length > 0 && (
@@ -2533,54 +2538,54 @@ export const ProductDetailPage: React.FC = () => {
                     </AccordionHeader>
                     <AccordionBody $open={isOpen}>
                       {acc.description && (
-                        <div style={{ fontSize: '0.85rem', color: '#55524d', marginBottom: (acc.items && acc.items.length > 0) ? 12 : 0, lineHeight: 1.6 }}>
+                        <div style={{ fontSize: '0.88rem', color: '#D8D2C5', marginBottom: (acc.items && acc.items.length > 0) ? 14 : 0, lineHeight: 1.7 }}>
                           {acc.description}
                         </div>
                       )}
                       {acc.items && Array.isArray(acc.items) && acc.items.length > 0 ? (
                         <div style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
                           {(acc.type === 'SPECIFICATIONS' || (acc.title || '').toUpperCase().includes('SPECIFICATION')) ? (
-                            <div style={{ background: '#faf8f5', border: '1px solid #e8e3d9', padding: 16, borderRadius: 6 }}>
-                              <div style={{ fontSize: '0.78rem', fontWeight: 700, letterSpacing: '0.08em', textTransform: 'uppercase', color: '#c9a45c', marginBottom: 10 }}>
+                            <div style={{ background: '#151515', border: '1px solid rgba(140, 116, 75, 0.25)', padding: 18, borderRadius: 6, boxShadow: '0 4px 16px rgba(0, 0, 0, 0.4)' }}>
+                              <div style={{ fontSize: '0.78rem', fontWeight: 700, letterSpacing: '0.1em', textTransform: 'uppercase', color: '#C9A96E', marginBottom: 12 }}>
                                 SPECIFICATION DETAILS
                               </div>
-                              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '10px 16px', fontSize: '0.85rem' }}>
+                              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '12px 18px', fontSize: '0.85rem' }}>
                                 {acc.items.map((item: any, itemIdx: number) => (
                                   <div key={item.id || itemIdx}>
-                                    {item.title && <strong style={{ color: '#19202a' }}>{item.title}: </strong>}
-                                    <span>{item.value || item.description || '-'}</span>
+                                    {item.title && <strong style={{ color: '#F5F1E8', fontWeight: 600 }}>{item.title}: </strong>}
+                                    <span style={{ color: '#D8D2C5' }}>{item.value || item.description || '-'}</span>
                                   </div>
                                 ))}
                               </div>
                             </div>
                           ) : (
                             acc.items.map((item: any, itemIdx: number) => (
-                              <div key={item.id || itemIdx} style={{ background: '#faf8f5', border: '1px solid #e8e3d9', padding: 14, borderRadius: 6, display: 'flex', flexDirection: 'column', gap: 6 }}>
+                              <div key={item.id || itemIdx} style={{ background: '#151515', border: '1px solid rgba(140, 116, 75, 0.25)', padding: 16, borderRadius: 6, display: 'flex', flexDirection: 'column', gap: 6, boxShadow: '0 4px 16px rgba(0, 0, 0, 0.35)' }}>
                                 {item.imageUrl && (
                                   <img src={item.imageUrl} alt={item.title || 'Atelier Media'} style={{ width: '100%', maxHeight: 220, objectFit: 'cover', borderRadius: 4, marginBottom: 6 }} />
                                 )}
                                 {(item.title || item.icon) && (
-                                  <div style={{ fontSize: '0.92rem', fontWeight: 700, color: '#19202a', display: 'flex', alignItems: 'center', gap: 8 }}>
-                                    {item.icon === 'Truck' && <Truck size={16} color="#c9a45c" />}
-                                    {item.icon === 'ShieldCheck' && <ShieldCheck size={16} color="#c9a45c" />}
-                                    {item.icon === 'Award' && <Award size={16} color="#c9a45c" />}
-                                    {item.icon === 'Sparkles' && <Sparkles size={16} color="#c9a45c" />}
+                                  <div style={{ fontSize: '0.92rem', fontWeight: 700, color: '#F5F1E8', display: 'flex', alignItems: 'center', gap: 8 }}>
+                                    {item.icon === 'Truck' && <Truck size={16} color="#C9A96E" />}
+                                    {item.icon === 'ShieldCheck' && <ShieldCheck size={16} color="#C9A96E" />}
+                                    {item.icon === 'Award' && <Award size={16} color="#C9A96E" />}
+                                    {item.icon === 'Sparkles' && <Sparkles size={16} color="#C9A96E" />}
                                     {item.title}
                                   </div>
                                 )}
                                 {item.value && (
-                                  <div style={{ fontSize: '0.88rem', fontWeight: 600, color: '#c9a45c' }}>
+                                  <div style={{ fontSize: '0.88rem', fontWeight: 600, color: '#C9A96E' }}>
                                     {item.value}
                                   </div>
                                 )}
-                                {item.description && <div style={{ fontSize: '0.85rem', color: '#555', lineHeight: 1.5 }}>{item.description}</div>}
+                                {item.description && <div style={{ fontSize: '0.85rem', color: '#D8D2C5', lineHeight: 1.6 }}>{item.description}</div>}
                               </div>
                             ))
                           )}
                         </div>
                       ) : (
                         !acc.description && (
-                          <div style={{ whiteSpace: 'pre-line', fontSize: '0.88rem', color: '#4a4843', lineHeight: 1.7 }}>
+                          <div style={{ whiteSpace: 'pre-line', fontSize: '0.88rem', color: '#D8D2C5', lineHeight: 1.7 }}>
                             {acc.content || 'Information for this section.'}
                           </div>
                         )
@@ -2603,18 +2608,18 @@ export const ProductDetailPage: React.FC = () => {
       {/* CONCIERGE EXPERT MODAL */}
       {showConciergeModal && siteSettings.enableConsultAtelierExpert !== 'false' && (
         <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.6)', zIndex: 9999, display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
-          <div style={{ background: '#fff', padding: 32, borderRadius: 8, maxWidth: 500, width: '90%', textAlign: 'center' }}>
-            <h3 style={{ fontFamily: 'Cormorant Garamond, serif', fontSize: '1.8rem', marginBottom: 12 }}>
-              {siteSettings.consultTitle || 'Consult a Floksy Atelier Expert'}
+          <div style={{ background: '#151515', border: '1px solid rgba(140, 116, 75, 0.3)', padding: 32, borderRadius: 8, maxWidth: 500, width: '90%', textAlign: 'center', color: '#F5F1E8' }}>
+            <h3 style={{ fontFamily: 'Cormorant Garamond, serif', fontSize: '1.8rem', color: '#F5F1E8', marginBottom: 12 }}>
+              {siteSettings.consultTitle || 'Consult an Atelier Expert'}
             </h3>
-            <p style={{ fontSize: '0.9rem', color: '#666', marginBottom: 20, whiteSpace: 'pre-line' }}>
-              {siteSettings.consultDescription || 'Speak directly with our Floksy Jewel specialists regarding custom design, diamond selection, or sizing guidance.'}
+            <p style={{ fontSize: '0.9rem', color: '#A8A8A8', marginBottom: 20, whiteSpace: 'pre-line' }}>
+              {siteSettings.consultDescription || 'Speak directly with our AethelCarats specialists regarding custom design, diamond selection, or sizing guidance.'}
             </p>
             <div style={{ display: 'flex', flexDirection: 'column', gap: 12, marginBottom: 20 }}>
               {siteSettings.consultPhone && siteSettings.consultPhone.trim() !== '' && (
                 <a
                   href={`tel:${siteSettings.consultPhone.replace(/[^\d+]/g, '')}`}
-                  style={{ padding: '12px', background: '#faf8f5', border: '1px solid #e8e3d9', borderRadius: 4, textDecoration: 'none', color: '#19202a', fontWeight: 600 }}
+                  style={{ padding: '12px', background: '#111111', border: '1px solid rgba(140, 116, 75, 0.25)', borderRadius: 4, textDecoration: 'none', color: '#F5F1E8', fontWeight: 600 }}
                 >
                   ☎ {siteSettings.consultPhoneLabel || 'Call Atelier'}: {siteSettings.consultPhone}
                 </a>
@@ -2622,7 +2627,7 @@ export const ProductDetailPage: React.FC = () => {
               {siteSettings.consultEmail && siteSettings.consultEmail.trim() !== '' && (
                 <a
                   href={`mailto:${siteSettings.consultEmail.trim()}`}
-                  style={{ padding: '12px', background: '#faf8f5', border: '1px solid #e8e3d9', borderRadius: 4, textDecoration: 'none', color: '#19202a', fontWeight: 600 }}
+                  style={{ padding: '12px', background: '#111111', border: '1px solid rgba(140, 116, 75, 0.25)', borderRadius: 4, textDecoration: 'none', color: '#F5F1E8', fontWeight: 600 }}
                 >
                   ✉ {siteSettings.consultEmailLabel || 'Email Concierge'}: {siteSettings.consultEmail}
                 </a>
@@ -2630,7 +2635,7 @@ export const ProductDetailPage: React.FC = () => {
             </div>
             <button
               onClick={() => setShowConciergeModal(false)}
-              style={{ padding: '10px 24px', background: '#19202a', color: '#fff', border: 'none', borderRadius: 4, cursor: 'pointer', fontWeight: 600 }}
+              style={{ padding: '10px 24px', background: '#C9A96E', color: '#0B0B0B', border: 'none', borderRadius: 4, cursor: 'pointer', fontWeight: 700 }}
             >
               {siteSettings.consultCloseLabel || 'Close'}
             </button>

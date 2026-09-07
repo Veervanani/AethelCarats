@@ -1,4 +1,4 @@
-import { Request, Response } from 'express';
+﻿import { Request, Response } from 'express';
 import { AuthRequest } from '../middleware/auth';
 import prisma from '../prisma';
 
@@ -17,13 +17,13 @@ export const getSeoMetadata = async (req: Request, res: Response) => {
 
     const seo = await prisma.seoMetadata.findFirst({ where });
     res.json(seo || {
-      seoTitle: 'FLOKSY JEWEL | High Jewellery & Natural Diamond Vault',
-      metaDescription: 'Discover Floksy Jewel bespoke fine jewellery collections and certified loose diamonds in The Diamond Vault.',
-      canonicalUrl: 'https://floksyjewel.com',
+      seoTitle: 'AURA DIAMOND ATELIER | High Jewellery & Natural Diamond Vault',
+      metaDescription: 'Discover Aura Diamond Atelier bespoke fine jewellery collections and certified loose diamonds in The Diamond Vault.',
+      canonicalUrl: 'https://auroradiamonds.com',
       robots: 'index, follow',
-      ogTitle: 'FLOKSY JEWEL | International Luxury Fine Jewellery',
+      ogTitle: 'AURA DIAMOND ATELIER | International Luxury Fine Jewellery',
       ogDescription: 'Certified natural & lab-grown diamonds, engagement rings, bespoke craftsmanship.',
-      ogImage: '/assets/floksy_hero_desktop.png',
+      ogImage: '/assets/gem_hero_desktop.png',
     });
   } catch (error) {
     res.status(500).json({ message: 'Error fetching SEO metadata' });
@@ -80,7 +80,7 @@ export const createRedirect = async (req: AuthRequest, res: Response) => {
 
 export const generateSitemapXml = async (req: Request, res: Response) => {
   try {
-    const baseUrl = process.env.PUBLIC_SITE_URL || 'https://floksyjewel.com';
+    const baseUrl = process.env.PUBLIC_SITE_URL || 'https://auroradiamonds.com';
 
     const [products, diamonds, collections, pages] = await Promise.all([
       prisma.product.findMany({ where: { status: 'ACTIVE' }, select: { slug: true, updatedAt: true } }),
@@ -138,7 +138,7 @@ export const generateSitemapXml = async (req: Request, res: Response) => {
 };
 
 export const generateRobotsTxt = (req: Request, res: Response) => {
-  const baseUrl = process.env.PUBLIC_SITE_URL || 'https://floksyjewel.com';
+  const baseUrl = process.env.PUBLIC_SITE_URL || 'https://auroradiamonds.com';
   const txt = `User-agent: *
 Disallow: /admin/
 Disallow: /account/

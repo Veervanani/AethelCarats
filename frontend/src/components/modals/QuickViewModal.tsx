@@ -35,8 +35,8 @@ const Overlay = styled.div<{ $isOpen: boolean }>`
 `;
 
 const ModalContainer = styled.div`
-  background-color: #ffffff;
-  border: 1px solid #d9d3c7;
+  background-color: #151515;
+  border: 1px solid rgba(140, 116, 75, 0.25);
   width: 100%;
   max-width: 900px;
   border-radius: 8px;
@@ -72,9 +72,9 @@ const CloseButton = styled.button`
   width: 36px;
   height: 36px;
   border-radius: 50%;
-  background: rgba(255, 255, 255, 0.9);
-  border: 1px solid #e8e3d9;
-  color: #1f1f1f;
+  background: #111111;
+  border: 1px solid rgba(140, 116, 75, 0.3);
+  color: #F5F1E8;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -84,8 +84,8 @@ const CloseButton = styled.button`
 
   &:hover {
     background: #1f1f1f;
-    color: #c9a45c;
-    border-color: #1f1f1f;
+    color: #C9A96E;
+    border-color: #C9A96E;
   }
 `;
 
@@ -101,19 +101,19 @@ const ModalContent = styled.div`
 `;
 
 const ImageGallerySection = styled.div`
-  background-color: #faf8f5;
+  background-color: #0B0B0B;
   padding: 28px;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
   position: relative;
-  border-right: 1px solid #f0eae1;
+  border-right: 1px solid rgba(140, 116, 75, 0.2);
 
   @media (max-width: 768px) {
     padding: 20px;
     border-right: none;
-    border-bottom: 1px solid #f0eae1;
+    border-bottom: 1px solid rgba(140, 116, 75, 0.2);
   }
 
   .main-img-box {
@@ -144,14 +144,14 @@ const ImageGallerySection = styled.div`
       width: 52px;
       height: 52px;
       border-radius: 4px;
-      border: 1px solid #e8e3d9;
+      border: 1px solid rgba(140, 116, 75, 0.25);
       cursor: pointer;
       overflow: hidden;
-      background: #ffffff;
+      background: #111111;
       transition: all 0.2s ease;
 
       &.active {
-        border-color: #c9a45c;
+        border-color: #C9A96E;
         box-shadow: 0 0 0 2px rgba(201, 164, 92, 0.3);
       }
 
@@ -179,7 +179,7 @@ const InfoSection = styled.div`
     font-weight: 700;
     letter-spacing: 0.16em;
     text-transform: uppercase;
-    color: #c9a45c;
+    color: #C9A96E;
     margin-bottom: 8px;
   }
 
@@ -187,7 +187,7 @@ const InfoSection = styled.div`
     font-family: 'Cormorant Garamond', Georgia, serif;
     font-size: 1.6rem;
     font-weight: 600;
-    color: #1f1f1f;
+    color: #F5F1E8;
     line-height: 1.3;
     margin: 0 0 12px 0;
 
@@ -205,7 +205,7 @@ const InfoSection = styled.div`
     .price {
       font-size: 1.4rem;
       font-weight: 700;
-      color: #1f1f1f;
+      color: #F5F1E8;
 
       &.sale {
         color: #d93838;
@@ -239,11 +239,11 @@ const OptionGroup = styled.div`
     font-weight: 700;
     letter-spacing: 0.1em;
     text-transform: uppercase;
-    color: #1f1f1f;
+    color: #F5F1E8;
     margin-bottom: 8px;
 
     span {
-      color: #c9a45c;
+      color: #C9A96E;
       font-weight: 600;
       margin-left: 4px;
     }
@@ -260,15 +260,16 @@ const MetalPill = styled.button<{ $active: boolean }>`
   padding: 7px 12px;
   font-size: 0.78rem;
   font-weight: 600;
-  background-color: ${({ $active }) => ($active ? '#1f1f1f' : '#faf8f5')};
-  color: ${({ $active }) => ($active ? '#ffffff' : '#1f1f1f')};
-  border: 1px solid ${({ $active }) => ($active ? '#1f1f1f' : '#e8e3d9')};
+  background-color: ${({ $active }) => ($active ? '#C9A96E' : '#111111')};
+  color: ${({ $active }) => ($active ? '#0B0B0B' : '#D8D2C5')};
+  border: 1px solid ${({ $active }) => ($active ? '#C9A96E' : 'rgba(140, 116, 75, 0.25)')};
   border-radius: 4px;
   cursor: pointer;
   transition: all 0.2s ease;
 
   &:hover {
-    border-color: #c9a45c;
+    border-color: #C9A96E;
+    color: ${({ $active }) => ($active ? '#0B0B0B' : '#F5F1E8')};
   }
 `;
 
@@ -276,16 +277,16 @@ const SelectBox = styled.select`
   width: 100%;
   padding: 10px 14px;
   font-size: 0.88rem;
-  color: #1f1f1f;
-  background: #faf8f5;
-  border: 1px solid #e8e3d9;
+  color: #F5F1E8;
+  background: #0B0B0B;
+  border: 1px solid rgba(140, 116, 75, 0.25);
   border-radius: 4px;
   outline: none;
   font-family: inherit;
   cursor: pointer;
 
   &:focus {
-    border-color: #c9a45c;
+    border-color: #C9A96E;
   }
 `;
 
@@ -298,9 +299,9 @@ const QuantityRow = styled.div`
   .qty-picker {
     display: flex;
     align-items: center;
-    border: 1px solid #e8e3d9;
+    border: 1px solid rgba(140, 116, 75, 0.25);
     border-radius: 4px;
-    background: #faf8f5;
+    background: #0B0B0B;
 
     button {
       background: none;
@@ -311,10 +312,11 @@ const QuantityRow = styled.div`
       align-items: center;
       justify-content: center;
       cursor: pointer;
-      color: #1f1f1f;
+      color: #F5F1E8;
 
       &:hover {
-        background: #f0e9dc;
+        background: #1f1f1f;
+        color: #C9A96E;
       }
     }
 
@@ -322,7 +324,7 @@ const QuantityRow = styled.div`
       padding: 0 12px;
       font-weight: 700;
       font-size: 0.95rem;
-      color: #1f1f1f;
+      color: #F5F1E8;
       min-width: 24px;
       text-align: center;
     }
@@ -337,9 +339,9 @@ const ActionButtonsGroup = styled.div`
   .add-bag-btn {
     width: 100%;
     padding: 14px;
-    background-color: #1f1f1f;
-    color: #ffffff;
-    border: 1px solid #1f1f1f;
+    background-color: #C9A96E;
+    color: #0B0B0B;
+    border: 1px solid #C9A96E;
     border-radius: 4px;
     font-size: 0.85rem;
     font-weight: 700;
@@ -353,9 +355,9 @@ const ActionButtonsGroup = styled.div`
     transition: all 0.2s ease;
 
     &:hover {
-      background-color: #c9a45c;
-      border-color: #c9a45c;
-      color: #1f1f1f;
+      background-color: #DFBA73;
+      border-color: #DFBA73;
+      color: #0B0B0B;
     }
   }
 
@@ -363,8 +365,8 @@ const ActionButtonsGroup = styled.div`
     width: 100%;
     padding: 12px;
     background-color: transparent;
-    color: #1f1f1f;
-    border: 1px solid #d9d3c7;
+    color: #F5F1E8;
+    border: 1px solid rgba(140, 116, 75, 0.25);
     border-radius: 4px;
     font-size: 0.78rem;
     font-weight: 600;
@@ -378,9 +380,9 @@ const ActionButtonsGroup = styled.div`
     transition: all 0.2s ease;
 
     &:hover {
-      border-color: #c9a45c;
-      color: #c9a45c;
-      background: #faf8f5;
+      border-color: #C9A96E;
+      color: #C9A96E;
+      background: #0B0B0B;
     }
   }
 `;
@@ -451,7 +453,7 @@ export const QuickViewModal: React.FC = () => {
       if (url && !imagesList.includes(url)) imagesList.push(url);
     });
   }
-  if (imagesList.length === 0) imagesList.push('/assets/floksy_rings_cat.png');
+  if (imagesList.length === 0) imagesList.push('/assets/gem_rings_cat.png');
 
   const currentPrice = product.salePrice && product.onSale ? product.salePrice : (product.price || 0);
   const comparePrice = product.comparePrice;
@@ -486,7 +488,7 @@ export const QuickViewModal: React.FC = () => {
               <img
                 src={imagesList[activeImgIdx] || imagesList[0]}
                 alt={product.name}
-                onError={(e: any) => { e.target.src = '/assets/floksy_rings_cat.png'; }}
+                onError={(e: any) => { e.target.src = '/assets/gem_rings_cat.png'; }}
               />
             </div>
 
@@ -507,7 +509,7 @@ export const QuickViewModal: React.FC = () => {
 
           <InfoSection>
             <div>
-              <div className="brand-badge">FLOKSY JEWEL ATELIER</div>
+              <div className="brand-badge">AETHELCARATS FINE JEWELLERY ATELIER</div>
               <h2>{product.name}</h2>
 
               <div className="price-row">

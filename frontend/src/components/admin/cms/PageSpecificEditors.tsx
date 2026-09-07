@@ -23,11 +23,15 @@ import {
   Settings,
 } from 'lucide-react';
 import { api } from '../../../services/api';
+import { AdminColorPicker } from '../AdminColorPicker';
 
 const EditorContainer = styled.div`
   display: flex;
   flex-direction: column;
   gap: 24px;
+  width: 100%;
+  box-sizing: border-box;
+  min-width: 0;
 `;
 
 const SectionBox = styled.div`
@@ -35,6 +39,9 @@ const SectionBox = styled.div`
   border: 1px solid #e8e3d9;
   border-radius: 6px;
   padding: 24px;
+  width: 100%;
+  box-sizing: border-box;
+  min-width: 0;
 
   h3 {
     font-family: 'Cormorant Garamond', serif;
@@ -51,12 +58,14 @@ const SectionBox = styled.div`
 
 const FormGrid = styled.div<{ $cols?: number }>`
   display: grid;
-  grid-template-columns: repeat(${({ $cols }) => $cols || 2}, 1fr);
+  grid-template-columns: repeat(${({ $cols }) => $cols || 2}, minmax(0, 1fr));
   gap: 16px;
   margin-bottom: 16px;
+  width: 100%;
+  box-sizing: border-box;
 
-  @media (max-width: 768px) {
-    grid-template-columns: 1fr;
+  @media (max-width: 1024px) {
+    grid-template-columns: minmax(0, 1fr);
   }
 `;
 
@@ -64,6 +73,9 @@ const FormGroup = styled.div<{ $full?: boolean }>`
   display: flex;
   flex-direction: column;
   gap: 6px;
+  width: 100%;
+  box-sizing: border-box;
+  min-width: 0;
   ${({ $full }) => $full && 'grid-column: 1 / -1;'}
 
   label {
@@ -85,6 +97,8 @@ const FormGroup = styled.div<{ $full?: boolean }>`
     border-radius: 4px;
     font-size: 0.85rem;
     background: #fffdf9;
+    width: 100%;
+    box-sizing: border-box;
 
     &:focus {
       outline: none;
@@ -214,12 +228,18 @@ export const ContactUsEditor: React.FC<EditorProps> = ({ content, onChange }) =>
         <h3>Page Hero & Introduction</h3>
         <FormGrid>
           <FormGroup $full>
-            <label>Page Heading</label>
-            <input type="text" value={content.heading ?? 'Contact Floksy Jewel'} onChange={(e) => updateField('heading', e.target.value)} />
+            <label>
+              <span>Page Heading</span>
+              <AdminColorPicker label="Color" value={content.headingColor} defaultValue="#1f1f1f" onChange={(val) => updateField('headingColor', val)} />
+            </label>
+            <input type="text" value={content.heading ?? 'Contact Aura Diamond Atelier'} onChange={(e) => updateField('heading', e.target.value)} style={{ color: content.headingColor || undefined }} />
           </FormGroup>
           <FormGroup $full>
-            <label>Subtitle / Intro Description</label>
-            <textarea rows={2} value={content.subheading ?? ''} onChange={(e) => updateField('subheading', e.target.value)} />
+            <label>
+              <span>Subtitle / Intro Description</span>
+              <AdminColorPicker label="Color" value={content.subheadingColor} defaultValue="#55514b" onChange={(val) => updateField('subheadingColor', val)} />
+            </label>
+            <textarea rows={2} value={content.subheading ?? ''} onChange={(e) => updateField('subheading', e.target.value)} style={{ color: content.subheadingColor || undefined }} />
           </FormGroup>
         </FormGrid>
       </SectionBox>
@@ -229,12 +249,18 @@ export const ContactUsEditor: React.FC<EditorProps> = ({ content, onChange }) =>
         <h3>Customer Care Header</h3>
         <FormGrid>
           <FormGroup>
-            <label>Customer Care Heading</label>
-            <input type="text" value={content.customerCareHeading ?? 'CUSTOMER CARE'} onChange={(e) => updateField('customerCareHeading', e.target.value)} />
+            <label>
+              <span>Customer Care Heading</span>
+              <AdminColorPicker label="Color" value={content.customerCareHeadingColor} defaultValue="#1f1f1f" onChange={(val) => updateField('customerCareHeadingColor', val)} />
+            </label>
+            <input type="text" value={content.customerCareHeading ?? 'CUSTOMER CARE'} onChange={(e) => updateField('customerCareHeading', e.target.value)} style={{ color: content.customerCareHeadingColor || undefined }} />
           </FormGroup>
           <FormGroup>
-            <label>Customer Care Description</label>
-            <textarea rows={2} value={content.customerCareDescription ?? ''} onChange={(e) => updateField('customerCareDescription', e.target.value)} />
+            <label>
+              <span>Customer Care Description</span>
+              <AdminColorPicker label="Color" value={content.customerCareDescriptionColor} defaultValue="#55514b" onChange={(val) => updateField('customerCareDescriptionColor', val)} />
+            </label>
+            <textarea rows={2} value={content.customerCareDescription ?? ''} onChange={(e) => updateField('customerCareDescription', e.target.value)} style={{ color: content.customerCareDescriptionColor || undefined }} />
           </FormGroup>
         </FormGrid>
       </SectionBox>
@@ -244,16 +270,25 @@ export const ContactUsEditor: React.FC<EditorProps> = ({ content, onChange }) =>
         <h3>Telephone Assistance Block</h3>
         <FormGrid>
           <FormGroup>
-            <label>Label</label>
-            <input type="text" value={content.phoneLabel ?? 'TELEPHONE ASSISTANCE'} onChange={(e) => updateField('phoneLabel', e.target.value)} />
+            <label>
+              <span>Label</span>
+              <AdminColorPicker label="Color" value={content.phoneLabelColor} defaultValue="#c9a45c" onChange={(val) => updateField('phoneLabelColor', val)} />
+            </label>
+            <input type="text" value={content.phoneLabel ?? 'TELEPHONE ASSISTANCE'} onChange={(e) => updateField('phoneLabel', e.target.value)} style={{ color: content.phoneLabelColor || undefined }} />
           </FormGroup>
           <FormGroup>
-            <label>Phone Number</label>
-            <input type="text" value={content.phone ?? '+91973785306'} onChange={(e) => updateField('phone', e.target.value)} />
+            <label>
+              <span>Phone Number</span>
+              <AdminColorPicker label="Color" value={content.phoneColor} defaultValue="#1f1f1f" onChange={(val) => updateField('phoneColor', val)} />
+            </label>
+            <input type="text" value={content.phone ?? '+91973785306'} onChange={(e) => updateField('phone', e.target.value)} style={{ color: content.phoneColor || undefined }} />
           </FormGroup>
           <FormGroup $full>
-            <label>Business Hours Note</label>
-            <input type="text" value={content.businessHours ?? 'Mon – Sat: 9:00 AM – 7:00 PM GMT'} onChange={(e) => updateField('businessHours', e.target.value)} />
+            <label>
+              <span>Business Hours Note</span>
+              <AdminColorPicker label="Color" value={content.businessHoursColor} defaultValue="#77736c" onChange={(val) => updateField('businessHoursColor', val)} />
+            </label>
+            <input type="text" value={content.businessHours ?? 'Mon – Sat: 9:00 AM – 7:00 PM GMT'} onChange={(e) => updateField('businessHours', e.target.value)} style={{ color: content.businessHoursColor || undefined }} />
           </FormGroup>
         </FormGrid>
       </SectionBox>
@@ -263,16 +298,25 @@ export const ContactUsEditor: React.FC<EditorProps> = ({ content, onChange }) =>
         <h3>Email Concierge Block</h3>
         <FormGrid>
           <FormGroup>
-            <label>Label</label>
-            <input type="text" value={content.emailLabel ?? 'EMAIL CONCIERGE'} onChange={(e) => updateField('emailLabel', e.target.value)} />
+            <label>
+              <span>Label</span>
+              <AdminColorPicker label="Color" value={content.emailLabelColor} defaultValue="#c9a45c" onChange={(val) => updateField('emailLabelColor', val)} />
+            </label>
+            <input type="text" value={content.emailLabel ?? 'EMAIL CONCIERGE'} onChange={(e) => updateField('emailLabel', e.target.value)} style={{ color: content.emailLabelColor || undefined }} />
           </FormGroup>
           <FormGroup>
-            <label>Email Address</label>
-            <input type="email" value={content.email ?? 'contact@floksyjewel.com'} onChange={(e) => updateField('email', e.target.value)} />
+            <label>
+              <span>Email Address</span>
+              <AdminColorPicker label="Color" value={content.emailColor} defaultValue="#1f1f1f" onChange={(val) => updateField('emailColor', val)} />
+            </label>
+            <input type="email" value={content.email ?? 'contact@auroradiamonds.com'} onChange={(e) => updateField('email', e.target.value)} style={{ color: content.emailColor || undefined }} />
           </FormGroup>
           <FormGroup $full>
-            <label>Response Time Guarantee</label>
-            <input type="text" value={content.responseTime ?? 'Responses within 24 business hours'} onChange={(e) => updateField('responseTime', e.target.value)} />
+            <label>
+              <span>Response Time Guarantee</span>
+              <AdminColorPicker label="Color" value={content.responseTimeColor} defaultValue="#77736c" onChange={(val) => updateField('responseTimeColor', val)} />
+            </label>
+            <input type="text" value={content.responseTime ?? 'Responses within 24 business hours'} onChange={(e) => updateField('responseTime', e.target.value)} style={{ color: content.responseTimeColor || undefined }} />
           </FormGroup>
         </FormGrid>
       </SectionBox>
@@ -282,16 +326,25 @@ export const ContactUsEditor: React.FC<EditorProps> = ({ content, onChange }) =>
         <h3>Private Atelier Appointments Block</h3>
         <FormGrid>
           <FormGroup>
-            <label>Location Label</label>
-            <input type="text" value={content.locationLabel ?? 'PRIVATE ATELIER APPOINTMENTS'} onChange={(e) => updateField('locationLabel', e.target.value)} />
+            <label>
+              <span>Location Label</span>
+              <AdminColorPicker label="Color" value={content.locationLabelColor} defaultValue="#c9a45c" onChange={(val) => updateField('locationLabelColor', val)} />
+            </label>
+            <input type="text" value={content.locationLabel ?? 'PRIVATE ATELIER APPOINTMENTS'} onChange={(e) => updateField('locationLabel', e.target.value)} style={{ color: content.locationLabelColor || undefined }} />
           </FormGroup>
           <FormGroup>
-            <label>Address / Location</label>
-            <input type="text" value={content.address ?? 'Surat, India'} onChange={(e) => updateField('address', e.target.value)} />
+            <label>
+              <span>Address / Location</span>
+              <AdminColorPicker label="Color" value={content.addressColor} defaultValue="#1f1f1f" onChange={(val) => updateField('addressColor', val)} />
+            </label>
+            <input type="text" value={content.address ?? 'Surat, India'} onChange={(e) => updateField('address', e.target.value)} style={{ color: content.addressColor || undefined }} />
           </FormGroup>
           <FormGroup $full>
-            <label>Appointment Description</label>
-            <input type="text" value={content.appointmentDescription ?? 'By private appointment only'} onChange={(e) => updateField('appointmentDescription', e.target.value)} />
+            <label>
+              <span>Appointment Description</span>
+              <AdminColorPicker label="Color" value={content.appointmentDescriptionColor} defaultValue="#77736c" onChange={(val) => updateField('appointmentDescriptionColor', val)} />
+            </label>
+            <input type="text" value={content.appointmentDescription ?? 'By private appointment only'} onChange={(e) => updateField('appointmentDescription', e.target.value)} style={{ color: content.appointmentDescriptionColor || undefined }} />
           </FormGroup>
         </FormGrid>
       </SectionBox>
@@ -301,8 +354,11 @@ export const ContactUsEditor: React.FC<EditorProps> = ({ content, onChange }) =>
         <h3>Enquiry Form Headers & Field Labels</h3>
         <FormGrid>
           <FormGroup $full>
-            <label>Form Heading</label>
-            <input type="text" value={content.formHeading ?? 'Send an Enquiry'} onChange={(e) => updateField('formHeading', e.target.value)} />
+            <label>
+              <span>Form Heading</span>
+              <AdminColorPicker label="Color" value={content.formHeadingColor} defaultValue="#1f1f1f" onChange={(val) => updateField('formHeadingColor', val)} />
+            </label>
+            <input type="text" value={content.formHeading ?? 'Send an Enquiry'} onChange={(e) => updateField('formHeading', e.target.value)} style={{ color: content.formHeadingColor || undefined }} />
           </FormGroup>
           <FormGroup>
             <label>First Name Label</label>
@@ -615,12 +671,18 @@ export const ReturnsEditor: React.FC<EditorProps> = ({ content, onChange }) => {
         <h3>Return Policy Header</h3>
         <FormGrid>
           <FormGroup $full>
-            <label>Page Heading</label>
-            <input type="text" value={content.heading || ''} onChange={(e) => updateField('heading', e.target.value)} />
+            <label>
+              <span>Page Heading</span>
+              <AdminColorPicker label="Color" value={content.headingColor} defaultValue="#1f1f1f" onChange={(val) => updateField('headingColor', val)} />
+            </label>
+            <input type="text" value={content.heading || ''} onChange={(e) => updateField('heading', e.target.value)} style={{ color: content.headingColor || undefined }} />
           </FormGroup>
           <FormGroup $full>
-            <label>Policy Introduction</label>
-            <textarea rows={3} value={content.introduction || ''} onChange={(e) => updateField('introduction', e.target.value)} />
+            <label>
+              <span>Policy Introduction</span>
+              <AdminColorPicker label="Color" value={content.introductionColor} defaultValue="#55514b" onChange={(val) => updateField('introductionColor', val)} />
+            </label>
+            <textarea rows={3} value={content.introduction || ''} onChange={(e) => updateField('introduction', e.target.value)} style={{ color: content.introductionColor || undefined }} />
           </FormGroup>
         </FormGrid>
       </SectionBox>
@@ -629,22 +691,34 @@ export const ReturnsEditor: React.FC<EditorProps> = ({ content, onChange }) => {
         <h3>Eligibility & Timelines</h3>
         <FormGrid>
           <FormGroup>
-            <label>Return Window (Days)</label>
-            <input type="text" value={content.returnWindow || ''} onChange={(e) => updateField('returnWindow', e.target.value)} />
+            <label>
+              <span>Return Window (Days)</span>
+              <AdminColorPicker label="Color" value={content.returnWindowColor} defaultValue="#1f1f1f" onChange={(val) => updateField('returnWindowColor', val)} />
+            </label>
+            <input type="text" value={content.returnWindow || ''} onChange={(e) => updateField('returnWindow', e.target.value)} style={{ color: content.returnWindowColor || undefined }} />
           </FormGroup>
           <FormGroup>
-            <label>Refund Processing Time</label>
-            <input type="text" value={content.refundTiming || ''} onChange={(e) => updateField('refundTiming', e.target.value)} />
+            <label>
+              <span>Refund Processing Time</span>
+              <AdminColorPicker label="Color" value={content.refundTimingColor} defaultValue="#1f1f1f" onChange={(val) => updateField('refundTimingColor', val)} />
+            </label>
+            <input type="text" value={content.refundTiming || ''} onChange={(e) => updateField('refundTiming', e.target.value)} style={{ color: content.refundTimingColor || undefined }} />
           </FormGroup>
 
           <FormGroup $full>
-            <label>Return Eligibility Criteria</label>
-            <textarea rows={2} value={content.returnEligibility || ''} onChange={(e) => updateField('returnEligibility', e.target.value)} />
+            <label>
+              <span>Return Eligibility Criteria</span>
+              <AdminColorPicker label="Color" value={content.returnEligibilityColor} defaultValue="#55514b" onChange={(val) => updateField('returnEligibilityColor', val)} />
+            </label>
+            <textarea rows={2} value={content.returnEligibility || ''} onChange={(e) => updateField('returnEligibility', e.target.value)} style={{ color: content.returnEligibilityColor || undefined }} />
           </FormGroup>
 
           <FormGroup $full>
-            <label>Non-Returnable Items</label>
-            <textarea rows={2} value={content.nonReturnableItems || ''} onChange={(e) => updateField('nonReturnableItems', e.target.value)} />
+            <label>
+              <span>Non-Returnable Items</span>
+              <AdminColorPicker label="Color" value={content.nonReturnableItemsColor} defaultValue="#55514b" onChange={(val) => updateField('nonReturnableItemsColor', val)} />
+            </label>
+            <textarea rows={2} value={content.nonReturnableItems || ''} onChange={(e) => updateField('nonReturnableItems', e.target.value)} style={{ color: content.nonReturnableItemsColor || undefined }} />
           </FormGroup>
         </FormGrid>
       </SectionBox>
@@ -653,23 +727,35 @@ export const ReturnsEditor: React.FC<EditorProps> = ({ content, onChange }) => {
         <h3>Process & Gemological Inspection</h3>
         <FormGrid>
           <FormGroup $full>
-            <label>Return Step-by-Step Process</label>
-            <textarea rows={3} value={content.returnProcess || ''} onChange={(e) => updateField('returnProcess', e.target.value)} />
+            <label>
+              <span>Return Step-by-Step Process</span>
+              <AdminColorPicker label="Color" value={content.returnProcessColor} defaultValue="#55514b" onChange={(val) => updateField('returnProcessColor', val)} />
+            </label>
+            <textarea rows={3} value={content.returnProcess || ''} onChange={(e) => updateField('returnProcess', e.target.value)} style={{ color: content.returnProcessColor || undefined }} />
           </FormGroup>
 
           <FormGroup $full>
-            <label>Gemological Inspection Procedure</label>
-            <textarea rows={3} value={content.inspectionProcess || ''} onChange={(e) => updateField('inspectionProcess', e.target.value)} />
+            <label>
+              <span>Gemological Inspection Procedure</span>
+              <AdminColorPicker label="Color" value={content.inspectionProcessColor} defaultValue="#55514b" onChange={(val) => updateField('inspectionProcessColor', val)} />
+            </label>
+            <textarea rows={3} value={content.inspectionProcess || ''} onChange={(e) => updateField('inspectionProcess', e.target.value)} style={{ color: content.inspectionProcessColor || undefined }} />
           </FormGroup>
 
           <FormGroup $full>
-            <label>Custom Jewellery & Bespoke Rules</label>
-            <textarea rows={2} value={content.customJewelleryRules || ''} onChange={(e) => updateField('customJewelleryRules', e.target.value)} />
+            <label>
+              <span>Custom Jewellery & Bespoke Rules</span>
+              <AdminColorPicker label="Color" value={content.customJewelleryRulesColor} defaultValue="#55514b" onChange={(val) => updateField('customJewelleryRulesColor', val)} />
+            </label>
+            <textarea rows={2} value={content.customJewelleryRules || ''} onChange={(e) => updateField('customJewelleryRules', e.target.value)} style={{ color: content.customJewelleryRulesColor || undefined }} />
           </FormGroup>
 
           <FormGroup $full>
-            <label>Loose Diamond Certificate Rules</label>
-            <textarea rows={2} value={content.diamondRules || ''} onChange={(e) => updateField('diamondRules', e.target.value)} />
+            <label>
+              <span>Loose Diamond Certificate Rules</span>
+              <AdminColorPicker label="Color" value={content.diamondRulesColor} defaultValue="#55514b" onChange={(val) => updateField('diamondRulesColor', val)} />
+            </label>
+            <textarea rows={2} value={content.diamondRules || ''} onChange={(e) => updateField('diamondRules', e.target.value)} style={{ color: content.diamondRulesColor || undefined }} />
           </FormGroup>
         </FormGrid>
       </SectionBox>
@@ -687,12 +773,18 @@ export const ShippingEditor: React.FC<EditorProps> = ({ content, onChange }) => 
         <h3>Shipping Policy Header</h3>
         <FormGrid>
           <FormGroup $full>
-            <label>Page Heading</label>
-            <input type="text" value={content.heading || ''} onChange={(e) => updateField('heading', e.target.value)} />
+            <label>
+              <span>Page Heading</span>
+              <AdminColorPicker label="Color" value={content.headingColor} defaultValue="#1f1f1f" onChange={(val) => updateField('headingColor', val)} />
+            </label>
+            <input type="text" value={content.heading || ''} onChange={(e) => updateField('heading', e.target.value)} style={{ color: content.headingColor || undefined }} />
           </FormGroup>
           <FormGroup $full>
-            <label>Introduction</label>
-            <textarea rows={3} value={content.introduction || ''} onChange={(e) => updateField('introduction', e.target.value)} />
+            <label>
+              <span>Introduction</span>
+              <AdminColorPicker label="Color" value={content.introductionColor} defaultValue="#55514b" onChange={(val) => updateField('introductionColor', val)} />
+            </label>
+            <textarea rows={3} value={content.introduction || ''} onChange={(e) => updateField('introduction', e.target.value)} style={{ color: content.introductionColor || undefined }} />
           </FormGroup>
         </FormGrid>
       </SectionBox>
@@ -701,28 +793,46 @@ export const ShippingEditor: React.FC<EditorProps> = ({ content, onChange }) => 
         <h3>Logistics & Transit Insurance Details</h3>
         <FormGrid>
           <FormGroup>
-            <label>Order Processing Time</label>
-            <input type="text" value={content.processingTime || ''} onChange={(e) => updateField('processingTime', e.target.value)} />
+            <label>
+              <span>Order Processing Time</span>
+              <AdminColorPicker label="Color" value={content.processingTimeColor} defaultValue="#1f1f1f" onChange={(val) => updateField('processingTimeColor', val)} />
+            </label>
+            <input type="text" value={content.processingTime || ''} onChange={(e) => updateField('processingTime', e.target.value)} style={{ color: content.processingTimeColor || undefined }} />
           </FormGroup>
           <FormGroup>
-            <label>Estimated Delivery Time</label>
-            <input type="text" value={content.deliveryTime || ''} onChange={(e) => updateField('deliveryTime', e.target.value)} />
+            <label>
+              <span>Estimated Delivery Time</span>
+              <AdminColorPicker label="Color" value={content.deliveryTimeColor} defaultValue="#1f1f1f" onChange={(val) => updateField('deliveryTimeColor', val)} />
+            </label>
+            <input type="text" value={content.deliveryTime || ''} onChange={(e) => updateField('deliveryTime', e.target.value)} style={{ color: content.deliveryTimeColor || undefined }} />
           </FormGroup>
           <FormGroup>
-            <label>Courier Partners</label>
-            <input type="text" value={content.courierInformation || ''} onChange={(e) => updateField('courierInformation', e.target.value)} />
+            <label>
+              <span>Courier Partners</span>
+              <AdminColorPicker label="Color" value={content.courierInformationColor} defaultValue="#1f1f1f" onChange={(val) => updateField('courierInformationColor', val)} />
+            </label>
+            <input type="text" value={content.courierInformation || ''} onChange={(e) => updateField('courierInformation', e.target.value)} style={{ color: content.courierInformationColor || undefined }} />
           </FormGroup>
           <FormGroup>
-            <label>Signature Requirement</label>
-            <input type="text" value={content.signatureRequirement || ''} onChange={(e) => updateField('signatureRequirement', e.target.value)} />
+            <label>
+              <span>Signature Requirement</span>
+              <AdminColorPicker label="Color" value={content.signatureRequirementColor} defaultValue="#1f1f1f" onChange={(val) => updateField('signatureRequirementColor', val)} />
+            </label>
+            <input type="text" value={content.signatureRequirement || ''} onChange={(e) => updateField('signatureRequirement', e.target.value)} style={{ color: content.signatureRequirementColor || undefined }} />
           </FormGroup>
           <FormGroup $full>
-            <label>Transit Insurance Protection</label>
-            <textarea rows={2} value={content.insuranceInformation || ''} onChange={(e) => updateField('insuranceInformation', e.target.value)} />
+            <label>
+              <span>Transit Insurance Protection</span>
+              <AdminColorPicker label="Color" value={content.insuranceInformationColor} defaultValue="#55514b" onChange={(val) => updateField('insuranceInformationColor', val)} />
+            </label>
+            <textarea rows={2} value={content.insuranceInformation || ''} onChange={(e) => updateField('insuranceInformation', e.target.value)} style={{ color: content.insuranceInformationColor || undefined }} />
           </FormGroup>
           <FormGroup $full>
-            <label>International Customs & Duty Rules</label>
-            <textarea rows={2} value={content.customsInformation || ''} onChange={(e) => updateField('customsInformation', e.target.value)} />
+            <label>
+              <span>International Customs & Duty Rules</span>
+              <AdminColorPicker label="Color" value={content.customsInformationColor} defaultValue="#55514b" onChange={(val) => updateField('customsInformationColor', val)} />
+            </label>
+            <textarea rows={2} value={content.customsInformation || ''} onChange={(e) => updateField('customsInformation', e.target.value)} style={{ color: content.customsInformationColor || undefined }} />
           </FormGroup>
         </FormGrid>
       </SectionBox>
@@ -740,12 +850,18 @@ export const SustainabilityEditor: React.FC<EditorProps> = ({ content, onChange 
         <h3>Ethical Sourcing Header</h3>
         <FormGrid>
           <FormGroup $full>
-            <label>Page Heading</label>
-            <input type="text" value={content.heading || ''} onChange={(e) => updateField('heading', e.target.value)} />
+            <label>
+              <span>Page Heading</span>
+              <AdminColorPicker label="Color" value={content.headingColor} defaultValue="#1f1f1f" onChange={(val) => updateField('headingColor', val)} />
+            </label>
+            <input type="text" value={content.heading || ''} onChange={(e) => updateField('heading', e.target.value)} style={{ color: content.headingColor || undefined }} />
           </FormGroup>
           <FormGroup $full>
-            <label>Introduction</label>
-            <textarea rows={3} value={content.introduction || ''} onChange={(e) => updateField('introduction', e.target.value)} />
+            <label>
+              <span>Introduction</span>
+              <AdminColorPicker label="Color" value={content.introductionColor} defaultValue="#55514b" onChange={(val) => updateField('introductionColor', val)} />
+            </label>
+            <textarea rows={3} value={content.introduction || ''} onChange={(e) => updateField('introduction', e.target.value)} style={{ color: content.introductionColor || undefined }} />
           </FormGroup>
         </FormGrid>
       </SectionBox>
@@ -754,20 +870,32 @@ export const SustainabilityEditor: React.FC<EditorProps> = ({ content, onChange 
         <h3>Diamond & Metal Sourcing Policies</h3>
         <FormGrid>
           <FormGroup $full>
-            <label>Kimberley Process & Conflict-Free Policy</label>
-            <textarea rows={3} value={content.conflictFreePolicy || ''} onChange={(e) => updateField('conflictFreePolicy', e.target.value)} />
+            <label>
+              <span>Kimberley Process & Conflict-Free Policy</span>
+              <AdminColorPicker label="Color" value={content.conflictFreePolicyColor} defaultValue="#55514b" onChange={(val) => updateField('conflictFreePolicyColor', val)} />
+            </label>
+            <textarea rows={3} value={content.conflictFreePolicy || ''} onChange={(e) => updateField('conflictFreePolicy', e.target.value)} style={{ color: content.conflictFreePolicyColor || undefined }} />
           </FormGroup>
           <FormGroup $full>
-            <label>Natural Diamond Mine Sourcing</label>
-            <textarea rows={2} value={content.naturalDiamonds || ''} onChange={(e) => updateField('naturalDiamonds', e.target.value)} />
+            <label>
+              <span>Natural Diamond Mine Sourcing</span>
+              <AdminColorPicker label="Color" value={content.naturalDiamondsColor} defaultValue="#55514b" onChange={(val) => updateField('naturalDiamondsColor', val)} />
+            </label>
+            <textarea rows={2} value={content.naturalDiamonds || ''} onChange={(e) => updateField('naturalDiamonds', e.target.value)} style={{ color: content.naturalDiamondsColor || undefined }} />
           </FormGroup>
           <FormGroup $full>
-            <label>Climate Neutral Lab-Grown Diamonds</label>
-            <textarea rows={2} value={content.labGrownDiamonds || ''} onChange={(e) => updateField('labGrownDiamonds', e.target.value)} />
+            <label>
+              <span>Climate Neutral Lab-Grown Diamonds</span>
+              <AdminColorPicker label="Color" value={content.labGrownDiamondsColor} defaultValue="#55514b" onChange={(val) => updateField('labGrownDiamondsColor', val)} />
+            </label>
+            <textarea rows={2} value={content.labGrownDiamonds || ''} onChange={(e) => updateField('labGrownDiamonds', e.target.value)} style={{ color: content.labGrownDiamondsColor || undefined }} />
           </FormGroup>
           <FormGroup $full>
-            <label>Recycled Gold & Platinum Manufacturing</label>
-            <textarea rows={2} value={content.responsibleManufacturing || ''} onChange={(e) => updateField('responsibleManufacturing', e.target.value)} />
+            <label>
+              <span>Recycled Gold & Platinum Manufacturing</span>
+              <AdminColorPicker label="Color" value={content.responsibleManufacturingColor} defaultValue="#55514b" onChange={(val) => updateField('responsibleManufacturingColor', val)} />
+            </label>
+            <textarea rows={2} value={content.responsibleManufacturing || ''} onChange={(e) => updateField('responsibleManufacturing', e.target.value)} style={{ color: content.responsibleManufacturingColor || undefined }} />
           </FormGroup>
         </FormGrid>
       </SectionBox>
@@ -965,8 +1093,11 @@ export const GenericRichTextPolicyEditor: React.FC<EditorProps> = ({ content, on
         <h3>Policy Page Header</h3>
         <FormGrid>
           <FormGroup $full>
-            <label>Page Title / Heading</label>
-            <input type="text" value={content.heading || content.title || ''} onChange={(e) => updateField('heading', e.target.value)} />
+            <label>
+              <span>Page Title / Heading</span>
+              <AdminColorPicker label="Color" value={content.headingColor} defaultValue="#1f1f1f" onChange={(val) => updateField('headingColor', val)} />
+            </label>
+            <input type="text" value={content.heading || content.title || ''} onChange={(e) => updateField('heading', e.target.value)} style={{ color: content.headingColor || undefined }} />
           </FormGroup>
           <FormGroup>
             <label>Last Revision Date</label>
@@ -978,8 +1109,11 @@ export const GenericRichTextPolicyEditor: React.FC<EditorProps> = ({ content, on
       <SectionBox>
         <h3>Legal Policy Content (Rich Text / HTML Supported)</h3>
         <FormGroup $full>
-          <label>Complete Terms / Policy Body</label>
-          <textarea rows={16} value={content.content || ''} onChange={(e) => updateField('content', e.target.value)} style={{ fontFamily: 'monospace' }} />
+          <label style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+            <span>Complete Terms / Policy Body</span>
+            <AdminColorPicker label="Text Color" value={content.textColor} defaultValue="#1f1f1f" onChange={(val) => updateField('textColor', val)} />
+          </label>
+          <textarea rows={16} value={content.content || ''} onChange={(e) => updateField('content', e.target.value)} style={{ fontFamily: 'monospace', color: content.textColor || undefined }} />
         </FormGroup>
       </SectionBox>
     </EditorContainer>
@@ -996,16 +1130,25 @@ export const AboutUsEditor: React.FC<EditorProps> = ({ content, onChange }) => {
         <h3>About Us & Brand Heritage Header</h3>
         <FormGrid>
           <FormGroup $full>
-            <label>Page Heading</label>
-            <input type="text" value={content.heading || ''} onChange={(e) => updateField('heading', e.target.value)} />
+            <label>
+              <span>Page Heading</span>
+              <AdminColorPicker label="Color" value={content.headingColor} defaultValue="#1f1f1f" onChange={(val) => updateField('headingColor', val)} />
+            </label>
+            <input type="text" value={content.heading || ''} onChange={(e) => updateField('heading', e.target.value)} style={{ color: content.headingColor || undefined }} />
           </FormGroup>
           <FormGroup $full>
-            <label>Subheading</label>
-            <textarea rows={2} value={content.subheading || ''} onChange={(e) => updateField('subheading', e.target.value)} />
+            <label>
+              <span>Subheading</span>
+              <AdminColorPicker label="Color" value={content.subheadingColor} defaultValue="#55514b" onChange={(val) => updateField('subheadingColor', val)} />
+            </label>
+            <textarea rows={2} value={content.subheading || ''} onChange={(e) => updateField('subheading', e.target.value)} style={{ color: content.subheadingColor || undefined }} />
           </FormGroup>
           <FormGroup $full>
-            <label>Introduction</label>
-            <textarea rows={3} value={content.introduction || ''} onChange={(e) => updateField('introduction', e.target.value)} />
+            <label>
+              <span>Introduction</span>
+              <AdminColorPicker label="Color" value={content.introductionColor} defaultValue="#55514b" onChange={(val) => updateField('introductionColor', val)} />
+            </label>
+            <textarea rows={3} value={content.introduction || ''} onChange={(e) => updateField('introduction', e.target.value)} style={{ color: content.introductionColor || undefined }} />
           </FormGroup>
         </FormGrid>
       </SectionBox>
@@ -1014,28 +1157,46 @@ export const AboutUsEditor: React.FC<EditorProps> = ({ content, onChange }) => {
         <h3>Brand Pillars & Craftsmanship</h3>
         <FormGrid>
           <FormGroup $full>
-            <label>Brand Story</label>
-            <textarea rows={3} value={content.brandStory || ''} onChange={(e) => updateField('brandStory', e.target.value)} />
+            <label>
+              <span>Brand Story</span>
+              <AdminColorPicker label="Color" value={content.brandStoryColor} defaultValue="#55514b" onChange={(val) => updateField('brandStoryColor', val)} />
+            </label>
+            <textarea rows={3} value={content.brandStory || ''} onChange={(e) => updateField('brandStory', e.target.value)} style={{ color: content.brandStoryColor || undefined }} />
           </FormGroup>
           <FormGroup $full>
-            <label>Our Core Values</label>
-            <textarea rows={3} value={content.ourValues || ''} onChange={(e) => updateField('ourValues', e.target.value)} />
+            <label>
+              <span>Our Core Values</span>
+              <AdminColorPicker label="Color" value={content.ourValuesColor} defaultValue="#55514b" onChange={(val) => updateField('ourValuesColor', val)} />
+            </label>
+            <textarea rows={3} value={content.ourValues || ''} onChange={(e) => updateField('ourValues', e.target.value)} style={{ color: content.ourValuesColor || undefined }} />
           </FormGroup>
           <FormGroup $full>
-            <label>Master Craftsmanship</label>
-            <textarea rows={3} value={content.craftsmanship || ''} onChange={(e) => updateField('craftsmanship', e.target.value)} />
+            <label>
+              <span>Master Craftsmanship</span>
+              <AdminColorPicker label="Color" value={content.craftsmanshipColor} defaultValue="#55514b" onChange={(val) => updateField('craftsmanshipColor', val)} />
+            </label>
+            <textarea rows={3} value={content.craftsmanship || ''} onChange={(e) => updateField('craftsmanship', e.target.value)} style={{ color: content.craftsmanshipColor || undefined }} />
           </FormGroup>
           <FormGroup $full>
-            <label>Atelier Manufacturing Standards</label>
-            <textarea rows={2} value={content.manufacturing || ''} onChange={(e) => updateField('manufacturing', e.target.value)} />
+            <label>
+              <span>Atelier Manufacturing Standards</span>
+              <AdminColorPicker label="Color" value={content.manufacturingColor} defaultValue="#55514b" onChange={(val) => updateField('manufacturingColor', val)} />
+            </label>
+            <textarea rows={2} value={content.manufacturing || ''} onChange={(e) => updateField('manufacturing', e.target.value)} style={{ color: content.manufacturingColor || undefined }} />
           </FormGroup>
           <FormGroup $full>
-            <label>Diamond Excellence & Certification</label>
-            <textarea rows={2} value={content.diamonds || ''} onChange={(e) => updateField('diamonds', e.target.value)} />
+            <label>
+              <span>Diamond Excellence & Certification</span>
+              <AdminColorPicker label="Color" value={content.diamondsColor} defaultValue="#55514b" onChange={(val) => updateField('diamondsColor', val)} />
+            </label>
+            <textarea rows={2} value={content.diamonds || ''} onChange={(e) => updateField('diamonds', e.target.value)} style={{ color: content.diamondsColor || undefined }} />
           </FormGroup>
           <FormGroup $full>
-            <label>Why Choose Floksy Jewel</label>
-            <textarea rows={2} value={content.whyFloksyJewel || ''} onChange={(e) => updateField('whyFloksyJewel', e.target.value)} />
+            <label>
+              <span>Why Choose Aura Diamond Atelier</span>
+              <AdminColorPicker label="Color" value={content.whyAuraDiamondColor} defaultValue="#55514b" onChange={(val) => updateField('whyAuraDiamondColor', val)} />
+            </label>
+            <textarea rows={2} value={content.whyAuraDiamond || ''} onChange={(e) => updateField('whyAuraDiamond', e.target.value)} style={{ color: content.whyAuraDiamondColor || undefined }} />
           </FormGroup>
         </FormGrid>
       </SectionBox>
@@ -1053,12 +1214,18 @@ export const PriceMatchEditor: React.FC<EditorProps> = ({ content, onChange }) =
         <h3>Price Match Guarantee Header</h3>
         <FormGrid>
           <FormGroup $full>
-            <label>Page Heading</label>
-            <input type="text" value={content.heading || ''} onChange={(e) => updateField('heading', e.target.value)} />
+            <label>
+              <span>Page Heading</span>
+              <AdminColorPicker label="Color" value={content.headingColor} defaultValue="#1f1f1f" onChange={(val) => updateField('headingColor', val)} />
+            </label>
+            <input type="text" value={content.heading || ''} onChange={(e) => updateField('heading', e.target.value)} style={{ color: content.headingColor || undefined }} />
           </FormGroup>
           <FormGroup $full>
-            <label>Subheading</label>
-            <textarea rows={2} value={content.subheading || ''} onChange={(e) => updateField('subheading', e.target.value)} />
+            <label>
+              <span>Subheading</span>
+              <AdminColorPicker label="Color" value={content.subheadingColor} defaultValue="#55514b" onChange={(val) => updateField('subheadingColor', val)} />
+            </label>
+            <textarea rows={2} value={content.subheading || ''} onChange={(e) => updateField('subheading', e.target.value)} style={{ color: content.subheadingColor || undefined }} />
           </FormGroup>
         </FormGrid>
       </SectionBox>
@@ -1067,24 +1234,39 @@ export const PriceMatchEditor: React.FC<EditorProps> = ({ content, onChange }) =
         <h3>Eligibility & Verification Requirements</h3>
         <FormGrid>
           <FormGroup $full>
-            <label>Diamond Eligibility Rules</label>
-            <textarea rows={2} value={content.eligibility || ''} onChange={(e) => updateField('eligibility', e.target.value)} />
+            <label>
+              <span>Diamond Eligibility Rules</span>
+              <AdminColorPicker label="Color" value={content.eligibilityColor} defaultValue="#55514b" onChange={(val) => updateField('eligibilityColor', val)} />
+            </label>
+            <textarea rows={2} value={content.eligibility || ''} onChange={(e) => updateField('eligibility', e.target.value)} style={{ color: content.eligibilityColor || undefined }} />
           </FormGroup>
           <FormGroup $full>
-            <label>4Cs & Certification Matching Requirements</label>
-            <textarea rows={2} value={content.requirements || ''} onChange={(e) => updateField('requirements', e.target.value)} />
+            <label>
+              <span>4Cs & Certification Matching Requirements</span>
+              <AdminColorPicker label="Color" value={content.requirementsColor} defaultValue="#55514b" onChange={(val) => updateField('requirementsColor', val)} />
+            </label>
+            <textarea rows={2} value={content.requirements || ''} onChange={(e) => updateField('requirements', e.target.value)} style={{ color: content.requirementsColor || undefined }} />
           </FormGroup>
           <FormGroup $full>
-            <label>Excluded Items & Retailers</label>
-            <textarea rows={2} value={content.excludedProducts || ''} onChange={(e) => updateField('excludedProducts', e.target.value)} />
+            <label>
+              <span>Excluded Items & Retailers</span>
+              <AdminColorPicker label="Color" value={content.excludedProductsColor} defaultValue="#55514b" onChange={(val) => updateField('excludedProductsColor', val)} />
+            </label>
+            <textarea rows={2} value={content.excludedProducts || ''} onChange={(e) => updateField('excludedProducts', e.target.value)} style={{ color: content.excludedProductsColor || undefined }} />
           </FormGroup>
           <FormGroup $full>
-            <label>Gemologist Verification Process</label>
-            <textarea rows={2} value={content.verificationProcess || ''} onChange={(e) => updateField('verificationProcess', e.target.value)} />
+            <label>
+              <span>Gemologist Verification Process</span>
+              <AdminColorPicker label="Color" value={content.verificationProcessColor} defaultValue="#55514b" onChange={(val) => updateField('verificationProcessColor', val)} />
+            </label>
+            <textarea rows={2} value={content.verificationProcess || ''} onChange={(e) => updateField('verificationProcess', e.target.value)} style={{ color: content.verificationProcessColor || undefined }} />
           </FormGroup>
           <FormGroup>
-            <label>CTA Button Text</label>
-            <input type="text" value={content.buttonText || ''} onChange={(e) => updateField('buttonText', e.target.value)} />
+            <label>
+              <span>CTA Button Text</span>
+              <AdminColorPicker label="Text Color" value={content.buttonTextColor} defaultValue="#101418" onChange={(val) => updateField('buttonTextColor', val)} />
+            </label>
+            <input type="text" value={content.buttonText || ''} onChange={(e) => updateField('buttonText', e.target.value)} style={{ color: content.buttonTextColor || undefined }} />
           </FormGroup>
           <FormGroup>
             <label>CTA Button Link</label>
@@ -1106,12 +1288,18 @@ export const WarrantyEditor: React.FC<EditorProps> = ({ content, onChange }) => 
         <h3>Lifetime Warranty Header</h3>
         <FormGrid>
           <FormGroup $full>
-            <label>Page Heading</label>
-            <input type="text" value={content.heading || ''} onChange={(e) => updateField('heading', e.target.value)} />
+            <label>
+              <span>Page Heading</span>
+              <AdminColorPicker label="Color" value={content.headingColor} defaultValue="#1f1f1f" onChange={(val) => updateField('headingColor', val)} />
+            </label>
+            <input type="text" value={content.heading || ''} onChange={(e) => updateField('heading', e.target.value)} style={{ color: content.headingColor || undefined }} />
           </FormGroup>
           <FormGroup $full>
-            <label>Subheading / Introduction</label>
-            <textarea rows={3} value={content.subheading || content.introduction || ''} onChange={(e) => updateField('introduction', e.target.value)} />
+            <label>
+              <span>Subheading / Introduction</span>
+              <AdminColorPicker label="Color" value={content.introductionColor} defaultValue="#55514b" onChange={(val) => updateField('introductionColor', val)} />
+            </label>
+            <textarea rows={3} value={content.subheading || content.introduction || ''} onChange={(e) => updateField('introduction', e.target.value)} style={{ color: content.introductionColor || undefined }} />
           </FormGroup>
         </FormGrid>
       </SectionBox>
@@ -1120,20 +1308,32 @@ export const WarrantyEditor: React.FC<EditorProps> = ({ content, onChange }) => 
         <h3>Coverage Details & Claims</h3>
         <FormGrid>
           <FormGroup $full>
-            <label>Warranty Coverage Overview</label>
-            <textarea rows={3} value={content.coverage || ''} onChange={(e) => updateField('coverage', e.target.value)} />
+            <label>
+              <span>Warranty Coverage Overview</span>
+              <AdminColorPicker label="Color" value={content.coverageColor} defaultValue="#55514b" onChange={(val) => updateField('coverageColor', val)} />
+            </label>
+            <textarea rows={3} value={content.coverage || ''} onChange={(e) => updateField('coverage', e.target.value)} style={{ color: content.coverageColor || undefined }} />
           </FormGroup>
           <FormGroup $full>
-            <label>What's Included (Prongs, Cleaning, Rhodium)</label>
-            <textarea rows={2} value={content.whatsIncluded || ''} onChange={(e) => updateField('whatsIncluded', e.target.value)} />
+            <label>
+              <span>What's Included (Prongs, Cleaning, Rhodium)</span>
+              <AdminColorPicker label="Color" value={content.whatsIncludedColor} defaultValue="#55514b" onChange={(val) => updateField('whatsIncludedColor', val)} />
+            </label>
+            <textarea rows={2} value={content.whatsIncluded || ''} onChange={(e) => updateField('whatsIncluded', e.target.value)} style={{ color: content.whatsIncludedColor || undefined }} />
           </FormGroup>
           <FormGroup $full>
-            <label>What's Excluded (Wear & Tear, Third-party alterations)</label>
-            <textarea rows={2} value={content.whatsExcluded || ''} onChange={(e) => updateField('whatsExcluded', e.target.value)} />
+            <label>
+              <span>What's Excluded (Wear & Tear, Third-party alterations)</span>
+              <AdminColorPicker label="Color" value={content.whatsExcludedColor} defaultValue="#55514b" onChange={(val) => updateField('whatsExcludedColor', val)} />
+            </label>
+            <textarea rows={2} value={content.whatsExcluded || ''} onChange={(e) => updateField('whatsExcluded', e.target.value)} style={{ color: content.whatsExcludedColor || undefined }} />
           </FormGroup>
           <FormGroup $full>
-            <label>Warranty Claim Procedure</label>
-            <textarea rows={2} value={content.claimProcess || ''} onChange={(e) => updateField('claimProcess', e.target.value)} />
+            <label>
+              <span>Warranty Claim Procedure</span>
+              <AdminColorPicker label="Color" value={content.claimProcessColor} defaultValue="#55514b" onChange={(val) => updateField('claimProcessColor', val)} />
+            </label>
+            <textarea rows={2} value={content.claimProcess || ''} onChange={(e) => updateField('claimProcess', e.target.value)} style={{ color: content.claimProcessColor || undefined }} />
           </FormGroup>
         </FormGrid>
       </SectionBox>
@@ -1151,12 +1351,18 @@ export const InsuranceEditor: React.FC<EditorProps> = ({ content, onChange }) =>
         <h3>Jewellery Insurance Header</h3>
         <FormGrid>
           <FormGroup $full>
-            <label>Page Heading</label>
-            <input type="text" value={content.heading || ''} onChange={(e) => updateField('heading', e.target.value)} />
+            <label>
+              <span>Page Heading</span>
+              <AdminColorPicker label="Color" value={content.headingColor} defaultValue="#1f1f1f" onChange={(val) => updateField('headingColor', val)} />
+            </label>
+            <input type="text" value={content.heading || ''} onChange={(e) => updateField('heading', e.target.value)} style={{ color: content.headingColor || undefined }} />
           </FormGroup>
           <FormGroup $full>
-            <label>Introduction</label>
-            <textarea rows={3} value={content.introduction || ''} onChange={(e) => updateField('introduction', e.target.value)} />
+            <label>
+              <span>Introduction</span>
+              <AdminColorPicker label="Color" value={content.introductionColor} defaultValue="#55514b" onChange={(val) => updateField('introductionColor', val)} />
+            </label>
+            <textarea rows={3} value={content.introduction || ''} onChange={(e) => updateField('introduction', e.target.value)} style={{ color: content.introductionColor || undefined }} />
           </FormGroup>
         </FormGrid>
       </SectionBox>
@@ -1165,16 +1371,25 @@ export const InsuranceEditor: React.FC<EditorProps> = ({ content, onChange }) =>
         <h3>Insurance & Appraisal Information</h3>
         <FormGrid>
           <FormGroup $full>
-            <label>Appraisal Certificate Program</label>
-            <textarea rows={2} value={content.insuranceInformation || ''} onChange={(e) => updateField('insuranceInformation', e.target.value)} />
+            <label>
+              <span>Appraisal Certificate Program</span>
+              <AdminColorPicker label="Color" value={content.insuranceInformationColor} defaultValue="#55514b" onChange={(val) => updateField('insuranceInformationColor', val)} />
+            </label>
+            <textarea rows={2} value={content.insuranceInformation || ''} onChange={(e) => updateField('insuranceInformation', e.target.value)} style={{ color: content.insuranceInformationColor || undefined }} />
           </FormGroup>
           <FormGroup $full>
-            <label>Coverage Scope (Loss, Theft, Damage)</label>
-            <textarea rows={2} value={content.coverage || ''} onChange={(e) => updateField('coverage', e.target.value)} />
+            <label>
+              <span>Coverage Scope (Loss, Theft, Damage)</span>
+              <AdminColorPicker label="Color" value={content.coverageColor} defaultValue="#55514b" onChange={(val) => updateField('coverageColor', val)} />
+            </label>
+            <textarea rows={2} value={content.coverage || ''} onChange={(e) => updateField('coverage', e.target.value)} style={{ color: content.coverageColor || undefined }} />
           </FormGroup>
           <FormGroup $full>
-            <label>Claims Process</label>
-            <textarea rows={2} value={content.claims || ''} onChange={(e) => updateField('claims', e.target.value)} />
+            <label>
+              <span>Claims Process</span>
+              <AdminColorPicker label="Color" value={content.claimsColor} defaultValue="#55514b" onChange={(val) => updateField('claimsColor', val)} />
+            </label>
+            <textarea rows={2} value={content.claims || ''} onChange={(e) => updateField('claims', e.target.value)} style={{ color: content.claimsColor || undefined }} />
           </FormGroup>
         </FormGrid>
       </SectionBox>
@@ -1192,12 +1407,18 @@ export const SaleExclusionsEditor: React.FC<EditorProps> = ({ content, onChange 
         <h3>Sale Exclusions Header</h3>
         <FormGrid>
           <FormGroup $full>
-            <label>Page Heading</label>
-            <input type="text" value={content.heading || ''} onChange={(e) => updateField('heading', e.target.value)} />
+            <label>
+              <span>Page Heading</span>
+              <AdminColorPicker label="Color" value={content.headingColor} defaultValue="#1f1f1f" onChange={(val) => updateField('headingColor', val)} />
+            </label>
+            <input type="text" value={content.heading || ''} onChange={(e) => updateField('heading', e.target.value)} style={{ color: content.headingColor || undefined }} />
           </FormGroup>
           <FormGroup $full>
-            <label>Introduction</label>
-            <textarea rows={3} value={content.introduction || ''} onChange={(e) => updateField('introduction', e.target.value)} />
+            <label>
+              <span>Introduction</span>
+              <AdminColorPicker label="Color" value={content.introductionColor} defaultValue="#55514b" onChange={(val) => updateField('introductionColor', val)} />
+            </label>
+            <textarea rows={3} value={content.introduction || ''} onChange={(e) => updateField('introduction', e.target.value)} style={{ color: content.introductionColor || undefined }} />
           </FormGroup>
         </FormGrid>
       </SectionBox>
@@ -1206,16 +1427,25 @@ export const SaleExclusionsEditor: React.FC<EditorProps> = ({ content, onChange 
         <h3>Exclusion Rules & Terms</h3>
         <FormGrid>
           <FormGroup $full>
-            <label>General Exclusion Rules</label>
-            <textarea rows={2} value={content.exclusionRules || ''} onChange={(e) => updateField('exclusionRules', e.target.value)} />
+            <label>
+              <span>General Exclusion Rules</span>
+              <AdminColorPicker label="Color" value={content.exclusionRulesColor} defaultValue="#55514b" onChange={(val) => updateField('exclusionRulesColor', val)} />
+            </label>
+            <textarea rows={2} value={content.exclusionRules || ''} onChange={(e) => updateField('exclusionRules', e.target.value)} style={{ color: content.exclusionRulesColor || undefined }} />
           </FormGroup>
           <FormGroup $full>
-            <label>Excluded Product Types</label>
-            <textarea rows={2} value={content.excludedProducts || ''} onChange={(e) => updateField('excludedProducts', e.target.value)} />
+            <label>
+              <span>Excluded Product Types</span>
+              <AdminColorPicker label="Color" value={content.excludedProductsColor} defaultValue="#55514b" onChange={(val) => updateField('excludedProductsColor', val)} />
+            </label>
+            <textarea rows={2} value={content.excludedProducts || ''} onChange={(e) => updateField('excludedProducts', e.target.value)} style={{ color: content.excludedProductsColor || undefined }} />
           </FormGroup>
           <FormGroup $full>
-            <label>Excluded Categories</label>
-            <textarea rows={2} value={content.excludedCategories || ''} onChange={(e) => updateField('excludedCategories', e.target.value)} />
+            <label>
+              <span>Excluded Categories</span>
+              <AdminColorPicker label="Color" value={content.excludedCategoriesColor} defaultValue="#55514b" onChange={(val) => updateField('excludedCategoriesColor', val)} />
+            </label>
+            <textarea rows={2} value={content.excludedCategories || ''} onChange={(e) => updateField('excludedCategories', e.target.value)} style={{ color: content.excludedCategoriesColor || undefined }} />
           </FormGroup>
         </FormGrid>
       </SectionBox>
@@ -1233,16 +1463,25 @@ export const CustomCadEditor: React.FC<EditorProps> = ({ content, onChange }) =>
         <h3>Bespoke Custom CAD Design Header</h3>
         <FormGrid>
           <FormGroup $full>
-            <label>Page Heading</label>
-            <input type="text" value={content.heading || ''} onChange={(e) => updateField('heading', e.target.value)} />
+            <label>
+              <span>Page Heading</span>
+              <AdminColorPicker label="Color" value={content.headingColor} defaultValue="#1f1f1f" onChange={(val) => updateField('headingColor', val)} />
+            </label>
+            <input type="text" value={content.heading || ''} onChange={(e) => updateField('heading', e.target.value)} style={{ color: content.headingColor || undefined }} />
           </FormGroup>
           <FormGroup $full>
-            <label>Subheading</label>
-            <textarea rows={2} value={content.subheading || ''} onChange={(e) => updateField('subheading', e.target.value)} />
+            <label>
+              <span>Subheading</span>
+              <AdminColorPicker label="Color" value={content.subheadingColor} defaultValue="#55514b" onChange={(val) => updateField('subheadingColor', val)} />
+            </label>
+            <textarea rows={2} value={content.subheading || ''} onChange={(e) => updateField('subheading', e.target.value)} style={{ color: content.subheadingColor || undefined }} />
           </FormGroup>
           <FormGroup $full>
-            <label>Introduction</label>
-            <textarea rows={3} value={content.introduction || ''} onChange={(e) => updateField('introduction', e.target.value)} />
+            <label>
+              <span>Introduction</span>
+              <AdminColorPicker label="Color" value={content.introductionColor} defaultValue="#55514b" onChange={(val) => updateField('introductionColor', val)} />
+            </label>
+            <textarea rows={3} value={content.introduction || ''} onChange={(e) => updateField('introduction', e.target.value)} style={{ color: content.introductionColor || undefined }} />
           </FormGroup>
         </FormGrid>
       </SectionBox>
@@ -1251,36 +1490,60 @@ export const CustomCadEditor: React.FC<EditorProps> = ({ content, onChange }) =>
         <h3>4-Step CAD Design Process</h3>
         <FormGrid>
           <FormGroup>
-            <label>Step 1 Heading</label>
-            <input type="text" value={content.step1Heading || ''} onChange={(e) => updateField('step1Heading', e.target.value)} />
+            <label>
+              <span>Step 1 Heading</span>
+              <AdminColorPicker label="Color" value={content.step1HeadingColor} defaultValue="#1f1f1f" onChange={(val) => updateField('step1HeadingColor', val)} />
+            </label>
+            <input type="text" value={content.step1Heading || ''} onChange={(e) => updateField('step1Heading', e.target.value)} style={{ color: content.step1HeadingColor || undefined }} />
           </FormGroup>
           <FormGroup>
-            <label>Step 1 Description</label>
-            <input type="text" value={content.step1Description || ''} onChange={(e) => updateField('step1Description', e.target.value)} />
+            <label>
+              <span>Step 1 Description</span>
+              <AdminColorPicker label="Color" value={content.step1DescriptionColor} defaultValue="#55514b" onChange={(val) => updateField('step1DescriptionColor', val)} />
+            </label>
+            <input type="text" value={content.step1Description || ''} onChange={(e) => updateField('step1Description', e.target.value)} style={{ color: content.step1DescriptionColor || undefined }} />
           </FormGroup>
           <FormGroup>
-            <label>Step 2 Heading</label>
-            <input type="text" value={content.step2Heading || ''} onChange={(e) => updateField('step2Heading', e.target.value)} />
+            <label>
+              <span>Step 2 Heading</span>
+              <AdminColorPicker label="Color" value={content.step2HeadingColor} defaultValue="#1f1f1f" onChange={(val) => updateField('step2HeadingColor', val)} />
+            </label>
+            <input type="text" value={content.step2Heading || ''} onChange={(e) => updateField('step2Heading', e.target.value)} style={{ color: content.step2HeadingColor || undefined }} />
           </FormGroup>
           <FormGroup>
-            <label>Step 2 Description</label>
-            <input type="text" value={content.step2Description || ''} onChange={(e) => updateField('step2Description', e.target.value)} />
+            <label>
+              <span>Step 2 Description</span>
+              <AdminColorPicker label="Color" value={content.step2DescriptionColor} defaultValue="#55514b" onChange={(val) => updateField('step2DescriptionColor', val)} />
+            </label>
+            <input type="text" value={content.step2Description || ''} onChange={(e) => updateField('step2Description', e.target.value)} style={{ color: content.step2DescriptionColor || undefined }} />
           </FormGroup>
           <FormGroup>
-            <label>Step 3 Heading</label>
-            <input type="text" value={content.step3Heading || ''} onChange={(e) => updateField('step3Heading', e.target.value)} />
+            <label>
+              <span>Step 3 Heading</span>
+              <AdminColorPicker label="Color" value={content.step3HeadingColor} defaultValue="#1f1f1f" onChange={(val) => updateField('step3HeadingColor', val)} />
+            </label>
+            <input type="text" value={content.step3Heading || ''} onChange={(e) => updateField('step3Heading', e.target.value)} style={{ color: content.step3HeadingColor || undefined }} />
           </FormGroup>
           <FormGroup>
-            <label>Step 3 Description</label>
-            <input type="text" value={content.step3Description || ''} onChange={(e) => updateField('step3Description', e.target.value)} />
+            <label>
+              <span>Step 3 Description</span>
+              <AdminColorPicker label="Color" value={content.step3DescriptionColor} defaultValue="#55514b" onChange={(val) => updateField('step3DescriptionColor', val)} />
+            </label>
+            <input type="text" value={content.step3Description || ''} onChange={(e) => updateField('step3Description', e.target.value)} style={{ color: content.step3DescriptionColor || undefined }} />
           </FormGroup>
           <FormGroup>
-            <label>Step 4 Heading</label>
-            <input type="text" value={content.step4Heading || ''} onChange={(e) => updateField('step4Heading', e.target.value)} />
+            <label>
+              <span>Step 4 Heading</span>
+              <AdminColorPicker label="Color" value={content.step4HeadingColor} defaultValue="#1f1f1f" onChange={(val) => updateField('step4HeadingColor', val)} />
+            </label>
+            <input type="text" value={content.step4Heading || ''} onChange={(e) => updateField('step4Heading', e.target.value)} style={{ color: content.step4HeadingColor || undefined }} />
           </FormGroup>
           <FormGroup>
-            <label>Step 4 Description</label>
-            <input type="text" value={content.step4Description || ''} onChange={(e) => updateField('step4Description', e.target.value)} />
+            <label>
+              <span>Step 4 Description</span>
+              <AdminColorPicker label="Color" value={content.step4DescriptionColor} defaultValue="#55514b" onChange={(val) => updateField('step4DescriptionColor', val)} />
+            </label>
+            <input type="text" value={content.step4Description || ''} onChange={(e) => updateField('step4Description', e.target.value)} style={{ color: content.step4DescriptionColor || undefined }} />
           </FormGroup>
         </FormGrid>
       </SectionBox>
@@ -1316,16 +1579,25 @@ export const DiamondVaultEditor: React.FC<EditorProps> = ({ content, onChange })
         <h3>Diamond Vault Header</h3>
         <FormGrid>
           <FormGroup $full>
-            <label>Page Heading</label>
-            <input type="text" value={content.heading || ''} onChange={(e) => updateField('heading', e.target.value)} />
+            <label>
+              <span>Page Heading</span>
+              <AdminColorPicker label="Color" value={content.headingColor} defaultValue="#1f1f1f" onChange={(val) => updateField('headingColor', val)} />
+            </label>
+            <input type="text" value={content.heading || ''} onChange={(e) => updateField('heading', e.target.value)} style={{ color: content.headingColor || undefined }} />
           </FormGroup>
           <FormGroup $full>
-            <label>Subheading</label>
-            <textarea rows={2} value={content.subheading || ''} onChange={(e) => updateField('subheading', e.target.value)} />
+            <label>
+              <span>Subheading</span>
+              <AdminColorPicker label="Color" value={content.subheadingColor} defaultValue="#55514b" onChange={(val) => updateField('subheadingColor', val)} />
+            </label>
+            <textarea rows={2} value={content.subheading || ''} onChange={(e) => updateField('subheading', e.target.value)} style={{ color: content.subheadingColor || undefined }} />
           </FormGroup>
           <FormGroup $full>
-            <label>Introduction</label>
-            <textarea rows={3} value={content.introduction || ''} onChange={(e) => updateField('introduction', e.target.value)} />
+            <label>
+              <span>Introduction</span>
+              <AdminColorPicker label="Color" value={content.introductionColor} defaultValue="#55514b" onChange={(val) => updateField('introductionColor', val)} />
+            </label>
+            <textarea rows={3} value={content.introduction || ''} onChange={(e) => updateField('introduction', e.target.value)} style={{ color: content.introductionColor || undefined }} />
           </FormGroup>
         </FormGrid>
       </SectionBox>
@@ -1334,12 +1606,18 @@ export const DiamondVaultEditor: React.FC<EditorProps> = ({ content, onChange })
         <h3>Filter & Certification Descriptions</h3>
         <FormGrid>
           <FormGroup $full>
-            <label>Diamond Filter Guide Text</label>
-            <textarea rows={2} value={content.filterDescription || ''} onChange={(e) => updateField('filterDescription', e.target.value)} />
+            <label>
+              <span>Diamond Filter Guide Text</span>
+              <AdminColorPicker label="Color" value={content.filterDescriptionColor} defaultValue="#55514b" onChange={(val) => updateField('filterDescriptionColor', val)} />
+            </label>
+            <textarea rows={2} value={content.filterDescription || ''} onChange={(e) => updateField('filterDescription', e.target.value)} style={{ color: content.filterDescriptionColor || undefined }} />
           </FormGroup>
           <FormGroup $full>
-            <label>GIA / IGI Certification Guarantee</label>
-            <textarea rows={2} value={content.certificationInformation || ''} onChange={(e) => updateField('certificationInformation', e.target.value)} />
+            <label>
+              <span>GIA / IGI Certification Guarantee</span>
+              <AdminColorPicker label="Color" value={content.certificationInformationColor} defaultValue="#55514b" onChange={(val) => updateField('certificationInformationColor', val)} />
+            </label>
+            <textarea rows={2} value={content.certificationInformation || ''} onChange={(e) => updateField('certificationInformation', e.target.value)} style={{ color: content.certificationInformationColor || undefined }} />
           </FormGroup>
         </FormGrid>
       </SectionBox>
@@ -1361,12 +1639,18 @@ export const CollectionPageEditor: React.FC<EditorProps> = ({ content, onChange 
         <h3>Category Collection Header</h3>
         <FormGrid>
           <FormGroup $full>
-            <label>Category Display Heading</label>
-            <input type="text" value={content.heading || ''} onChange={(e) => updateField('heading', e.target.value)} />
+            <label>
+              <span>Category Display Heading</span>
+              <AdminColorPicker label="Color" value={content.headingColor} defaultValue="#1f1f1f" onChange={(val) => updateField('headingColor', val)} />
+            </label>
+            <input type="text" value={content.heading || ''} onChange={(e) => updateField('heading', e.target.value)} style={{ color: content.headingColor || undefined }} />
           </FormGroup>
           <FormGroup $full>
-            <label>Category Subheading / Description</label>
-            <textarea rows={3} value={content.headingDescription || content.description || ''} onChange={(e) => updateField('headingDescription', e.target.value)} />
+            <label>
+              <span>Category Subheading / Description</span>
+              <AdminColorPicker label="Color" value={content.headingDescriptionColor} defaultValue="#55514b" onChange={(val) => updateField('headingDescriptionColor', val)} />
+            </label>
+            <textarea rows={3} value={content.headingDescription || content.description || ''} onChange={(e) => updateField('headingDescription', e.target.value)} style={{ color: content.headingDescriptionColor || undefined }} />
           </FormGroup>
         </FormGrid>
       </SectionBox>
@@ -1379,8 +1663,11 @@ export const CollectionPageEditor: React.FC<EditorProps> = ({ content, onChange 
             <input type="text" value={content.bannerImage || ''} onChange={(e) => updateField('bannerImage', e.target.value)} placeholder="/assets/collections_banner.jpg" />
           </FormGroup>
           <FormGroup $full>
-            <label>SEO Category Copy</label>
-            <textarea rows={3} value={content.seoContent || ''} onChange={(e) => updateField('seoContent', e.target.value)} />
+            <label>
+              <span>SEO Category Copy</span>
+              <AdminColorPicker label="Color" value={content.seoContentColor} defaultValue="#55514b" onChange={(val) => updateField('seoContentColor', val)} />
+            </label>
+            <textarea rows={3} value={content.seoContent || ''} onChange={(e) => updateField('seoContent', e.target.value)} style={{ color: content.seoContentColor || undefined }} />
           </FormGroup>
         </FormGrid>
       </SectionBox>
@@ -1402,16 +1689,25 @@ export const CustomerAccountEditor: React.FC<EditorProps> = ({ content, onChange
         <h3>Client Portal Header</h3>
         <FormGrid>
           <FormGroup $full>
-            <label>Portal Title</label>
-            <input type="text" value={content.title || ''} onChange={(e) => updateField('title', e.target.value)} />
+            <label>
+              <span>Portal Title</span>
+              <AdminColorPicker label="Color" value={content.titleColor} defaultValue="#1f1f1f" onChange={(val) => updateField('titleColor', val)} />
+            </label>
+            <input type="text" value={content.title || ''} onChange={(e) => updateField('title', e.target.value)} style={{ color: content.titleColor || undefined }} />
           </FormGroup>
           <FormGroup $full>
-            <label>Welcome Heading</label>
-            <input type="text" value={content.heading || ''} onChange={(e) => updateField('heading', e.target.value)} />
+            <label>
+              <span>Welcome Heading</span>
+              <AdminColorPicker label="Color" value={content.headingColor} defaultValue="#1f1f1f" onChange={(val) => updateField('headingColor', val)} />
+            </label>
+            <input type="text" value={content.heading || ''} onChange={(e) => updateField('heading', e.target.value)} style={{ color: content.headingColor || undefined }} />
           </FormGroup>
           <FormGroup $full>
-            <label>Portal Introduction</label>
-            <textarea rows={2} value={content.introduction || ''} onChange={(e) => updateField('introduction', e.target.value)} />
+            <label>
+              <span>Portal Introduction</span>
+              <AdminColorPicker label="Color" value={content.introductionColor} defaultValue="#55514b" onChange={(val) => updateField('introductionColor', val)} />
+            </label>
+            <textarea rows={2} value={content.introduction || ''} onChange={(e) => updateField('introduction', e.target.value)} style={{ color: content.introductionColor || undefined }} />
           </FormGroup>
         </FormGrid>
       </SectionBox>
@@ -1420,16 +1716,25 @@ export const CustomerAccountEditor: React.FC<EditorProps> = ({ content, onChange
         <h3>Sign In & Support Text</h3>
         <FormGrid>
           <FormGroup $full>
-            <label>Login Prompt Text</label>
-            <input type="text" value={content.loginText || ''} onChange={(e) => updateField('loginText', e.target.value)} />
+            <label>
+              <span>Login Prompt Text</span>
+              <AdminColorPicker label="Color" value={content.loginTextColor} defaultValue="#55514b" onChange={(val) => updateField('loginTextColor', val)} />
+            </label>
+            <input type="text" value={content.loginText || ''} onChange={(e) => updateField('loginText', e.target.value)} style={{ color: content.loginTextColor || undefined }} />
           </FormGroup>
           <FormGroup $full>
-            <label>Registration Prompt Text</label>
-            <input type="text" value={content.registerText || ''} onChange={(e) => updateField('registerText', e.target.value)} />
+            <label>
+              <span>Registration Prompt Text</span>
+              <AdminColorPicker label="Color" value={content.registerTextColor} defaultValue="#55514b" onChange={(val) => updateField('registerTextColor', val)} />
+            </label>
+            <input type="text" value={content.registerText || ''} onChange={(e) => updateField('registerText', e.target.value)} style={{ color: content.registerTextColor || undefined }} />
           </FormGroup>
           <FormGroup $full>
-            <label>Direct Support Contact Info</label>
-            <input type="text" value={content.supportInformation || ''} onChange={(e) => updateField('supportInformation', e.target.value)} />
+            <label>
+              <span>Direct Support Contact Info</span>
+              <AdminColorPicker label="Color" value={content.supportInformationColor} defaultValue="#55514b" onChange={(val) => updateField('supportInformationColor', val)} />
+            </label>
+            <input type="text" value={content.supportInformation || ''} onChange={(e) => updateField('supportInformation', e.target.value)} style={{ color: content.supportInformationColor || undefined }} />
           </FormGroup>
         </FormGrid>
       </SectionBox>
@@ -1446,7 +1751,7 @@ export const BlogManagerComponent: React.FC = () => {
   const [form, setForm] = useState({
     title: '',
     slug: '',
-    author: 'Floksy Master Gemologist',
+    author: 'Master Gemologist',
     featuredImage: '',
     excerpt: '',
     content: '',
@@ -1500,14 +1805,14 @@ export const BlogManagerComponent: React.FC = () => {
     <EditorContainer>
       <SectionBox>
         <h3>
-          Floksy Jewel Journal (Blog Manager)
+          Aura Diamond Atelier Journal (Blog Manager)
           <AddBtn
             onClick={() => {
               setEditingPost(null);
               setForm({
                 title: '',
                 slug: '',
-                author: 'Floksy Master Gemologist',
+                author: 'Master Gemologist',
                 featuredImage: '',
                 excerpt: '',
                 content: '',
@@ -1646,12 +1951,18 @@ export const DefaultPageEditor: React.FC<EditorProps> = ({ content, onChange }) 
         <h3>General Page Content</h3>
         <FormGrid>
           <FormGroup $full>
-            <label>Page Heading</label>
-            <input type="text" value={content.heading || ''} onChange={(e) => updateField('heading', e.target.value)} />
+            <label>
+              <span>Page Heading</span>
+              <AdminColorPicker label="Color" value={content.headingColor} defaultValue="#1f1f1f" onChange={(val) => updateField('headingColor', val)} />
+            </label>
+            <input type="text" value={content.heading || ''} onChange={(e) => updateField('heading', e.target.value)} style={{ color: content.headingColor || undefined }} />
           </FormGroup>
           <FormGroup $full>
-            <label>Subheading / Introduction</label>
-            <textarea rows={3} value={content.subheading || content.introduction || ''} onChange={(e) => updateField('subheading', e.target.value)} />
+            <label>
+              <span>Subheading / Introduction</span>
+              <AdminColorPicker label="Color" value={content.subheadingColor} defaultValue="#55514b" onChange={(val) => updateField('subheadingColor', val)} />
+            </label>
+            <textarea rows={3} value={content.subheading || content.introduction || ''} onChange={(e) => updateField('subheading', e.target.value)} style={{ color: content.subheadingColor || undefined }} />
           </FormGroup>
         </FormGrid>
       </SectionBox>

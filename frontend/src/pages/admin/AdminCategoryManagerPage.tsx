@@ -64,7 +64,7 @@ export const AdminCategoryManagerPage: React.FC = () => {
       name: '',
       slug: '',
       link: '/rings',
-      image: '/assets/floksy_rings_cat.png',
+      image: '/assets/gem_rings_cat.png',
       description: '',
       sortOrder: (categories.length + 1),
       isActive: true,
@@ -101,8 +101,12 @@ export const AdminCategoryManagerPage: React.FC = () => {
   };
 
   const handleDelete = async (id: string, name: string) => {
+    const catToDelete = categories.find((c) => c.id === id);
     if (!window.confirm(`Are you sure you want to delete category "${name}"?`)) return;
     try {
+      if (catToDelete?.image && catToDelete.image.startsWith('/uploads/')) {
+        api.deleteUploadedFile(catToDelete.image).catch(console.warn);
+      }
       await api.deleteCategory(id);
       setSuccessMsg(`Category "${name}" deleted.`);
       await fetchCategories();
@@ -166,7 +170,7 @@ export const AdminCategoryManagerPage: React.FC = () => {
                 <tr key={cat.id}>
                   <td>
                     <CardThumb>
-                      <SafeImage src={cat.image || '/assets/floksy_rings_cat.png'} alt={cat.name} fallbackSrc="/assets/floksy_rings_cat.png" />
+                      <SafeImage src={cat.image || '/assets/gem_rings_cat.png'} alt={cat.name} fallbackSrc="/assets/gem_rings_cat.png" />
                     </CardThumb>
                   </td>
                   <td style={{ fontWeight: 600, color: '#1f1f1f' }}>{cat.name}</td>

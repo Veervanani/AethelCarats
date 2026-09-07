@@ -1,14 +1,14 @@
-import React, { useState, useEffect } from 'react';
+import React, { useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import styled from 'styled-components';
-import { Award, CheckCircle, ShieldCheck, Mail, ChevronRight, Wrench } from 'lucide-react';
-import { api } from '../../services/api';
+import { Award, CheckCircle, Mail, ChevronRight } from 'lucide-react';
 import { SafeImage } from '../../components/ui/SafeImage';
-import { WhyFloksyJewelNav } from '../../components/ui/WhyFloksyJewelNav';
+import { WhyAuraDiamondNav } from '../../components/ui/WhyAuraDiamondNav';
+import { RevealContainer } from '../../components/ui/RevealContainer';
 
 const PageWrapper = styled.div`
-  background-color: #f7f6f2;
-  color: #1a1918;
+  background-color: #0B0B0B;
+  color: #F5F1E8;
   min-height: 100vh;
   padding-bottom: 80px;
 `;
@@ -21,21 +21,21 @@ const BreadcrumbsBar = styled.div`
   align-items: center;
   gap: 8px;
   font-size: 0.8rem;
-  color: #77736c;
+  color: #A8A8A8;
 
   a {
-    color: #77736c;
+    color: #A8A8A8;
     text-decoration: none;
     transition: color 0.2s ease;
 
     &:hover {
-      color: #c9a45c;
+      color: #C9A96E;
     }
   }
 
   span.current {
-    color: #1a1918;
-    font-weight: 500;
+    color: #C9A96E;
+    font-weight: 600;
   }
 `;
 
@@ -59,8 +59,8 @@ const HeroSection = styled.section`
       font-size: 0.8rem;
       letter-spacing: 0.18em;
       text-transform: uppercase;
-      color: #c9a45c;
-      font-weight: 600;
+      color: #C9A96E;
+      font-weight: 700;
       margin-bottom: 12px;
       display: block;
     }
@@ -69,9 +69,9 @@ const HeroSection = styled.section`
       font-family: 'Cormorant Garamond', serif;
       font-size: 3.2rem;
       font-weight: 500;
-      color: #1a1918;
+      color: #F5F1E8;
       margin-bottom: 20px;
-      letter-spacing: -0.01em;
+      letter-spacing: 0.04em;
       line-height: 1.1;
 
       @media (max-width: 768px) {
@@ -81,7 +81,7 @@ const HeroSection = styled.section`
 
     p.subtitle {
       font-size: 1.05rem;
-      color: #55524d;
+      color: #D8D2C5;
       line-height: 1.7;
       margin-bottom: 28px;
     }
@@ -91,7 +91,8 @@ const HeroSection = styled.section`
     position: relative;
     border-radius: 4px;
     overflow: hidden;
-    box-shadow: 0 12px 32px rgba(0, 0, 0, 0.06);
+    border: 1px solid rgba(140, 116, 75, 0.25);
+    box-shadow: 0 12px 32px rgba(0, 0, 0, 0.6);
 
     img {
       width: 100%;
@@ -115,24 +116,26 @@ const ContentGrid = styled.main`
 `;
 
 const EditorialBlock = styled.section`
-  background: #fffdf9;
-  border: 1px solid #e8e3d9;
+  background: #151515;
+  border: 1px solid rgba(140, 116, 75, 0.25);
   padding: 36px;
   border-radius: 4px;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
 
   h2 {
     font-family: 'Cormorant Garamond', serif;
     font-size: 1.8rem;
     font-weight: 500;
-    color: #1a1918;
+    color: #F5F1E8;
+    letter-spacing: 0.08em;
     margin-bottom: 16px;
     padding-bottom: 12px;
-    border-bottom: 1px solid #e8e3d9;
+    border-bottom: 1px solid rgba(140, 116, 75, 0.2);
   }
 
   p {
     font-size: 0.95rem;
-    color: #55524d;
+    color: #D8D2C5;
     line-height: 1.7;
     margin-bottom: 14px;
 
@@ -143,7 +146,7 @@ const EditorialBlock = styled.section`
 
   ul {
     margin: 12px 0 16px 20px;
-    color: #55524d;
+    color: #D8D2C5;
     font-size: 0.95rem;
 
     li {
@@ -157,7 +160,7 @@ const CoverageGrid = styled.div`
   display: grid;
   grid-template-columns: repeat(2, 1fr);
   gap: 24px;
-  margin-top: 20px;
+  margin-top: 24px;
 
   @media (max-width: 768px) {
     grid-template-columns: 1fr;
@@ -165,15 +168,16 @@ const CoverageGrid = styled.div`
 `;
 
 const CoverageCard = styled.div`
-  background: #f9f7f2;
-  border: 1px solid #e8e3d9;
+  background: #111111;
+  border: 1px solid rgba(140, 116, 75, 0.25);
   padding: 24px;
   border-radius: 4px;
 
   h3 {
     font-family: 'Cormorant Garamond', serif;
     font-size: 1.3rem;
-    color: #1a1918;
+    color: #F5F1E8;
+    letter-spacing: 0.06em;
     margin-bottom: 12px;
     display: flex;
     align-items: center;
@@ -182,7 +186,7 @@ const CoverageCard = styled.div`
 
   p {
     font-size: 0.9rem;
-    color: #55524d;
+    color: #A8A8A8;
     line-height: 1.6;
   }
 `;
@@ -194,21 +198,24 @@ const CTABanner = styled.section`
 `;
 
 const CTABannerInner = styled.div`
-  background: #1a1918;
-  color: #fffdf9;
+  background: #151515;
+  border: 1px solid rgba(140, 116, 75, 0.3);
+  color: #F5F1E8;
   padding: 40px;
   border-radius: 4px;
   text-align: center;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.6);
 
   h2 {
     font-family: 'Cormorant Garamond', serif;
     font-size: 2rem;
-    color: #fffdf9;
+    letter-spacing: 0.1em;
+    color: #F5F1E8;
     margin-bottom: 12px;
   }
 
   p {
-    color: #d9d3c7;
+    color: #D8D2C5;
     font-size: 0.95rem;
     max-width: 540px;
     margin: 0 auto 24px;
@@ -219,61 +226,27 @@ const CTABannerInner = styled.div`
     display: inline-flex;
     align-items: center;
     gap: 8px;
-    background: #c9a45c;
-    color: #1a1918;
+    background: #C9A96E;
+    color: #0B0B0B;
     padding: 14px 28px;
-    border-radius: 4px;
+    border-radius: 2px;
     font-size: 0.85rem;
-    letter-spacing: 0.1em;
+    letter-spacing: 0.14em;
     text-transform: uppercase;
-    font-weight: 600;
+    font-weight: 700;
     text-decoration: none;
-    transition: all 0.2s ease;
+    transition: all 0.25s ease;
 
     &:hover {
-      background: #fffdf9;
+      background: #DFBA73;
+      box-shadow: 0 4px 18px rgba(201, 169, 110, 0.35);
     }
   }
 `;
 
 export const LifetimeWarrantyPage: React.FC = () => {
   useEffect(() => {
-    // Dynamic SEO Metadata
-    document.title = 'Limited Lifetime Warranty | Floksy Jewel';
-    const metaDesc = document.querySelector('meta[name="description"]');
-    if (metaDesc) {
-      metaDesc.setAttribute('content', 'Learn about the Floksy Jewel Free Limited Lifetime Warranty covering manufacturing craftsmanship, prong inspection, and complimentary cleaning.');
-    }
-
-    // JSON-LD Structured Data
-    const script = document.createElement('script');
-    script.type = 'application/ld+json';
-    script.innerHTML = JSON.stringify({
-      '@context': 'https://schema.org',
-      '@graph': [
-        {
-          '@type': 'WebPage',
-          '@id': 'https://floksyjewel.com/lifetime-warranty#webpage',
-          'url': 'https://floksyjewel.com/lifetime-warranty',
-          'name': 'Free Limited Lifetime Warranty | Floksy Jewel',
-          'description': 'Our lifetime commitment to manufacturing quality, stone security, and complimentary maintenance.',
-        },
-        {
-          '@type': 'BreadcrumbList',
-          '@id': 'https://floksyjewel.com/lifetime-warranty#breadcrumb',
-          'itemListElement': [
-            { '@type': 'ListItem', 'position': 1, 'name': 'Home', 'item': 'https://floksyjewel.com' },
-            { '@type': 'ListItem', 'position': 2, 'name': 'Why Floksy Jewel', 'item': 'https://floksyjewel.com/lifetime-warranty' },
-            { '@type': 'ListItem', 'position': 3, 'name': 'Limited Lifetime Warranty', 'item': 'https://floksyjewel.com/lifetime-warranty' }
-          ]
-        }
-      ]
-    });
-    document.head.appendChild(script);
-
-    return () => {
-      document.head.removeChild(script);
-    };
+    document.title = 'Lifetime Warranty | AethelCarats Fine Jewellery';
   }, []);
 
   return (
@@ -281,89 +254,101 @@ export const LifetimeWarrantyPage: React.FC = () => {
       <BreadcrumbsBar>
         <Link to="/">Home</Link>
         <ChevronRight size={12} />
-        <span>Why Floksy Jewel</span>
+        <span>Why AethelCarats</span>
         <ChevronRight size={12} />
-        <span className="current">Limited Lifetime Warranty</span>
+        <span className="current">Lifetime Warranty</span>
       </BreadcrumbsBar>
 
-      <HeroSection>
-        <div className="text-side">
-          <span className="eyebrow">GUARANTEED CRAFTSMANSHIP</span>
-          <h1>Limited Lifetime Warranty</h1>
-          <p className="subtitle">
-            Every piece created by Floksy Jewel is hand-crafted to exacting standards. We proudly stand behind our master goldsmiths with a complimentary Limited Lifetime Warranty against manufacturing defects.
-          </p>
-          <Link
-            to="/contact-us"
-            style={{
-              display: 'inline-flex',
-              alignItems: 'center',
-              gap: 8,
-              background: '#1a1918',
-              color: '#fffdf9',
-              padding: '14px 28px',
-              borderRadius: 4,
-              fontSize: '0.85rem',
-              letterSpacing: '0.12em',
-              textTransform: 'uppercase',
-              fontWeight: 600,
-              textDecoration: 'none',
-            }}
-          >
-            REQUEST WARRANTY ASSISTANCE
-          </Link>
-        </div>
-        <div className="image-side">
-          <SafeImage src="/assets/why-floksy/lifetime-warranty-hero.jpg" alt="Master Jeweller Polishing Diamond Ring" />
-        </div>
-      </HeroSection>
+      <RevealContainer yOffset={35}>
+        <HeroSection>
+          <div className="text-side">
+            <span className="eyebrow">GUARANTEED CRAFTSMANSHIP</span>
+            <h1>Lifetime Warranty</h1>
+            <p className="subtitle">
+              Every piece created by AethelCarats is hand-crafted to exacting standards. We proudly stand behind our master goldsmiths with a complimentary Lifetime Warranty against manufacturing defects.
+            </p>
+            <Link
+              to="/contact-us"
+              style={{
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: 8,
+                background: '#C9A96E',
+                color: '#0B0B0B',
+                padding: '14px 28px',
+                borderRadius: 2,
+                fontSize: '0.85rem',
+                letterSpacing: '0.14em',
+                textTransform: 'uppercase',
+                fontWeight: 700,
+                textDecoration: 'none',
+              }}
+            >
+              REQUEST WARRANTY ASSISTANCE
+            </Link>
+          </div>
+          <div className="image-side">
+            <SafeImage src="/assets/why-aura/lifetime-warranty-hero.jpg" alt="Master Jeweller Polishing Diamond Ring" />
+          </div>
+        </HeroSection>
+      </RevealContainer>
 
       <ContentGrid>
-        <EditorialBlock>
-          <h2>Our Quality Guarantee</h2>
-          <p>
-            When you purchase fine jewellery from Floksy Jewel, your piece is inspected through multi-point gemmological protocols. We guarantee that your item is free from manufacturing defects in structure, setting, and metal casting at the time of delivery.
-          </p>
-          <p>
-            If you ever believe your item has a manufacturing defect, send it to our atelier for expert inspection. If a defect is confirmed, we will repair or replace the item free of charge.
-          </p>
+        <RevealContainer yOffset={35}>
+          <EditorialBlock>
+            <h2>Our Quality Guarantee</h2>
+            <p>
+              When you purchase fine jewellery from AethelCarats, your piece is inspected through multi-point gemmological protocols. We guarantee that your item is free from manufacturing defects in structure, setting, and metal casting at the time of delivery.
+            </p>
+            <p>
+              If you ever believe your item has a manufacturing defect, send it to our atelier for expert inspection. If a defect is confirmed, we will repair or replace the item free of charge.
+            </p>
 
-          <CoverageGrid>
-            <CoverageCard>
-              <h3><CheckCircle size={18} color="#c9a45c" /> What Is Covered</h3>
-              <p>Manufacturing defects in metal casting, prong alignment, channel settings, solder joints, and structural integrity under normal wear.</p>
-            </CoverageCard>
-            <CoverageCard>
-              <h3><Award size={18} color="#c9a45c" /> Complimentary Services</h3>
-              <p>Complimentary annual prong tightening, stone inspection, steam cleaning, and rhodium polishing at our atelier.</p>
-            </CoverageCard>
-          </CoverageGrid>
-        </EditorialBlock>
+            <CoverageGrid>
+              <RevealContainer delay={0.0} yOffset={25}>
+                <CoverageCard>
+                  <h3><CheckCircle size={18} color="#C9A96E" /> What Is Covered</h3>
+                  <p>Manufacturing defects in metal casting, prong alignment, channel settings, solder joints, and structural integrity under normal wear.</p>
+                </CoverageCard>
+              </RevealContainer>
+              <RevealContainer delay={0.1} yOffset={25}>
+                <CoverageCard>
+                  <h3><Award size={18} color="#C9A96E" /> Complimentary Services</h3>
+                  <p>Complimentary annual prong tightening, stone inspection, steam cleaning, and rhodium polishing at our atelier.</p>
+                </CoverageCard>
+              </RevealContainer>
+            </CoverageGrid>
+          </EditorialBlock>
+        </RevealContainer>
 
-        <EditorialBlock>
-          <h2>Care & Maintenance Guidance</h2>
-          <p>
-            Fine jewellery is crafted from precious metals that can naturally experience wear over time. Normal wear and tear, accidental damage, loss of stones due to impact, or repairs performed by third-party jewellers are not covered under warranty.
-          </p>
-          <p>
-            We recommend scheduling an annual inspection with our concierge to ensure prongs remain taut and settings remain secure.
-          </p>
-        </EditorialBlock>
+        <RevealContainer yOffset={35}>
+          <EditorialBlock>
+            <h2>Care & Maintenance Guidance</h2>
+            <p>
+              Fine jewellery is crafted from precious metals that can naturally experience wear over time. Normal wear and tear, accidental damage, loss of stones due to impact, or repairs performed by third-party jewellers are not covered under warranty.
+            </p>
+            <p>
+              We recommend scheduling an annual inspection with our concierge to ensure prongs remain taut and settings remain secure.
+            </p>
+          </EditorialBlock>
+        </RevealContainer>
       </ContentGrid>
 
-      <CTABanner>
-        <CTABannerInner>
-          <h2>Need Maintenance or Repair Assistance?</h2>
-          <p>
-            Contact our Customer Care team to schedule your complimentary annual jewellery inspection or service.
-          </p>
-          <Link to="/contact-us" className="primary-btn">
-            <Mail size={16} /> CONTACT CUSTOMER CARE
-          </Link>
-        </CTABannerInner>
-      </CTABanner>
+      <RevealContainer yOffset={35}>
+        <CTABanner>
+          <CTABannerInner>
+            <h2>Need Maintenance or Repair Assistance?</h2>
+            <p>
+              Contact our Customer Care team to schedule your complimentary annual jewellery inspection or service.
+            </p>
+            <Link to="/contact-us" className="primary-btn">
+              <Mail size={16} /> CONTACT CUSTOMER CARE
+            </Link>
+          </CTABannerInner>
+        </CTABanner>
+      </RevealContainer>
 
-      <WhyFloksyJewelNav />
+      <WhyAuraDiamondNav />
     </PageWrapper>
   );
 };

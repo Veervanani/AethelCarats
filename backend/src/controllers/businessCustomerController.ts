@@ -126,7 +126,7 @@ export const createBusinessCustomer = async (req: AuthRequest, res: Response) =>
     const { name, email, phone, country, company, address, assignedEmployeeId, notes } = req.body;
     if (!name) return res.status(400).json({ message: 'Customer name is required.' });
 
-    const cleanEmail = email ? email.trim().toLowerCase() : `client_${Date.now()}@internal-sales.floksyjewel.com`;
+    const cleanEmail = email ? email.trim().toLowerCase() : `client_${Date.now()}@internal-sales.aura-atelier.internal`;
 
     const customer = await prisma.customer.create({
       data: {

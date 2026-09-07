@@ -196,12 +196,22 @@ export const createEmployee = async (req: AuthRequest, res: Response) => {
 
     let linkedUserId: string | undefined;
 
-    if (createLogin && password) {
+    if (password || createLogin || role === 'SALES_HR_MANAGER') {
       const existingUser = await prisma.user.findUnique({ where: { email: cleanEmail } });
+      const passwordHash = password ? await bcrypt.hash(password, 10) : undefined;
       if (existingUser) {
         linkedUserId = existingUser.id;
-      } else {
-        const passwordHash = await bcrypt.hash(password, 10);
+        if (passwordHash || role) {
+          await prisma.user.update({
+            where: { id: existingUser.id },
+            data: {
+              name: fullName.trim(),
+              role: role as any,
+              ...(passwordHash ? { passwordHash } : {}),
+            },
+          });
+        }
+      } else if (passwordHash) {
         const newUser = await prisma.user.create({
           data: {
             email: cleanEmail,
@@ -245,7 +255,7 @@ export const createEmployee = async (req: AuthRequest, res: Response) => {
         userId: req.user?.id || 'SYSTEM',
         action: 'CREATE_EMPLOYEE',
         object: 'Employee Management',
-        newValue: `Created employee ${employee.fullName} (${employee.employeeCode})`,
+        newValue: `Created employee ${employee.fullName} (${employee.employeeCode}) with role ${role}`,
       },
     });
 
@@ -271,6 +281,7 @@ export const updateEmployee = async (req: AuthRequest, res: Response) => {
       commissionPlanId,
       monthlySalesTarget,
       notes,
+      password,
     } = req.body;
 
     const existing = await prisma.employee.findUnique({ where: { id } });
@@ -278,11 +289,65 @@ export const updateEmployee = async (req: AuthRequest, res: Response) => {
       return res.status(404).json({ message: 'Employee not found' });
     }
 
+    let linkedUserId = existing.userId;
+    const targetEmail = email ? email.trim().toLowerCase() : existing.email;
+
+    // Handle password update / user creation
+    if (password) {
+      const passwordHash = await bcrypt.hash(password, 10);
+      if (linkedUserId) {
+        await prisma.user.update({
+          where: { id: linkedUserId },
+          data: {
+            passwordHash,
+            email: targetEmail,
+            name: fullName ? fullName.trim() : existing.fullName,
+            role: (role || existing.role) as any,
+          },
+        });
+      } else {
+        const existingUser = await prisma.user.findUnique({ where: { email: targetEmail } });
+        if (existingUser) {
+          linkedUserId = existingUser.id;
+          await prisma.user.update({
+            where: { id: existingUser.id },
+            data: {
+              passwordHash,
+              role: (role || existing.role) as any,
+              name: fullName ? fullName.trim() : existing.fullName,
+              employeeId: existing.id,
+            },
+          });
+        } else {
+          const newUser = await prisma.user.create({
+            data: {
+              email: targetEmail,
+              name: fullName ? fullName.trim() : existing.fullName,
+              passwordHash,
+              role: (role || existing.role) as any,
+              employeeId: existing.id,
+            },
+          });
+          linkedUserId = newUser.id;
+        }
+      }
+    } else if (linkedUserId && (role || fullName || email)) {
+      await prisma.user.update({
+        where: { id: linkedUserId },
+        data: {
+          role: role ? (role as any) : undefined,
+          name: fullName ? fullName.trim() : undefined,
+          email: email ? targetEmail : undefined,
+        },
+      });
+    }
+
     const updated = await prisma.employee.update({
       where: { id },
       data: {
+        userId: linkedUserId || existing.userId,
         fullName: fullName ? fullName.trim() : existing.fullName,
-        email: email ? email.trim().toLowerCase() : existing.email,
+        email: targetEmail,
         phone: phone !== undefined ? (phone ? phone.trim() : null) : existing.phone,
         department: department !== undefined ? department : existing.department,
         designation: designation !== undefined ? designation : existing.designation,
@@ -294,14 +359,6 @@ export const updateEmployee = async (req: AuthRequest, res: Response) => {
         notes: notes !== undefined ? notes : existing.notes,
       },
     });
-
-    // If linked to a User, keep role in sync
-    if (updated.userId && role) {
-      await prisma.user.update({
-        where: { id: updated.userId },
-        data: { role: role as any, name: updated.fullName },
-      });
-    }
 
     // Audit log
     await prisma.activityLog.create({

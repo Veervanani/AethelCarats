@@ -13,8 +13,8 @@ const CardContainer = styled(Link)`
   height: 100%;
   width: 100%;
   box-sizing: border-box;
-  background-color: #ffffff;
-  border: 1px solid #e8e3d9;
+  background-color: #151515;
+  border: 1px solid rgba(140, 116, 75, 0.2);
   border-radius: 4px;
   overflow: hidden;
   text-decoration: none;
@@ -24,8 +24,8 @@ const CardContainer = styled(Link)`
 
   &:hover {
     transform: translateY(-5px);
-    border-color: #c9a45c;
-    box-shadow: 0 16px 36px rgba(201, 164, 92, 0.12), 0 6px 16px rgba(0, 0, 0, 0.04);
+    border-color: #C9A96E;
+    box-shadow: 0 16px 36px rgba(0, 0, 0, 0.8), 0 0 20px rgba(201, 169, 110, 0.15);
   }
 `;
 
@@ -34,14 +34,14 @@ const ImageWrapper = styled.div`
   width: 100%;
   aspect-ratio: 4 / 5;
   overflow: hidden;
-  background-color: #FAF9F6;
+  background-color: #0B0B0B;
   user-select: none;
 `;
 
 const PrimaryImg = styled.div<{ $isHovered: boolean; $activeIdx: number }>`
   position: absolute;
   inset: 0;
-  opacity: ${({ $isHovered, $activeIdx }) => ($activeIdx === 1 ? 0 : $isHovered ? 0 : 1)};
+  opacity: ${({ $activeIdx, $isHovered }) => ($activeIdx === 1 ? 0 : $isHovered ? 0 : 1)};
   transform: scale(${({ $isHovered }) => ($isHovered ? 1.04 : 1)});
   transition: opacity 0.5s ease, transform 0.7s cubic-bezier(0.16, 1, 0.3, 1);
 
@@ -56,7 +56,7 @@ const PrimaryImg = styled.div<{ $isHovered: boolean; $activeIdx: number }>`
 const SecondaryImg = styled.div<{ $isHovered: boolean; $activeIdx: number }>`
   position: absolute;
   inset: 0;
-  opacity: ${({ $isHovered, $activeIdx }) => ($activeIdx === 1 ? 1 : $isHovered ? 1 : 0)};
+  opacity: ${({ $activeIdx, $isHovered }) => ($activeIdx === 1 ? 1 : $isHovered ? 1 : 0)};
   transform: scale(${({ $isHovered }) => ($isHovered ? 1.04 : 1)});
   transition: opacity 0.5s ease, transform 0.7s cubic-bezier(0.16, 1, 0.3, 1);
 
@@ -84,17 +84,17 @@ const BadgeRow = styled.div`
 `;
 
 const MetalBadge = styled.span`
-  background-color: rgba(255, 253, 249, 0.94);
-  color: #1f1f1f;
+  background-color: rgba(11, 11, 11, 0.88);
+  color: #C9A96E;
   font-size: 0.65rem;
   letter-spacing: 0.14em;
   text-transform: uppercase;
   padding: 4px 9px;
   font-weight: 600;
-  border: 1px solid #e6e1d7;
+  border: 1px solid rgba(140, 116, 75, 0.3);
   border-radius: 2px;
   backdrop-filter: blur(6px);
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.4);
 
   @media (max-width: 576px) {
     font-size: 0.58rem;
@@ -110,9 +110,9 @@ const WishlistButton = styled.button<{ $isLiked?: boolean }>`
   width: 34px;
   height: 34px;
   border-radius: 50%;
-  background-color: rgba(255, 253, 249, 0.94);
-  border: 1px solid #e6e1d7;
-  color: ${({ $isLiked }) => ($isLiked ? '#d93838' : '#1f1f1f')};
+  background-color: rgba(21, 21, 21, 0.88);
+  border: 1px solid rgba(140, 116, 75, 0.3);
+  color: ${({ $isLiked }) => ($isLiked ? '#E53E3E' : '#F5F1E8')};
   display: flex;
   align-items: center;
   justify-content: center;
@@ -120,12 +120,12 @@ const WishlistButton = styled.button<{ $isLiked?: boolean }>`
   z-index: 5;
   transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
   backdrop-filter: blur(6px);
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.4);
 
   &:hover {
-    background-color: #1f1f1f;
-    color: #c9a45c;
-    border-color: #1f1f1f;
+    background-color: #0B0B0B;
+    color: #C9A96E;
+    border-color: #C9A96E;
     transform: scale(1.08);
   }
 
@@ -149,10 +149,9 @@ const QuickViewOverlayBtn = styled.button<{ $isHovered?: boolean }>`
   transform: translate(-50%, 14px);
   width: 84%;
   padding: 9px 14px;
-  background-color: rgba(28, 27, 25, 0.9);
-  backdrop-filter: blur(8px);
-  color: #ffffff;
-  border: 1px solid rgba(201, 164, 92, 0.45);
+  background-color: #C9A96E;
+  color: #0B0B0B;
+  border: none;
   border-radius: 30px;
   font-family: 'Inter', sans-serif;
   font-size: 0.72rem;
@@ -166,8 +165,8 @@ const QuickViewOverlayBtn = styled.button<{ $isHovered?: boolean }>`
   cursor: pointer;
   z-index: 6;
   opacity: 0;
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
-  transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.35s ease, background-color 0.25s ease, border-color 0.25s ease, color 0.25s ease, box-shadow 0.25s ease;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.5);
+  transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.35s ease, background-color 0.25s ease, color 0.25s ease, box-shadow 0.25s ease;
 
   ${CardContainer}:hover & {
     transform: translate(-50%, 0);
@@ -175,14 +174,11 @@ const QuickViewOverlayBtn = styled.button<{ $isHovered?: boolean }>`
   }
 
   &:hover {
-    background-color: #c9a45c;
-    border-color: #c9a45c;
-    color: #1f1f1f;
-    box-shadow: 0 10px 28px rgba(201, 164, 92, 0.4);
+    background-color: #DFCA9B;
+    box-shadow: 0 10px 28px rgba(201, 169, 110, 0.4);
   }
 
   @media (max-width: 1024px) {
-    /* Hidden by default on mobile so product photos stay 100% clean */
     opacity: ${({ $isHovered }) => ($isHovered ? 0.96 : 0)};
     transform: ${({ $isHovered }) => ($isHovered ? 'translate(-50%, 0)' : 'translate(-50%, 12px)')};
     pointer-events: ${({ $isHovered }) => ($isHovered ? 'auto' : 'none')};
@@ -191,7 +187,6 @@ const QuickViewOverlayBtn = styled.button<{ $isHovered?: boolean }>`
     font-size: 0.65rem;
     letter-spacing: 0.1em;
     bottom: 8px;
-    background-color: rgba(28, 27, 25, 0.92);
 
     ${CardContainer}:active &, ${CardContainer}:focus & {
       opacity: 0.96;
@@ -219,8 +214,8 @@ const Dot = styled.span<{ $active: boolean }>`
   width: 5px;
   height: 5px;
   border-radius: 50%;
-  background-color: ${({ $active }) => ($active ? '#C9A45C' : 'rgba(255, 255, 255, 0.7)')};
-  border: 1px solid rgba(0, 0, 0, 0.15);
+  background-color: ${({ $active }) => ($active ? '#C9A96E' : 'rgba(255, 255, 255, 0.4)')};
+  border: 1px solid rgba(0, 0, 0, 0.3);
   transition: background-color 0.2s ease;
 `;
 
@@ -232,7 +227,7 @@ const ContentArea = styled.div`
   text-align: center;
   flex: 1;
   justify-content: space-between;
-  background: #ffffff;
+  background: #151515;
 
   @media (max-width: 576px) {
     padding: 10px 8px 12px;
@@ -243,15 +238,20 @@ const Title = styled.h3`
   font-family: 'Cormorant Garamond', Georgia, serif;
   font-size: 1.15rem;
   font-weight: 500;
-  color: #1f1f1f;
+  color: #F5F1E8;
   margin-bottom: 6px;
   line-height: 1.3;
-  letter-spacing: 0.01em;
+  letter-spacing: 0.02em;
   min-height: 2.6em;
   display: -webkit-box;
   -webkit-line-clamp: 2;
   -webkit-box-orient: vertical;
   overflow: hidden;
+  transition: color 0.25s ease;
+
+  ${CardContainer}:hover & {
+    color: #C9A96E;
+  }
 
   @media (max-width: 576px) {
     font-size: 0.95rem;
@@ -268,7 +268,7 @@ const Title = styled.h3`
 const SpecsText = styled.p`
   font-size: 0.78rem;
   letter-spacing: 0.05em;
-  color: #77736c;
+  color: #A8A8A8;
   margin-bottom: 10px;
 
   @media (max-width: 576px) {
@@ -287,9 +287,10 @@ const PriceRow = styled.div`
   width: 100%;
 
   .price {
+    font-family: 'Inter', sans-serif;
     font-size: 1.05rem;
-    font-weight: 700;
-    color: #1f1f1f;
+    font-weight: 600;
+    color: #C9A96E;
     letter-spacing: 0.01em;
     white-space: nowrap;
 
@@ -303,8 +304,9 @@ const PriceRow = styled.div`
   }
 
   .compare {
+    font-family: 'Inter', sans-serif;
     font-size: 0.82rem;
-    color: #999388;
+    color: #777777;
     text-decoration: line-through;
     white-space: nowrap;
 
@@ -344,7 +346,7 @@ export const ProductCard: React.FC<{ product: Product }> = ({ product }) => {
   if (product.secondaryImage && typeof product.secondaryImage === 'string') candidateImages.push(product.secondaryImage.trim());
 
   const realCustomImages = candidateImages.filter(
-    (u) => u && !u.includes('floksy_rings_cat.png') && !u.includes('floksy_rings_cat_2.png')
+    (u) => u && !u.includes('gem_rings_cat.png') && !u.includes('gem_rings_cat_2.png')
   );
 
   const cleanUniqueCustom = Array.from(new Set(realCustomImages));
@@ -353,7 +355,7 @@ export const ProductCard: React.FC<{ product: Product }> = ({ product }) => {
   const primarySrc =
     cleanUniqueCustom[0] ||
     cleanUniqueAll[0] ||
-    '/assets/floksy_rings_cat.png';
+    '/assets/gem_rings_cat.png';
 
   const secondarySrc =
     cleanUniqueCustom[1] ||
@@ -443,7 +445,7 @@ export const ProductCard: React.FC<{ product: Product }> = ({ product }) => {
           </SpecsText>
         )}
         <PriceRow>
-          <span className="price" style={{ color: Boolean(product.onSale && product.salePrice) ? '#d93838' : '#1f1f1f', fontWeight: 700 }}>
+          <span className="price" style={{ color: Boolean(product.onSale && product.salePrice) ? '#E53E3E' : '#C9A96E', fontWeight: 700 }}>
             ${(product.salePrice && product.onSale ? product.salePrice : (product.price || 0)).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
           </span>
           {Boolean(product.onSale && product.comparePrice && Number(product.comparePrice) > Number(product.salePrice || product.price || 0)) && (

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+﻿import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
 import { Save, Check, Palette } from 'lucide-react';
 import { api } from '../../services/api';
@@ -196,7 +196,7 @@ export const AdminThemeSettingsPage: React.FC = () => {
           </FormGroup>
 
           <FormGroup>
-            <label>FLOKSY Gold Secondary Color</label>
+            <label>AURA Gold Secondary Color</label>
             <div className="color-picker-row">
               <input
                 type="color"

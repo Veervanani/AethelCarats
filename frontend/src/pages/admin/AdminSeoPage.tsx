@@ -17,16 +17,23 @@ import {
 
 const StickyTopHeader = styled.div`
   position: sticky;
-  top: 0;
+  top: 64px;
   z-index: 80;
   background: #ffffff;
-  border-bottom: 1px solid #e8e3d9;
+  border: 1px solid #e8e3d9;
+  border-radius: 8px;
   padding: 16px 24px;
   display: flex;
   justify-content: space-between;
   align-items: center;
+  flex-wrap: wrap;
+  gap: 16px;
   margin-bottom: 24px;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03);
+
+  @media (max-width: 900px) {
+    top: 58px;
+  }
 
   h1 {
     font-family: 'Cormorant Garamond', serif;
@@ -47,15 +54,15 @@ const ContentCanvas = styled.div`
 
 export const AdminSeoPage: React.FC = () => {
   const [seo, setSeo] = useState<any>({
-    seoTitle: 'FLOKSY JEWEL | High Jewellery & Natural Diamond Vault',
-    metaDescription: 'Discover Floksy Jewel bespoke fine jewellery collections and certified loose diamonds in The Diamond Vault.',
-    canonicalUrl: 'https://floksyjewel.com',
-    ogTitle: 'FLOKSY JEWEL | Fine Jewellery Atelier',
+    seoTitle: 'AURA DIAMOND ATELIER | High Jewellery & Natural Diamond Vault',
+    metaDescription: 'Discover Aura Diamond Atelier bespoke fine jewellery collections and certified loose diamonds in The Diamond Vault.',
+    canonicalUrl: 'https://auroradiamonds.com',
+    ogTitle: 'AURA DIAMOND ATELIER | Fine Jewellery Atelier',
     ogDescription: 'Certified natural & lab-grown diamonds, engagement rings.',
-    ogImage: '/assets/floksy_hero_luxury.png',
-    twitterTitle: 'FLOKSY JEWEL | Luxury Fine Jewelry',
+    ogImage: '/assets/gem_hero_luxury.png',
+    twitterTitle: 'AURA DIAMOND ATELIER | Luxury Fine Jewelry',
     twitterDescription: 'Certified natural & lab-grown diamonds, engagement rings.',
-    twitterImage: '/assets/floksy_hero_luxury.png',
+    twitterImage: '/assets/gem_hero_luxury.png',
   });
 
   const [tracking, setTracking] = useState<any>({
@@ -173,7 +180,7 @@ export const AdminSeoPage: React.FC = () => {
               type="text"
               value={seo.seoTitle || ''}
               onChange={(e) => setSeo({ ...seo, seoTitle: e.target.value })}
-              placeholder="FLOKSY JEWEL | High Jewellery & Natural Diamond Vault"
+              placeholder="AURA DIAMOND ATELIER | High Jewellery & Natural Diamond Vault"
             />
           </AdminFormGroup>
           <AdminFormGroup style={{ marginTop: 16 }}>
@@ -191,7 +198,7 @@ export const AdminSeoPage: React.FC = () => {
               type="text"
               value={seo.canonicalUrl || ''}
               onChange={(e) => setSeo({ ...seo, canonicalUrl: e.target.value })}
-              placeholder="https://floksyjewel.com"
+              placeholder="https://auroradiamonds.com"
             />
           </AdminFormGroup>
         </AdminCard>

@@ -1,6 +1,6 @@
-<?php
+﻿<?php
 /**
- * Floksy Jewel — Health Controller
+ * Aura Diamond Atelier — Health Controller
  * Real-Time Database Connection & Health Diagnostic Endpoint
  */
 
@@ -21,7 +21,7 @@ function handleHealthCheck(): void {
         $productStmt = $pdo->query("SELECT COUNT(*) as count FROM `product`");
         $productCount = (int) $productStmt->fetch()['count'];
 
-        $dbName = $pdo->query("SELECT DATABASE()")->fetchColumn() ?: 'u657751653_floksyjewel';
+        $dbName = $pdo->query("SELECT DATABASE()")->fetchColumn() ?: 'aura_atelier_db';
         $tableStmt = $pdo->prepare("SELECT COUNT(*) as count FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_SCHEMA = ?");
         $tableStmt->execute([$dbName]);
         $tableCount = (int) $tableStmt->fetch()['count'];

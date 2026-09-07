@@ -20,9 +20,10 @@ import { api } from '../../services/api';
 
 const PageWrapper = styled.div`
   max-width: 1200px;
+  min-height: 80vh;
   margin: 0 auto;
   padding: 48px 24px 80px;
-  background-color: #f9f7f2;
+  background-color: #0B0B0B;
   box-sizing: border-box;
 
   @media (max-width: 768px) {
@@ -36,21 +37,21 @@ const AccountHeader = styled.div`
   align-items: center;
   margin-bottom: 32px;
   padding-bottom: 20px;
-  border-bottom: 1px solid #d9d3c7;
+  border-bottom: 1px solid rgba(140, 116, 75, 0.25);
 
   .welcome {
     h1 {
       font-family: 'Cormorant Garamond', serif;
       font-size: 2.4rem;
-      letter-spacing: 0.1em;
+      letter-spacing: 0.14em;
       text-transform: uppercase;
-      color: #1f1f1f;
+      color: #F5F1E8;
       margin-bottom: 4px;
     }
 
     p {
       font-size: 0.95rem;
-      color: #6b6b6b;
+      color: #A8A8A8;
     }
   }
 
@@ -70,25 +71,26 @@ const LogoutBtn = styled.button`
   font-weight: 600;
   letter-spacing: 0.1em;
   text-transform: uppercase;
-  background-color: #ffffff;
-  color: #1f1f1f;
-  border: 1px solid #d9d3c7;
+  background-color: #111111;
+  color: #F5F1E8;
+  border: 1px solid rgba(140, 116, 75, 0.25);
+  border-radius: 2px;
   cursor: pointer;
-  transition: all 0.2s ease;
+  transition: all 0.25s ease;
 
   &:hover {
-    background-color: #1f1f1f;
-    color: #ffffff;
-    border-color: #1f1f1f;
+    background-color: rgba(229, 62, 62, 0.15);
+    color: #FC8181;
+    border-color: rgba(229, 62, 62, 0.4);
   }
 `;
 
 const SectionTitle = styled.h2`
   font-family: 'Cormorant Garamond', 'Playfair Display', serif;
   font-size: 1.8rem;
-  letter-spacing: 0.08em;
+  letter-spacing: 0.12em;
   text-transform: uppercase;
-  color: #1f1f1f;
+  color: #F5F1E8;
   margin: 40px 0 20px 0;
   display: flex;
   align-items: center;
@@ -96,19 +98,22 @@ const SectionTitle = styled.h2`
 `;
 
 const LookupBox = styled.div`
-  background: #ffffff;
-  border: 1px solid #d9d3c7;
+  background: #151515;
+  border: 1px solid rgba(140, 116, 75, 0.25);
+  border-radius: 4px;
   padding: 24px;
   margin-bottom: 32px;
-  box-shadow: 0 4px 16px rgba(31, 31, 31, 0.03);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
 
   h3 {
     font-family: 'Cormorant Garamond', serif;
     font-size: 1.3rem;
-    letter-spacing: 0.06em;
+    letter-spacing: 0.1em;
     text-transform: uppercase;
-    color: #1f1f1f;
-    margin-bottom: 12px;
+    color: #F5F1E8;
+    margin-bottom: 14px;
+    display: flex;
+    align-items: center;
   }
 
   .form-row {
@@ -120,50 +125,69 @@ const LookupBox = styled.div`
       flex: 1;
       min-width: 220px;
       padding: 12px 14px;
-      border: 1px solid #d9d3c7;
-      background: #faf8f5;
+      border: 1px solid rgba(140, 116, 75, 0.25);
+      background: #111111;
+      color: #F5F1E8;
+      border-radius: 2px;
       font-size: 0.88rem;
       outline: none;
+      font-family: 'Inter', sans-serif;
+      transition: all 0.2s ease;
+
+      &::placeholder {
+        color: #666666;
+      }
 
       &:focus {
-        border-color: #c9a45c;
-        background: #ffffff;
+        border-color: #C9A96E;
+        background: #0B0B0B;
+        box-shadow: 0 0 0 3px rgba(201, 169, 110, 0.2);
       }
     }
 
     button {
       padding: 12px 24px;
-      background: #1f1f1f;
-      color: #ffffff;
-      border: none;
+      background: #C9A96E;
+      color: #0B0B0B;
+      border: 1px solid #C9A96E;
+      border-radius: 2px;
       font-size: 0.8rem;
-      font-weight: 600;
-      letter-spacing: 0.1em;
+      font-weight: 700;
+      letter-spacing: 0.12em;
       text-transform: uppercase;
       cursor: pointer;
       display: flex;
       align-items: center;
       gap: 8px;
+      transition: all 0.25s ease;
 
       &:hover {
-        background: #c9a45c;
+        background: #DFBA73;
+        border-color: #DFBA73;
+        box-shadow: 0 4px 14px rgba(201, 169, 110, 0.3);
+      }
+
+      &:disabled {
+        opacity: 0.6;
+        cursor: not-allowed;
       }
     }
   }
 `;
 
 const OrderCard = styled.div`
-  background: #ffffff;
-  border: 1px solid #d9d3c7;
+  background: #151515;
+  border: 1px solid rgba(140, 116, 75, 0.25);
+  border-radius: 4px;
   padding: 24px;
   margin-bottom: 24px;
-  box-shadow: 0 4px 16px rgba(31, 31, 31, 0.03);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
 
   .order-header {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    border-bottom: 1px solid #f2ede4;
+    border-bottom: 1px solid rgba(140, 116, 75, 0.2);
     padding-bottom: 16px;
     margin-bottom: 20px;
     flex-wrap: wrap;
@@ -173,48 +197,49 @@ const OrderCard = styled.div`
       font-family: monospace;
       font-weight: 700;
       font-size: 1.1rem;
-      color: #1f1f1f;
+      color: #C9A96E;
     }
 
     .date {
       font-size: 0.82rem;
-      color: #777;
+      color: #A8A8A8;
     }
 
     .status-badge {
-      padding: 4px 12px;
+      padding: 5px 14px;
       font-size: 0.72rem;
       font-weight: 700;
       letter-spacing: 0.08em;
       text-transform: uppercase;
       border-radius: 12px;
-      background: #faf5eb;
-      color: #c9a45c;
-      border: 1px solid #e8e3d9;
+      background: rgba(201, 169, 110, 0.15);
+      color: #C9A96E;
+      border: 1px solid rgba(201, 169, 110, 0.35);
 
       &.delivered {
-        background: #e6f4ea;
-        color: #137333;
-        border-color: #ceead6;
+        background: rgba(56, 161, 105, 0.15);
+        color: #68D391;
+        border-color: rgba(56, 161, 105, 0.35);
       }
       &.manufacturing {
-        background: #e8f0fe;
-        color: #1a73e8;
-        border-color: #d2e3fc;
+        background: rgba(49, 130, 206, 0.15);
+        color: #63B3ED;
+        border-color: rgba(49, 130, 206, 0.35);
       }
       &.dispatched {
-        background: #feefc3;
-        color: #b06000;
-        border-color: #fce8e6;
+        background: rgba(221, 107, 32, 0.15);
+        color: #F6AD55;
+        border-color: rgba(221, 107, 32, 0.35);
       }
     }
   }
 `;
 
 const CourierBox = styled.div`
-  background: #faf8f5;
-  border: 1px solid #e8e3d9;
-  border-left: 4px solid #c9a45c;
+  background: #111111;
+  border: 1px solid rgba(140, 116, 75, 0.3);
+  border-left: 4px solid #C9A96E;
+  border-radius: 4px;
   padding: 16px 20px;
   margin: 20px 0;
   display: flex;
@@ -231,13 +256,13 @@ const CourierBox = styled.div`
     .icon-wrap {
       width: 42px;
       height: 42px;
-      background: #ffffff;
-      border: 1px solid #d9d3c7;
+      background: #151515;
+      border: 1px solid rgba(140, 116, 75, 0.3);
       border-radius: 50%;
       display: flex;
       align-items: center;
       justify-content: center;
-      color: #c9a45c;
+      color: #C9A96E;
       flex-shrink: 0;
     }
 
@@ -246,14 +271,14 @@ const CourierBox = styled.div`
       font-weight: 700;
       letter-spacing: 0.08em;
       text-transform: uppercase;
-      color: #77736c;
+      color: #A8A8A8;
     }
 
     .tracking-no {
       font-family: monospace;
       font-size: 1.05rem;
       font-weight: 700;
-      color: #1f1f1f;
+      color: #F5F1E8;
       margin-top: 2px;
     }
   }
@@ -283,9 +308,9 @@ const StepItem = styled.div<{ $completed: boolean }>`
     width: 36px;
     height: 36px;
     border-radius: 50%;
-    background: ${({ $completed }) => ($completed ? '#1f1f1f' : '#faf8f5')};
-    color: ${({ $completed }) => ($completed ? '#c9a45c' : '#a39e93')};
-    border: 2px solid ${({ $completed }) => ($completed ? '#1f1f1f' : '#d9d3c7')};
+    background: ${({ $completed }) => ($completed ? '#C9A96E' : '#111111')};
+    color: ${({ $completed }) => ($completed ? '#0B0B0B' : '#666666')};
+    border: 2px solid ${({ $completed }) => ($completed ? '#C9A96E' : 'rgba(140, 116, 75, 0.25)')};
     display: flex;
     align-items: center;
     justify-content: center;
@@ -298,7 +323,7 @@ const StepItem = styled.div<{ $completed: boolean }>`
     font-weight: 700;
     letter-spacing: 0.06em;
     text-transform: uppercase;
-    color: ${({ $completed }) => ($completed ? '#1f1f1f' : '#8c877d')};
+    color: ${({ $completed }) => ($completed ? '#F5F1E8' : '#666666')};
   }
 
   @media (max-width: 640px) {
@@ -317,16 +342,16 @@ const OrderItemsList = styled.div`
     justify-content: space-between;
     align-items: center;
     font-size: 0.88rem;
-    color: #33312e;
+    color: #D8D2C5;
     padding: 8px 0;
-    border-bottom: 1px dashed #f2ede4;
+    border-bottom: 1px dashed rgba(140, 116, 75, 0.2);
 
     .name {
       font-weight: 600;
     }
     .price {
       font-weight: 700;
-      color: #c9a45c;
+      color: #C9A96E;
     }
   }
 `;
@@ -348,14 +373,14 @@ export const AccountPage: React.FC = () => {
 
   useEffect(() => {
     try {
-      const stored = localStorage.getItem('fj_customer_user');
-      const token = localStorage.getItem('floksy_token') || localStorage.getItem('fj_admin_token');
+      const stored = localStorage.getItem('app_user_profile');
+      const token = localStorage.getItem('app_auth_token') || localStorage.getItem('admin_session_token');
       if (stored) {
         const u = JSON.parse(stored);
         setUser(u);
         fetchUserOrders(u.email);
       } else if (token) {
-        const u = { email: 'client@floksyjewel.com', name: 'Valued Client' };
+        const u = { email: 'client@aethelcarats.com', name: 'Valued Client' };
         setUser(u);
         fetchUserOrders(u.email);
       } else {
@@ -380,7 +405,7 @@ export const AccountPage: React.FC = () => {
   const fetchUserOrders = async (email: string) => {
     setLoadingOrders(true);
     try {
-      const lastPlacedEmail = localStorage.getItem('fj_last_order_email');
+      const lastPlacedEmail = localStorage.getItem('app_last_order_email');
       let data = await api.getMyOrders(email);
       if ((!data || data.length === 0) && lastPlacedEmail && lastPlacedEmail !== email) {
         const extraData = await api.getMyOrders(lastPlacedEmail);
@@ -404,7 +429,7 @@ export const AccountPage: React.FC = () => {
     setLookupResult(null);
 
     try {
-      const searchEmail = lookupEmail || (user?.email?.includes('@') ? user.email : localStorage.getItem('fj_last_order_email') || '');
+      const searchEmail = lookupEmail || (user?.email?.includes('@') ? user.email : localStorage.getItem('app_last_order_email') || '');
       const res = await api.trackPublicOrder(lookupOrderNo, searchEmail);
       setLookupResult(res);
     } catch (err: any) {
@@ -415,9 +440,9 @@ export const AccountPage: React.FC = () => {
   };
 
   const handleLogout = () => {
-    localStorage.removeItem('floksy_token');
-    localStorage.removeItem('fj_customer_user');
-    localStorage.removeItem('fj_admin_token');
+    localStorage.removeItem('app_auth_token');
+    localStorage.removeItem('app_user_profile');
+    localStorage.removeItem('admin_session_token');
     navigate('/login');
   };
 
@@ -471,12 +496,12 @@ export const AccountPage: React.FC = () => {
 
       {/* TRACK ORDER INSTANT LOOKUP */}
       <LookupBox>
-        <h3><Search size={18} color="#C9A45C" style={{ marginRight: 8 }} /> INSTANT ORDER TRACKING</h3>
+        <h3><Search size={18} color="#C9A96E" style={{ marginRight: 8 }} /> INSTANT ORDER TRACKING</h3>
         <form onSubmit={handleLookupSubmit}>
           <div className="form-row">
             <input
               type="text"
-              placeholder="Enter Order Number (e.g. FJ-10028)"
+              placeholder="Enter Order Number (e.g. AC-10028)"
               value={lookupOrderNo}
               onChange={(e) => setLookupOrderNo(e.target.value)}
               required
@@ -494,13 +519,13 @@ export const AccountPage: React.FC = () => {
         </form>
 
         {lookupError && (
-          <div style={{ color: '#c53030', fontSize: '0.85rem', marginTop: 12, display: 'flex', alignItems: 'center', gap: 6 }}>
+          <div style={{ color: '#FC8181', fontSize: '0.85rem', marginTop: 12, display: 'flex', alignItems: 'center', gap: 6 }}>
             <AlertCircle size={16} /> {lookupError}
           </div>
         )}
 
         {lookupResult && (
-          <div style={{ marginTop: 24, paddingTop: 20, borderTop: '1px solid #e8e3d9' }}>
+          <div style={{ marginTop: 24, paddingTop: 20, borderTop: '1px solid rgba(140, 116, 75, 0.2)' }}>
             <OrderCard style={{ margin: 0 }}>
               <div className="order-header">
                 <div>
@@ -527,7 +552,7 @@ export const AccountPage: React.FC = () => {
                       <div className="tracking-no">Waybill / Tracking ID: {lookupResult.shipments[lookupResult.shipments.length - 1].trackingNumber}</div>
                     </div>
                   </div>
-                  <div style={{ fontSize: '0.8rem', fontWeight: 600, color: '#388E3C', background: '#e6f4ea', border: '1px solid #ceead6', padding: '6px 14px', borderRadius: 4 }}>
+                  <div style={{ fontSize: '0.8rem', fontWeight: 600, color: '#68D391', background: 'rgba(56, 161, 105, 0.15)', border: '1px solid rgba(56, 161, 105, 0.35)', padding: '6px 14px', borderRadius: 4 }}>
                     ✓ Insured Transit in Progress
                   </div>
                 </CourierBox>
@@ -548,15 +573,15 @@ export const AccountPage: React.FC = () => {
 
       {/* MY ORDERS SECTION */}
       <SectionTitle id="my-orders">
-        <ShoppingBag size={24} color="#C9A45C" /> MY RECENT ORDERS ({orders.length})
+        <ShoppingBag size={24} color="#C9A96E" /> MY RECENT ORDERS ({orders.length})
       </SectionTitle>
 
       {loadingOrders ? (
-        <div style={{ padding: '32px', textAlign: 'center', color: '#777' }}>Loading order history...</div>
+        <div style={{ padding: '32px', textAlign: 'center', color: '#A8A8A8' }}>Loading order history...</div>
       ) : orders.length === 0 ? (
-        <div style={{ background: '#ffffff', border: '1px solid #d9d3c7', padding: '40px 24px', textAlign: 'center' }}>
-          <p style={{ color: '#777', marginBottom: 16 }}>You have no placed orders yet.</p>
-          <Link to="/rings" style={{ padding: '12px 24px', background: '#1f1f1f', color: '#fff', textDecoration: 'none', fontSize: '0.8rem', fontWeight: 600, letterSpacing: '0.1em' }}>
+        <div style={{ background: '#151515', border: '1px solid rgba(140, 116, 75, 0.25)', borderRadius: 4, padding: '40px 24px', textAlign: 'center' }}>
+          <p style={{ color: '#A8A8A8', marginBottom: 16 }}>You have no placed orders yet.</p>
+          <Link to="/rings" style={{ padding: '12px 24px', background: '#C9A96E', color: '#0B0B0B', textDecoration: 'none', fontSize: '0.8rem', fontWeight: 700, letterSpacing: '0.12em', borderRadius: 2 }}>
             EXPLORE FINE JEWELLERY
           </Link>
         </div>
@@ -588,7 +613,7 @@ export const AccountPage: React.FC = () => {
                     <div className="tracking-no">Waybill / Tracking ID: {ord.shipments[ord.shipments.length - 1].trackingNumber}</div>
                   </div>
                 </div>
-                <div style={{ fontSize: '0.8rem', fontWeight: 600, color: '#388E3C', background: '#e6f4ea', border: '1px solid #ceead6', padding: '6px 14px', borderRadius: 4 }}>
+                <div style={{ fontSize: '0.8rem', fontWeight: 600, color: '#68D391', background: 'rgba(56, 161, 105, 0.15)', border: '1px solid rgba(56, 161, 105, 0.35)', padding: '6px 14px', borderRadius: 4 }}>
                   ✓ Insured Transit in Progress
                 </div>
               </CourierBox>

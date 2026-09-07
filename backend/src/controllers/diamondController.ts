@@ -1,4 +1,4 @@
-import { Request, Response } from 'express';
+﻿import { Request, Response } from 'express';
 import { AuthRequest } from '../middleware/auth';
 import prisma from '../prisma';
 
@@ -312,11 +312,11 @@ export const getWhatsAppInquiryMessage = async (req: Request, res: Response) => 
       return res.status(404).json({ message: 'Diamond not found' });
     }
 
-    const host = req.get('host') || 'floksyjewel.com';
+    const host = req.get('host') || 'auroradiamonds.com';
     const protocol = req.protocol || 'https';
     const diamondUrl = `${protocol}://${host}/diamonds/${diamond.diamondId}`;
 
-    const text = `Hello Floksy Jewel,\n\nI am interested in this diamond:\n\nDiamond ID: ${diamond.diamondId}\nShape: ${diamond.shape}\nCarat: ${diamond.carat}ct\nColor: ${diamond.color}\nClarity: ${diamond.clarity}\nCut: ${diamond.cut || 'N/A'}\nCertificate: ${diamond.lab || 'N/A'}\nCertificate No: ${diamond.certificateNumber || 'N/A'}\nPrice: $${diamond.price.toLocaleString()}\n\nDiamond Link:\n${diamondUrl}`;
+    const text = `Hello Aura Diamond Atelier,\n\nI am interested in this diamond:\n\nDiamond ID: ${diamond.diamondId}\nShape: ${diamond.shape}\nCarat: ${diamond.carat}ct\nColor: ${diamond.color}\nClarity: ${diamond.clarity}\nCut: ${diamond.cut || 'N/A'}\nCertificate: ${diamond.lab || 'N/A'}\nCertificate No: ${diamond.certificateNumber || 'N/A'}\nPrice: $${diamond.price.toLocaleString()}\n\nDiamond Link:\n${diamondUrl}`;
 
     let waNumber = '447900123456';
     const waSetting = await prisma.siteSetting.findUnique({ where: { key: 'whatsapp_config' } });
@@ -403,7 +403,7 @@ export const createDiamond = async (req: AuthRequest, res: Response) => {
         fancyColor: data.fancyColor || null,
         fancyOvertone: data.fancyOvertone || null,
         fancyIntensity: data.fancyIntensity || null,
-        imageUrl: data.imageUrl || '/assets/floksy_diamonds_cat.png',
+        imageUrl: data.imageUrl || '/assets/gem_diamonds_cat.png',
       },
     });
 

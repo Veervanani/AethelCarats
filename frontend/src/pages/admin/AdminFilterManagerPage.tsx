@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+﻿import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
 import {
   Plus,
@@ -498,7 +498,7 @@ export const AdminFilterManagerPage: React.FC = () => {
       const formData = new FormData();
       formData.append('file', file);
 
-      const token = localStorage.getItem('fj_admin_token') || localStorage.getItem('floksy_token');
+      const token = localStorage.getItem('admin_session_token') || localStorage.getItem('app_auth_token');
       const res = await fetch('/api/v1/admin/media/upload', {
         method: 'POST',
         headers: { Authorization: token ? `Bearer ${token}` : '' },

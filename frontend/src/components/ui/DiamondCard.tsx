@@ -31,7 +31,7 @@ const ImageArea = styled.div`
   position: relative;
   width: 100%;
   aspect-ratio: 1 / 1;
-  background-color: #f7f4ed;
+  background-color: #0B0B0B;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -91,14 +91,14 @@ const DetailsArea = styled.div`
   flex-direction: column;
   align-items: center;
   gap: 8px;
-  background: #ffffff;
+  background: #151515;
 `;
 
 const MainHeader = styled.h4`
   font-family: ${({ theme }) => theme.fonts.heading};
   font-size: 1.3rem;
   font-weight: 600;
-  color: ${({ theme }) => theme.colors.textPrimary};
+  color: #F5F1E8;
   letter-spacing: 0.04em;
   text-transform: uppercase;
 `;
@@ -106,7 +106,7 @@ const MainHeader = styled.h4`
 const SpecsLine = styled.div`
   font-size: 0.82rem;
   font-weight: 500;
-  color: ${({ theme }) => theme.colors.textSecondary};
+  color: #D8D2C5;
   letter-spacing: 0.08em;
   text-transform: uppercase;
 `;
@@ -115,40 +115,42 @@ const CertBadge = styled.div`
   font-size: 0.72rem;
   font-weight: 600;
   letter-spacing: 0.12em;
-  color: ${({ theme }) => theme.colors.deepGold};
-  border: 1px solid ${({ theme }) => theme.colors.border};
-  background-color: #faf5eb;
+  color: #C9A96E;
+  border: 1px solid rgba(140, 116, 75, 0.3);
+  background-color: #1F1F1F;
   padding: 4px 10px;
   margin: 4px 0;
   text-transform: uppercase;
-  border-radius: 2px;
+  border-radius: 4px;
 `;
 
 const PriceText = styled.div`
   font-size: 1.18rem;
-  font-weight: 600;
-  color: ${({ theme }) => theme.colors.textPrimary};
+  font-weight: 700;
+  color: #C9A96E;
   margin-top: 4px;
 `;
 
 const InquireBtn = styled.button`
   width: 100%;
   background-color: transparent;
-  border: 1px solid ${({ theme }) => theme.colors.textPrimary};
-  color: ${({ theme }) => theme.colors.textPrimary};
+  border: 1px solid rgba(140, 116, 75, 0.4);
+  color: #F5F1E8;
   padding: 11px 16px;
   font-size: 0.72rem;
-  font-weight: 600;
+  font-weight: 700;
   letter-spacing: 0.16em;
   text-transform: uppercase;
   margin-top: 10px;
-  border-radius: 2px;
+  border-radius: 4px;
+  cursor: pointer;
   transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
 
   &:hover {
-    background-color: ${({ theme }) => theme.colors.textPrimary};
-    border-color: ${({ theme }) => theme.colors.textPrimary};
-    color: #c9a45c;
+    background-color: #C9A96E;
+    border-color: #C9A96E;
+    color: #0B0B0B;
+    transform: translateY(-1px);
   }
 `;
 

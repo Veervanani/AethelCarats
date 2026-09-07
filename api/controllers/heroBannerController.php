@@ -42,13 +42,13 @@ function handleGetPublicHeroBanners() {
                 $m = strtolower($b['mobileImagePath'] ?? '');
 
                 if (str_contains($type, 'ring') || str_contains($title, 'ring') || str_contains($img, 'ring') || str_contains($m, 'ring')) {
-                    $b['mobileImagePath'] = '/assets/floksy_hero_ring_mobile.png';
+                    $b['mobileImagePath'] = '/assets/gem_rings_cat.png';
                 } else if (str_contains($type, 'necklace') || str_contains($title, 'necklace') || str_contains($img, 'necklace') || str_contains($m, 'necklace')) {
-                    $b['mobileImagePath'] = '/assets/floksy_hero_necklace_mobile.png';
+                    $b['mobileImagePath'] = '/assets/gem_necklaces_cat.png';
                 } else if (str_contains($type, 'earring') || str_contains($title, 'earring') || str_contains($img, 'earring') || str_contains($m, 'earring')) {
-                    $b['mobileImagePath'] = '/assets/floksy_hero_earrings_mobile.png';
+                    $b['mobileImagePath'] = '/assets/gem_earrings_cat.png';
                 } else if (str_contains($type, 'bracelet') || str_contains($title, 'bracelet') || str_contains($img, 'bracelet') || str_contains($m, 'bracelet')) {
-                    $b['mobileImagePath'] = '/assets/floksy_bracelets_mobile.png';
+                    $b['mobileImagePath'] = '/assets/gem_bracelets_cat.png';
                 }
             }
             sendJsonResponse(200, $banners);
@@ -70,7 +70,7 @@ function handleGetPublicHeroBanners() {
             'secondaryCtaLink' => '/diamonds',
             'productType' => 'Engagement Ring',
             'imagePath' => '/assets/Engagement Ring.png',
-            'mobileImagePath' => '/assets/floksy_hero_ring_mobile.png',
+            'mobileImagePath' => '/assets/gem_rings_cat.png',
             'imageAlt' => 'Handcrafted Solitaire Diamond Engagement Ring',
             'isActive' => 1,
             'displayOrder' => 1
@@ -86,7 +86,7 @@ function handleGetPublicHeroBanners() {
             'secondaryCtaLink' => '/collections/signature-collection',
             'productType' => 'Necklace',
             'imagePath' => '/assets/Necklace.png',
-            'mobileImagePath' => '/assets/floksy_hero_necklace_mobile.png',
+            'mobileImagePath' => '/assets/gem_necklaces_cat.png',
             'imageAlt' => 'Haute Joaillerie Diamond Necklace',
             'isActive' => 1,
             'displayOrder' => 2
@@ -102,7 +102,7 @@ function handleGetPublicHeroBanners() {
             'secondaryCtaLink' => '/diamonds',
             'productType' => 'Earrings',
             'imagePath' => '/assets/Earrings.png',
-            'mobileImagePath' => '/assets/floksy_hero_earrings_mobile.png',
+            'mobileImagePath' => '/assets/gem_earrings_cat.png',
             'imageAlt' => 'Brilliant Diamond Earrings',
             'isActive' => 1,
             'displayOrder' => 3
@@ -118,7 +118,7 @@ function handleGetPublicHeroBanners() {
             'secondaryCtaLink' => '/custom-jewellery',
             'productType' => 'Bracelet',
             'imagePath' => '/assets/Bracelet.png',
-            'mobileImagePath' => '/assets/floksy_bracelets_mobile.png',
+            'mobileImagePath' => '/assets/gem_bracelets_cat.png',
             'imageAlt' => 'Bespoke Diamond Bracelet',
             'isActive' => 1,
             'displayOrder' => 4
@@ -185,7 +185,7 @@ function handleCreateHeroBanner() {
     ensureHeroBannersTableExists($db);
 
     $title = $_POST['title'] ?? 'Timeless Luxury Fine Jewellery';
-    $subtitle = $_POST['subtitle'] ?? 'FLOKSY JEWEL ATELIER';
+    $subtitle = $_POST['subtitle'] ?? 'AURA DIAMOND ATELIER';
     $description = $_POST['description'] ?? '';
     $primaryCtaText = $_POST['primaryCtaText'] ?? 'EXPLORE COLLECTION';
     $primaryCtaLink = $_POST['primaryCtaLink'] ?? '/rings';

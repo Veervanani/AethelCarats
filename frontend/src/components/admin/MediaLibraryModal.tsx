@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+﻿import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
 import { Search, X, Check, Image as ImageIcon, RefreshCw, Upload } from 'lucide-react';
 import { api } from '../../services/api';
@@ -161,14 +161,14 @@ export const MediaLibraryModal: React.FC<MediaLibraryModalProps> = ({ isOpen, on
       if (items.length === 0) {
         // Fallback default assets if database media table is empty
         setMediaItems([
-          { id: '1', url: '/assets/floksy_hero_luxury.png', filename: 'floksy_hero_luxury.png' },
-          { id: '2', url: '/assets/floksy_rings_cat.png', filename: 'floksy_rings_cat.png' },
-          { id: '3', url: '/assets/floksy_rings_cat_2.png', filename: 'floksy_rings_cat_2.png' },
-          { id: '4', url: '/assets/floksy_earrings_cat.png', filename: 'floksy_earrings_cat.png' },
-          { id: '5', url: '/assets/floksy_necklaces_cat.png', filename: 'floksy_necklaces_cat.png' },
-          { id: '6', url: '/assets/floksy_bracelets_cat.png', filename: 'floksy_bracelets_cat.png' },
-          { id: '7', url: '/assets/floksy_diamonds_cat.png', filename: 'floksy_diamonds_cat.png' },
-          { id: '8', url: '/assets/floksy_craftsmanship.jpg', filename: 'floksy_craftsmanship.jpg' },
+          { id: '1', url: '/assets/gem_hero_luxury.png', filename: 'gem_hero_luxury.png' },
+          { id: '2', url: '/assets/gem_rings_cat.png', filename: 'gem_rings_cat.png' },
+          { id: '3', url: '/assets/gem_rings_cat_2.png', filename: 'gem_rings_cat_2.png' },
+          { id: '4', url: '/assets/gem_earrings_cat.png', filename: 'gem_earrings_cat.png' },
+          { id: '5', url: '/assets/gem_necklaces_cat.png', filename: 'gem_necklaces_cat.png' },
+          { id: '6', url: '/assets/gem_bracelets_cat.png', filename: 'gem_bracelets_cat.png' },
+          { id: '7', url: '/assets/gem_diamonds_cat.png', filename: 'gem_diamonds_cat.png' },
+          { id: '8', url: '/assets/gem_craftsmanship.jpg', filename: 'gem_craftsmanship.jpg' },
         ]);
       } else {
         setMediaItems(items);
@@ -176,14 +176,14 @@ export const MediaLibraryModal: React.FC<MediaLibraryModalProps> = ({ isOpen, on
     } catch (err) {
       console.error('Failed to fetch media library items:', err);
       setMediaItems([
-        { id: '1', url: '/assets/floksy_hero_luxury.png', filename: 'floksy_hero_luxury.png' },
-        { id: '2', url: '/assets/floksy_rings_cat.png', filename: 'floksy_rings_cat.png' },
-        { id: '3', url: '/assets/floksy_rings_cat_2.png', filename: 'floksy_rings_cat_2.png' },
-        { id: '4', url: '/assets/floksy_earrings_cat.png', filename: 'floksy_earrings_cat.png' },
-        { id: '5', url: '/assets/floksy_necklaces_cat.png', filename: 'floksy_necklaces_cat.png' },
-        { id: '6', url: '/assets/floksy_bracelets_cat.png', filename: 'floksy_bracelets_cat.png' },
-        { id: '7', url: '/assets/floksy_diamonds_cat.png', filename: 'floksy_diamonds_cat.png' },
-        { id: '8', url: '/assets/floksy_craftsmanship.jpg', filename: 'floksy_craftsmanship.jpg' },
+        { id: '1', url: '/assets/gem_hero_luxury.png', filename: 'gem_hero_luxury.png' },
+        { id: '2', url: '/assets/gem_rings_cat.png', filename: 'gem_rings_cat.png' },
+        { id: '3', url: '/assets/gem_rings_cat_2.png', filename: 'gem_rings_cat_2.png' },
+        { id: '4', url: '/assets/gem_earrings_cat.png', filename: 'gem_earrings_cat.png' },
+        { id: '5', url: '/assets/gem_necklaces_cat.png', filename: 'gem_necklaces_cat.png' },
+        { id: '6', url: '/assets/gem_bracelets_cat.png', filename: 'gem_bracelets_cat.png' },
+        { id: '7', url: '/assets/gem_diamonds_cat.png', filename: 'gem_diamonds_cat.png' },
+        { id: '8', url: '/assets/gem_craftsmanship.jpg', filename: 'gem_craftsmanship.jpg' },
       ]);
     } finally {
       setLoading(false);

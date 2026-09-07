@@ -1,6 +1,6 @@
 import { Request, Response } from 'express';
 import { AuthRequest } from '../middleware/auth';
-import { ensure22PagesContentSeeded, INITIAL_22_PAGES_DATA } from '../services/cmsSeedService';
+import { ensure22PagesContentSeeded, INITIAL_22_PAGES_DATA, DEFAULT_HOMEPAGE_SECTIONS } from '../services/cmsSeedService';
 import prisma from '../prisma';
 
 // Get single CMS Page by Slug
@@ -32,6 +32,29 @@ export const getPageBySlug = async (req: AuthRequest, res: Response) => {
           lastPublishedAt: new Date(),
           publishedBy: 'System',
         },
+        include: {
+          sections: { orderBy: { position: 'asc' } },
+          seoMetadata: true,
+          revisions: { orderBy: { createdAt: 'desc' }, take: 20 },
+          faqs: { orderBy: { sortOrder: 'asc' } },
+        },
+      });
+    }
+
+    if (slug === 'home' && page && page.sections.length === 0) {
+      for (const s of DEFAULT_HOMEPAGE_SECTIONS) {
+        await prisma.pageSection.create({
+          data: {
+            pageId: page.id,
+            blockType: s.blockType,
+            position: s.position,
+            isVisible: s.isVisible,
+            content: s.content,
+          },
+        });
+      }
+      page = await prisma.page.findUnique({
+        where: { slug },
         include: {
           sections: { orderBy: { position: 'asc' } },
           seoMetadata: true,
@@ -404,19 +427,19 @@ export const getBlogPosts = async (req: AuthRequest, res: Response) => {
         {
           title: 'The Ultimate Guide to GIA vs IGI Diamond Certification',
           slug: 'gia-vs-igi-diamond-certification-guide',
-          author: 'Floksy Master Gemologist',
+          author: 'Master Gemologist',
           excerpt: 'Understanding key differences in diamond grading standards, cut proportions, and value retention.',
           content: '<h2>Demystifying Laboratory Diamond Certification</h2><p>When purchasing a diamond over 0.50 carats, independent laboratory certification ensures you receive exact gemological specifications.</p>',
-          featuredImage: '/assets/floksy_diamonds_cat.png',
+          featuredImage: '/assets/gem_diamonds_cat.png',
           isPublished: true,
         },
         {
           title: 'Solitaire vs Halo Engagement Rings: Which Silhouette Suits You?',
           slug: 'solitaire-vs-halo-engagement-ring-guide',
-          author: 'Floksy Atelier Designer',
+          author: 'Atelier Designer',
           excerpt: 'Comparing classic solitaire elegance with light-enhancing halo settings in 18K yellow gold and platinum.',
           content: '<h2>Choosing Your Perfect Engagement Ring Setting</h2><p>Solitaire settings accentuate pure diamond geometry, while halo designs amplify visual presence.</p>',
-          featuredImage: '/assets/floksy_rings_cat.png',
+          featuredImage: '/assets/gem_rings_cat.png',
           isPublished: true,
         },
       ];
@@ -454,7 +477,7 @@ export const createBlogPost = async (req: AuthRequest, res: Response) => {
       data: {
         title,
         slug: cleanSlug,
-        author: author || 'Floksy Concierge',
+        author: author || 'Atelier Concierge',
         featuredImage,
         excerpt,
         content,

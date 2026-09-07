@@ -15,13 +15,14 @@ const ErrorWrapper = styled.div`
   max-width: 600px;
   margin: 80px auto;
   padding: 48px 32px;
-  background: #ffffff;
-  border: 1px solid #d9d3c7;
+  background: #151515;
+  border: 1px solid rgba(140, 116, 75, 0.25);
+  border-radius: 8px;
   text-align: center;
-  box-shadow: 0 12px 36px rgba(31, 31, 31, 0.08);
+  box-shadow: 0 24px 60px rgba(0, 0, 0, 0.5);
 
   .icon {
-    color: #c9a45c;
+    color: #C9A96E;
     margin-bottom: 20px;
   }
 
@@ -30,13 +31,13 @@ const ErrorWrapper = styled.div`
     font-size: 2.2rem;
     letter-spacing: 0.1em;
     text-transform: uppercase;
-    color: #1f1f1f;
+    color: #F5F1E8;
     margin-bottom: 12px;
   }
 
   p {
     font-size: 0.95rem;
-    color: #6b6b6b;
+    color: #D8D2C5;
     line-height: 1.6;
     margin-bottom: 28px;
   }
@@ -46,18 +47,20 @@ const ErrorWrapper = styled.div`
     align-items: center;
     gap: 8px;
     padding: 14px 28px;
-    background-color: #1f1f1f;
-    color: #ffffff;
+    background-color: #C9A96E;
+    color: #0B0B0B;
     font-size: 0.8rem;
-    font-weight: 600;
+    font-weight: 700;
     letter-spacing: 0.14em;
     text-transform: uppercase;
     border: none;
+    border-radius: 4px;
     cursor: pointer;
     transition: all 0.25s ease;
 
     &:hover {
-      background-color: #b8944d;
+      background-color: #DFBA73;
+      color: #0B0B0B;
     }
   }
 `;

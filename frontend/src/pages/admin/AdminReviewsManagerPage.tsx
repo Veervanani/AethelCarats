@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+﻿import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
 import {
   Star,
@@ -341,11 +341,11 @@ export const AdminReviewsManagerPage: React.FC = () => {
       `Absolutely in love with my ${pName}! The ${pCarat}${pShape} stone catches the light brilliantly in ${pMetal}. Arrived in discreet luxury packaging right on schedule.`,
       `Exceeded my expectations in every way. The craftsmanship on this ${pCategory.toLowerCase()} is flawless, and the ${pMetal} setting holds the ${pShape} diamond so elegantly.`,
       `Bought the ${pName} for a special milestone and could not be happier. Superior craftsmanship, certified diamond clarity, and white-glove customer service!`,
-      `The brilliance of the ${pShape} diamond in person is unbelievable. Floksy Jewel's attention to detail on this ${pMetal} ${pCategory.toLowerCase()} makes it a true heirloom piece.`,
+      `The brilliance of the ${pShape} diamond in person is unbelievable. Aura Diamond Atelier's attention to detail on this ${pMetal} ${pCategory.toLowerCase()} makes it a true heirloom piece.`,
       `Outstanding quality! The ${pName} came beautifully presented with its certificate. Stunning ${pMetal} polish and mesmerizing diamond fire.`,
       `I spent months searching for the right ${pCategory.toLowerCase()} and ${pName} was the absolute perfect choice. The ${pMetal} setting is so refined!`,
       `Words cannot express how gorgeous this ${pName} is in person. The ${pShape} diamond reflects light from every angle!`,
-      `The craftsmanship of Floksy Jewel atelier is top tier. This ${pMetal} ${pName} feels comfortable, solid, and looks extraordinarily opulent.`,
+      `The craftsmanship of Aura Diamond Atelier atelier is top tier. This ${pMetal} ${pName} feels comfortable, solid, and looks extraordinarily opulent.`,
       `My partner was completely speechless when opening the box! The ${pCarat}${pShape} diamond in ${pMetal} is mesmerizing.`,
       `Incredible quality and craftsmanship. The diamond certification was included and the parcel arrived quickly in discreet packaging.`
     ];

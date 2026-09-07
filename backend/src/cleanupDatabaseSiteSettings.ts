@@ -7,37 +7,37 @@ export async function cleanupDatabaseSiteSettings() {
     // 1. UPDATE OR UPSERT INSTAGRAM URL IN DATABASE
     await prisma.siteSetting.upsert({
       where: { key: 'instagramUrl' },
-      update: { value: 'https://www.instagram.com/bhumi_floksyjewel?igsh=MTAxdHVtcTdqcXRldg==' },
-      create: { key: 'instagramUrl', value: 'https://www.instagram.com/bhumi_floksyjewel?igsh=MTAxdHVtcTdqcXRldg==' },
+      update: { value: 'https://www.instagram.com/auradiamondatelier' },
+      create: { key: 'instagramUrl', value: 'https://www.instagram.com/auradiamondatelier' },
     });
 
     // 2. UPDATE OR UPSERT STORE ADDRESS IN DATABASE
     await prisma.siteSetting.upsert({
       where: { key: 'storeAddress' },
-      update: { value: 'Surat, India' },
-      create: { key: 'storeAddress', value: 'Surat, India' },
+      update: { value: '740 Fifth Avenue, Suite 1800, New York, NY 10019' },
+      create: { key: 'storeAddress', value: '740 Fifth Avenue, Suite 1800, New York, NY 10019' },
     });
 
     // 3. UPDATE OR UPSERT STORE NAME IN DATABASE
     await prisma.siteSetting.upsert({
       where: { key: 'storeName' },
-      update: { value: 'FLOKSY JEWEL' },
-      create: { key: 'storeName', value: 'FLOKSY JEWEL' },
+      update: { value: 'AURA DIAMOND ATELIER' },
+      create: { key: 'storeName', value: 'AURA DIAMOND ATELIER' },
     });
 
     // 4. CLEANUP FOOTER SETTINGS ROW IN DATABASE
     const footerRow = await prisma.siteSetting.findUnique({ where: { key: 'footer_settings' } });
     let footerObj: any = {
-      brandName: 'FLOKSY JEWEL',
+      brandName: 'AURA DIAMOND ATELIER',
       tagline: 'Fine Jewelry & Certified Solitaire Diamonds',
-      logoImage: '/assets/floksy_logo_light.svg',
-      copyrightText: '© 2026 Floksy Jewel. All Rights Reserved.',
-      email: 'contact@floksyjewel.com',
-      phone: '+91973785306',
-      address: 'Surat, India',
-      instagram: 'https://www.instagram.com/bhumi_floksyjewel?igsh=MTAxdHVtcTdqcXRldg==',
-      facebook: 'https://facebook.com/floksyjewel',
-      pinterest: 'https://pinterest.com/floksyjewel',
+      logoImage: '/assets/gem_logo_light.svg',
+      copyrightText: '© 2026 Aura Diamond Atelier. All Rights Reserved.',
+      email: 'concierge@auroradiamonds.com',
+      phone: '+1 (800) 555-2872',
+      address: '740 Fifth Avenue, Suite 1800, New York, NY 10019',
+      instagram: 'https://www.instagram.com/auradiamondatelier',
+      facebook: 'https://facebook.com/auradiamondatelier',
+      pinterest: 'https://pinterest.com/auradiamondatelier',
       trustBadgeImage: '/assets/trust_badges.png',
     };
 
@@ -48,10 +48,10 @@ export async function cleanupDatabaseSiteSettings() {
       } catch (e) {}
     }
 
-    footerObj.brandName = 'FLOKSY JEWEL';
-    footerObj.address = 'Surat, India';
-    footerObj.copyrightText = '© 2026 Floksy Jewel. All Rights Reserved.';
-    footerObj.instagram = 'https://www.instagram.com/bhumi_floksyjewel?igsh=MTAxdHVtcTdqcXRldg==';
+    footerObj.brandName = 'AURA DIAMOND ATELIER';
+    footerObj.address = '740 Fifth Avenue, Suite 1800, New York, NY 10019';
+    footerObj.copyrightText = '© 2026 Aura Diamond Atelier. All Rights Reserved.';
+    footerObj.instagram = 'https://www.instagram.com/auradiamondatelier';
 
     await prisma.siteSetting.upsert({
       where: { key: 'footer_settings' },
@@ -64,13 +64,13 @@ export async function cleanupDatabaseSiteSettings() {
     if (footerConfigRow?.value) {
       try {
         const parsedConfig = JSON.parse(footerConfigRow.value);
-        parsedConfig.address = 'Surat, India';
-        parsedConfig.brandDescription = parsedConfig.brandDescription ? parsedConfig.brandDescription.replace(/Mayfair/g, 'Surat') : undefined;
-        parsedConfig.copyrightText = '© 2026 FLOKSY JEWEL. ALL RIGHTS RESERVED.';
+        parsedConfig.address = '740 Fifth Avenue, Suite 1800, New York, NY 10019';
+        parsedConfig.brandDescription = parsedConfig.brandDescription ? parsedConfig.brandDescription.replace(/Mayfair/g, 'Fifth Avenue') : undefined;
+        parsedConfig.copyrightText = '© 2026 AURA DIAMOND ATELIER. ALL RIGHTS RESERVED.';
         if (Array.isArray(parsedConfig.socialLinks)) {
           parsedConfig.socialLinks = parsedConfig.socialLinks.map((link: any) => {
             if (link && link.platform && link.platform.toLowerCase() === 'instagram') {
-              return { ...link, url: 'https://www.instagram.com/bhumi_floksyjewel?igsh=MTAxdHVtcTdqcXRldg==' };
+              return { ...link, url: 'https://www.instagram.com/auradiamondatelier' };
             }
             return link;
           });
@@ -87,9 +87,9 @@ export async function cleanupDatabaseSiteSettings() {
     if (siteSettingsRow?.value) {
       try {
         const parsedSiteSettings = JSON.parse(siteSettingsRow.value);
-        parsedSiteSettings.storeName = 'FLOKSY JEWEL';
-        parsedSiteSettings.storeAddress = 'Surat, India';
-        parsedSiteSettings.instagramUrl = 'https://www.instagram.com/bhumi_floksyjewel?igsh=MTAxdHVtcTdqcXRldg==';
+        parsedSiteSettings.storeName = 'AURA DIAMOND ATELIER';
+        parsedSiteSettings.storeAddress = '740 Fifth Avenue, Suite 1800, New York, NY 10019';
+        parsedSiteSettings.instagramUrl = 'https://www.instagram.com/auradiamondatelier';
         await prisma.siteSetting.update({
           where: { key: 'site_settings' },
           data: { value: JSON.stringify(parsedSiteSettings) },

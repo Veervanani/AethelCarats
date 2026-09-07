@@ -20,13 +20,13 @@ const mapProductResponse = (product: any, customerPriceRecord?: any) => {
   const primaryImage =
     (sortedImages.find((img: any) => img.imageType === 'primary' || img.imageType === 'hero')?.url) ||
     (sortedImages.length > 0 ? sortedImages[0].url : null) ||
-    (product.mainImage && product.mainImage !== '/assets/floksy_rings_cat.png' ? product.mainImage : null) ||
+    (product.mainImage && product.mainImage !== '/assets/gem_rings_cat.png' ? product.mainImage : null) ||
     product.mainImage ||
-    '/assets/floksy_rings_cat.png';
+    '/assets/gem_rings_cat.png';
 
   const secondaryImage =
     (sortedImages.length > 1 ? sortedImages[1].url : null) ||
-    (product.secondaryImage && product.secondaryImage !== '/assets/floksy_rings_cat_2.png' ? product.secondaryImage : null) ||
+    (product.secondaryImage && product.secondaryImage !== '/assets/gem_rings_cat_2.png' ? product.secondaryImage : null) ||
     product.secondaryImage ||
     null;
 
@@ -60,8 +60,8 @@ const mapProductResponse = (product: any, customerPriceRecord?: any) => {
   const accordionsConfig = safeJsonParse(product.accordionsConfig, [
     {
       id: 'experience',
-      title: 'YOUR FLOKSY JEWEL EXPERIENCE',
-      content: 'Every creation is handcrafted in our Surat atelier using certified conflict-free diamonds and 100% recycled precious metals.'
+      title: 'YOUR ATELIER EXPERIENCE',
+      content: 'Every creation is handcrafted in our master atelier using certified conflict-free diamonds and 100% recycled precious metals.'
     },
     {
       id: 'details',
@@ -82,10 +82,7 @@ const mapProductResponse = (product: any, customerPriceRecord?: any) => {
 
   const pricingMatrix = safeJsonParse(product.pricingMatrix, {});
   const rawVariations = safeJsonParse(product.variationsJson, []);
-  const variationsConfig = rawVariations.filter((v: any) => {
-    const metalStr = String(v.metal || '').toLowerCase();
-    return !metalStr.includes('9k') && !metalStr.includes('10k');
-  });
+  const variationsConfig = rawVariations;
 
   const customOptionsConfig = safeJsonParse(product.customOptionsJson, []);
   const shippingInfoConfig = safeJsonParse(product.shippingInfoJson, {
@@ -129,13 +126,15 @@ const mapProductResponse = (product: any, customerPriceRecord?: any) => {
     socialImage: product.ogImage || primaryImage,
     twitterTitle: product.metaTitle || title || '',
     twitterDescription: product.metaDescription || product.shortDescription || '',
-    canonicalUrl: product.slug ? `https://floksyjewel.com/product/${product.slug}` : '',
+    canonicalUrl: product.slug ? `https://auroradiamonds.com/product/${product.slug}` : '',
   });
 
   return {
     ...product,
     title,
     name: title,
+    style: product.ringStyle || 'Solitaire',
+    ringStyle: product.ringStyle || 'Solitaire',
     primaryImage,
     secondaryImage,
     price: effectivePrice,
@@ -217,9 +216,11 @@ export const getProducts = async (req: AuthRequest, res: Response) => {
     }
 
     if (category && category !== 'All' && category !== 'all') {
-      const catStr = String(category);
+      const catStr = String(category).trim();
       const catLower = catStr.toLowerCase();
       const catCap = catStr.charAt(0).toUpperCase() + catStr.slice(1).toLowerCase();
+      const catClean = catLower.replace(/-/g, ' ');
+
       where.AND = where.AND || [];
       where.AND.push({
         OR: [
@@ -229,12 +230,34 @@ export const getProducts = async (req: AuthRequest, res: Response) => {
           { jewelleryType: { contains: catStr } },
           { jewelleryType: { contains: catCap } },
           { jewelleryType: { contains: catLower } },
+          { jewelleryType: { contains: catClean } },
+          { internalTagsJson: { contains: catStr } },
+          { internalTagsJson: { contains: catLower } },
+          { internalTagsJson: { contains: catClean } },
+          { title: { contains: catClean } },
+          { title: { contains: catStr } },
+          { shortDescription: { contains: catClean } },
+          { ringStyle: { contains: catClean } },
         ],
       });
     }
 
-    if (collection) {
-      where.collection = { slug: collection as string };
+    if (collection && collection !== 'All' && collection !== 'all') {
+      const colStr = String(collection).trim();
+      const colLower = colStr.toLowerCase();
+      const colClean = colLower.replace(/-/g, ' ');
+
+      where.AND = where.AND || [];
+      where.AND.push({
+        OR: [
+          { collection: { slug: colLower } },
+          { collection: { name: { contains: colStr } } },
+          { internalTagsJson: { contains: colStr } },
+          { internalTagsJson: { contains: colLower } },
+          { internalTagsJson: { contains: colClean } },
+          { title: { contains: colClean } },
+        ],
+      });
     }
 
     if (gender && gender !== 'All') {
@@ -251,17 +274,85 @@ export const getProducts = async (req: AuthRequest, res: Response) => {
       const metalOrConditions: any[] = [];
       metalTerms.forEach((mTerm) => {
         const clean = mTerm.trim().toLowerCase();
-        if (clean.includes('yellow')) {
-          metalOrConditions.push({ metal: { contains: 'Yellow' } }, { goldColor: { contains: 'Yellow' } });
-        } else if (clean.includes('white')) {
-          metalOrConditions.push({ metal: { contains: 'White' } }, { goldColor: { contains: 'White' } });
-        } else if (clean.includes('rose')) {
-          metalOrConditions.push({ metal: { contains: 'Rose' } }, { goldColor: { contains: 'Rose' } });
-        } else if (clean.includes('platinum')) {
-          metalOrConditions.push({ metal: { contains: 'Platinum' } });
-        } else {
-          metalOrConditions.push({ metal: { contains: mTerm.trim() } });
+        if (clean === 'all' || clean === 'any') return;
+
+        if (clean.includes('9k')) {
+          metalOrConditions.push(
+            { metal: { contains: '9K' } },
+            { goldPurity: { contains: '9K' } },
+            { metalsConfig: { contains: '9K' } },
+            { variationsJson: { contains: '9K' } }
+          );
         }
+        if (clean.includes('10k')) {
+          metalOrConditions.push(
+            { metal: { contains: '10K' } },
+            { goldPurity: { contains: '10K' } },
+            { metalsConfig: { contains: '10K' } },
+            { variationsJson: { contains: '10K' } }
+          );
+        }
+        if (clean.includes('14k')) {
+          metalOrConditions.push(
+            { metal: { contains: '14K' } },
+            { goldPurity: { contains: '14K' } },
+            { metalsConfig: { contains: '14K' } },
+            { variationsJson: { contains: '14K' } }
+          );
+        }
+        if (clean.includes('18k')) {
+          metalOrConditions.push(
+            { metal: { contains: '18K' } },
+            { goldPurity: { contains: '18K' } },
+            { metalsConfig: { contains: '18K' } },
+            { variationsJson: { contains: '18K' } }
+          );
+        }
+        if (clean.includes('silver')) {
+          metalOrConditions.push(
+            { metal: { contains: 'Silver' } },
+            { metal: { contains: '925' } },
+            { goldPurity: { contains: 'Silver' } },
+            { metalsConfig: { contains: 'Silver' } },
+            { variationsJson: { contains: 'Silver' } }
+          );
+        }
+        if (clean.includes('yellow')) {
+          metalOrConditions.push(
+            { metal: { contains: 'Yellow' } },
+            { goldColor: { contains: 'Yellow' } },
+            { metalsConfig: { contains: 'Yellow' } },
+            { variationsJson: { contains: 'Yellow' } }
+          );
+        }
+        if (clean.includes('white')) {
+          metalOrConditions.push(
+            { metal: { contains: 'White' } },
+            { goldColor: { contains: 'White' } },
+            { metalsConfig: { contains: 'White' } },
+            { variationsJson: { contains: 'White' } }
+          );
+        }
+        if (clean.includes('rose')) {
+          metalOrConditions.push(
+            { metal: { contains: 'Rose' } },
+            { goldColor: { contains: 'Rose' } },
+            { metalsConfig: { contains: 'Rose' } },
+            { variationsJson: { contains: 'Rose' } }
+          );
+        }
+        if (clean.includes('platinum')) {
+          metalOrConditions.push(
+            { metal: { contains: 'Platinum' } },
+            { metalsConfig: { contains: 'Platinum' } },
+            { variationsJson: { contains: 'Platinum' } }
+          );
+        }
+        metalOrConditions.push(
+          { metal: { contains: mTerm.trim() } },
+          { metalsConfig: { contains: mTerm.trim() } },
+          { variationsJson: { contains: mTerm.trim() } }
+        );
       });
       if (metalOrConditions.length > 0) {
         where.AND.push({ OR: metalOrConditions });
@@ -282,19 +373,30 @@ export const getProducts = async (req: AuthRequest, res: Response) => {
       where.AND.push({
         OR: styleTerms.flatMap((st) => {
           const clean = st.trim();
-          if (clean === 'ALL' || clean === 'All') return [];
+          if (clean === 'ALL' || clean === 'All' || !clean) return [];
           return [
             { ringStyle: { contains: clean } },
             { specifications: { contains: clean } },
             { shortDescription: { contains: clean } },
             { fullDescription: { contains: clean } },
+            { internalTagsJson: { contains: clean } },
+            { name: { contains: clean } },
+            { title: { contains: clean } },
           ];
         }),
       });
     }
 
     if (ringSize && ringSize !== 'All') {
-      where.ringSize = { contains: ringSize as string };
+      const cleanSize = String(ringSize).trim();
+      where.AND = where.AND || [];
+      where.AND.push({
+        OR: [
+          { ringSize: { contains: cleanSize } },
+          { availableRingSizes: { contains: cleanSize } },
+          { variationsJson: { contains: cleanSize } },
+        ],
+      });
     }
 
     if (ringWidth && ringWidth !== 'All') {
@@ -338,11 +440,25 @@ export const getProducts = async (req: AuthRequest, res: Response) => {
     }
 
     if (minCarat && minCarat !== 'All') {
-      where.carat = { gte: parseFloat(minCarat as string) };
+      const caratVal = parseFloat(minCarat as string) || 0;
+      where.AND = where.AND || [];
+      where.AND.push({
+        OR: [
+          { carat: { gte: caratVal } },
+          { diamondDetailsJson: { contains: String(caratVal) } },
+        ],
+      });
     }
 
     if (clarity && clarity !== 'Any' && clarity !== 'All') {
-      where.clarity = { contains: clarity as string };
+      const cleanClarity = String(clarity).trim();
+      where.AND = where.AND || [];
+      where.AND.push({
+        OR: [
+          { clarity: { contains: cleanClarity } },
+          { diamondDetailsJson: { contains: cleanClarity } },
+        ],
+      });
     }
 
     if (color && color !== 'Any' && color !== 'All') {
@@ -369,11 +485,25 @@ export const getProducts = async (req: AuthRequest, res: Response) => {
     }
 
     if (cut && cut !== 'Any' && cut !== 'All') {
-      where.cut = { contains: cut as string };
+      const cleanCut = String(cut).trim();
+      where.AND = where.AND || [];
+      where.AND.push({
+        OR: [
+          { cut: { contains: cleanCut } },
+          { diamondDetailsJson: { contains: cleanCut } },
+        ],
+      });
     }
 
     if (certification && certification !== 'Any' && certification !== 'All') {
-      where.certification = { contains: certification as string };
+      const cleanCert = String(certification).trim();
+      where.AND = where.AND || [];
+      where.AND.push({
+        OR: [
+          { certification: { contains: cleanCert } },
+          { diamondDetailsJson: { contains: cleanCert } },
+        ],
+      });
     }
 
     if (plainMetal === 'true') {
@@ -513,11 +643,11 @@ export const getProductBySlug = async (req: AuthRequest, res: Response) => {
         const DEFAULT_PRODUCT_SECTIONS = [
           {
             type: 'EXPERIENCE',
-            title: 'YOUR FLOKSY JEWEL EXPERIENCE',
-            description: 'Every creation is handcrafted in our Surat atelier using certified conflict-free diamonds and 100% recycled precious metals.',
+            title: 'YOUR ATELIER EXPERIENCE',
+            description: 'Every creation is handcrafted in our master atelier using certified conflict-free diamonds and 100% recycled precious metals.',
             displayOrder: 0,
             items: [
-              { title: 'Expert Guidance', description: 'Consult directly with Floksy Jewel specialists for sizing and diamond guidance.', icon: 'UserCheck', displayOrder: 0 },
+              { title: 'Expert Guidance', description: 'Consult directly with atelier diamond specialists for sizing and diamond guidance.', icon: 'UserCheck', displayOrder: 0 },
               { title: 'Bespoke Craftsmanship', description: 'Custom CAD 3D photorealistic rendering and master goldsmithing.', icon: 'Sparkles', displayOrder: 1 },
               { title: 'Quality Assurance', description: 'Independently certified by GIA / IGI with 40x microscopic quality control.', icon: 'ShieldCheck', displayOrder: 2 },
               { title: 'Lifetime Service', description: 'Includes complimentary annual prong checking, sizing, and professional cleaning.', icon: 'Award', displayOrder: 3 }
@@ -700,7 +830,7 @@ export const createCategory = async (req: AuthRequest, res: Response) => {
         slug: catSlug,
         description,
         bannerImage,
-        image: image || '/assets/floksy_rings_cat.png',
+        image: image || '/assets/gem_rings_cat.png',
         link: link || `/${catSlug}`,
         sortOrder: sortOrder !== undefined ? parseInt(sortOrder, 10) : 0,
         isActive: isActive !== undefined ? Boolean(isActive) : true,
@@ -729,7 +859,7 @@ export const createProduct = async (req: AuthRequest, res: Response) => {
     const data = req.body;
     const prodTitle = data.title || data.name || 'Untitled Product';
     const slug = data.slug || prodTitle.toLowerCase().replace(/[^a-z0-9]+/g, '-');
-    const mainImage = data.mainImage || data.primaryImage || '/assets/floksy_rings_cat.png';
+    const mainImage = data.mainImage || data.primaryImage || '/assets/gem_rings_cat.png';
     const secondaryImage = data.secondaryImage || null;
 
     const product = await prisma.product.create({
@@ -744,14 +874,14 @@ export const createProduct = async (req: AuthRequest, res: Response) => {
         diamondDetailsJson: typeof data.diamondDetails === 'object' ? JSON.stringify(data.diamondDetails) : data.diamondDetailsJson,
         internalTagsJson: typeof data.internalTags === 'object' ? JSON.stringify(data.internalTags) : data.internalTagsJson,
         seoSocialJson: typeof data.seoSocial === 'object' ? JSON.stringify(data.seoSocial) : data.seoSocialJson,
-        categoryId: data.categoryId || null,
-        collectionId: data.collectionId || null,
+        ...(data.categoryId ? { category: { connect: { id: data.categoryId } } } : {}),
+        ...(data.collectionId ? { collection: { connect: { id: data.collectionId } } } : {}),
         shortDescription: data.shortDescription,
         fullDescription: data.fullDescription,
         specifications: data.specifications,
         careInstructions: data.careInstructions,
         jewelleryType: data.jewelleryType || 'Rings',
-        ringStyle: data.ringStyle || null,
+        ringStyle: data.style || data.ringStyle || null,
         ringSize: data.ringSize || null,
         ringWidth: data.ringWidth || null,
         gender: data.gender || 'Unisex',
@@ -886,7 +1016,9 @@ export const updateProduct = async (req: AuthRequest, res: Response) => {
       ...(data.specifications !== undefined && { specifications: data.specifications }),
       ...(data.careInstructions !== undefined && { careInstructions: data.careInstructions }),
       ...(data.jewelleryType !== undefined && { jewelleryType: data.jewelleryType }),
-      ...(data.ringStyle !== undefined && { ringStyle: data.ringStyle }),
+      ...((data.style !== undefined || data.ringStyle !== undefined) && {
+        ringStyle: data.style !== undefined ? data.style : data.ringStyle,
+      }),
       ...(data.ringSize !== undefined && { ringSize: data.ringSize }),
       ...(data.ringWidth !== undefined && { ringWidth: data.ringWidth }),
       ...(data.gender !== undefined && { gender: data.gender }),
@@ -1054,7 +1186,7 @@ export const duplicateProduct = async (req: AuthRequest, res: Response) => {
         specifications: original.specifications,
         careInstructions: original.careInstructions,
         jewelleryType: original.jewelleryType,
-        ringStyle: original.ringStyle,
+        ringStyle: original.ringStyle || null,
         ringSize: original.ringSize,
         ringWidth: original.ringWidth,
         gender: original.gender,
@@ -1240,12 +1372,12 @@ export const getRingSizeGuide = async (req: AuthRequest, res: Response) => {
           slug: 'find-your-ring-size',
           status: 'PUBLISHED',
           heroTitle: 'FIND YOUR PERFECT RING SIZE',
-          heroSubtitle: 'Comprehensive Floksy Jewel Sizing Guide',
+          heroSubtitle: 'Comprehensive Diamond Sizing Guide',
           heroBg: '#19202A',
           introHeading: "Precision Sizing for Life's Timeless Moments",
           infoHeading: 'International Ring Size Conversion',
           infoDescription: 'Measure your finger diameter or convert existing ring sizes using our standardized international chart.',
-          sizerHeading: 'COMPLIMENTARY FLOKSY RING SIZER',
+          sizerHeading: 'COMPLIMENTARY PRECISION RING SIZER',
           sizerDescription: 'Receive our reusable precision ring sizer delivered directly to your door.',
           measureHeading: 'HOW TO MEASURE AT HOME',
           measureDescription: 'Follow these three simple steps using a strip of paper or string.',
@@ -1510,9 +1642,9 @@ export const ensureSingleDemoProductEnforced = async () => {
           data: {
             name: 'Rings',
             slug: 'rings',
-            description: 'Luxury Floksy Jewel Diamond Rings',
-            image: '/assets/floksy_rings_cat.png',
-            bannerImage: '/assets/floksy_rings_cat.png',
+            description: 'Luxury Diamond Atelier Rings',
+            image: '/assets/gem_rings_cat.png',
+            bannerImage: '/assets/gem_rings_cat.png',
             link: '/rings',
             isActive: true,
           },
@@ -1607,7 +1739,7 @@ export const ensureSingleDemoProductEnforced = async () => {
       ];
 
       const accordionsConfig = [
-        { id: 'exp', title: 'YOUR FLOKSY JEWEL EXPERIENCE', content: 'Every creation is handcrafted in our Surat atelier using certified conflict-free diamonds.' },
+        { id: 'exp', title: 'YOUR ATELIER EXPERIENCE', content: 'Every creation is handcrafted in our master atelier using certified conflict-free diamonds.' },
         { id: 'spec', title: 'PRODUCT & DIAMOND SPECIFICATIONS', content: 'Hand-set by master artisans under 40x microscopic precision.' },
         { id: 'craft', title: 'CRAFTSMANSHIP & SUSTAINABILITY', content: 'Sustainably crafted with 100% recycled 18K gold and Platinum.' },
         { id: 'ship', title: 'SHIPPING & RETURNS', content: 'Dispatched via fully insured FedEx Priority Air.' },
@@ -1615,7 +1747,7 @@ export const ensureSingleDemoProductEnforced = async () => {
 
       // Build Metal x Ring Size Variations (No Diamond in Variations Matrix)
       const demoVariations: any[] = [];
-      const baseSku = 'FJ-DEMO-RING-001';
+      const baseSku = 'AD-DEMO-RING-001';
       for (const m of metalsConfig) {
         for (const sz of availableRingSizes) {
           const price = 5000 + m.priceAdjustment;
@@ -1633,14 +1765,14 @@ export const ensureSingleDemoProductEnforced = async () => {
 
       await prisma.product.create({
         data: {
-          name: 'Floksy Jewel Signature Solitaire Ring',
-          sku: 'FJ-DEMO-RING-001',
-          slug: 'floksy-jewel-signature-solitaire-ring',
+          name: 'Aura Signature Solitaire Ring',
+          sku: 'AD-DEMO-RING-001',
+          slug: 'aura-signature-solitaire-ring',
           categoryId: ringsCategory.id,
           jewelleryType: 'Ring',
           status: 'DRAFT',
-          shortDescription: 'A luxury Floksy Jewel solitaire engagement ring designed to showcase multiple diamond shapes and carat options.',
-          fullDescription: 'A luxury Floksy Jewel solitaire engagement ring designed to showcase multiple diamond shapes and carat options with a premium customizable configuration.',
+          shortDescription: 'A luxury solitaire engagement ring designed to showcase multiple diamond shapes and carat options.',
+          fullDescription: 'A luxury solitaire engagement ring designed to showcase multiple diamond shapes and carat options with a premium customizable configuration.',
           price: 5500,
           metal: '18K Yellow Gold',
           shape: 'Round',
@@ -1656,8 +1788,8 @@ export const ensureSingleDemoProductEnforced = async () => {
           customOptionsJson: JSON.stringify(customOptions),
           accordionsConfig: JSON.stringify(accordionsConfig),
           variationsJson: JSON.stringify(demoVariations),
-          metaTitle: 'Floksy Jewel Signature Solitaire Ring | Luxury Diamond Ring',
-          metaDescription: 'Explore the Floksy Jewel Signature Solitaire Ring with customizable diamond shapes, 1–10 carat options, premium metals, and personalized details.',
+          metaTitle: 'Aura Signature Solitaire Ring | Luxury Diamond Ring',
+          metaDescription: 'Explore the Aura Signature Solitaire Ring with customizable diamond shapes, 1–10 carat options, premium metals, and personalized details.',
           mainImage: '',
           secondaryImage: null,
         },

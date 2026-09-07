@@ -1,14 +1,14 @@
-<?php
+﻿<?php
 /**
- * Floksy Jewel — Hostinger Email / SMTP Dispatcher
+ * Aura Diamond Atelier — Hostinger Email / SMTP Dispatcher
  */
 
-function sendFloksyEmail(string $toEmail, string $toName, string $subject, string $htmlBody): bool {
+function sendAuraEmail(string $toEmail, string $toName, string $subject, string $htmlBody): bool {
     $smtpHost = getenv('SMTP_HOST') ?: 'smtp.hostinger.com';
     $smtpPort = (int) (getenv('SMTP_PORT') ?: 465);
-    $smtpUser = getenv('SMTP_USER') ?: 'contact@floksyjewel.com';
+    $smtpUser = getenv('SMTP_USER') ?: 'concierge@auroradiamonds.com';
     $smtpPass = getenv('SMTP_PASS') ?: '';
-    $smtpFrom = getenv('SMTP_FROM') ?: '"Floksy Jewel Atelier" <contact@floksyjewel.com>';
+    $smtpFrom = getenv('SMTP_FROM') ?: '"Aura Diamond Atelier" <concierge@auroradiamonds.com>';
 
     // Try PHPMailer if vendor exists, or Socket SMTP / mail() fallback
     if (class_exists('PHPMailer\PHPMailer\PHPMailer')) {
@@ -22,7 +22,7 @@ function sendFloksyEmail(string $toEmail, string $toName, string $subject, strin
             $mail->SMTPSecure = $smtpPort === 465 ? PHPMailer\PHPMailer\PHPMailer::ENCRYPTION_SMTPS : PHPMailer\PHPMailer\PHPMailer::ENCRYPTION_STARTTLS;
             $mail->Port       = $smtpPort;
 
-            $mail->setFrom($smtpUser, 'Floksy Jewel Atelier');
+            $mail->setFrom($smtpUser, 'Aura Diamond Atelier');
             $mail->addAddress($toEmail, $toName);
             $mail->isHTML(true);
             $mail->Subject = $subject;

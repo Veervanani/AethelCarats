@@ -1,5 +1,5 @@
-/**
- * Floksy Jewel — Diamond Image & Video Helper
+﻿/**
+ * Aura Diamond Atelier — Diamond Image & Video Helper
  * Resolves diamond image URLs and maps missing image paths to diamond cut SVGs.
  */
 

@@ -45,12 +45,12 @@ const SectionBox = styled.div`
   h4 {
     font-size: 11px;
     font-weight: 700;
-    letter-spacing: 0.14em;
+    letter-spacing: 0.16em;
     text-transform: uppercase;
-    color: #242321;
+    color: #C9A96E;
     padding-bottom: 8px;
     margin-bottom: 12px;
-    border-bottom: 1px solid #e8e3d9;
+    border-bottom: 1px solid rgba(140, 116, 75, 0.25);
     display: flex;
     align-items: center;
     justify-content: space-between;
@@ -69,14 +69,14 @@ const SectionBox = styled.div`
     font-size: 13px;
     font-weight: 400;
     line-height: 1.8;
-    color: #55524d;
+    color: #D8D2C5;
     text-decoration: none;
     display: inline-flex;
     align-items: center;
     transition: color 0.22s ease, transform 0.22s ease;
 
     &:hover {
-      color: #c9a45c;
+      color: #C9A96E;
       transform: translateX(4px);
     }
   }
@@ -87,21 +87,21 @@ const NewTagBadge = styled.span`
   font-weight: 700;
   letter-spacing: 0.08em;
   text-transform: uppercase;
-  background-color: #c9a45c;
-  color: #ffffff;
+  background-color: #C9A96E;
+  color: #0B0B0B;
   padding: 2px 6px;
   border-radius: 2px;
   margin-left: 8px;
   display: inline-block;
   line-height: 1;
-  box-shadow: 0 2px 6px rgba(201, 164, 92, 0.3);
+  box-shadow: 0 2px 6px rgba(201, 169, 110, 0.3);
 `;
 
 const PromosArea = styled.div`
   display: flex;
   gap: 24px;
   flex-shrink: 0;
-  border-left: 1px solid #e8e3d9;
+  border-left: 1px solid rgba(140, 116, 75, 0.25);
   padding-left: 44px;
 
   @media (max-width: 1200px) {
@@ -126,10 +126,10 @@ const PromoBox = styled(Link)`
     border-radius: 4px;
     overflow: hidden;
     margin-bottom: 12px;
-    background-color: #f0ebe1;
+    background-color: #151515;
     position: relative;
-    border: 1px solid #e8e3d9;
-    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.04);
+    border: 1px solid rgba(140, 116, 75, 0.25);
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.4);
     transition: border-color 0.3s ease, box-shadow 0.3s ease;
 
     img {
@@ -141,8 +141,8 @@ const PromoBox = styled(Link)`
   }
 
   &:hover .img-area {
-    border-color: #c9a45c;
-    box-shadow: 0 12px 24px rgba(201, 164, 92, 0.15);
+    border-color: #C9A96E;
+    box-shadow: 0 12px 24px rgba(201, 169, 110, 0.2);
 
     img {
       transform: scale(1.05);
@@ -155,15 +155,14 @@ const PromoBox = styled(Link)`
     font-weight: 600;
     letter-spacing: 0.08em;
     text-transform: uppercase;
-    color: #1f1f1f;
+    color: #F5F1E8;
     margin-bottom: 4px;
     transition: color 0.25s ease;
   }
 
   .promo-subtitle {
-    font-size: 11.5px;
-    color: #77736c;
-    font-weight: 400;
+    font-size: 12px;
+    color: #A8A8A8;
     line-height: 1.4;
   }
 
@@ -221,10 +220,10 @@ export const MegaMenu: React.FC<MegaMenuProps> = ({ isOpen, data, onClose }) => 
             left: 0,
             right: 0,
             width: '100%',
-            backgroundColor: '#faf8f5',
-            borderTop: '1px solid #e8e3d9',
-            borderBottom: '1px solid #dcd6c8',
-            boxShadow: '0 24px 50px rgba(26, 25, 24, 0.12)',
+            backgroundColor: '#111111',
+            borderTop: '1px solid rgba(140, 116, 75, 0.35)',
+            borderBottom: '1px solid rgba(140, 116, 75, 0.25)',
+            boxShadow: '0 24px 50px rgba(0, 0, 0, 0.85)',
             zIndex: 1050,
             maxHeight: 'calc(85vh - 84px)',
             overflowY: 'auto',
@@ -273,7 +272,7 @@ export const MegaMenu: React.FC<MegaMenuProps> = ({ isOpen, data, onClose }) => 
                   col.promos
                     ?.filter((p) => p.enabled !== false)
                     .map((promo, pIdx) => {
-                      const imgSrc = promo.desktopImage || promo.image || '/assets/floksy_rings_cat.png';
+                      const imgSrc = promo.desktopImage || promo.image || '/assets/gem_rings_cat.png';
                       return (
                         <motion.div
                           key={`${idx}-${pIdx}`}

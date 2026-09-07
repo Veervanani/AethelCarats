@@ -12,6 +12,7 @@ const DetailContainer = styled.div`
   max-width: 1300px;
   margin: 0 auto;
   padding: 48px 24px 80px;
+  color: #F5F1E8;
 `;
 
 const BackLink = styled(Link)`
@@ -19,10 +20,12 @@ const BackLink = styled(Link)`
   align-items: center;
   gap: 8px;
   font-size: 0.85rem;
-  color: ${({ theme }) => theme.colors.textSecondary};
+  color: #A8A8A8;
   margin-bottom: 32px;
+  text-decoration: none;
+  transition: color 0.2s ease;
   &:hover {
-    color: ${({ theme }) => theme.colors.gold};
+    color: #C9A96E;
   }
 `;
 
@@ -45,8 +48,10 @@ const MediaViewer = styled.div`
 
 const MediaDisplay = styled.div`
   aspect-ratio: 1 / 1;
-  background-color: #f5f2ea;
-  border: 1px solid ${({ theme }) => theme.colors.border};
+  background-color: #111111;
+  border: 1px solid rgba(140, 116, 75, 0.25);
+  border-radius: 6px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -62,14 +67,14 @@ const MediaDisplay = styled.div`
 const Title = styled.h1`
   font-family: ${({ theme }) => theme.fonts.heading};
   font-size: 2.4rem;
-  color: ${({ theme }) => theme.colors.textPrimary};
+  color: #F5F1E8;
   margin-bottom: 12px;
 `;
 
 const Price = styled.div`
   font-size: 2rem;
-  font-weight: 600;
-  color: ${({ theme }) => theme.colors.textPrimary};
+  font-weight: 700;
+  color: #C9A96E;
   margin-bottom: 24px;
 `;
 
@@ -78,9 +83,11 @@ const SpecsGrid = styled.div`
   grid-template-columns: repeat(2, 1fr);
   gap: 16px 24px;
   padding: 24px;
-  background-color: ${({ theme }) => theme.colors.white};
-  border: 1px solid ${({ theme }) => theme.colors.border};
+  background-color: #151515;
+  border: 1px solid rgba(140, 116, 75, 0.25);
+  border-radius: 6px;
   margin-bottom: 32px;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.2);
 
   @media (max-width: 480px) {
     grid-template-columns: 1fr;
@@ -97,13 +104,13 @@ const SpecItem = styled.div`
     font-size: 0.75rem;
     letter-spacing: 0.1em;
     text-transform: uppercase;
-    color: ${({ theme }) => theme.colors.textSecondary};
+    color: #A8A8A8;
   }
 
   .val {
     font-size: 0.95rem;
     font-weight: 600;
-    color: ${({ theme }) => theme.colors.textPrimary};
+    color: #F5F1E8;
   }
 `;
 
@@ -111,7 +118,7 @@ const ActionButton = styled.button<{ $isWhatsapp?: boolean }>`
   width: 100%;
   padding: 16px;
   font-size: 0.85rem;
-  font-weight: 600;
+  font-weight: 700;
   letter-spacing: 0.15em;
   text-transform: uppercase;
   display: flex;
@@ -119,14 +126,17 @@ const ActionButton = styled.button<{ $isWhatsapp?: boolean }>`
   justify-content: center;
   gap: 10px;
   margin-bottom: 16px;
+  border-radius: 4px;
+  cursor: pointer;
   transition: all 0.25s ease;
 
-  background-color: ${({ $isWhatsapp, theme }) => ($isWhatsapp ? '#25D366' : theme.colors.textPrimary)};
-  color: ${({ theme }) => theme.colors.white};
+  background-color: ${({ $isWhatsapp }) => ($isWhatsapp ? '#25D366' : '#C9A96E')};
+  color: ${({ $isWhatsapp }) => ($isWhatsapp ? '#ffffff' : '#0B0B0B')};
   border: none;
 
   &:hover {
     opacity: 0.9;
+    transform: translateY(-2px);
   }
 `;
 
@@ -167,7 +177,7 @@ export const DiamondDetailPage: React.FC = () => {
       const data = await api.getWhatsAppInquiryMessage(diamond.diamondId);
       window.open(data.whatsappUrl, '_blank');
     } catch (e) {
-      const text = `Hello Floksy Jewel Atelier,\n\nI am interested in Diamond ${diamond.diamondId} (${diamond.carat}ct ${diamond.shape}, Color ${diamond.color}, Clarity ${diamond.clarity}).\n\nLink: ${window.location.href}`;
+      const text = `Hello AethelCarats Fine Jewellery Atelier,\n\nI am interested in Diamond ${diamond.diamondId} (${diamond.carat}ct ${diamond.shape}, Color ${diamond.color}, Clarity ${diamond.clarity}).\n\nLink: ${window.location.href}`;
       window.open(`https://wa.me/${waNumber}?text=${encodeURIComponent(text)}`, '_blank');
     }
   };
@@ -205,13 +215,13 @@ export const DiamondDetailPage: React.FC = () => {
               <div style={{ display: 'flex', gap: 12, marginTop: 16 }}>
                 <button
                   onClick={() => setActiveMedia('image')}
-                  style={{ padding: '8px 16px', border: '1px solid #ccc', background: activeMedia === 'image' ? '#242321' : 'white', color: activeMedia === 'image' ? 'white' : 'black', cursor: 'pointer' }}
+                  style={{ padding: '8px 16px', border: '1px solid rgba(140, 116, 75, 0.3)', background: activeMedia === 'image' ? '#C9A96E' : '#151515', color: activeMedia === 'image' ? '#0B0B0B' : '#F5F1E8', fontWeight: 600, borderRadius: 4, cursor: 'pointer' }}
                 >
                   IMAGE
                 </button>
                 <button
                   onClick={() => setActiveMedia('video')}
-                  style={{ padding: '8px 16px', border: '1px solid #ccc', background: activeMedia === 'video' ? '#242321' : 'white', color: activeMedia === 'video' ? 'white' : 'black', cursor: 'pointer' }}
+                  style={{ padding: '8px 16px', border: '1px solid rgba(140, 116, 75, 0.3)', background: activeMedia === 'video' ? '#C9A96E' : '#151515', color: activeMedia === 'video' ? '#0B0B0B' : '#F5F1E8', fontWeight: 600, borderRadius: 4, cursor: 'pointer' }}
                 >
                   360° VIDEO
                 </button>
@@ -285,7 +295,7 @@ export const DiamondDetailPage: React.FC = () => {
                 href={diamond.certificateUrl}
                 target="_blank"
                 rel="noopener noreferrer"
-                style={{ display: 'inline-flex', alignItems: 'center', gap: 8, fontSize: '0.85rem', color: '#B8944D', fontWeight: 600 }}
+                style={{ display: 'inline-flex', alignItems: 'center', gap: 8, fontSize: '0.85rem', color: '#C9A96E', fontWeight: 600, textDecoration: 'none' }}
               >
                 <FileText size={16} /> View Official {diamond.lab || 'GIA'} Digital Grading Report
               </a>

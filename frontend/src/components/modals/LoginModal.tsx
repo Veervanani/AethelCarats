@@ -18,7 +18,7 @@ const Overlay = styled.div<{ $isOpen: boolean }>`
   left: 0;
   right: 0;
   bottom: 0;
-  background-color: rgba(24, 23, 21, 0.72);
+  background-color: rgba(0, 0, 0, 0.8);
   backdrop-filter: blur(8px);
   z-index: 9999;
   display: ${({ $isOpen }) => ($isOpen ? 'flex' : 'none')};
@@ -34,16 +34,17 @@ const Overlay = styled.div<{ $isOpen: boolean }>`
 `;
 
 const ModalCard = styled.div`
-  background: #ffffff;
-  border: 1px solid #d9d3c7;
+  background: #151515;
+  border: 1px solid rgba(140, 116, 75, 0.35);
   width: 100%;
   max-width: 480px;
   position: relative;
   padding: 48px 40px;
-  box-shadow: 0 24px 60px rgba(31, 31, 31, 0.18), 0 0 0 1px rgba(201, 164, 92, 0.25);
+  box-shadow: 0 24px 60px rgba(0, 0, 0, 0.6), 0 0 0 1px rgba(201, 169, 110, 0.25);
   box-sizing: border-box;
   animation: modalScaleUp 0.35s cubic-bezier(0.16, 1, 0.3, 1);
-  border-radius: 4px;
+  border-radius: 6px;
+  color: #F5F1E8;
 
   @keyframes modalScaleUp {
     from {
@@ -65,12 +66,12 @@ const CloseButton = styled.button`
   position: absolute;
   top: 18px;
   right: 18px;
-  background: #faf8f5;
-  border: 1px solid #e8e3d9;
+  background: #111111;
+  border: 1px solid rgba(140, 116, 75, 0.3);
   border-radius: 50%;
   width: 34px;
   height: 34px;
-  color: #1f1f1f;
+  color: #F5F1E8;
   cursor: pointer;
   display: flex;
   align-items: center;
@@ -78,8 +79,8 @@ const CloseButton = styled.button`
   transition: all 0.25s ease;
 
   &:hover {
-    color: #c9a45c;
-    border-color: #c9a45c;
+    color: #C9A96E;
+    border-color: #C9A96E;
     transform: rotate(90deg);
   }
 `;
@@ -94,12 +95,12 @@ const HeaderSection = styled.div`
     justify-content: center;
     width: 44px;
     height: 44px;
-    background: linear-gradient(135deg, #faf5eb 0%, #f4eae0 100%);
-    border: 1px solid #c9a45c;
+    background: #111111;
+    border: 1px solid #C9A96E;
     border-radius: 50%;
     margin-bottom: 14px;
-    color: #c9a45c;
-    box-shadow: 0 4px 14px rgba(201, 164, 92, 0.15);
+    color: #C9A96E;
+    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.4);
   }
 
   .brand-sub {
@@ -107,7 +108,7 @@ const HeaderSection = styled.div`
     font-weight: 700;
     letter-spacing: 0.22em;
     text-transform: uppercase;
-    color: #c9a45c;
+    color: #C9A96E;
     margin-bottom: 6px;
   }
 
@@ -116,7 +117,7 @@ const HeaderSection = styled.div`
     font-size: 2.3rem;
     letter-spacing: 0.08em;
     text-transform: uppercase;
-    color: #1f1f1f;
+    color: #F5F1E8;
     margin: 0 0 10px 0;
     font-weight: 500;
   }
@@ -124,7 +125,7 @@ const HeaderSection = styled.div`
   .gold-divider {
     width: 48px;
     height: 2px;
-    background: linear-gradient(90deg, transparent 0%, #c9a45c 50%, transparent 100%);
+    background: linear-gradient(90deg, transparent 0%, #C9A96E 50%, transparent 100%);
     margin: 0 auto;
   }
 `;
@@ -151,18 +152,18 @@ const FormGroup = styled.div`
     font-weight: 700;
     letter-spacing: 0.12em;
     text-transform: uppercase;
-    color: #1f1f1f;
+    color: #F5F1E8;
   }
 
   .forgot-link {
     font-size: 0.76rem;
-    color: #6b6b6b;
+    color: #A8A8A8;
     text-decoration: none;
     cursor: pointer;
     transition: color 0.2s ease;
 
     &:hover {
-      color: #c9a45c;
+      color: #C9A96E;
       text-decoration: underline;
     }
   }
@@ -176,19 +177,19 @@ const FormGroup = styled.div`
     width: 100%;
     padding: 14px 16px;
     font-size: 0.92rem;
-    color: #1f1f1f;
-    background-color: #faf5eb;
-    border: 1px solid #d9d3c7;
-    border-radius: 2px;
+    color: #F5F1E8;
+    background-color: #111111;
+    border: 1px solid rgba(140, 116, 75, 0.25);
+    border-radius: 4px;
     outline: none;
     box-sizing: border-box;
     font-family: 'Inter', sans-serif;
     transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
 
     &:focus {
-      border-color: #c9a45c;
-      background-color: #ffffff;
-      box-shadow: 0 0 0 4px rgba(201, 164, 92, 0.14);
+      border-color: #C9A96E;
+      background-color: #161616;
+      box-shadow: 0 0 0 4px rgba(201, 169, 110, 0.14);
     }
   }
 
@@ -199,13 +200,13 @@ const FormGroup = styled.div`
     transform: translateY(-50%);
     background: none;
     border: none;
-    color: #777;
+    color: #A8A8A8;
     cursor: pointer;
     display: flex;
     align-items: center;
 
     &:hover {
-      color: #c9a45c;
+      color: #C9A96E;
     }
   }
 `;
@@ -213,41 +214,27 @@ const FormGroup = styled.div`
 const LoginButton = styled.button`
   width: 100%;
   padding: 16px;
-  background: linear-gradient(135deg, #1f1f1f 0%, #2b2a28 100%);
-  color: #ffffff;
+  background: #C9A96E;
+  color: #0B0B0B;
   font-size: 0.85rem;
-  font-weight: 600;
+  font-weight: 700;
   letter-spacing: 0.18em;
   text-transform: uppercase;
-  border: 1px solid #1f1f1f;
+  border: 1px solid #C9A96E;
+  border-radius: 4px;
   cursor: pointer;
   transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
   margin-top: 8px;
   position: relative;
   overflow: hidden;
-  box-shadow: 0 4px 14px rgba(31, 31, 31, 0.15);
-
-  &::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: -100%;
-    width: 100%;
-    height: 100%;
-    background: linear-gradient(90deg, transparent 0%, rgba(201, 164, 92, 0.3) 50%, transparent 100%);
-    transition: left 0.6s ease;
-  }
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.3);
 
   &:hover {
-    background: linear-gradient(135deg, #c9a45c 0%, #b8944d 100%);
-    border-color: #c9a45c;
-    color: #1f1f1f;
-    box-shadow: 0 6px 20px rgba(201, 164, 92, 0.3);
+    background: #DFBA73;
+    border-color: #DFBA73;
+    color: #0B0B0B;
+    box-shadow: 0 6px 20px rgba(201, 169, 110, 0.4);
     transform: translateY(-1px);
-
-    &::before {
-      left: 100%;
-    }
   }
 
   &:disabled {
@@ -266,7 +253,7 @@ const Divider = styled.div`
   &::before, &::after {
     content: '';
     flex: 1;
-    border-bottom: 1px solid #e8e3d9;
+    border-bottom: 1px solid rgba(140, 116, 75, 0.25);
   }
 
   span {
@@ -274,7 +261,7 @@ const Divider = styled.div`
     font-size: 0.75rem;
     font-weight: 600;
     letter-spacing: 0.1em;
-    color: #888;
+    color: #A8A8A8;
     text-transform: uppercase;
   }
 `;
@@ -282,11 +269,12 @@ const Divider = styled.div`
 const GoogleButton = styled.button`
   width: 100%;
   padding: 13px;
-  background-color: #ffffff;
-  color: #1f1f1f;
-  border: 1px solid #d9d3c7;
+  background-color: #111111;
+  color: #F5F1E8;
+  border: 1px solid rgba(140, 116, 75, 0.3);
+  border-radius: 4px;
   font-size: 0.85rem;
-  font-weight: 500;
+  font-weight: 600;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -295,9 +283,9 @@ const GoogleButton = styled.button`
   transition: all 0.25s ease;
 
   &:hover {
-    border-color: #c9a45c;
-    background-color: #faf5eb;
-    box-shadow: 0 4px 12px rgba(201, 164, 92, 0.1);
+    border-color: #C9A96E;
+    background-color: #161616;
+    box-shadow: 0 4px 12px rgba(201, 169, 110, 0.15);
   }
 
   svg {
@@ -310,14 +298,14 @@ const FooterRow = styled.div`
   text-align: center;
   margin-top: 28px;
   padding-top: 20px;
-  border-top: 1px solid #f7f2ea;
+  border-top: 1px solid rgba(140, 116, 75, 0.2);
   font-size: 0.85rem;
-  color: #6b6b6b;
+  color: #D8D2C5;
 
   button {
     background: none;
     border: none;
-    color: #1f1f1f;
+    color: #C9A96E;
     font-weight: 700;
     letter-spacing: 0.05em;
     cursor: pointer;
@@ -325,19 +313,19 @@ const FooterRow = styled.div`
     transition: color 0.2s ease;
 
     &:hover {
-      color: #c9a45c;
+      color: #DFBA73;
       text-decoration: underline;
     }
   }
 `;
 
 const ErrorMsg = styled.div`
-  background-color: #fdf2f2;
-  border: 1px solid #f8b4b4;
-  color: #c53030;
+  background-color: rgba(239, 68, 68, 0.15);
+  border: 1px solid #ef4444;
+  color: #fca5a5;
   padding: 12px 16px;
   font-size: 0.82rem;
-  border-radius: 2px;
+  border-radius: 4px;
   margin-bottom: 16px;
   text-align: center;
 `;
@@ -386,7 +374,7 @@ export const LoginModal: React.FC<LoginModalProps> = ({
     try {
       const data = await api.login({ email, password });
       if (data.token) {
-        localStorage.setItem('floksy_token', data.token);
+        localStorage.setItem('app_auth_token', data.token);
         if (onSuccess) onSuccess();
         onClose();
       } else {
@@ -424,8 +412,8 @@ export const LoginModal: React.FC<LoginModalProps> = ({
         });
 
         if (res.token) {
-          localStorage.setItem('floksy_token', res.token);
-          localStorage.setItem('fj_customer_user', JSON.stringify(res.user));
+          localStorage.setItem('app_auth_token', res.token);
+          localStorage.setItem('app_user_profile', JSON.stringify(res.user));
           if (onSuccess) onSuccess();
           onClose();
         } else {
@@ -462,7 +450,7 @@ export const LoginModal: React.FC<LoginModalProps> = ({
           <div className="crest-logo">
             <Sparkles size={20} />
           </div>
-          <div className="brand-sub">FLOKSY JEWEL ATELIER</div>
+          <div className="brand-sub">AETHELCARATS</div>
           <h2>SIGN IN</h2>
           <div className="gold-divider" />
         </HeaderSection>
@@ -475,7 +463,7 @@ export const LoginModal: React.FC<LoginModalProps> = ({
             <input
               id="modal-login-email"
               type="email"
-              placeholder="e.g. eleanor@floksyjewel.com"
+              placeholder="e.g. eleanor@auroradiamonds.com"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               autoFocus

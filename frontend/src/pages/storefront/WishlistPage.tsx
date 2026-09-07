@@ -9,9 +9,10 @@ import { RevealContainer } from '../../components/ui/RevealContainer';
 
 const PageWrapper = styled.div`
   max-width: 1400px;
+  min-height: 80vh;
   margin: 0 auto;
   padding: 48px 24px 80px;
-  background-color: #f9f7f2;
+  background-color: #0B0B0B;
   box-sizing: border-box;
 
   @media (max-width: 768px) {
@@ -26,15 +27,16 @@ const TitleHeader = styled.div`
   h1 {
     font-family: 'Cormorant Garamond', 'Playfair Display', serif;
     font-size: 2.8rem;
-    letter-spacing: 0.1em;
+    letter-spacing: 0.14em;
     text-transform: uppercase;
-    color: #1f1f1f;
+    color: #F5F1E8;
     margin-bottom: 12px;
   }
 
   p {
-    font-size: 1rem;
-    color: #6b6b6b;
+    font-size: 0.95rem;
+    color: #A8A8A8;
+    letter-spacing: 0.04em;
   }
 `;
 
@@ -43,21 +45,22 @@ const EmptyStateContainer = styled.div`
   margin: 40px auto;
   text-align: center;
   padding: 56px 32px;
-  background-color: #ffffff;
-  border: 1px solid #d9d3c7;
-  border-radius: 2px;
-  box-shadow: 0 4px 20px rgba(31, 31, 31, 0.04);
+  background-color: #151515;
+  border: 1px solid rgba(140, 116, 75, 0.25);
+  border-radius: 4px;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.6);
 
   .icon-wrapper {
     width: 72px;
     height: 72px;
     margin: 0 auto 24px;
     border-radius: 50%;
-    background-color: #faf5eb;
+    background-color: rgba(201, 169, 110, 0.1);
+    border: 1px solid rgba(140, 116, 75, 0.3);
     display: flex;
     align-items: center;
     justify-content: center;
-    color: #c9a45c;
+    color: #C9A96E;
   }
 
   h2 {
@@ -65,13 +68,13 @@ const EmptyStateContainer = styled.div`
     font-size: 1.8rem;
     letter-spacing: 0.12em;
     text-transform: uppercase;
-    color: #1f1f1f;
+    color: #F5F1E8;
     margin-bottom: 12px;
   }
 
   p {
     font-size: 0.95rem;
-    color: #6b6b6b;
+    color: #A8A8A8;
     margin-bottom: 32px;
     line-height: 1.6;
   }
@@ -90,19 +93,21 @@ const CategoryBtn = styled(Link)`
   font-weight: 600;
   letter-spacing: 0.12em;
   text-transform: uppercase;
-  background-color: #ffffff;
-  color: #1f1f1f;
-  border: 1px solid #d9d3c7;
+  background-color: #111111;
+  color: #F5F1E8;
+  border: 1px solid rgba(140, 116, 75, 0.25);
   border-radius: 2px;
-  transition: all 0.2s ease;
+  transition: all 0.25s ease;
   display: flex;
   align-items: center;
   gap: 6px;
+  text-decoration: none;
 
   &:hover {
-    background-color: #b8944d;
-    color: #ffffff;
-    border-color: #b8944d;
+    background-color: #C9A96E;
+    color: #0B0B0B;
+    border-color: #C9A96E;
+    transform: translateY(-2px);
   }
 `;
 
@@ -125,17 +130,18 @@ const WishlistGrid = styled.div`
 `;
 
 const WishlistCard = styled.div`
-  background-color: #ffffff;
-  border: 1px solid #d9d3c7;
-  border-radius: 6px;
+  background-color: #151515;
+  border: 1px solid rgba(140, 116, 75, 0.25);
+  border-radius: 4px;
   padding: 16px;
   display: flex;
   flex-direction: column;
   position: relative;
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease;
 
   &:hover {
-    box-shadow: 0 10px 30px rgba(31, 31, 31, 0.08);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.7);
+    border-color: rgba(201, 169, 110, 0.6);
     transform: translateY(-2px);
   }
 
@@ -143,29 +149,29 @@ const WishlistCard = styled.div`
     width: 100%;
     aspect-ratio: 1;
     overflow: hidden;
-    background-color: #f9f7f2;
+    background-color: #0B0B0B;
     margin-bottom: 14px;
-    border-radius: 4px;
+    border-radius: 2px;
     display: block;
 
     img {
       width: 100%;
       height: 100%;
       object-fit: cover;
-      transition: transform 0.3s ease;
+      transition: transform 0.4s ease;
     }
 
     &:hover img {
-      transform: scale(1.04);
+      transform: scale(1.05);
     }
   }
 
   .name-link {
     font-family: 'Cormorant Garamond', Georgia, serif;
-    font-size: 1.05rem;
+    font-size: 1.1rem;
     font-weight: 600;
-    color: #1f1f1f;
-    margin-bottom: 6px;
+    color: #F5F1E8;
+    margin-bottom: 8px;
     line-height: 1.35;
     text-decoration: none;
     display: -webkit-box;
@@ -175,14 +181,15 @@ const WishlistCard = styled.div`
     transition: color 0.2s ease;
 
     &:hover {
-      color: #c9a45c;
+      color: #C9A96E;
     }
   }
 
   .price {
-    font-size: 1.0rem;
+    font-size: 1.1rem;
     font-weight: 700;
-    color: #c9a45c;
+    color: #C9A96E;
+    letter-spacing: 0.05em;
     margin-bottom: 16px;
   }
 
@@ -200,20 +207,21 @@ const ActionBtn = styled.button`
   padding: 12px 14px;
   text-align: center;
   font-size: 0.78rem;
-  font-weight: 600;
-  letter-spacing: 0.08em;
+  font-weight: 700;
+  letter-spacing: 0.12em;
   text-transform: uppercase;
-  background-color: #1f1f1f;
-  color: #ffffff;
-  border: 1px solid #1f1f1f;
-  border-radius: 4px;
+  background-color: #C9A96E;
+  color: #0B0B0B;
+  border: 1px solid #C9A96E;
+  border-radius: 2px;
   cursor: pointer;
-  transition: all 0.2s ease;
+  transition: all 0.25s ease;
   white-space: nowrap;
 
   &:hover {
-    background-color: #b8944d;
-    border-color: #b8944d;
+    background-color: #DFBA73;
+    border-color: #DFBA73;
+    box-shadow: 0 4px 15px rgba(201, 169, 110, 0.35);
   }
 `;
 
@@ -221,20 +229,20 @@ const RemoveBtn = styled.button`
   width: 42px;
   height: 42px;
   flex-shrink: 0;
-  background: #faf7f2;
-  border: 1px solid #d9d3c7;
-  border-radius: 4px;
-  color: #6b6b6b;
+  background: #111111;
+  border: 1px solid rgba(140, 116, 75, 0.25);
+  border-radius: 2px;
+  color: #A8A8A8;
   cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
-  transition: all 0.2s ease;
+  transition: all 0.25s ease;
 
   &:hover {
-    color: #d32f2f;
-    background: #fff5f5;
-    border-color: #d32f2f;
+    color: #E53E3E;
+    background: rgba(229, 62, 62, 0.1);
+    border-color: rgba(229, 62, 62, 0.5);
   }
 `;
 
@@ -261,13 +269,13 @@ export const WishlistPage: React.FC = () => {
     <PageWrapper>
       <TitleHeader>
         <h1>MY WISHLIST</h1>
-        <p>Your curated collection of Floksy Jewel fine jewellery & loose diamonds.</p>
+        <p>Your curated collection of AethelCarats fine jewellery & rare diamonds.</p>
       </TitleHeader>
 
       {items.length === 0 ? (
         <EmptyStateContainer>
           <div className="icon-wrapper">
-            <Heart size={36} color="#C9A45C" />
+            <Heart size={36} color="#C9A96E" />
           </div>
           <h2>YOUR WISHLIST IS EMPTY</h2>
           <p>Save your favorite pieces here so you can easily find them later.</p>
@@ -299,7 +307,7 @@ export const WishlistPage: React.FC = () => {
                 <WishlistCard>
                   <Link to={`/product/${productSlug}`} className="img-box-link" title={`View ${item.name} details`}>
                     <img
-                      src={item.primaryImage || item.mainImage || (item.images && item.images[0] ? item.images[0].url : '/assets/floksy_rings_cat.png')}
+                      src={item.primaryImage || item.mainImage || (item.images && item.images[0] ? item.images[0].url : '/assets/gem_rings_cat.png')}
                       alt={item.name}
                     />
                   </Link>

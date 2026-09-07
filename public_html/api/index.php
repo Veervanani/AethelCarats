@@ -1,6 +1,6 @@
-<?php
+﻿<?php
 /**
- * Floksy Jewel — Central PHP Front Controller & Router
+ * Aura Diamond Atelier — Central PHP Front Controller & Router
  * Step 10 Custom Requests, Media, Files, SEO & Remaining API Entrypoint
  */
 

@@ -5,7 +5,7 @@ import { businessApi } from '../services/businessApi';
 import { BusinessCustomer, Employee } from '../types';
 import { Users, UserPlus, Search, Filter, Trash2, Check, Plus, Eye, ShoppingBag, DollarSign, TrendingUp, Calendar, ExternalLink, Package, X, ArrowUpRight, ArrowRightLeft } from 'lucide-react';
 
-const PRIVATE_BUSINESS_PATH = '/flk-business-vault-8R2Lp9Kx7Qm4Nw6T';
+const PRIVATE_BUSINESS_PATH = '/enterprise-hub-m7k4p9v2x1n8';
 
 const CustomCheckbox = styled.label<{ $checked?: boolean }>`
   display: inline-flex;

@@ -1,6 +1,6 @@
 <?php
 /**
- * Floksy Jewel — PDO Database Connection Helper
+ * Aura Diamond Atelier — PDO Database Connection Helper
  * Reads connection settings safely from environment variables.
  * Safe, prepared-statement enabled PDO configuration for Hostinger MySQL.
  */
@@ -14,9 +14,9 @@ function getDatabaseConnection(): PDO {
 
     $host = getenv('DB_HOST') ?: ($_ENV['DB_HOST'] ?? '127.0.0.1');
     $port = getenv('DB_PORT') ?: ($_ENV['DB_PORT'] ?? '3306');
-    $db   = getenv('DB_NAME') ?: ($_ENV['DB_NAME'] ?? 'u657751653_floksyjewel');
-    $user = getenv('DB_USER') ?: ($_ENV['DB_USER'] ?? 'u657751653_floksyjewels');
-    $pass = getenv('DB_PASSWORD') !== false ? getenv('DB_PASSWORD') : (getenv('DB_PASS') ?: ($_ENV['DB_PASSWORD'] ?? 'FloksyJewel@2026!'));
+    $db   = getenv('DB_NAME') ?: ($_ENV['DB_NAME'] ?? 'aura_atelier_db');
+    $user = getenv('DB_USER') ?: ($_ENV['DB_USER'] ?? 'root');
+    $pass = getenv('DB_PASSWORD') !== false ? getenv('DB_PASSWORD') : (getenv('DB_PASS') ?: ($_ENV['DB_PASSWORD'] ?? ''));
 
     $options = [
         PDO::ATTR_ERRMODE            => PDO::ERRMODE_EXCEPTION,
@@ -28,10 +28,10 @@ function getDatabaseConnection(): PDO {
         ['dsn' => "mysql:host={$host};port={$port};dbname={$db};charset=utf8mb4", 'user' => $user, 'pass' => $pass],
         ['dsn' => "mysql:host=127.0.0.1;port={$port};dbname={$db};charset=utf8mb4", 'user' => $user, 'pass' => $pass],
         ['dsn' => "mysql:host=localhost;port={$port};dbname={$db};charset=utf8mb4", 'user' => $user, 'pass' => $pass],
-        // Local Dev Fallbacks (XAMPP / WAMP / Local MySQL)
-        ['dsn' => "mysql:host=127.0.0.1;port=3306;dbname=floksyjewel;charset=utf8mb4", 'user' => 'root', 'pass' => ''],
-        ['dsn' => "mysql:host=localhost;port=3306;dbname=floksyjewel;charset=utf8mb4", 'user' => 'root', 'pass' => ''],
-        ['dsn' => "mysql:host=127.0.0.1;port=3306;dbname=floksyjewel;charset=utf8mb4", 'user' => 'root', 'pass' => 'root'],
+        // Local Fallbacks
+        ['dsn' => "mysql:host=127.0.0.1;port=3306;dbname=aura_atelier;charset=utf8mb4", 'user' => 'root', 'pass' => ''],
+        ['dsn' => "mysql:host=localhost;port=3306;dbname=aura_atelier;charset=utf8mb4", 'user' => 'root', 'pass' => ''],
+        ['dsn' => "mysql:host=127.0.0.1;port=3306;dbname=aura_atelier;charset=utf8mb4", 'user' => 'root', 'pass' => 'root'],
     ];
 
     $lastError = null;

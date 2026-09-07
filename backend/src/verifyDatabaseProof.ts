@@ -1,4 +1,4 @@
-import prisma from './prisma';
+﻿import prisma from './prisma';
 
 async function verifyDatabaseProof() {
   console.log('\n======================================================');
@@ -23,8 +23,8 @@ async function verifyDatabaseProof() {
         const obj = JSON.parse(row.value);
         if (obj.address) obj.address = 'Surat, India';
         if (obj.storeAddress) obj.storeAddress = 'Surat, India';
-        if (obj.copyrightText) obj.copyrightText = '© 2026 Floksy Jewel. All Rights Reserved.';
-        if (obj.brandName) obj.brandName = 'FLOKSY JEWEL';
+        if (obj.copyrightText) obj.copyrightText = '© 2026 Aura Diamond Atelier. All Rights Reserved.';
+        if (obj.brandName) obj.brandName = 'AURA DIAMOND ATELIER';
         if (obj.consultDescription) obj.consultDescription = obj.consultDescription.replace(/Mayfair/g, 'Surat');
         newValue = JSON.stringify(obj);
       } catch (e) {}
@@ -79,7 +79,7 @@ async function verifyDatabaseProof() {
 
   if (remainingMayfairRows.length === 0 && remainingMayfairProductContents.length === 0) {
     console.log('\n✅ PROOF VERIFIED: "Mayfair" and "London" have been 100% REMOVED from the MySQL database!');
-    console.log('✅ PROOF VERIFIED: Instagram URL updated in MySQL DB to https://www.instagram.com/bhumi_floksyjewel?igsh=MTAxdHVtcTdqcXRldg==');
+    console.log('✅ PROOF VERIFIED: Instagram URL updated in MySQL DB to https://www.instagram.com/auradiamondatelier');
   } else {
     console.log('\n⚠️ WARNING: Found matching rows.');
   }

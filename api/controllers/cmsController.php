@@ -1,6 +1,6 @@
-<?php
+﻿<?php
 /**
- * Floksy Jewel — CMS, Page Builder, Menus, FAQs, Blog & Content Controller
+ * Aura Diamond Atelier — CMS, Page Builder, Menus, FAQs, Blog & Content Controller
  * Migrated from Node.js (cmsController.ts, blogController.ts, faqController.ts, reviewController.ts, etc.) to PHP 8.3 / PDO MySQL
  */
 
@@ -378,8 +378,8 @@ function handleGetSiteSettings(): void {
             $val = $r['value'];
             if (is_string($val)) {
                 $val = str_replace(
-                    ['floksy_cad_craftsmanship.png', 'floksy_cad_craftsmanship_v2.png', 'floksy_cad_craftsmanship_v3.png', 'floksy_bracelets_editorial_right.png', 'floksy_bracelets_editorial_right_v2026.png', 'floksy_bracelets_editorial_right_final.png'],
-                    'floksy_bracelets_editorial_right_new.png',
+                    ['gem_cad_craftsmanship.png', 'gem_cad_craftsmanship_v2.png', 'gem_cad_craftsmanship_v3.png', 'gem_bracelets_editorial_right.png', 'gem_bracelets_editorial_right_v2026.png', 'gem_bracelets_editorial_right_final.png'],
+                    'gem_bracelets_editorial_right_new.png',
                     $val
                 );
             }
@@ -388,9 +388,9 @@ function handleGetSiteSettings(): void {
         }
 
         $defaults = [
-            'instagramUrl'              => 'https://www.instagram.com/floksyjewel',
-            'facebookUrl'               => 'https://facebook.com/floksyjewel',
-            'pinterestUrl'              => 'https://pinterest.com/floksyjewel',
+            'instagramUrl'              => 'https://www.instagram.com/auradiamondatelier',
+            'facebookUrl'               => 'https://facebook.com/auradiamondatelier',
+            'pinterestUrl'              => 'https://pinterest.com/auradiamondatelier',
             'google_analytics_id'       => 'G-4819ZT1SH9',
             'google_tag_ids'            => 'G-4819ZT1SH9, G-XXY9NETZMZ, GT-NFXXGC34, GT-WPL2TXJW, GT-NSVC87ZS',
             'google_merchant_center_id' => 'MC-FZJ1P4XPW8, MC-V2Y54WKJL7',
@@ -411,9 +411,9 @@ function handleGetSiteSettings(): void {
     } catch (Throwable $e) {
         error_log("handleGetSiteSettings error: " . $e->getMessage());
         $defaults = [
-            'instagramUrl'              => 'https://www.instagram.com/floksyjewel',
-            'facebookUrl'               => 'https://facebook.com/floksyjewel',
-            'pinterestUrl'              => 'https://pinterest.com/floksyjewel',
+            'instagramUrl'              => 'https://www.instagram.com/auradiamondatelier',
+            'facebookUrl'               => 'https://facebook.com/auradiamondatelier',
+            'pinterestUrl'              => 'https://pinterest.com/auradiamondatelier',
             'google_analytics_id'       => 'G-4819ZT1SH9',
             'google_tag_ids'            => 'G-4819ZT1SH9, G-XXY9NETZMZ, GT-NFXXGC34, GT-WPL2TXJW, GT-NSVC87ZS',
             'google_merchant_center_id' => 'MC-FZJ1P4XPW8, MC-V2Y54WKJL7',
@@ -529,7 +529,7 @@ function handleGetReviews(): void {
                 'verified' => true,
                 'date' => isset($r['createdAt']) ? date('m/d/y', strtotime($r['createdAt'])) : date('m/d/y'),
                 'createdAt' => $r['createdAt'] ?? date('Y-m-d H:i:s'),
-                'productReviewed' => $r['productName'] ?? ($r['productReviewed'] ?? 'Floksy Jewel Creation'),
+                'productReviewed' => $r['productName'] ?? ($r['productReviewed'] ?? 'Aura Atelier Creation'),
                 'response' => $r['response'] ?? null
             ];
         }, $rawReviews);
@@ -836,7 +836,7 @@ function handleSaveReview(): void {
             $u->execute([$author, $rating, $comment, $isApproved, $isFeatured, $id]);
         } else {
             $newId = 'rev_' . bin2hex(random_bytes(8));
-            $ins = $pdo->prepare("INSERT INTO `review` (`id`, `productId`, `author`, `email`, `rating`, `comment`, `isApproved`, `isFeatured`, `createdAt`) VALUES (?, ?, ?, 'customer@floksyjewel.com', ?, ?, ?, ?, NOW())");
+            $ins = $pdo->prepare("INSERT INTO `review` (`id`, `productId`, `author`, `email`, `rating`, `comment`, `isApproved`, `isFeatured`, `createdAt`) VALUES (?, ?, ?, 'customer@auroradiamonds.com', ?, ?, ?, ?, NOW())");
             $ins->execute([$newId, $productId, $author, $rating, $comment, $isApproved, $isFeatured]);
             $id = $newId;
         }
@@ -980,7 +980,7 @@ function handleGenerateRandomReviewsPerProduct(): void {
                 } while (in_array($author, $usedNames) && count($usedNames) < 30);
                 $usedNames[] = $author;
 
-                $email = strtolower("{$fName}.{$lName}@example.com");
+                $email = strtolower("{$fName}.{$lName}@auroradiamonds.com");
                 $headline = $headlines[array_rand($headlines)];
                 $rating = (mt_rand(1, 10) === 10) ? 4 : 5; // 90% 5-star, 10% 4-star
                 $isFeatured = $rIdx < 2 ? 1 : 0;
@@ -989,15 +989,15 @@ function handleGenerateRandomReviewsPerProduct(): void {
                     "Absolutely in love with my {$pName}! The {$pCarat}{$pShape} stone catches the light brilliantly in {$pMetal}. Arrived in discreet luxury packaging right on schedule.",
                     "Exceeded my expectations in every way. The craftsmanship on this {$pCat} is flawless, and the {$pMetal} setting holds the {$pShape} diamond so elegantly.",
                     "Bought the {$pName} for a special milestone and could not be happier. Superior craftsmanship, certified diamond clarity, and white-glove customer service!",
-                    "The brilliance of the {$pShape} diamond in person is unbelievable. Floksy Jewel's attention to detail on this {$pMetal} {$pCat} makes it a true heirloom piece.",
+                    "The brilliance of the {$pShape} diamond in person is unbelievable. Aura Atelier's attention to detail on this {$pMetal} {$pCat} makes it a true heirloom piece.",
                     "Outstanding quality! The {$pName} came beautifully presented with its certificate. Stunning {$pMetal} polish and mesmerizing diamond fire.",
                     "I spent months searching for the right {$pCat} and {$pName} was the absolute perfect choice. The {$pMetal} setting is so refined!",
                     "Words cannot express how gorgeous this {$pName} is in person. The {$pShape} diamond reflects light from every angle!",
-                    "The craftsmanship of Floksy Jewel atelier is top tier. This {$pMetal} {$pName} feels comfortable, solid, and looks extraordinarily opulent.",
+                    "The craftsmanship of Aura Diamond Atelier is top tier. This {$pMetal} {$pName} feels comfortable, solid, and looks extraordinarily opulent.",
                     "My partner was completely speechless when opening the box! The {$pCarat}{$pShape} diamond in {$pMetal} is mesmerizing.",
                     "Incredible quality and craftsmanship. The diamond certification was included and the parcel arrived quickly in discreet packaging.",
                     "The sparkle on this {$pName} is captivating. Every detail of the {$pMetal} band is perfectly balanced and smooth to wear.",
-                    "Floksy Jewel concierge provided amazing assistance. The {$pName} arrived with full IGI certification and flawless presentation."
+                    "Aura Atelier concierge provided amazing assistance. The {$pName} arrived with full IGI certification and flawless presentation."
                 ];
 
                 $body = $commentsPool[array_rand($commentsPool)];

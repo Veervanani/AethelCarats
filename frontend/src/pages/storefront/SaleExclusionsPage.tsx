@@ -1,14 +1,14 @@
 import React, { useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import styled from 'styled-components';
-import { Tag, ShieldCheck, Mail, ChevronRight } from 'lucide-react';
-import { api } from '../../services/api';
+import { Mail, ChevronRight } from 'lucide-react';
 import { SafeImage } from '../../components/ui/SafeImage';
-import { WhyFloksyJewelNav } from '../../components/ui/WhyFloksyJewelNav';
+import { WhyAuraDiamondNav } from '../../components/ui/WhyAuraDiamondNav';
+import { RevealContainer } from '../../components/ui/RevealContainer';
 
 const PageWrapper = styled.div`
-  background-color: #f7f6f2;
-  color: #1a1918;
+  background-color: #0B0B0B;
+  color: #F5F1E8;
   min-height: 100vh;
   padding-bottom: 80px;
 `;
@@ -21,21 +21,21 @@ const BreadcrumbsBar = styled.div`
   align-items: center;
   gap: 8px;
   font-size: 0.8rem;
-  color: #77736c;
+  color: #A8A8A8;
 
   a {
-    color: #77736c;
+    color: #A8A8A8;
     text-decoration: none;
     transition: color 0.2s ease;
 
     &:hover {
-      color: #c9a45c;
+      color: #C9A96E;
     }
   }
 
   span.current {
-    color: #1a1918;
-    font-weight: 500;
+    color: #C9A96E;
+    font-weight: 600;
   }
 `;
 
@@ -59,8 +59,8 @@ const HeroSection = styled.section`
       font-size: 0.8rem;
       letter-spacing: 0.18em;
       text-transform: uppercase;
-      color: #c9a45c;
-      font-weight: 600;
+      color: #C9A96E;
+      font-weight: 700;
       margin-bottom: 12px;
       display: block;
     }
@@ -69,9 +69,9 @@ const HeroSection = styled.section`
       font-family: 'Cormorant Garamond', serif;
       font-size: 3.2rem;
       font-weight: 500;
-      color: #1a1918;
+      color: #F5F1E8;
       margin-bottom: 20px;
-      letter-spacing: -0.01em;
+      letter-spacing: 0.04em;
       line-height: 1.1;
 
       @media (max-width: 768px) {
@@ -81,7 +81,7 @@ const HeroSection = styled.section`
 
     p.subtitle {
       font-size: 1.05rem;
-      color: #55524d;
+      color: #D8D2C5;
       line-height: 1.7;
       margin-bottom: 28px;
     }
@@ -91,7 +91,8 @@ const HeroSection = styled.section`
     position: relative;
     border-radius: 4px;
     overflow: hidden;
-    box-shadow: 0 12px 32px rgba(0, 0, 0, 0.06);
+    border: 1px solid rgba(140, 116, 75, 0.25);
+    box-shadow: 0 12px 32px rgba(0, 0, 0, 0.6);
 
     img {
       width: 100%;
@@ -115,24 +116,26 @@ const ContentGrid = styled.main`
 `;
 
 const EditorialBlock = styled.section`
-  background: #fffdf9;
-  border: 1px solid #e8e3d9;
+  background: #151515;
+  border: 1px solid rgba(140, 116, 75, 0.25);
   padding: 36px;
   border-radius: 4px;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
 
   h2 {
     font-family: 'Cormorant Garamond', serif;
     font-size: 1.8rem;
     font-weight: 500;
-    color: #1a1918;
+    color: #F5F1E8;
+    letter-spacing: 0.08em;
     margin-bottom: 16px;
     padding-bottom: 12px;
-    border-bottom: 1px solid #e8e3d9;
+    border-bottom: 1px solid rgba(140, 116, 75, 0.2);
   }
 
   p {
     font-size: 0.95rem;
-    color: #55524d;
+    color: #D8D2C5;
     line-height: 1.7;
     margin-bottom: 14px;
 
@@ -143,7 +146,7 @@ const EditorialBlock = styled.section`
 
   ul {
     margin: 12px 0 16px 20px;
-    color: #55524d;
+    color: #D8D2C5;
     font-size: 0.95rem;
 
     li {
@@ -160,21 +163,24 @@ const CTABanner = styled.section`
 `;
 
 const CTABannerInner = styled.div`
-  background: #1a1918;
-  color: #fffdf9;
+  background: #151515;
+  border: 1px solid rgba(140, 116, 75, 0.3);
+  color: #F5F1E8;
   padding: 40px;
   border-radius: 4px;
   text-align: center;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.6);
 
   h2 {
     font-family: 'Cormorant Garamond', serif;
     font-size: 2rem;
-    color: #fffdf9;
+    letter-spacing: 0.1em;
+    color: #F5F1E8;
     margin-bottom: 12px;
   }
 
   p {
-    color: #d9d3c7;
+    color: #D8D2C5;
     font-size: 0.95rem;
     max-width: 540px;
     margin: 0 auto 24px;
@@ -185,60 +191,27 @@ const CTABannerInner = styled.div`
     display: inline-flex;
     align-items: center;
     gap: 8px;
-    background: #c9a45c;
-    color: #1a1918;
+    background: #C9A96E;
+    color: #0B0B0B;
     padding: 14px 28px;
-    border-radius: 4px;
+    border-radius: 2px;
     font-size: 0.85rem;
-    letter-spacing: 0.1em;
+    letter-spacing: 0.14em;
     text-transform: uppercase;
-    font-weight: 600;
+    font-weight: 700;
     text-decoration: none;
-    transition: all 0.2s ease;
+    transition: all 0.25s ease;
 
     &:hover {
-      background: #fffdf9;
+      background: #DFBA73;
+      box-shadow: 0 4px 18px rgba(201, 169, 110, 0.35);
     }
   }
 `;
 
 export const SaleExclusionsPage: React.FC = () => {
   useEffect(() => {
-    // Dynamic SEO Metadata
-    document.title = 'Sale Exclusions | Floksy Jewel';
-    const metaDesc = document.querySelector('meta[name="description"]');
-    if (metaDesc) {
-      metaDesc.setAttribute('content', 'Review official Floksy Jewel promotional exclusions, special offer terms, and custom order guidelines.');
-    }
-
-    // JSON-LD Structured Data
-    const script = document.createElement('script');
-    script.type = 'application/ld+json';
-    script.innerHTML = JSON.stringify({
-      '@context': 'https://schema.org',
-      '@graph': [
-        {
-          '@type': 'WebPage',
-          '@id': 'https://floksyjewel.com/sale-exclusions#webpage',
-          'url': 'https://floksyjewel.com/sale-exclusions',
-          'name': 'Sale Exclusions & Promotional Terms | Floksy Jewel',
-          'description': 'Official policy details regarding promotional codes, special offers, loose diamonds, and bespoke custom items.',
-        },
-        {
-          '@type': 'BreadcrumbList',
-          '@id': 'https://floksyjewel.com/sale-exclusions#breadcrumb',
-          'itemListElement': [
-            { '@type': 'ListItem', 'position': 1, 'name': 'Home', 'item': 'https://floksyjewel.com' },
-            { '@type': 'ListItem', 'position': 2, 'name': 'Sale Exclusions', 'item': 'https://floksyjewel.com/sale-exclusions' }
-          ]
-        }
-      ]
-    });
-    document.head.appendChild(script);
-
-    return () => {
-      document.head.removeChild(script);
-    };
+    document.title = 'Sale Exclusions | AethelCarats Fine Jewellery';
   }, []);
 
   return (
@@ -249,58 +222,66 @@ export const SaleExclusionsPage: React.FC = () => {
         <span className="current">Sale Exclusions</span>
       </BreadcrumbsBar>
 
-      <HeroSection>
-        <div className="text-side">
-          <span className="eyebrow">PROMOTIONAL GUIDELINES & TERMS</span>
-          <h1>Sale Exclusions</h1>
-          <p className="subtitle">
-            Official guidelines and policy terms regarding promotional discount codes, special seasonal offers, loose certified diamonds, and bespoke custom jewellery.
-          </p>
-        </div>
-        <div className="image-side">
-          <SafeImage src="/assets/why-floksy/sale-exclusions-hero.jpg" alt="Floksy Jewel Ring on Ivory Pedestal" />
-        </div>
-      </HeroSection>
+      <RevealContainer yOffset={35}>
+        <HeroSection>
+          <div className="text-side">
+            <span className="eyebrow">PROMOTIONAL GUIDELINES & TERMS</span>
+            <h1>Sale Exclusions</h1>
+            <p className="subtitle">
+              Official guidelines and policy terms regarding promotional discount codes, special seasonal offers, loose certified diamonds, and bespoke custom jewellery.
+            </p>
+          </div>
+          <div className="image-side">
+            <SafeImage src="/assets/why-aura/sale-exclusions-hero.jpg" alt="AethelCarats Ring on Pedestal" />
+          </div>
+        </HeroSection>
+      </RevealContainer>
 
       <ContentGrid>
-        <EditorialBlock>
-          <h2>Promotional Discount Guidelines</h2>
-          <p>
-            Promotional codes, seasonal offers, and storewide discounts offered by Floksy Jewel apply to eligible ready-to-ship fine jewellery items unless explicitly stated otherwise.
-          </p>
-          <p>
-            Promotional offers cannot be combined with existing sale prices, trade-in allowances, or price-matched diamond orders. Limit one promotional code per transaction.
-          </p>
-        </EditorialBlock>
+        <RevealContainer yOffset={35}>
+          <EditorialBlock>
+            <h2>Promotional Discount Guidelines</h2>
+            <p>
+              Promotional codes, seasonal offers, and storewide discounts offered by AethelCarats apply to eligible ready-to-ship fine jewellery items unless explicitly stated otherwise.
+            </p>
+            <p>
+              Promotional offers cannot be combined with existing sale prices, trade-in allowances, or price-matched diamond orders. Limit one promotional code per transaction.
+            </p>
+          </EditorialBlock>
+        </RevealContainer>
 
-        <EditorialBlock>
-          <h2>Standard Exclusions</h2>
-          <p>
-            Unless explicitly specified in a promotional campaign announcement, the following categories are excluded from discount promotional codes:
-          </p>
-          <ul>
-            <li>Loose Natural and Lab-Grown Diamonds.</li>
-            <li>Custom 3D CAD Bespoke Jewellery Creations.</li>
-            <li>Special order gemstones and rare fancy-colored diamonds.</li>
-            <li>Gift Cards and e-Vouchers.</li>
-            <li>Shipping, insurance, and duties charges.</li>
-          </ul>
-        </EditorialBlock>
+        <RevealContainer yOffset={35}>
+          <EditorialBlock>
+            <h2>Standard Exclusions</h2>
+            <p>
+              Unless explicitly specified in a promotional campaign announcement, the following categories are excluded from discount promotional codes:
+            </p>
+            <ul>
+              <li>Loose Natural and Lab-Grown Diamonds.</li>
+              <li>Custom 3D CAD Bespoke Jewellery Creations.</li>
+              <li>Special order gemstones and rare fancy-colored diamonds.</li>
+              <li>Gift Cards and e-Vouchers.</li>
+              <li>Shipping, insurance, and duties charges.</li>
+            </ul>
+          </EditorialBlock>
+        </RevealContainer>
       </ContentGrid>
 
-      <CTABanner>
-        <CTABannerInner>
-          <h2>Have Questions About a Promo Code?</h2>
-          <p>
-            Our customer care team is available to assist you with order verification or discount eligibility.
-          </p>
-          <Link to="/contact-us" className="primary-btn">
-            <Mail size={16} /> CONTACT CUSTOMER CARE
-          </Link>
-        </CTABannerInner>
-      </CTABanner>
+      <RevealContainer yOffset={35}>
+        <CTABanner>
+          <CTABannerInner>
+            <h2>Have Questions About a Promo Code?</h2>
+            <p>
+              Our customer care team is available to assist you with order verification or discount eligibility.
+            </p>
+            <Link to="/contact-us" className="primary-btn">
+              <Mail size={16} /> CONTACT CUSTOMER CARE
+            </Link>
+          </CTABannerInner>
+        </CTABanner>
+      </RevealContainer>
 
-      <WhyFloksyJewelNav />
+      <WhyAuraDiamondNav />
     </PageWrapper>
   );
 };

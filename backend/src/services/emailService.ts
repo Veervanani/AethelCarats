@@ -4,7 +4,7 @@ import nodemailer from 'nodemailer';
 const createTransporter = () => {
   const host = process.env.SMTP_HOST || 'smtp.hostinger.com';
   const port = parseInt(process.env.SMTP_PORT || '465', 10);
-  const user = process.env.SMTP_USER || 'contact@floksyjewel.com';
+  const user = process.env.SMTP_USER || 'concierge@auroradiamonds.com';
   const pass = process.env.SMTP_PASS || '';
 
   if (!pass) {
@@ -14,7 +14,7 @@ const createTransporter = () => {
   return nodemailer.createTransport({
     host,
     port,
-    secure: port === 465, // Hostinger SSL port 465
+    secure: port === 465,
     auth: {
       user,
       pass,
@@ -25,7 +25,7 @@ const createTransporter = () => {
 export const sendOrderConfirmationEmail = async (order: any) => {
   try {
     const transporter = createTransporter();
-    const fromAddress = process.env.SMTP_FROM || `"Floksy Jewel Atelier" <${process.env.SMTP_USER || 'contact@floksyjewel.com'}>`;
+    const fromAddress = process.env.SMTP_FROM || `"Aura Diamond Atelier" <${process.env.SMTP_USER || 'concierge@auroradiamonds.com'}>`;
     const recipientEmail = order.customerEmail;
 
     if (!recipientEmail) {
@@ -49,14 +49,14 @@ export const sendOrderConfirmationEmail = async (order: any) => {
     <html>
     <head>
       <meta charset="utf-8">
-      <title>Order Confirmation - Floksy Jewel</title>
+      <title>Order Confirmation - Aura Diamond Atelier</title>
     </head>
     <body style="font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; background-color: #f9f7f2; margin: 0; padding: 40px 10px;">
       <table width="100%" border="0" cellspacing="0" cellpadding="0" style="max-width: 600px; margin: 0 auto; background-color: #ffffff; border: 1px solid #d9d3c7; border-radius: 4px; overflow: hidden; box-shadow: 0 8px 30px rgba(0,0,0,0.06);">
         <!-- Header -->
         <tr>
           <td style="background-color: #1f1f1f; padding: 28px 20px; text-align: center;">
-            <h1 style="color: #c9a45c; font-family: Georgia, serif; font-size: 24px; letter-spacing: 0.15em; margin: 0; text-transform: uppercase;">FLOKSY JEWEL</h1>
+            <h1 style="color: #c9a45c; font-family: Georgia, serif; font-size: 24px; letter-spacing: 0.15em; margin: 0; text-transform: uppercase;">AURA DIAMOND ATELIER</h1>
             <p style="color: #e8e3d9; font-size: 11px; letter-spacing: 0.2em; text-transform: uppercase; margin: 6px 0 0 0;">Haute Joaillerie & Bespoke Atelier</p>
           </td>
         </tr>
@@ -107,15 +107,15 @@ export const sendOrderConfirmationEmail = async (order: any) => {
         <!-- Action CTA Button -->
         <tr>
           <td style="padding: 0 32px 40px; text-align: center;">
-            <a href="https://floksyjewel.com/account#my-orders" style="background-color: #1f1f1f; color: #ffffff; text-decoration: none; padding: 14px 28px; font-size: 13px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; display: inline-block; border-radius: 2px;">TRACK YOUR ORDER LIVE →</a>
+            <a href="https://auroradiamonds.com/account#my-orders" style="background-color: #1f1f1f; color: #ffffff; text-decoration: none; padding: 14px 28px; font-size: 13px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; display: inline-block; border-radius: 2px;">TRACK YOUR ORDER LIVE →</a>
           </td>
         </tr>
 
         <!-- Footer -->
         <tr>
           <td style="background-color: #faf8f5; border-top: 1px solid #e8e3d9; padding: 20px; text-align: center; color: #77736c; font-size: 12px; line-height: 1.5;">
-            Need assistance? Reply directly to this email or contact our Private Concierge at <a href="mailto:concierge@floksyjewel.com" style="color: #c9a45c; text-decoration: none;">concierge@floksyjewel.com</a>.<br>
-            © ${new Date().getFullYear()} Floksy Jewel Fine Jewellery Atelier. All rights reserved.
+            Need assistance? Reply directly to this email or contact our Private Concierge at <a href="mailto:concierge@auroradiamonds.com" style="color: #c9a45c; text-decoration: none;">concierge@auroradiamonds.com</a>.<br>
+            © ${new Date().getFullYear()} Aura Diamond Atelier. All rights reserved.
           </td>
         </tr>
       </table>
@@ -127,19 +127,22 @@ export const sendOrderConfirmationEmail = async (order: any) => {
     const info = await transporter.sendMail({
       from: fromAddress,
       to: recipientEmail,
-      subject: `Order Confirmation #${order.orderNumber} - Floksy Jewel Atelier`,
+      subject: `Order Confirmation #${order.orderNumber} - Aura Diamond Atelier`,
       html: htmlContent,
     });
 
     console.log(`✉️ Order Confirmation email sent to ${recipientEmail}: ${info.messageId}`);
 
     // Send copy notification to Store Owner
-    await transporter.sendMail({
-      from: fromAddress,
-      to: 'veervanani1201@gmail.com',
-      subject: `NEW STORE ORDER RECEIVED: #${order.orderNumber} ($${order.totalAmount})`,
-      html: htmlContent,
-    }).catch(console.error);
+    const adminNotifyEmail = process.env.ADMIN_NOTIFICATION_EMAIL || process.env.SMTP_USER;
+    if (adminNotifyEmail) {
+      await transporter.sendMail({
+        from: fromAddress,
+        to: adminNotifyEmail,
+        subject: `NEW STORE ORDER RECEIVED: #${order.orderNumber} ($${order.totalAmount})`,
+        html: htmlContent,
+      }).catch(console.error);
+    }
 
   } catch (error) {
     console.error('Error sending order confirmation email:', error);
@@ -149,7 +152,7 @@ export const sendOrderConfirmationEmail = async (order: any) => {
 export const sendOrderDispatchEmail = async (order: any, courierCompany: string, trackingNumber: string) => {
   try {
     const transporter = createTransporter();
-    const fromAddress = process.env.SMTP_FROM || `"Floksy Jewel Atelier" <${process.env.SMTP_USER || 'contact@floksyjewel.com'}>`;
+    const fromAddress = process.env.SMTP_FROM || `"Aura Diamond Atelier" <${process.env.SMTP_USER || 'concierge@auroradiamonds.com'}>`;
     const recipientEmail = order.customerEmail;
 
     if (!recipientEmail) return;
@@ -159,13 +162,13 @@ export const sendOrderDispatchEmail = async (order: any, courierCompany: string,
     <html>
     <head>
       <meta charset="utf-8">
-      <title>Your Order Has Been Dispatched - Floksy Jewel</title>
+      <title>Your Order Has Been Dispatched - Aura Diamond Atelier</title>
     </head>
     <body style="font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; background-color: #f9f7f2; margin: 0; padding: 40px 10px;">
       <table width="100%" border="0" cellspacing="0" cellpadding="0" style="max-width: 600px; margin: 0 auto; background-color: #ffffff; border: 1px solid #d9d3c7; border-radius: 4px; overflow: hidden; box-shadow: 0 8px 30px rgba(0,0,0,0.06);">
         <tr>
           <td style="background-color: #1f1f1f; padding: 28px 20px; text-align: center;">
-            <h1 style="color: #c9a45c; font-family: Georgia, serif; font-size: 24px; letter-spacing: 0.15em; margin: 0; text-transform: uppercase;">FLOKSY JEWEL</h1>
+            <h1 style="color: #c9a45c; font-family: Georgia, serif; font-size: 24px; letter-spacing: 0.15em; margin: 0; text-transform: uppercase;">AURA DIAMOND ATELIER</h1>
             <p style="color: #e8e3d9; font-size: 11px; letter-spacing: 0.2em; text-transform: uppercase; margin: 6px 0 0 0;">Insured White-Glove Transit</p>
           </td>
         </tr>
@@ -183,7 +186,7 @@ export const sendOrderDispatchEmail = async (order: any, courierCompany: string,
               <div style="font-size: 18px; font-weight: 700; color: #c9a45c; font-family: monospace;">${trackingNumber || 'N/A'}</div>
             </div>
 
-            <a href="https://floksyjewel.com/account#my-orders" style="background-color: #1f1f1f; color: #ffffff; text-decoration: none; padding: 14px 28px; font-size: 13px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; display: inline-block; border-radius: 2px;">TRACK SHIPMENT ON FLOKSY JEWEL →</a>
+            <a href="https://auroradiamonds.com/account#my-orders" style="background-color: #1f1f1f; color: #ffffff; text-decoration: none; padding: 14px 28px; font-size: 13px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; display: inline-block; border-radius: 2px;">TRACK SHIPMENT LIVE →</a>
           </td>
         </tr>
       </table>

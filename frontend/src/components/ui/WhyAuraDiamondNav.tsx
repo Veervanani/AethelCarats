@@ -16,17 +16,18 @@ const SectionHeader = styled.div`
 
   h2 {
     font-family: 'Cormorant Garamond', serif;
-    font-size: 2rem;
+    font-size: 2.2rem;
     font-weight: 500;
-    color: #1a1918;
-    letter-spacing: 0.05em;
+    color: #F5F1E8;
+    letter-spacing: 0.1em;
     text-transform: uppercase;
   }
 
   p {
-    font-size: 0.9rem;
-    color: #77736c;
-    margin-top: 6px;
+    font-size: 0.95rem;
+    color: #A8A8A8;
+    margin-top: 8px;
+    letter-spacing: 0.04em;
   }
 `;
 
@@ -45,8 +46,8 @@ const NavGrid = styled.div`
 `;
 
 const NavItemCard = styled(Link)<{ $active: boolean }>`
-  background: #fffdf9;
-  border: 1px solid ${({ $active }) => ($active ? '#c9a45c' : '#e8e3d9')};
+  background: #151515;
+  border: 1px solid ${({ $active }) => ($active ? '#C9A96E' : 'rgba(140, 116, 75, 0.25)')};
   padding: 24px 16px;
   border-radius: 4px;
   text-decoration: none;
@@ -55,40 +56,44 @@ const NavItemCard = styled(Link)<{ $active: boolean }>`
   align-items: center;
   text-align: center;
   gap: 12px;
-  transition: all 0.2s ease;
-  box-shadow: ${({ $active }) => ($active ? '0 4px 16px rgba(201, 164, 92, 0.15)' : 'none')};
+  transition: all 0.25s ease;
+  box-shadow: ${({ $active }) => ($active ? '0 4px 20px rgba(201, 169, 110, 0.2)' : 'none')};
 
   .icon-wrapper {
     width: 44px;
     height: 44px;
     border-radius: 50%;
-    background: ${({ $active }) => ($active ? '#1a1918' : '#f5f2ea')};
-    color: ${({ $active }) => ($active ? '#c9a45c' : '#1a1918')};
+    background: ${({ $active }) => ($active ? '#C9A96E' : '#111111')};
+    color: ${({ $active }) => ($active ? '#0B0B0B' : '#C9A96E')};
+    border: 1px solid ${({ $active }) => ($active ? '#C9A96E' : 'rgba(140, 116, 75, 0.3)')};
     display: flex;
     align-items: center;
     justify-content: center;
-    transition: all 0.2s ease;
+    transition: all 0.25s ease;
   }
 
   span {
     font-size: 0.82rem;
-    letter-spacing: 0.05em;
+    letter-spacing: 0.08em;
     font-weight: 600;
-    color: ${({ $active }) => ($active ? '#c9a45c' : '#1a1918')};
+    text-transform: uppercase;
+    color: ${({ $active }) => ($active ? '#C9A96E' : '#F5F1E8')};
     line-height: 1.4;
+    transition: color 0.2s ease;
   }
 
   &:hover {
-    border-color: #c9a45c;
+    border-color: #C9A96E;
     transform: translateY(-2px);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.6);
 
     .icon-wrapper {
-      background: #c9a45c;
-      color: #1a1918;
+      background: #C9A96E;
+      color: #0B0B0B;
     }
 
     span {
-      color: #c9a45c;
+      color: #C9A96E;
     }
   }
 `;
@@ -98,23 +103,23 @@ const WHY_PAGES = [
   { label: 'Return Policy', path: '/returns-refunds', icon: RefreshCw },
   { label: 'Conflict Free Diamonds', path: '/sustainability', icon: ShieldCheck },
   { label: 'Diamond Price Matching', path: '/price-match', icon: Scale },
-  { label: 'Limited Lifetime Warranty', path: '/lifetime-warranty', icon: Award },
-  { label: 'Free Secure Shipping', path: '/shipping-delivery', icon: Truck },
-  { label: 'Jewelry Insurance', path: '/insurance', icon: Lock },
-  { label: 'Floksy Jewel Journal', path: '/blog', icon: BookOpen },
+  { label: 'Lifetime Warranty', path: '/lifetime-warranty', icon: Award },
+  { label: 'Free Insured Shipping', path: '/shipping-delivery', icon: Truck },
+  { label: 'Jewellery Insurance', path: '/insurance', icon: Lock },
+  { label: 'AethelCarats Journal', path: '/blog', icon: BookOpen },
   { label: 'Sale Exclusions', path: '/sale-exclusions', icon: Tag },
   { label: 'Contact Concierge', path: '/contact-us', icon: Mail },
 ];
 
-export const WhyFloksyJewelNav: React.FC = () => {
+export const WhyAuraDiamondNav: React.FC = () => {
   const location = useLocation();
 
   return (
     <RevealContainer yOffset={35}>
       <NavSectionWrapper>
         <SectionHeader>
-          <h2>Why Floksy Jewel</h2>
-          <p>Discover our uncompromising commitments to ethical sourcing, security, and lifetime value.</p>
+          <h2>Why AethelCarats Atelier</h2>
+          <p>Discover our commitments to master craftsmanship, certified diamonds, and lifetime value.</p>
         </SectionHeader>
 
         <NavGrid>

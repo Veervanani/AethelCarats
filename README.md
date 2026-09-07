@@ -1,6 +1,6 @@
-# Floksy Jewel
+# AethelCarats
 
-Luxury jewelry and diamond platform featuring a high-end storefront, authenticated loose diamond vault, bespoke CAD customizer, and a complete CMS Admin Panel.
+Ultra-luxury jewelry and diamond platform featuring a high-end storefront, authenticated loose diamond vault, bespoke CAD customizer, and a complete CMS Admin Panel.
 <!-- Cloud Run Continuous Deployment Verified -->
 <!-- Verified Cloud Build Trigger Connection -->
 
@@ -9,7 +9,7 @@ Luxury jewelry and diamond platform featuring a high-end storefront, authenticat
 ## Project Structure
 
 ```text
-floksy-jewel/
+aethelcarats/
 ├── frontend/             # React (Vite, TypeScript, Styled-Components, Swiper)
 │   ├── public/           # Static brand assets, favicon, SVGs, and campaign media
 │   └── src/              # Storefront, Admin Panel, components, routes, and styles
@@ -124,7 +124,7 @@ npm run build:backend
 
 ## Admin Panel
 
-The Floksy Jewel application includes an Admin Content Management System (CMS) and Page Builder.
+The AethelCarats application includes an Admin Content Management System (CMS) and Page Builder.
 
 - **Access URL**: `/admin` (or `/admin/cms/page-builder`)
 - **Key Capabilities**:

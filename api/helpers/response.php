@@ -1,6 +1,6 @@
-<?php
+﻿<?php
 /**
- * Floksy Jewel — Response Helper
+ * Aura Diamond Atelier — Response Helper
  * Provides standardized JSON response formatting and HTTP status codes.
  */
 

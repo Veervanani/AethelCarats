@@ -43,28 +43,39 @@ import {
   GenericRichTextPolicyEditor,
   DefaultPageEditor,
 } from '../../components/admin/cms/PageSpecificEditors';
+import { AdminColorPicker } from '../../components/admin/AdminColorPicker';
 
 const PageContainer = styled.div`
   display: flex;
   flex-direction: column;
-  height: 100vh;
-  overflow-y: auto;
+  width: 100%;
+  box-sizing: border-box;
   padding-bottom: 60px;
+  min-width: 0;
 `;
 
 const StickyHeaderBar = styled.div`
   position: sticky;
-  top: 0;
-  z-index: 1000;
-  background: #1a1918;
+  top: 64px;
+  z-index: 100;
+  background: #11161b;
   color: #fffdf9;
-  padding: 16px 24px;
+  padding: 16px 20px;
+  border-radius: 8px;
   display: flex;
   justify-content: space-between;
   align-items: center;
   flex-wrap: wrap;
   gap: 16px;
+  margin-bottom: 24px;
+  border: 1px solid rgba(201, 164, 92, 0.3);
   box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
+  box-sizing: border-box;
+  width: 100%;
+
+  @media (max-width: 900px) {
+    top: 58px;
+  }
 
   .left-side {
     display: flex;
@@ -137,10 +148,12 @@ const HeaderBtn = styled.button<{ $variant?: 'primary' | 'gold' | 'secondary' }>
 `;
 
 const ContentWrapper = styled.div`
-  padding: 24px;
-  max-width: 1400px;
+  padding: 0;
+  max-width: 100%;
   margin: 0 auto;
   width: 100%;
+  box-sizing: border-box;
+  min-width: 0;
 `;
 
 const TabsHeader = styled.div`
@@ -178,6 +191,9 @@ const Card = styled.div`
   border-radius: 6px;
   padding: 24px;
   margin-bottom: 24px;
+  box-sizing: border-box;
+  width: 100%;
+  min-width: 0;
 
   h2 {
     font-family: 'Cormorant Garamond', serif;
@@ -191,12 +207,18 @@ const Card = styled.div`
 
 const FormGrid = styled.div<{ $cols?: number }>`
   display: grid;
-  grid-template-columns: repeat(${({ $cols }) => $cols || 2}, 1fr);
+  grid-template-columns: repeat(${({ $cols }) => $cols || 2}, minmax(0, 1fr));
   gap: 16px;
   margin-bottom: 16px;
+  width: 100%;
+  box-sizing: border-box;
+
+  @media (max-width: 1200px) {
+    grid-template-columns: ${({ $cols }) => ($cols && $cols > 2 ? 'repeat(2, minmax(0, 1fr))' : 'minmax(0, 1fr)')};
+  }
 
   @media (max-width: 768px) {
-    grid-template-columns: 1fr;
+    grid-template-columns: minmax(0, 1fr);
   }
 `;
 
@@ -204,6 +226,9 @@ const FormGroup = styled.div<{ $full?: boolean }>`
   display: flex;
   flex-direction: column;
   gap: 6px;
+  min-width: 0;
+  width: 100%;
+  box-sizing: border-box;
   ${({ $full }) => $full && 'grid-column: 1 / -1;'}
 
   label {
@@ -223,6 +248,8 @@ const FormGroup = styled.div<{ $full?: boolean }>`
     border-radius: 4px;
     font-size: 0.85rem;
     background: #fffdf9;
+    width: 100%;
+    box-sizing: border-box;
 
     &:focus {
       outline: none;
@@ -334,12 +361,12 @@ export const AdminPageEditorPage: React.FC = () => {
   });
 
   const [pageImages, setPageImages] = useState({
-    desktopImage: '/assets/contact_hero_desktop.jpg',
-    tabletImage: '/assets/contact_hero_tablet.jpg',
-    mobileImage: '/assets/contact_hero_mobile.jpg',
-    altText: 'Floksy Jewel Concierge Atelier',
-    imageTitle: 'Floksy Jewel Surat Atelier',
-    imageCaption: 'Surat Showroom Consultations',
+    desktopImage: '',
+    tabletImage: '',
+    mobileImage: '',
+    altText: '',
+    imageTitle: '',
+    imageCaption: '',
   });
 
   // Revisions
@@ -357,7 +384,7 @@ export const AdminPageEditorPage: React.FC = () => {
       if (data) {
         setPage(data);
 
-        let parsedContent = {};
+        let parsedContent: any = {};
         const rawContent = data.draftContent || data.content;
         if (rawContent) {
           try {
@@ -368,6 +395,27 @@ export const AdminPageEditorPage: React.FC = () => {
         }
         setContentData(parsedContent);
         setSections(data.sections || []);
+
+        // Load persisted hero image assets from MySQL database
+        if (parsedContent.pageImages) {
+          setPageImages({
+            desktopImage: parsedContent.pageImages.desktopImage || '',
+            tabletImage: parsedContent.pageImages.tabletImage || '',
+            mobileImage: parsedContent.pageImages.mobileImage || '',
+            altText: parsedContent.pageImages.altText || '',
+            imageTitle: parsedContent.pageImages.imageTitle || '',
+            imageCaption: parsedContent.pageImages.imageCaption || '',
+          });
+        } else {
+          setPageImages({
+            desktopImage: parsedContent.desktopImage || '',
+            tabletImage: parsedContent.tabletImage || '',
+            mobileImage: parsedContent.mobileImage || '',
+            altText: parsedContent.altText || '',
+            imageTitle: parsedContent.imageTitle || '',
+            imageCaption: parsedContent.imageCaption || '',
+          });
+        }
 
         if (data.seoMetadata) {
           setSeoMetadata({
@@ -400,14 +448,25 @@ export const AdminPageEditorPage: React.FC = () => {
     const targetSlug = slug || 'home';
     setSaving(true);
     try {
+      const draftPayload = {
+        ...contentData,
+        pageImages,
+        desktopImage: pageImages.desktopImage,
+        tabletImage: pageImages.tabletImage,
+        mobileImage: pageImages.mobileImage,
+        altText: pageImages.altText,
+        imageTitle: pageImages.imageTitle,
+        imageCaption: pageImages.imageCaption,
+      };
+
       const updated = await api.savePageDraft(targetSlug, {
         title: page?.title || 'Untitled Page',
-        draftContent: contentData,
+        draftContent: draftPayload,
         sections,
         seoMetadata,
       });
       setPage(updated);
-      setSaveSuccessMsg('Draft Saved Successfully!');
+      setSaveSuccessMsg('Draft Saved Successfully to Database!');
       setTimeout(() => setSaveSuccessMsg(''), 3000);
     } catch (e) {
       alert('Error saving draft');
@@ -420,14 +479,25 @@ export const AdminPageEditorPage: React.FC = () => {
     const targetSlug = slug || 'home';
     setSaving(true);
     try {
+      const publishPayload = {
+        ...contentData,
+        pageImages,
+        desktopImage: pageImages.desktopImage,
+        tabletImage: pageImages.tabletImage,
+        mobileImage: pageImages.mobileImage,
+        altText: pageImages.altText,
+        imageTitle: pageImages.imageTitle,
+        imageCaption: pageImages.imageCaption,
+      };
+
       const updated = await api.publishPage(targetSlug, {
         title: page?.title || 'Untitled Page',
-        draftContent: contentData,
+        draftContent: publishPayload,
         sections,
         seoMetadata,
       });
       setPage(updated);
-      setSaveSuccessMsg('Published Live to Storefront!');
+      setSaveSuccessMsg('Published Live to Storefront & Database!');
       setTimeout(() => setSaveSuccessMsg(''), 4000);
     } catch (e) {
       alert('Error publishing page');
@@ -508,7 +578,7 @@ export const AdminPageEditorPage: React.FC = () => {
       {/* ALWAYS VISIBLE STICKY HEADER ACTION BAR */}
       <StickyHeaderBar>
         <div className="left-side">
-          <button onClick={() => navigate('/atelier-vault-7Kx9Qm4R2Lp8Nw6T/pages')} style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#fff' }}>
+          <button onClick={() => navigate('/vault-mgmt-k8m3x9q2v7/pages')} style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#fff' }}>
             <ArrowLeft size={20} />
           </button>
           <div>
@@ -600,35 +670,378 @@ export const AdminPageEditorPage: React.FC = () => {
 
         {/* SECTION 3: SECTIONS BUILDER */}
         <Card>
-          <h2>Custom Section Layout Blocks ({sections.length})</h2>
-          <button
-            onClick={() => setSections([...sections, { blockType: 'RICH_TEXT', position: sections.length + 1, content: {}, isVisible: true }])}
-            style={{ padding: '8px 16px', background: '#c9a45c', color: '#fff', border: 'none', borderRadius: 4, cursor: 'pointer', marginBottom: 16 }}
-          >
-            + Add Custom Section Block
-          </button>
-          {sections.map((s, idx) => (
-            <div key={idx} style={{ background: '#f7f3e9', padding: 16, borderRadius: 6, marginBottom: 12 }}>
-              <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 8 }}>
-                <strong>Section #{idx + 1} ({s.blockType})</strong>
-                <button
-                  onClick={() => setSections(sections.filter((_, i) => i !== idx))}
-                  style={{ border: 'none', background: 'none', color: '#c00', cursor: 'pointer' }}
-                >
-                  <Trash2 size={16} />
-                </button>
-              </div>
-              <textarea
-                rows={3}
-                value={typeof s.content === 'string' ? s.content : JSON.stringify(s.content)}
-                onChange={(e) => {
-                  const updated = [...sections];
-                  updated[idx].content = e.target.value;
-                  setSections(updated);
-                }}
-              />
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16 }}>
+            <div>
+              <h2 style={{ margin: 0 }}>Custom Section Layout Blocks ({sections.length})</h2>
+              <p style={{ margin: '4px 0 0 0', fontSize: '0.84rem', color: '#77736c' }}>
+                Add individual page sections with dedicated text color controls for each text element.
+              </p>
             </div>
-          ))}
+            <button
+              onClick={() => {
+                setSections([
+                  ...sections,
+                  {
+                    id: `sec_${Date.now()}`,
+                    blockType: 'RICH_TEXT',
+                    position: sections.length + 1,
+                    isVisible: true,
+                    content: {
+                      eyebrow: 'EXCLUSIVE ATELIER EDIT',
+                      eyebrowColor: '#c9a45c',
+                      title: 'Handcrafted Atelier Section',
+                      titleColor: '#1f1f1f',
+                      subtitle: 'Fine Jewellery & Exceptional Diamonds',
+                      subtitleColor: '#77736c',
+                      description: 'Experience bespoke craftsmanship and precision-cut certified diamonds.',
+                      descriptionColor: '#55514b',
+                      primaryBtnText: 'DISCOVER MORE',
+                      primaryBtnTextColor: '#ffffff',
+                      primaryBtnLink: '/collections',
+                      bodyHtml: '<p>Detailed bespoke storytelling and fine jewellery specifications.</p>',
+                      textColor: '#1f1f1f',
+                      backgroundColor: '#ffffff',
+                    },
+                  },
+                ]);
+              }}
+              style={{
+                padding: '9px 18px',
+                background: '#19202a',
+                color: '#fff',
+                border: 'none',
+                borderRadius: 4,
+                cursor: 'pointer',
+                fontWeight: 600,
+                fontSize: '0.82rem',
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: 6,
+              }}
+            >
+              <Plus size={14} /> + Add Custom Section Block
+            </button>
+          </div>
+
+          {sections.length === 0 && (
+            <div style={{ padding: 32, textAlign: 'center', background: '#faf8f5', border: '1px dashed #d9d3c7', borderRadius: 6, color: '#77736c', fontSize: '0.9rem' }}>
+              No custom section blocks added yet. Click "+ Add Custom Section Block" above to create your first section.
+            </div>
+          )}
+
+          {sections.map((s, idx) => {
+            let c: any = {};
+            try {
+              c = typeof s.content === 'string' ? JSON.parse(s.content) : { ...(s.content || {}) };
+            } catch (e) {
+              c = { text: s.content };
+            }
+
+            const updateField = (field: string, val: any) => {
+              const updated = [...sections];
+              let currentContent: any = {};
+              try {
+                currentContent = typeof updated[idx].content === 'string' ? JSON.parse(updated[idx].content) : { ...(updated[idx].content || {}) };
+              } catch (e) {
+                currentContent = { text: updated[idx].content };
+              }
+              currentContent[field] = val;
+              updated[idx] = {
+                ...updated[idx],
+                content: currentContent,
+              };
+              setSections(updated);
+            };
+
+            const handleMove = (direction: 'up' | 'down') => {
+              const targetIdx = direction === 'up' ? idx - 1 : idx + 1;
+              if (targetIdx < 0 || targetIdx >= sections.length) return;
+              const updated = [...sections];
+              const temp = updated[idx];
+              updated[idx] = updated[targetIdx];
+              updated[targetIdx] = temp;
+              setSections(updated);
+            };
+
+            return (
+              <div
+                key={s.id || idx}
+                style={{
+                  background: '#ffffff',
+                  border: '1px solid #e8e3d9',
+                  borderRadius: 8,
+                  padding: 20,
+                  marginBottom: 16,
+                  boxShadow: '0 2px 8px rgba(0, 0, 0, 0.02)',
+                }}
+              >
+                {/* SECTION HEADER ROW */}
+                <div
+                  style={{
+                    display: 'flex',
+                    justifyContent: 'space-between',
+                    alignItems: 'center',
+                    borderBottom: '1px solid #f0ebe1',
+                    paddingBottom: 12,
+                    marginBottom: 16,
+                    flexWrap: 'wrap',
+                    gap: 12,
+                  }}
+                >
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+                    <span
+                      style={{
+                        fontSize: '0.75rem',
+                        fontWeight: 700,
+                        letterSpacing: '0.08em',
+                        textTransform: 'uppercase',
+                        color: '#c9a45c',
+                        background: '#faf8f5',
+                        padding: '4px 8px',
+                        borderRadius: 4,
+                        border: '1px solid #e8e3d9',
+                      }}
+                    >
+                      Section #{idx + 1}
+                    </span>
+                    <select
+                      value={s.blockType || 'RICH_TEXT'}
+                      onChange={(e) => {
+                        const updated = [...sections];
+                        updated[idx] = { ...updated[idx], blockType: e.target.value };
+                        setSections(updated);
+                      }}
+                      style={{
+                        padding: '5px 10px',
+                        fontSize: '0.82rem',
+                        fontWeight: 600,
+                        borderRadius: 4,
+                        border: '1px solid #d9d3c7',
+                        background: '#ffffff',
+                      }}
+                    >
+                      <option value="RICH_TEXT">Rich Text Section</option>
+                      <option value="HERO_BANNER">Hero Banner</option>
+                      <option value="CALLOUT_BANNER">Callout Banner</option>
+                      <option value="FEATURE_GRID">Feature Grid</option>
+                      <option value="IMAGE_BANNER">Image Banner</option>
+                      <option value="CUSTOM">Custom Section</option>
+                    </select>
+                  </div>
+
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                    <label style={{ display: 'inline-flex', alignItems: 'center', gap: 6, fontSize: '0.8rem', fontWeight: 600, cursor: 'pointer', marginRight: 8 }}>
+                      <input
+                        type="checkbox"
+                        checked={s.isVisible !== false}
+                        onChange={(e) => {
+                          const updated = [...sections];
+                          updated[idx] = { ...updated[idx], isVisible: e.target.checked };
+                          setSections(updated);
+                        }}
+                      />
+                      Visible
+                    </label>
+
+                    <button
+                      type="button"
+                      disabled={idx === 0}
+                      onClick={() => handleMove('up')}
+                      style={{ padding: '4px 8px', border: '1px solid #d9d3c7', background: '#faf8f5', borderRadius: 4, cursor: idx === 0 ? 'not-allowed' : 'pointer', opacity: idx === 0 ? 0.5 : 1 }}
+                      title="Move Up"
+                    >
+                      <MoveUp size={13} />
+                    </button>
+                    <button
+                      type="button"
+                      disabled={idx === sections.length - 1}
+                      onClick={() => handleMove('down')}
+                      style={{ padding: '4px 8px', border: '1px solid #d9d3c7', background: '#faf8f5', borderRadius: 4, cursor: idx === sections.length - 1 ? 'not-allowed' : 'pointer', opacity: idx === sections.length - 1 ? 0.5 : 1 }}
+                      title="Move Down"
+                    >
+                      <MoveDown size={13} />
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        if (window.confirm('Delete this section block?')) {
+                          setSections(sections.filter((_, i) => i !== idx));
+                        }
+                      }}
+                      style={{ padding: '4px 8px', border: '1px solid #feb2b2', background: '#fff5f5', color: '#c00', borderRadius: 4, cursor: 'pointer' }}
+                      title="Delete Section"
+                    >
+                      <Trash2 size={13} />
+                    </button>
+                  </div>
+                </div>
+
+                {/* FORM FIELDS WITH INDIVIDUAL COLOR PICKERS */}
+                <FormGrid $cols={2}>
+                  <FormGroup>
+                    <label style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                      <span>Section Eyebrow Tagline</span>
+                      <AdminColorPicker
+                        label="Color"
+                        value={c.eyebrowColor}
+                        defaultValue="#c9a45c"
+                        onChange={(val) => updateField('eyebrowColor', val)}
+                      />
+                    </label>
+                    <input
+                      type="text"
+                      value={c.eyebrow || ''}
+                      onChange={(e) => updateField('eyebrow', e.target.value)}
+                      placeholder="e.g. EXCLUSIVE ATELIER EDIT"
+                      style={{ color: c.eyebrowColor || undefined }}
+                    />
+                  </FormGroup>
+
+                  <FormGroup>
+                    <label style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                      <span>Section Headline / Title</span>
+                      <AdminColorPicker
+                        label="Color"
+                        value={c.titleColor}
+                        defaultValue="#1f1f1f"
+                        onChange={(val) => updateField('titleColor', val)}
+                      />
+                    </label>
+                    <input
+                      type="text"
+                      value={c.title || ''}
+                      onChange={(e) => updateField('title', e.target.value)}
+                      placeholder="e.g. Handcrafted Atelier Section"
+                      style={{ color: c.titleColor || undefined, fontWeight: 600 }}
+                    />
+                  </FormGroup>
+                </FormGrid>
+
+                <FormGrid $cols={2} style={{ marginTop: 12 }}>
+                  <FormGroup>
+                    <label style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                      <span>Section Subtitle</span>
+                      <AdminColorPicker
+                        label="Color"
+                        value={c.subtitleColor}
+                        defaultValue="#77736c"
+                        onChange={(val) => updateField('subtitleColor', val)}
+                      />
+                    </label>
+                    <input
+                      type="text"
+                      value={c.subtitle || ''}
+                      onChange={(e) => updateField('subtitle', e.target.value)}
+                      placeholder="e.g. Fine Jewellery & Exceptional Diamonds"
+                      style={{ color: c.subtitleColor || undefined }}
+                    />
+                  </FormGroup>
+
+                  <FormGroup>
+                    <label style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                      <span>Button Text</span>
+                      <AdminColorPicker
+                        label="Text Color"
+                        value={c.primaryBtnTextColor || c.buttonTextColor}
+                        defaultValue="#ffffff"
+                        onChange={(val) => {
+                          updateField('primaryBtnTextColor', val);
+                          updateField('buttonTextColor', val);
+                        }}
+                      />
+                    </label>
+                    <input
+                      type="text"
+                      value={c.primaryBtnText || c.buttonText || ''}
+                      onChange={(e) => {
+                        updateField('primaryBtnText', e.target.value);
+                        updateField('buttonText', e.target.value);
+                      }}
+                      placeholder="e.g. DISCOVER MORE"
+                      style={{ color: c.primaryBtnTextColor || c.buttonTextColor || undefined }}
+                    />
+                  </FormGroup>
+                </FormGrid>
+
+                <FormGrid $cols={2} style={{ marginTop: 12 }}>
+                  <FormGroup>
+                    <label>Button Target URL</label>
+                    <input
+                      type="text"
+                      value={c.primaryBtnLink || c.buttonLink || ''}
+                      onChange={(e) => {
+                        updateField('primaryBtnLink', e.target.value);
+                        updateField('buttonLink', e.target.value);
+                      }}
+                      placeholder="/collections"
+                    />
+                  </FormGroup>
+
+                  <FormGroup>
+                    <label style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                      <span>Section Background Color</span>
+                      <AdminColorPicker
+                        label="BG Color"
+                        value={c.backgroundColor}
+                        defaultValue="#ffffff"
+                        onChange={(val) => updateField('backgroundColor', val)}
+                      />
+                    </label>
+                    <input
+                      type="text"
+                      value={c.backgroundColor || '#ffffff'}
+                      onChange={(e) => updateField('backgroundColor', e.target.value)}
+                      placeholder="#ffffff"
+                    />
+                  </FormGroup>
+                </FormGrid>
+
+                <FormGroup $full style={{ marginTop: 12 }}>
+                  <label style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                    <span>Description Narrative</span>
+                    <AdminColorPicker
+                      label="Color"
+                      value={c.descriptionColor}
+                      defaultValue="#55514b"
+                      onChange={(val) => updateField('descriptionColor', val)}
+                    />
+                  </label>
+                  <textarea
+                    rows={2}
+                    value={c.description || ''}
+                    onChange={(e) => updateField('description', e.target.value)}
+                    placeholder="Short section narrative introducing the collection or atelier features..."
+                    style={{ color: c.descriptionColor || undefined }}
+                  />
+                </FormGroup>
+
+                <FormGroup $full style={{ marginTop: 12 }}>
+                  <label style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                    <span>Rich Text / Body Paragraph Content</span>
+                    <AdminColorPicker
+                      label="Text Color"
+                      value={c.textColor || c.bodyTextColor}
+                      defaultValue="#1f1f1f"
+                      onChange={(val) => {
+                        updateField('textColor', val);
+                        updateField('bodyTextColor', val);
+                      }}
+                    />
+                  </label>
+                  <textarea
+                    rows={3}
+                    value={c.bodyHtml || c.text || (typeof c.content === 'string' ? c.content : '')}
+                    onChange={(e) => {
+                      updateField('bodyHtml', e.target.value);
+                      updateField('text', e.target.value);
+                    }}
+                    placeholder="Complete section body paragraph, features, or HTML..."
+                    style={{ color: c.textColor || c.bodyTextColor || undefined }}
+                  />
+                </FormGroup>
+              </div>
+            );
+          })}
         </Card>
 
         {/* SECTION 4: SEO METADATA */}
@@ -653,7 +1066,7 @@ export const AdminPageEditorPage: React.FC = () => {
 
             <FormGroup>
               <label>Canonical URL</label>
-              <input type="text" value={seoMetadata.canonicalUrl} onChange={(e) => setSeoMetadata({ ...seoMetadata, canonicalUrl: e.target.value })} placeholder={`https://floksyjewel.com/${page.slug}`} />
+              <input type="text" value={seoMetadata.canonicalUrl} onChange={(e) => setSeoMetadata({ ...seoMetadata, canonicalUrl: e.target.value })} placeholder={`https://auroradiamonds.com/${page.slug}`} />
             </FormGroup>
 
             <FormGroup>

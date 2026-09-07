@@ -21,7 +21,7 @@ export interface FilterGroupConfig {
   options: FilterOption[];
 }
 
-interface FloksyFilterBarProps {
+interface AuraFilterBarProps {
   selectedFilters: Record<string, string[]>;
   onFilterChange: (key: string, values: string[]) => void;
   onClearAll: () => void;
@@ -42,6 +42,88 @@ const DEFAULT_SORT_OPTIONS: FilterOption[] = [
   { label: 'Name: A → Z', value: 'name' },
 ];
 
+export const DEFAULT_METALS_LIST: FilterOption[] = [
+  { label: 'All Metals', value: 'All' },
+  { label: '9K Yellow Gold', value: '9k-yellow-gold', colorHex: '#E8C872' },
+  { label: '9K White Gold', value: '9k-white-gold', colorHex: '#CBD5E1' },
+  { label: '9K Rose Gold', value: '9k-rose-gold', colorHex: '#E4A8A5' },
+  { label: '10K Yellow Gold', value: '10k-yellow-gold', colorHex: '#E8C872' },
+  { label: '10K White Gold', value: '10k-white-gold', colorHex: '#CBD5E1' },
+  { label: '10K Rose Gold', value: '10k-rose-gold', colorHex: '#E4A8A5' },
+  { label: '14K Yellow Gold', value: '14k-yellow-gold', colorHex: '#E8C872' },
+  { label: '14K White Gold', value: '14k-white-gold', colorHex: '#CBD5E1' },
+  { label: '14K Rose Gold', value: '14k-rose-gold', colorHex: '#E4A8A5' },
+  { label: '18K Yellow Gold', value: '18k-yellow-gold', colorHex: '#E8C872' },
+  { label: '18K White Gold', value: '18k-white-gold', colorHex: '#CBD5E1' },
+  { label: '18K Rose Gold', value: '18k-rose-gold', colorHex: '#E4A8A5' },
+  { label: '925 Sterling Silver', value: 'silver', colorHex: '#D1D5DB' },
+  { label: 'Platinum', value: 'platinum', colorHex: '#E2E8F0' },
+];
+
+export const DEFAULT_RING_SIZES: FilterOption[] = [
+  { label: 'All Sizes', value: 'All' },
+  { label: 'US 4', value: 'US 4' },
+  { label: 'US 4.5', value: 'US 4.5' },
+  { label: 'US 5', value: 'US 5' },
+  { label: 'US 5.5', value: 'US 5.5' },
+  { label: 'US 6', value: 'US 6' },
+  { label: 'US 6.5', value: 'US 6.5' },
+  { label: 'US 7', value: 'US 7' },
+  { label: 'US 7.5', value: 'US 7.5' },
+  { label: 'US 8', value: 'US 8' },
+  { label: 'US 8.5', value: 'US 8.5' },
+  { label: 'US 9', value: 'US 9' },
+  { label: 'US 9.5', value: 'US 9.5' },
+  { label: 'US 10', value: 'US 10' },
+  { label: 'US 10.5', value: 'US 10.5' },
+  { label: 'US 11', value: 'US 11' },
+  { label: 'US 11.5', value: 'US 11.5' },
+  { label: 'US 12', value: 'US 12' },
+];
+
+export const DEFAULT_CARAT_OPTIONS: FilterOption[] = [
+  { label: 'Any Carat', value: 'All' },
+  { label: '0.50 ct+', value: '0.5' },
+  { label: '0.75 ct+', value: '0.75' },
+  { label: '1.00 ct+', value: '1.0' },
+  { label: '1.50 ct+', value: '1.5' },
+  { label: '2.00 ct+', value: '2.0' },
+  { label: '3.00 ct+', value: '3.0' },
+  { label: '4.00 ct+', value: '4.0' },
+  { label: '5.00 ct+', value: '5.0' },
+];
+
+export const DEFAULT_CLARITY_OPTIONS: FilterOption[] = [
+  { label: 'Any Clarity', value: 'Any' },
+  { label: 'FL (Flawless)', value: 'FL' },
+  { label: 'IF (Internally Flawless)', value: 'IF' },
+  { label: 'VVS1 (Very Very Slightly Included 1)', value: 'VVS1' },
+  { label: 'VVS2 (Very Very Slightly Included 2)', value: 'VVS2' },
+  { label: 'VS1 (Very Slightly Included 1)', value: 'VS1' },
+  { label: 'VS2 (Very Slightly Included 2)', value: 'VS2' },
+  { label: 'SI1 (Slightly Included 1)', value: 'SI1' },
+  { label: 'SI2 (Slightly Included 2)', value: 'SI2' },
+  { label: 'I1 (Included 1)', value: 'I1' },
+];
+
+export const DEFAULT_CUT_OPTIONS: FilterOption[] = [
+  { label: 'Any Cut', value: 'Any' },
+  { label: 'Excellent', value: 'Excellent' },
+  { label: 'Very Good', value: 'Very Good' },
+  { label: 'Good', value: 'Good' },
+  { label: 'Fair', value: 'Fair' },
+  { label: 'Ideal', value: 'Ideal' },
+];
+
+export const DEFAULT_CERT_OPTIONS: FilterOption[] = [
+  { label: 'Any Certification', value: 'Any' },
+  { label: 'IGI Certified', value: 'IGI' },
+  { label: 'GIA Authenticated', value: 'GIA' },
+  { label: 'GCAL Guaranteed', value: 'GCAL' },
+  { label: 'HRD Certified', value: 'HRD' },
+  { label: 'None', value: 'None' },
+];
+
 const CATEGORY_STYLE_DEFAULTS: Record<string, FilterOption[]> = {
   rings: [
     { label: 'Solitaire', value: 'Solitaire' },
@@ -51,6 +133,9 @@ const CATEGORY_STYLE_DEFAULTS: Record<string, FilterOption[]> = {
     { label: 'Vintage & Antique', value: 'Vintage & Antique' },
     { label: 'Bezel Settings', value: 'Bezel Settings' },
     { label: 'Cocktail', value: 'Cocktail' },
+    { label: 'Pavé', value: 'Pavé' },
+    { label: 'Hidden Halo', value: 'Hidden Halo' },
+    { label: 'Toi et Moi', value: 'Toi et Moi' },
   ],
   earrings: [
     { label: 'Solitaire Studs', value: 'Solitaire Studs' },
@@ -60,6 +145,7 @@ const CATEGORY_STYLE_DEFAULTS: Record<string, FilterOption[]> = {
     { label: 'Huggies', value: 'Huggies' },
     { label: 'Dangle & Drop', value: 'Dangle & Drop' },
     { label: 'Cluster', value: 'Cluster' },
+    { label: 'Chandeliers', value: 'Chandeliers' },
   ],
   necklaces: [
     { label: 'Graduated Tennis', value: 'Graduated Tennis' },
@@ -69,6 +155,7 @@ const CATEGORY_STYLE_DEFAULTS: Record<string, FilterOption[]> = {
     { label: 'Statement', value: 'Statement' },
     { label: 'Riviere', value: 'Riviere' },
     { label: 'Layering Chains', value: 'Layering Chains' },
+    { label: 'Solitaire Necklace', value: 'Solitaire Necklace' },
   ],
   bracelets: [
     { label: 'Emerald Cut Tennis', value: 'Emerald Cut Tennis' },
@@ -87,6 +174,7 @@ const CATEGORY_STYLE_DEFAULTS: Record<string, FilterOption[]> = {
     { label: 'Cross Pendants', value: 'Cross Pendants' },
     { label: 'Heart Pendants', value: 'Heart Pendants' },
     { label: 'Initial & Letter', value: 'Initial & Letter' },
+    { label: 'Medallion', value: 'Medallion' },
   ],
   diamonds: [
     { label: 'Natural Certified', value: 'Natural Certified' },
@@ -106,12 +194,15 @@ const CATEGORY_STYLE_DEFAULTS: Record<string, FilterOption[]> = {
 };
 
 const FilterPanelContainer = styled.div`
-  background-color: #F9F7F2;
-  border: 1px solid #d9d3c7;
+  background-color: #111111;
+  border: 1px solid rgba(140, 116, 75, 0.25);
   padding: 24px 28px;
   margin-bottom: 24px;
   border-radius: 4px;
   box-shadow: 0 4px 20px rgba(31, 31, 31, 0.03);
+  position: relative;
+  z-index: 100;
+  overflow: visible;
 
   @media (max-width: 992px) {
     display: none;
@@ -124,7 +215,7 @@ const FilterHeaderRow = styled.div`
   align-items: center;
   margin-bottom: 20px;
   padding-bottom: 14px;
-  border-bottom: 1px solid #f0eae1;
+  border-bottom: 1px solid rgba(140, 116, 75, 0.2);
 
   .title-group {
     display: flex;
@@ -136,7 +227,7 @@ const FilterHeaderRow = styled.div`
       font-weight: 700;
       letter-spacing: 0.14em;
       text-transform: uppercase;
-      color: #1f1f1f;
+      color: #F5F1E8;
     }
   }
 
@@ -147,7 +238,7 @@ const FilterHeaderRow = styled.div`
     font-weight: 600;
     letter-spacing: 0.08em;
     text-transform: uppercase;
-    color: #6b6b6b;
+    color: #C9A96E;
     cursor: pointer;
     display: flex;
     align-items: center;
@@ -155,7 +246,7 @@ const FilterHeaderRow = styled.div`
     transition: color 0.2s ease;
 
     &:hover {
-      color: #c9a45c;
+      color: #C9A96E;
     }
   }
 `;
@@ -177,7 +268,7 @@ const FilterBlock = styled.div`
     font-weight: 700;
     letter-spacing: 0.12em;
     text-transform: uppercase;
-    color: #6b6b6b;
+    color: #C9A96E;
     margin-bottom: 10px;
   }
 
@@ -206,17 +297,17 @@ const FilterBlock = styled.div`
     border-radius: 3px;
     cursor: pointer;
     font-size: 0.78rem;
-    color: #4a4a4a;
+    color: #D8D2C5;
     transition: all 0.15s ease;
 
     &:hover {
-      background-color: #faf8f5;
-      color: #1f1f1f;
+      background-color: #242018;
+      color: #C9A96E;
     }
 
     &.selected {
-      background-color: #faf5eb;
-      color: #1f1f1f;
+      background-color: #2A241A;
+      color: #C9A96E;
       font-weight: 600;
     }
   }
@@ -240,19 +331,19 @@ const PriceBlock = styled.div`
     .price-pill {
       padding: 6px 8px;
       font-size: 0.72rem;
-      background: #faf8f5;
-      border: 1px solid #e8e3d9;
+      background: #151515;
+      border: 1px solid rgba(140, 116, 75, 0.25);
       border-radius: 3px;
       cursor: pointer;
-      color: #4a4a4a;
+      color: #D8D2C5;
       text-align: center;
       transition: all 0.15s ease;
 
       &:hover,
       &.active {
-        background: #1f1f1f;
-        color: #ffffff;
-        border-color: #1f1f1f;
+        background: #242018;
+        color: #C9A96E;
+        border-color: #C9A96E;
       }
     }
   }
@@ -264,11 +355,15 @@ const BottomDropdownRow = styled.div`
   gap: 12px;
   margin-top: 20px;
   padding-top: 16px;
-  border-top: 1px solid #f0eae1;
+  border-top: 1px solid rgba(140, 116, 75, 0.25);
+  position: relative;
+  z-index: 120;
+  overflow: visible;
 
   > div {
     flex: 1;
     min-width: 150px;
+    position: relative;
   }
 `;
 
@@ -281,7 +376,7 @@ const ResultsHeaderRow = styled.div`
   .count {
     font-family: 'Cormorant Garamond', serif;
     font-size: 1.25rem;
-    color: #1f1f1f;
+    color: #F5F1E8;
     letter-spacing: 0.04em;
     display: flex;
     align-items: baseline;
@@ -291,7 +386,7 @@ const ResultsHeaderRow = styled.div`
       font-family: 'Inter', system-ui, -apple-system, sans-serif;
       font-weight: 700;
       font-size: 1.35rem;
-      color: #1f1f1f;
+      color: #F5F1E8;
       letter-spacing: 0;
       line-height: 1;
     }
@@ -307,7 +402,7 @@ const ResultsHeaderRow = styled.div`
       font-weight: 700;
       letter-spacing: 0.12em;
       text-transform: uppercase;
-      color: #6b6b6b;
+      color: #C9A96E;
     }
   }
 
@@ -343,15 +438,22 @@ const MobileBarContainer = styled.div`
       justify-content: center;
       gap: 8px;
       padding: 12px;
-      background: #F9F7F2;
-      border: 1px solid #d9d3c7;
+      background: #151515;
+      border: 1px solid rgba(140, 116, 75, 0.3);
       border-radius: 4px;
       font-size: 0.78rem;
       font-weight: 700;
       letter-spacing: 0.1em;
       text-transform: uppercase;
-      color: #1f1f1f;
+      color: #F5F1E8;
       cursor: pointer;
+      transition: all 0.2s ease;
+
+      &:hover {
+        background: #1E1E1E;
+        color: #C9A96E;
+        border-color: #C9A96E;
+      }
     }
   }
 `;
@@ -359,8 +461,8 @@ const MobileBarContainer = styled.div`
 const MobileDrawerOverlay = styled.div<{ $open: boolean }>`
   position: fixed;
   inset: 0;
-  background: rgba(18, 22, 26, 0.7);
-  backdrop-filter: blur(4px);
+  background: rgba(11, 11, 11, 0.8);
+  backdrop-filter: blur(6px);
   z-index: 9999;
   display: ${({ $open }) => ($open ? 'block' : 'none')};
 `;
@@ -372,7 +474,7 @@ const MobileDrawerContent = styled.div<{ $open: boolean }>`
   bottom: 0;
   width: 85%;
   max-width: 380px;
-  background: #ffffff;
+  background: #151515;
   z-index: 10000;
   transform: ${({ $open }) => ($open ? 'translateX(0)' : 'translateX(100%)')};
   transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
@@ -381,7 +483,7 @@ const MobileDrawerContent = styled.div<{ $open: boolean }>`
 
   .drawer-header {
     padding: 20px 24px;
-    border-bottom: 1px solid #e8e3d9;
+    border-bottom: 1px solid rgba(140, 116, 75, 0.25);
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -389,6 +491,7 @@ const MobileDrawerContent = styled.div<{ $open: boolean }>`
     h3 {
       font-family: 'Cormorant Garamond', serif;
       font-size: 1.4rem;
+      color: #F5F1E8;
       margin: 0;
     }
   }
@@ -404,7 +507,7 @@ const MobileDrawerContent = styled.div<{ $open: boolean }>`
 
   .drawer-actions {
     padding: 20px 24px;
-    border-top: 1px solid #e8e3d9;
+    border-top: 1px solid rgba(140, 116, 75, 0.25);
     display: flex;
     gap: 12px;
 
@@ -417,22 +520,35 @@ const MobileDrawerContent = styled.div<{ $open: boolean }>`
       text-transform: uppercase;
       border-radius: 4px;
       cursor: pointer;
+      transition: all 0.2s ease;
 
       &.clear {
-        background: #ffffff;
-        border: 1px solid #d9d3c7;
-        color: #1f1f1f;
+        background: #151515;
+        border: 1px solid rgba(140, 116, 75, 0.3);
+        color: #F5F1E8;
+
+        &:hover {
+          background: #1E1E1E;
+          border-color: #C9A96E;
+          color: #C9A96E;
+        }
       }
       &.apply {
-        background: #1f1f1f;
-        border: 1px solid #1f1f1f;
-        color: #ffffff;
+        background: #C9A96E;
+        border: 1px solid #C9A96E;
+        color: #0B0B0B;
+
+        &:hover {
+          background: #DFBA73;
+          border-color: #DFBA73;
+          color: #0B0B0B;
+        }
       }
     }
   }
 `;
 
-export const FloksyFilterBar: React.FC<FloksyFilterBarProps> = ({
+export const AuraFilterBar: React.FC<AuraFilterBarProps> = ({
   selectedFilters,
   onFilterChange,
   onClearAll,
@@ -575,19 +691,11 @@ export const FloksyFilterBar: React.FC<FloksyFilterBarProps> = ({
           {/* METAL BLOCK */}
           <FilterBlock>
             <div className="block-label">{metalConfig?.customerLabel || 'METAL'}</div>
-            <div className="options-box">
-              {(metalConfig?.options || [
-                { label: 'All Metals', value: 'All' },
-                { label: '14K Yellow Gold', value: '14k-yellow-gold', colorHex: '#E8C872' },
-                { label: '14K White Gold', value: '14k-white-gold', colorHex: '#CBD5E1' },
-                { label: '14K Rose Gold', value: '14k-rose-gold', colorHex: '#E4A8A5' },
-                { label: '18K Yellow Gold', value: '18k-yellow-gold', colorHex: '#E8C872' },
-                { label: '18K White Gold', value: '18k-white-gold', colorHex: '#CBD5E1' },
-                { label: '18K Rose Gold', value: '18k-rose-gold', colorHex: '#E4A8A5' },
-              ]).map((m) => (
+            <div className="options-box" style={{ maxHeight: 200 }}>
+              {DEFAULT_METALS_LIST.map((m) => (
                 <div
                   key={m.value}
-                  className={`option-row ${selectedMetal === m.value ? 'selected' : ''}`}
+                  className={`option-row ${selectedMetal === m.value || selectedMetal.toLowerCase() === m.label.toLowerCase() ? 'selected' : ''}`}
                   onClick={() => handleSelectOption('metal', m.value)}
                 >
                   <span style={{ display: 'flex', alignItems: 'center' }}>
@@ -596,7 +704,7 @@ export const FloksyFilterBar: React.FC<FloksyFilterBarProps> = ({
                     )}
                     {m.label}
                   </span>
-                  {selectedMetal === m.value && <Check size={14} color="#C9A45C" />}
+                  {(selectedMetal === m.value || selectedMetal.toLowerCase() === m.label.toLowerCase()) && <Check size={14} color="#C9A45C" />}
                 </div>
               ))}
             </div>
@@ -674,7 +782,7 @@ export const FloksyFilterBar: React.FC<FloksyFilterBarProps> = ({
           {isRingCategory && (
             <LuxuryDropdown
               label={ringSizeConfig?.customerLabel || 'Ring Size'}
-              options={(ringSizeConfig?.options || []).map((o) => ({ label: o.label, value: o.value }))}
+              options={((ringSizeConfig?.options && ringSizeConfig.options.length > 0) ? ringSizeConfig.options : DEFAULT_RING_SIZES).map((o) => ({ label: o.label, value: o.value }))}
               value={selectedFilters.ringSize?.[0] || 'All'}
               onChange={(val) => handleSelectOption('ringSize', val)}
             />
@@ -682,14 +790,15 @@ export const FloksyFilterBar: React.FC<FloksyFilterBarProps> = ({
 
           <LuxuryDropdown
             label={caratConfig?.customerLabel || 'Carat Weight'}
-            options={(caratConfig?.options || []).map((o) => ({ label: o.label, value: o.value }))}
-            value={selectedFilters.carat?.[0] || 'Any'}
+            options={((caratConfig?.options && caratConfig.options.length > 0) ? caratConfig.options : DEFAULT_CARAT_OPTIONS).map((o) => ({ label: o.label, value: o.value }))}
+            value={selectedFilters.carat?.[0] || 'All'}
+            placeholder="Any Carat"
             onChange={(val) => handleSelectOption('carat', val)}
           />
 
           <LuxuryDropdown
             label={clarityConfig?.customerLabel || 'Clarity'}
-            options={(clarityConfig?.options || []).map((o) => ({ label: o.label, value: o.value }))}
+            options={((clarityConfig?.options && clarityConfig.options.length > 0) ? clarityConfig.options : DEFAULT_CLARITY_OPTIONS).map((o) => ({ label: o.label, value: o.value }))}
             value={selectedFilters.clarity?.[0] || 'Any'}
             onChange={(val) => handleSelectOption('clarity', val)}
           />
@@ -702,16 +811,14 @@ export const FloksyFilterBar: React.FC<FloksyFilterBarProps> = ({
                 return [
                   { label: 'Any Color', value: 'Any' },
                   { label: 'STANDARD COLORS', value: 'HEADER_STD', isHeader: true },
-                  { label: 'D Grade', value: 'D' },
-                  { label: 'E Grade', value: 'E' },
-                  { label: 'F Grade', value: 'F' },
-                  { label: 'G Grade', value: 'G' },
-                  { label: 'H Grade', value: 'H' },
-                  { label: 'I Grade', value: 'I' },
-                  { label: 'J Grade', value: 'J' },
-                  { label: 'K Grade', value: 'K' },
-                  { label: 'L Grade', value: 'L' },
-                  { label: 'M Grade', value: 'M' },
+                  { label: 'D (Colorless)', value: 'D' },
+                  { label: 'E (Colorless)', value: 'E' },
+                  { label: 'F (Colorless)', value: 'F' },
+                  { label: 'G (Near Colorless)', value: 'G' },
+                  { label: 'H (Near Colorless)', value: 'H' },
+                  { label: 'I (Near Colorless)', value: 'I' },
+                  { label: 'J (Near Colorless)', value: 'J' },
+                  { label: 'K (Faint Yellow)', value: 'K' },
                   { label: 'FANCY COLORS', value: 'HEADER_FANCY', isHeader: true },
                   { label: 'Fancy Yellow', value: 'fancy-yellow', colorHex: '#FACC15' },
                   { label: 'Fancy Pink', value: 'fancy-pink', colorHex: '#F472B6' },
@@ -722,7 +829,6 @@ export const FloksyFilterBar: React.FC<FloksyFilterBarProps> = ({
                   { label: 'Fancy Purple', value: 'fancy-purple', colorHex: '#A855F7' },
                   { label: 'Fancy Brown', value: 'fancy-brown', colorHex: '#78350F' },
                   { label: 'Fancy Black', value: 'fancy-black', colorHex: '#18181B' },
-                  { label: 'Other Fancy Color', value: 'fancy-other', colorHex: '#E2E8F0' },
                 ];
               }
               const stdList = apiOpts.filter((o) => !o.label.toLowerCase().includes('fancy') && o.value !== 'Any Color');
@@ -744,14 +850,14 @@ export const FloksyFilterBar: React.FC<FloksyFilterBarProps> = ({
 
           <LuxuryDropdown
             label={cutConfig?.customerLabel || 'Cut'}
-            options={(cutConfig?.options || []).map((o) => ({ label: o.label, value: o.value }))}
+            options={((cutConfig?.options && cutConfig.options.length > 0) ? cutConfig.options : DEFAULT_CUT_OPTIONS).map((o) => ({ label: o.label, value: o.value }))}
             value={selectedFilters.cut?.[0] || 'Any'}
             onChange={(val) => handleSelectOption('cut', val)}
           />
 
           <LuxuryDropdown
             label={certConfig?.customerLabel || 'Certification'}
-            options={(certConfig?.options || []).map((o) => ({ label: o.label, value: o.value }))}
+            options={((certConfig?.options && certConfig.options.length > 0) ? certConfig.options : DEFAULT_CERT_OPTIONS).map((o) => ({ label: o.label, value: o.value }))}
             value={selectedFilters.certification?.[0] || 'Any'}
             onChange={(val) => handleSelectOption('certification', val)}
           />
@@ -814,7 +920,7 @@ export const FloksyFilterBar: React.FC<FloksyFilterBarProps> = ({
 
           <LuxuryDropdown
             label={metalConfig?.customerLabel || 'Metal'}
-            options={(metalConfig?.options || []).map((o) => ({ label: o.label, value: o.value }))}
+            options={DEFAULT_METALS_LIST.map((o) => ({ label: o.label, value: o.value }))}
             value={selectedMetal}
             onChange={(val) => handleSelectOption('metal', val)}
           />
@@ -829,7 +935,7 @@ export const FloksyFilterBar: React.FC<FloksyFilterBarProps> = ({
           {isRingCategory && (
             <LuxuryDropdown
               label={ringSizeConfig?.customerLabel || 'Ring Size'}
-              options={(ringSizeConfig?.options || []).map((o) => ({ label: o.label, value: o.value }))}
+              options={((ringSizeConfig?.options && ringSizeConfig.options.length > 0) ? ringSizeConfig.options : DEFAULT_RING_SIZES).map((o) => ({ label: o.label, value: o.value }))}
               value={selectedFilters.ringSize?.[0] || 'All'}
               onChange={(val) => handleSelectOption('ringSize', val)}
             />
@@ -837,23 +943,54 @@ export const FloksyFilterBar: React.FC<FloksyFilterBarProps> = ({
 
           <LuxuryDropdown
             label={caratConfig?.customerLabel || 'Carat Weight'}
-            options={(caratConfig?.options || []).map((o) => ({ label: o.label, value: o.value }))}
-            value={selectedFilters.carat?.[0] || 'Any'}
+            options={((caratConfig?.options && caratConfig.options.length > 0) ? caratConfig.options : DEFAULT_CARAT_OPTIONS).map((o) => ({ label: o.label, value: o.value }))}
+            value={selectedFilters.carat?.[0] || 'All'}
+            placeholder="Any Carat"
             onChange={(val) => handleSelectOption('carat', val)}
           />
 
           <LuxuryDropdown
             label={clarityConfig?.customerLabel || 'Clarity'}
-            options={(clarityConfig?.options || []).map((o) => ({ label: o.label, value: o.value }))}
+            options={((clarityConfig?.options && clarityConfig.options.length > 0) ? clarityConfig.options : DEFAULT_CLARITY_OPTIONS).map((o) => ({ label: o.label, value: o.value }))}
             value={selectedFilters.clarity?.[0] || 'Any'}
             onChange={(val) => handleSelectOption('clarity', val)}
           />
 
           <LuxuryDropdown
             label={colorConfig?.customerLabel || 'Color'}
-            options={(colorConfig?.options || []).map((o) => ({ label: o.label, value: o.value }))}
+            options={((colorConfig?.options && colorConfig.options.length > 0) ? colorConfig.options : [
+              { label: 'Any Color', value: 'Any' },
+              { label: 'D (Colorless)', value: 'D' },
+              { label: 'E (Colorless)', value: 'E' },
+              { label: 'F (Colorless)', value: 'F' },
+              { label: 'G (Near Colorless)', value: 'G' },
+              { label: 'H (Near Colorless)', value: 'H' },
+              { label: 'I (Near Colorless)', value: 'I' },
+              { label: 'J (Near Colorless)', value: 'J' },
+              { label: 'K (Faint Yellow)', value: 'K' },
+              { label: 'Fancy Yellow', value: 'fancy-yellow' },
+              { label: 'Fancy Pink', value: 'fancy-pink' },
+              { label: 'Fancy Blue', value: 'fancy-blue' },
+              { label: 'Fancy Green', value: 'fancy-green' },
+              { label: 'Fancy Red', value: 'fancy-red' },
+              { label: 'Fancy Black', value: 'fancy-black' },
+            ]).map((o) => ({ label: o.label, value: o.value }))}
             value={selectedFilters.color?.[0] || 'Any'}
             onChange={(val) => handleSelectOption('color', val)}
+          />
+
+          <LuxuryDropdown
+            label={cutConfig?.customerLabel || 'Cut'}
+            options={((cutConfig?.options && cutConfig.options.length > 0) ? cutConfig.options : DEFAULT_CUT_OPTIONS).map((o) => ({ label: o.label, value: o.value }))}
+            value={selectedFilters.cut?.[0] || 'Any'}
+            onChange={(val) => handleSelectOption('cut', val)}
+          />
+
+          <LuxuryDropdown
+            label={certConfig?.customerLabel || 'Certification'}
+            options={((certConfig?.options && certConfig.options.length > 0) ? certConfig.options : DEFAULT_CERT_OPTIONS).map((o) => ({ label: o.label, value: o.value }))}
+            value={selectedFilters.certification?.[0] || 'Any'}
+            onChange={(val) => handleSelectOption('certification', val)}
           />
         </div>
 

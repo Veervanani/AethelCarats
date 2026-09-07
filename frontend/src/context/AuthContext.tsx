@@ -28,7 +28,7 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
   const [user, setUser] = useState<IUser | null>(() => {
     try {
-      const stored = localStorage.getItem('fj_customer_user');
+      const stored = localStorage.getItem('app_user_profile');
       return stored ? JSON.parse(stored) : null;
     } catch (e) {
       return null;
@@ -36,11 +36,11 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
   });
 
   const [token, setToken] = useState<string | null>(() => {
-    return localStorage.getItem('floksy_token') || localStorage.getItem('fj_admin_token') || null;
+    return localStorage.getItem('app_auth_token') || localStorage.getItem('admin_session_token') || null;
   });
 
   const [rememberMe, setRememberMeState] = useState<boolean>(() => {
-    return localStorage.getItem('fj_remember_me') === 'true';
+    return localStorage.getItem('app_remember_me') === 'true';
   });
 
   const [isLoading, setIsLoading] = useState<boolean>(true);
@@ -55,22 +55,22 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
 
   const setRememberMe = (val: boolean) => {
     setRememberMeState(val);
-    localStorage.setItem('fj_remember_me', String(val));
+    localStorage.setItem('app_remember_me', String(val));
   };
 
   useEffect(() => {
     const initAuth = async () => {
-      const activeToken = localStorage.getItem('floksy_token') || localStorage.getItem('fj_admin_token');
+      const activeToken = localStorage.getItem('app_auth_token') || localStorage.getItem('admin_session_token');
       if (activeToken) {
         setToken(activeToken);
         try {
           const liveUser = await api.getCurrentUser();
           if (liveUser) {
             setUser(liveUser);
-            localStorage.setItem('fj_customer_user', JSON.stringify(liveUser));
+            localStorage.setItem('app_user_profile', JSON.stringify(liveUser));
           }
         } catch (e) {
-          const storedUser = localStorage.getItem('fj_customer_user');
+          const storedUser = localStorage.getItem('app_user_profile');
           if (storedUser) {
             try {
               setUser(JSON.parse(storedUser));
@@ -97,7 +97,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
   const handleAuthSuccess = (newToken: string, newUser?: IUser, remember?: boolean) => {
     const userData = newUser || {
       id: 'usr_' + Date.now(),
-      email: 'client@floksyjewel.com',
+      email: 'client@auroradiamonds.com',
       name: 'Valued Client',
       role: 'CUSTOMER',
     };
@@ -108,9 +108,9 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     setUser(userData);
     setRememberMe(isRem);
 
-    localStorage.setItem('floksy_token', newToken);
-    localStorage.setItem('fj_customer_user', JSON.stringify(userData));
-    localStorage.setItem('fj_last_activity', String(Date.now()));
+    localStorage.setItem('app_auth_token', newToken);
+    localStorage.setItem('app_user_profile', JSON.stringify(userData));
+    localStorage.setItem('app_last_activity', String(Date.now()));
     lastActivityRef.current = Date.now();
 
     closeAuthModal();
@@ -130,7 +130,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
       try {
         const adminRes = await api.adminLogin(credentials);
         if (adminRes.token) {
-          localStorage.setItem('fj_admin_token', adminRes.token);
+          localStorage.setItem('admin_session_token', adminRes.token);
           handleAuthSuccess(adminRes.token, adminRes.user || {
             id: 'admin_1',
             email: credentials.email,
@@ -138,9 +138,13 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
             role: 'ADMIN',
           }, false); // Admin always strictly enforces 15-min inactivity timeout
           return;
+        } else {
+          throw new Error('Admin login failed.');
         }
-      } catch (adminErr) {}
-      throw err;
+      } catch (adminErr: any) {
+        const message = err.response?.data?.message || adminErr.response?.data?.message || 'Invalid email or password.';
+        throw new Error(message);
+      }
     } finally {
       setIsLoading(false);
     }
@@ -151,10 +155,13 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     try {
       const res = await api.register(data);
       if (res.token) {
-        handleAuthSuccess(res.token, res.user);
+        handleAuthSuccess(res.token, res.user, true);
       } else {
         throw new Error('Registration failed.');
       }
+    } catch (err: any) {
+      const message = err.response?.data?.message || 'Registration failed.';
+      throw new Error(message);
     } finally {
       setIsLoading(false);
     }
@@ -165,10 +172,13 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     try {
       const res = await api.googleAuth(payload);
       if (res.token) {
-        handleAuthSuccess(res.token, res.user);
+        handleAuthSuccess(res.token, res.user, true);
       } else {
-        throw new Error('Google authentication failed.');
+        throw new Error('Google sign-in failed.');
       }
+    } catch (err: any) {
+      const message = err.response?.data?.message || 'Google sign-in failed.';
+      throw new Error(message);
     } finally {
       setIsLoading(false);
     }
@@ -180,10 +190,10 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     setIsWarningOpen(false);
     if (countdownIntervalRef.current) clearInterval(countdownIntervalRef.current);
 
-    localStorage.removeItem('floksy_token');
-    localStorage.removeItem('fj_customer_user');
-    localStorage.removeItem('fj_admin_token');
-    localStorage.removeItem('fj_last_activity');
+    localStorage.removeItem('app_auth_token');
+    localStorage.removeItem('app_user_profile');
+    localStorage.removeItem('admin_session_token');
+    localStorage.removeItem('app_last_activity');
     closeAuthModal();
 
     if (reason) {
@@ -193,7 +203,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
 
   const resetInactivityTimer = () => {
     lastActivityRef.current = Date.now();
-    localStorage.setItem('fj_last_activity', String(Date.now()));
+    localStorage.setItem('app_last_activity', String(Date.now()));
     if (isWarningOpen) {
       setIsWarningOpen(false);
       if (countdownIntervalRef.current) clearInterval(countdownIntervalRef.current);

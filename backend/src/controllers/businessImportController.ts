@@ -242,7 +242,7 @@ export const executeSalesExcelImport = async (req: AuthRequest, res: Response) =
             empId = employeeMap.get(key)!;
           } else {
             const code = `EMP-${String(allEmployees.length + employeeMap.size + 101).padStart(3, '0')}`;
-            const email = `${spName.toLowerCase().replace(/[^a-z0-9]/g, '')}@internal.floksyjewel.com`;
+            const email = `${spName.toLowerCase().replace(/[^a-z0-9]/g, '')}@internal.aura-atelier.internal`;
             const newEmp = await prisma.employee.create({
               data: {
                 employeeCode: code,
@@ -268,7 +268,7 @@ export const executeSalesExcelImport = async (req: AuthRequest, res: Response) =
           if (cust) {
             custId = cust.id;
           } else {
-            const dummyEmail = `client_${Date.now()}_${Math.floor(Math.random() * 1000)}@internal-sales.floksyjewel.com`;
+            const dummyEmail = `client_${Date.now()}_${Math.floor(Math.random() * 1000)}@internal-sales.aura-atelier.internal`;
             const newCust = await prisma.customer.create({
               data: {
                 name: custName,

@@ -1,4 +1,4 @@
-import { PrismaClient } from '@prisma/client';
+﻿import { PrismaClient } from '@prisma/client';
 import dotenv from 'dotenv';
 
 dotenv.config();
@@ -25,7 +25,7 @@ export function getDatabaseUrl(): string {
 
   const host = process.env.DB_HOST || '127.0.0.1';
   const port = process.env.DB_PORT || '3306';
-  const name = process.env.DB_NAME || 'u657751653_floksyjewel_db';
+  const name = process.env.DB_NAME || 'u657751653_aurajewel_db';
   const user = process.env.DB_USER || 'u657751653_admin_user';
   const password = process.env.DB_PASSWORD || '';
 

@@ -1,6 +1,6 @@
-<?php
+﻿<?php
 /**
- * Floksy Jewel — Order & Order Management Controller
+ * Aura Diamond Atelier — Order & Order Management Controller
  * Migrated from Node.js (orderController.ts) to PHP 8.3 / PDO MySQL
  * Step 7 Correction: Concurrency-Safe Order Numbers & Customer Order History Isolation
  */
@@ -526,8 +526,8 @@ function handleGenerateStatementReport(string $reportType, ?string $param = null
     requireRole(['FINANCE_MANAGER', 'SUPER_ADMIN', 'ADMIN', 'ORDER_MANAGER']);
     try {
         $pdo = getDatabaseConnection();
-        $title = "FLOKSY JEWEL FINANCIAL STATEMENT";
-        $dataHtml = "<p>Floksy Jewel Haute Joaillerie Financial Record</p>";
+        $title = "AURA DIAMOND ATELIER FINANCIAL STATEMENT";
+        $dataHtml = "<p>Aura Diamond Atelier Haute Joaillerie Financial Record</p>";
 
         if ($reportType === 'order-statement' || $reportType === 'invoice') {
             $stmt = $pdo->prepare("SELECT * FROM `order` WHERE `id` = ? OR `orderNumber` = ? LIMIT 1");
@@ -547,7 +547,7 @@ function handleGenerateStatementReport(string $reportType, ?string $param = null
             }
         }
 
-        $html = "<!DOCTYPE html><html><head><meta charset='utf-8'><title>{$title}</title><style>body{font-family:Georgia,serif;padding:40px;color:#1f1f1f;background:#faf8f5;}h1{color:#c9a45c;}table{width:100%;border-collapse:collapse;}th,td{padding:10px;border-bottom:1px solid #ddd;}</style></head><body><h1>FLOKSY JEWEL</h1>{$dataHtml}<hr><p style='font-size:12px;color:#888;'>Floksy Jewel Atelier — 740 Fifth Avenue, New York, NY 10019</p></body></html>";
+        $html = "<!DOCTYPE html><html><head><meta charset='utf-8'><title>{$title}</title><style>body{font-family:Georgia,serif;padding:40px;color:#1f1f1f;background:#faf8f5;}h1{color:#c9a45c;}table{width:100%;border-collapse:collapse;}th,td{padding:10px;border-bottom:1px solid #ddd;}</style></head><body><h1>AURA DIAMOND ATELIER</h1>{$dataHtml}<hr><p style='font-size:12px;color:#888;'>Aura Diamond Atelier — 740 Fifth Avenue, New York, NY 10019</p></body></html>";
 
         header('Content-Type: text/html; charset=utf-8');
         echo $html;
@@ -575,7 +575,7 @@ function handleExportFinancialData(): void {
             foreach ($rows as $r) {
                 $csv .= "\"{$r['paymentNumber']}\",\"{$r['orderId']}\",\"{$r['amount']}\",\"{$r['currency']}\",\"{$r['paymentMethod']}\",\"{$r['status']}\",\"{$r['paymentDate']}\"\n";
             }
-            $filename = "Floksy_Jewel_Payments_" . date('Y-m-d') . ".csv";
+            $filename = "Aura_Atelier_Payments_" . date('Y-m-d') . ".csv";
         } else {
             $stmt = $pdo->query("SELECT `orderNumber`, `customerName`, `customerEmail`, `totalAmount`, `currency`, `orderStatus`, `createdAt` FROM `order` ORDER BY `createdAt` DESC");
             $rows = $stmt->fetchAll();
@@ -584,7 +584,7 @@ function handleExportFinancialData(): void {
             foreach ($rows as $r) {
                 $csv .= "\"{$r['orderNumber']}\",\"{$r['customerName']}\",\"{$r['customerEmail']}\",\"{$r['totalAmount']}\",\"{$r['currency']}\",\"{$r['orderStatus']}\",\"{$r['createdAt']}\"\n";
             }
-            $filename = "Floksy_Jewel_Orders_" . date('Y-m-d') . ".csv";
+            $filename = "Aura_Atelier_Orders_" . date('Y-m-d') . ".csv";
         }
 
         header('Content-Type: text/csv; charset=utf-8');

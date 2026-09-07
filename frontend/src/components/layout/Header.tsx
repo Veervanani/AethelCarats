@@ -72,7 +72,7 @@ const DEFAULT_MENU_ITEMS: IMenuItem[] = [
             {
               heading: 'NEW ARRIVALS',
               links: [
-                { label: 'Shop NEW Floksy Collection', url: '/rings?sort=newest' }
+                { label: 'Shop NEW AethelCarats Collection', url: '/rings?sort=newest' }
               ]
             }
           ]
@@ -82,14 +82,14 @@ const DEFAULT_MENU_ITEMS: IMenuItem[] = [
             {
               title: 'SOLITAIRE RINGS',
               subtitle: '18K Basket & Peg Settings',
-              desktopImage: '/assets/floksy_rings_cat.png',
+              desktopImage: '/assets/gem_rings_cat.png',
               url: '/rings?style=solitaire',
               enabled: true
             },
             {
               title: 'WEDDING BANDS',
               subtitle: 'Handcrafted 18K Gold & Platinum',
-              desktopImage: '/assets/floksy_solitaire_ring_perfect.png',
+              desktopImage: '/assets/gem_solitaire_ring_perfect.png',
               url: '/rings?category=womens-wedding',
               enabled: true
             }
@@ -149,7 +149,7 @@ const DEFAULT_MENU_ITEMS: IMenuItem[] = [
             {
               title: 'DIAMOND DROP EARRINGS',
               subtitle: 'Handcrafted Pear Cuts',
-              desktopImage: '/assets/floksy_earrings_cat.png',
+              desktopImage: '/assets/gem_earrings_cat.png',
               url: '/earrings?category=drop',
               enabled: true
             }
@@ -208,7 +208,7 @@ const DEFAULT_MENU_ITEMS: IMenuItem[] = [
             {
               title: 'DIAMOND TENNIS NECKLACE',
               subtitle: '18K Fine Gold Setting',
-              desktopImage: '/assets/floksy_necklaces_cat.png',
+              desktopImage: '/assets/gem_necklaces_cat.png',
               url: '/necklaces?category=tennis',
               enabled: true
             }
@@ -267,7 +267,7 @@ const DEFAULT_MENU_ITEMS: IMenuItem[] = [
             {
               title: 'EMERALD TENNIS BRACELET',
               subtitle: 'Bezel & Prong Settings',
-              desktopImage: '/assets/floksy_bracelets_cat.png',
+              desktopImage: '/assets/gem_bracelets_cat.png',
               url: '/bracelets?category=tennis',
               enabled: true
             }
@@ -327,7 +327,7 @@ const DEFAULT_MENU_ITEMS: IMenuItem[] = [
             {
               title: 'SOLITAIRE PENDANTS',
               subtitle: '18K Basket Settings',
-              desktopImage: '/assets/floksy_pendants_cat.png',
+              desktopImage: '/assets/aura_pendants_cat.png',
               url: '/pendants?category=solitaire',
               enabled: true
             }
@@ -380,7 +380,7 @@ const DEFAULT_MENU_ITEMS: IMenuItem[] = [
             {
               title: 'BESPOKE ATELIER CAD',
               subtitle: '3D Modeling & Master Craftsmanship',
-              desktopImage: '/assets/floksy_bracelets_editorial_right_new.png',
+              desktopImage: '/assets/gem_bracelets_editorial_right_new.png',
               url: '/customise',
               enabled: true
             }
@@ -395,12 +395,12 @@ const HeaderWrapper = styled.header<{ $isScrolled?: boolean }>`
   position: sticky;
   top: 0;
   z-index: 1000;
-  background-color: ${({ $isScrolled }) => ($isScrolled ? 'rgba(250, 249, 246, 0.98)' : 'rgba(250, 249, 246, 0.94)')};
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-  border-bottom: 1px solid ${({ $isScrolled }) => ($isScrolled ? '#dcd6c8' : '#e6e1d7')};
+  background-color: ${({ $isScrolled }) => ($isScrolled ? 'rgba(11, 11, 11, 0.98)' : 'rgba(11, 11, 11, 0.95)')};
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  border-bottom: 1px solid rgba(140, 116, 75, 0.25);
   width: 100%;
-  box-shadow: ${({ $isScrolled }) => ($isScrolled ? '0 8px 24px rgba(31, 31, 31, 0.06)' : '0 4px 20px rgba(0, 0, 0, 0.02)')};
+  box-shadow: ${({ $isScrolled }) => ($isScrolled ? '0 10px 30px rgba(0, 0, 0, 0.7)' : '0 4px 20px rgba(0, 0, 0, 0.4)')};
   transition: background-color 0.35s cubic-bezier(0.22, 1, 0.36, 1), box-shadow 0.35s cubic-bezier(0.22, 1, 0.36, 1), border-color 0.35s ease;
 `;
 
@@ -441,28 +441,7 @@ const LogoLink = styled(Link)`
   display: flex;
   align-items: center;
   flex-shrink: 0;
-
-  img {
-    width: 150px;
-    height: auto;
-    max-height: 48px;
-    object-fit: contain;
-
-    @media (max-width: 1024px) {
-      width: 130px;
-      max-height: 40px;
-    }
-
-    @media (max-width: 576px) {
-      width: 115px;
-      max-height: 36px;
-    }
-
-    @media (max-width: 360px) {
-      width: 100px;
-      max-height: 32px;
-    }
-  }
+  text-decoration: none;
 
   @media (max-width: 1024px) {
     position: absolute;
@@ -470,6 +449,49 @@ const LogoLink = styled(Link)`
     transform: translateX(-50%);
     z-index: 4;
     margin: 0;
+  }
+`;
+
+const LogoBrandText = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  text-decoration: none;
+
+  .brand-name {
+    font-family: 'Cormorant Garamond', 'Playfair Display', Georgia, serif;
+    font-size: 1.55rem;
+    font-weight: 600;
+    letter-spacing: 0.18em;
+    color: #F5F1E8;
+    text-transform: uppercase;
+    line-height: 1;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+
+    span.gold-accent {
+      color: #C9A96E;
+    }
+  }
+
+  .brand-sub {
+    font-size: 0.58rem;
+    letter-spacing: 0.28em;
+    text-transform: uppercase;
+    color: #A8A8A8;
+    margin-top: 3px;
+    font-weight: 500;
+  }
+
+  @media (max-width: 576px) {
+    .brand-name {
+      font-size: 1.25rem;
+      letter-spacing: 0.14em;
+    }
+    .brand-sub {
+      font-size: 0.5rem;
+    }
   }
 `;
 
@@ -502,14 +524,14 @@ const NavItemContainer = styled.div`
 const NavLinkStyled = styled(Link)<{ $active: boolean }>`
   font-size: 12.5px;
   font-weight: 500;
-  letter-spacing: 0.14em;
+  letter-spacing: 0.16em;
   text-transform: uppercase;
-  color: ${({ $active }) => ($active ? '#C9A45C' : '#1F1F1F')};
+  color: ${({ $active }) => ($active ? '#C9A96E' : '#F5F1E8')};
   position: relative;
   display: flex;
   align-items: center;
   gap: 4px;
-  padding: 30px 0;
+  padding: 28px 0;
   transition: color 0.25s cubic-bezier(0.16, 1, 0.3, 1);
   text-decoration: none;
   white-space: nowrap;
@@ -517,17 +539,17 @@ const NavLinkStyled = styled(Link)<{ $active: boolean }>`
   &:after {
     content: '';
     position: absolute;
-    bottom: 22px;
+    bottom: 20px;
     left: 0;
     width: ${({ $active }) => ($active ? '100%' : '0%')};
     height: 1.5px;
-    background: #C9A45C;
+    background: #C9A96E;
     transition: width 0.3s cubic-bezier(0.16, 1, 0.3, 1);
     border-radius: 1px;
   }
 
   ${NavItemContainer}:hover & {
-    color: #C9A45C;
+    color: #C9A96E;
     &:after {
       width: 100%;
     }
@@ -555,7 +577,7 @@ const RightIcons = styled.div`
 `;
 
 const IconButton = styled.button`
-  color: #1F1F1F;
+  color: #F5F1E8;
   background: transparent;
   border: none;
   padding: 6px;
@@ -568,13 +590,14 @@ const IconButton = styled.button`
   transition: color 0.25s ease, background-color 0.25s ease;
 
   &:hover {
-    color: #C9A45C;
-    background-color: rgba(201, 164, 92, 0.08);
+    color: #C9A96E;
+    background-color: rgba(201, 169, 110, 0.12);
   }
 
   svg {
     width: 18px;
     height: 18px;
+    stroke: currentColor;
   }
 
   @media (max-width: 576px) {
@@ -603,9 +626,9 @@ const Badge = styled.span`
   position: absolute;
   top: -2px;
   right: -3px;
-  background: linear-gradient(135deg, #c9a45c 0%, #b8934b 100%);
-  color: #ffffff;
-  font-size: 0.6rem;
+  background: #C9A96E;
+  color: #0B0B0B;
+  font-size: 0.62rem;
   font-weight: 700;
   min-width: 17px;
   height: 17px;
@@ -615,14 +638,14 @@ const Badge = styled.span`
   align-items: center;
   justify-content: center;
   line-height: 1;
-  box-shadow: 0 2px 6px rgba(201, 164, 92, 0.4);
+  box-shadow: 0 2px 6px rgba(201, 169, 110, 0.4);
 `;
 
 const NavBackdrop = styled.div<{ $isOpen: boolean }>`
   position: fixed;
   inset: 0;
-  background-color: rgba(36, 35, 33, 0.2);
-  backdrop-filter: blur(2px);
+  background-color: rgba(0, 0, 0, 0.65);
+  backdrop-filter: blur(4px);
   z-index: 900;
   opacity: ${({ $isOpen }) => ($isOpen ? 1 : 0)};
   visibility: ${({ $isOpen }) => ($isOpen ? 'visible' : 'hidden')};
@@ -633,8 +656,8 @@ const NavBackdrop = styled.div<{ $isOpen: boolean }>`
 const MobileBackdrop = styled.div<{ $isOpen: boolean }>`
   position: fixed;
   inset: 0;
-  background-color: rgba(36, 35, 33, 0.4);
-  backdrop-filter: blur(2px);
+  background-color: rgba(0, 0, 0, 0.75);
+  backdrop-filter: blur(4px);
   z-index: 1900;
   opacity: ${({ $isOpen }) => ($isOpen ? 1 : 0)};
   visibility: ${({ $isOpen }) => ($isOpen ? 'visible' : 'hidden')};
@@ -649,10 +672,11 @@ const MobileDrawer = styled.div<{ $isOpen: boolean }>`
   width: 85%;
   max-width: 380px;
   height: 100vh;
-  background-color: #fffdf9;
+  background-color: #111111;
+  border-right: 1px solid rgba(140, 116, 75, 0.25);
   z-index: 2000;
   padding: 24px 20px;
-  box-shadow: 10px 0 40px rgba(0, 0, 0, 0.15);
+  box-shadow: 10px 0 40px rgba(0, 0, 0, 0.7);
   transform: ${({ $isOpen }) => ($isOpen ? 'translateX(0)' : 'translateX(-100%)')};
   transition: transform 0.35s cubic-bezier(0.25, 0.46, 0.45, 0.94);
   overflow-y: auto;
@@ -662,7 +686,7 @@ const MobileDrawer = styled.div<{ $isOpen: boolean }>`
 const MobileAccordion = styled.div`
   display: flex;
   flex-direction: column;
-  border-bottom: 1px solid #e8e3d9;
+  border-bottom: 1px solid rgba(140, 116, 75, 0.18);
 `;
 
 const MobileAccordionHeader = styled.div`
@@ -673,9 +697,9 @@ const MobileAccordionHeader = styled.div`
   padding: 4px 0;
   font-size: 0.88rem;
   font-weight: 600;
-  letter-spacing: 0.12em;
+  letter-spacing: 0.14em;
   text-transform: uppercase;
-  color: #242321;
+  color: #F5F1E8;
 
   a {
     color: inherit;
@@ -686,7 +710,7 @@ const MobileAccordionHeader = styled.div`
     min-height: 48px;
 
     &:hover {
-      color: #c9a45c;
+      color: #C9A96E;
     }
   }
 `;
@@ -699,10 +723,10 @@ const AccordionToggleButton = styled.button`
   display: flex;
   align-items: center;
   justify-content: center;
-  color: #77736c;
+  color: #A8A8A8;
 
   &:hover {
-    color: #c9a45c;
+    color: #C9A96E;
   }
 `;
 
@@ -714,12 +738,12 @@ const MobileSubLinks = styled.div<{ $isOpen: boolean }>`
 
   a {
     font-size: 0.82rem;
-    color: #55524d;
+    color: #D8D2C5;
     text-decoration: none;
     line-height: 1.5;
 
     &:hover {
-      color: #c9a45c;
+      color: #C9A96E;
     }
   }
 `;
@@ -731,9 +755,9 @@ const AccountMenuDropdown = styled.div<{ $isOpen: boolean }>`
   min-width: 230px;
   width: max-content;
   max-width: 280px;
-  background-color: #ffffff;
-  border: 1px solid #d9d3c7;
-  box-shadow: 0 12px 32px rgba(31, 31, 31, 0.14);
+  background-color: #151515;
+  border: 1px solid rgba(140, 116, 75, 0.25);
+  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.7);
   padding: 12px 0;
   z-index: 1200;
   display: ${({ $isOpen }) => ($isOpen ? 'flex' : 'none')};
@@ -748,21 +772,21 @@ const AccountMenuDropdown = styled.div<{ $isOpen: boolean }>`
 
   .user-info {
     padding: 8px 18px 12px;
-    border-bottom: 1px solid #f2ede4;
+    border-bottom: 1px solid rgba(140, 116, 75, 0.2);
     margin-bottom: 6px;
     box-sizing: border-box;
 
     .name {
       font-size: 0.85rem;
       font-weight: 700;
-      color: #1f1f1f;
+      color: #F5F1E8;
       white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis;
     }
     .email {
       font-size: 0.74rem;
-      color: #777;
+      color: #A8A8A8;
       word-break: break-word;
       overflow-wrap: anywhere;
       line-height: 1.4;
@@ -775,7 +799,7 @@ const AccountMenuDropdown = styled.div<{ $isOpen: boolean }>`
     font-weight: 600;
     letter-spacing: 0.1em;
     text-transform: uppercase;
-    color: #1f1f1f;
+    color: #D8D2C5;
     text-decoration: none;
     background: none;
     border: none;
@@ -787,8 +811,8 @@ const AccountMenuDropdown = styled.div<{ $isOpen: boolean }>`
     box-sizing: border-box;
 
     &:hover {
-      background-color: #faf5eb;
-      color: #c9a45c;
+      background-color: #1C1C1C;
+      color: #C9A96E;
     }
   }
 `;
@@ -799,6 +823,7 @@ export const Header: React.FC = () => {
   const { isAuthenticated, user, logout, openAuthModal } = useAuth();
   const [menuItems, setMenuItems] = useState<IMenuItem[]>(DEFAULT_MENU_ITEMS);
   const [activeMenuId, setActiveMenuId] = useState<string | null>(null);
+  const [hoveredNavId, setHoveredNavId] = useState<string | null>(null);
   const [isAccountMenuOpen, setIsAccountMenuOpen] = useState(false);
   const [isMobileOpen, setIsMobileOpen] = useState(false);
   const [isSearchOpen, setIsSearchOpen] = useState(false);
@@ -823,7 +848,7 @@ export const Header: React.FC = () => {
   }, []);
 
   const [headerConfig, setHeaderConfig] = useState<any>({
-    logoUrl: '/assets/floksy-jewel-logo.png',
+    logoUrl: '/assets/gem-brand-logo.png',
     logoLink: '/',
     showSearch: true,
     showAccount: true,
@@ -846,13 +871,34 @@ export const Header: React.FC = () => {
   }, []);
 
   useEffect(() => {
-    api.getMenus().then((menus) => {
-      if (!Array.isArray(menus)) return;
-      const headerMenu = menus.find((m) => m && m.location === 'HEADER');
-      if (headerMenu && Array.isArray(headerMenu.items) && headerMenu.items.length > 0) {
-        setMenuItems(headerMenu.items);
-      }
-    }).catch(console.error);
+    api.getSiteSettings('megamenu_config')
+      .then((res) => {
+        if (res && res.megamenu_config) {
+          try {
+            const parsed = typeof res.megamenu_config === 'string' ? JSON.parse(res.megamenu_config) : res.megamenu_config;
+            if (Array.isArray(parsed) && parsed.length > 0) {
+              setMenuItems(parsed);
+              return;
+            }
+          } catch (e) {}
+        }
+        api.getMenus().then((menus) => {
+          if (!Array.isArray(menus)) return;
+          const headerMenu = menus.find((m) => m && m.location === 'HEADER');
+          if (headerMenu && Array.isArray(headerMenu.items) && headerMenu.items.length > 0) {
+            setMenuItems(headerMenu.items);
+          }
+        }).catch(console.error);
+      })
+      .catch(() => {
+        api.getMenus().then((menus) => {
+          if (!Array.isArray(menus)) return;
+          const headerMenu = menus.find((m) => m && m.location === 'HEADER');
+          if (headerMenu && Array.isArray(headerMenu.items) && headerMenu.items.length > 0) {
+            setMenuItems(headerMenu.items);
+          }
+        }).catch(console.error);
+      });
   }, []);
 
   const accountMenuRef = useRef<HTMLDivElement>(null);
@@ -912,13 +958,21 @@ export const Header: React.FC = () => {
   };
 
   const effectiveMenuItems = menuItems.length > 0 ? menuItems : DEFAULT_MENU_ITEMS;
+  const activeItemObj = effectiveMenuItems.find((m) => m.id === activeMenuId);
+  const isDiamondsActive = (activeItemObj?.title || '').trim().toUpperCase() === 'DIAMONDS' || (activeItemObj?.url || '').toLowerCase() === '/diamonds';
+  const hasActiveMegaMenu = Boolean(
+    activeItemObj &&
+    !isDiamondsActive &&
+    (activeItemObj as any).hasDropdown !== false &&
+    activeItemObj.megaMenu
+  );
 
   return (
     <>
-      <NavBackdrop $isOpen={!!activeMenuId || isAccountMenuOpen} onClick={closeAllMenus} />
+      <NavBackdrop $isOpen={hasActiveMegaMenu || isAccountMenuOpen} onClick={closeAllMenus} />
       <MobileBackdrop $isOpen={isMobileOpen} onClick={closeAllMenus} />
 
-      <HeaderWrapper $isScrolled={isScrolled} onMouseLeave={handleMouseLeave}>
+      <HeaderWrapper $isScrolled={isScrolled} onMouseLeave={() => { handleMouseLeave(); setHoveredNavId(null); }}>
         <HeaderInner $isScrolled={isScrolled}>
           <MobileLeft>
             <MobileMenuButton onClick={() => setIsMobileOpen(true)} aria-label="Open mobile menu">
@@ -929,19 +983,25 @@ export const Header: React.FC = () => {
             </IconButton>
           </MobileLeft>
 
-          <LogoLink to="/" aria-label="Floksy Jewel Home" onClick={closeAllMenus} onMouseEnter={handleNonNavMouseEnter}>
-            <img src="/assets/floksy-jewel-logo.png" alt="Floksy Jewel Fine Jewellery" />
+          <LogoLink to="/" aria-label="AethelCarats Home" onClick={closeAllMenus} onMouseEnter={() => { handleNonNavMouseEnter(); setHoveredNavId(null); }}>
+            <LogoBrandText>
+              <div className="brand-name">
+                AETHEL<span className="gold-accent">CARATS</span>
+              </div>
+              <div className="brand-sub">FINE JEWELLERY ATELIER</div>
+            </LogoBrandText>
           </LogoLink>
 
           <DesktopNav aria-label="Main Navigation">
             {effectiveMenuItems.map((item) => {
+              const isDiamonds = (item.title || '').trim().toUpperCase() === 'DIAMONDS' || (item.url || '').toLowerCase() === '/diamonds';
               let parsedMega: any = null;
-              if (item.megaMenu) {
+              if (!isDiamonds && (item as any).hasDropdown !== false && item.megaMenu) {
                 try {
                   parsedMega = typeof item.megaMenu === 'string' ? JSON.parse(item.megaMenu) : item.megaMenu;
                 } catch (e) {}
               }
-              if (!parsedMega) {
+              if (!isDiamonds && !parsedMega && (item as any).hasDropdown !== false) {
                 const defaultItem = DEFAULT_MENU_ITEMS.find((d) => d.title.toUpperCase() === item.title.toUpperCase());
                 if (defaultItem?.megaMenu) {
                   try {
@@ -950,12 +1010,20 @@ export const Header: React.FC = () => {
                 }
               }
 
-              const isHovered = activeMenuId === item.id;
+              const isHovered = (activeMenuId === item.id && Boolean(parsedMega)) || hoveredNavId === item.id;
 
               return (
                 <NavItemContainer
                   key={item.id}
-                  onMouseEnter={() => handleMouseEnter(item.id)}
+                  onMouseEnter={() => {
+                    setHoveredNavId(item.id);
+                    if (parsedMega) {
+                      handleMouseEnter(item.id);
+                    } else {
+                      handleNonNavMouseEnter();
+                    }
+                  }}
+                  onMouseLeave={() => setHoveredNavId(null)}
                 >
                   <NavLinkStyled to={item.url} $active={isHovered} onClick={closeAllMenus}>
                     {item.title}
@@ -982,7 +1050,7 @@ export const Header: React.FC = () => {
 
                   {parsedMega && (
                     <MegaMenu
-                      isOpen={isHovered}
+                      isOpen={activeMenuId === item.id}
                       data={parsedMega}
                       onClose={closeAllMenus}
                     />
@@ -1022,14 +1090,14 @@ export const Header: React.FC = () => {
               <AccountMenuDropdown $isOpen={isAccountMenuOpen}>
                 <div className="user-info">
                   <div className="name">{user?.name || 'Valued Client'}</div>
-                  <div className="email">{user?.email || 'client@floksyjewel.com'}</div>
+                  <div className="email">{user?.email || 'client@auroradiamonds.com'}</div>
                 </div>
                 <Link to="/account" onClick={() => setIsAccountMenuOpen(false)}>MY ACCOUNT</Link>
                 <Link to="/account#my-orders" onClick={() => setIsAccountMenuOpen(false)}>MY ORDERS</Link>
                 <Link to="/wishlist" onClick={() => setIsAccountMenuOpen(false)}>WISHLIST</Link>
                 {(user?.role === 'ADMIN' || user?.role === 'SUPER_ADMIN') && (
                   <Link
-                    to="/atelier-vault-7Kx9Qm4R2Lp8Nw6T"
+                    to="/vault-mgmt-k8m3x9q2v7"
                     onClick={() => setIsAccountMenuOpen(false)}
                     style={{ color: '#c9a45c', fontWeight: 700 }}
                   >
@@ -1074,19 +1142,19 @@ export const Header: React.FC = () => {
 
       {/* MOBILE / TABLET NAVIGATION DRAWER */}
       <MobileDrawer $isOpen={isMobileOpen}>
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16, paddingBottom: 16, borderBottom: '1px solid #E8E3D9' }}>
-          <img src="/assets/floksy-jewel-logo.png" alt="Floksy Jewel Fine Jewellery" style={{ width: 125, height: 'auto', objectFit: 'contain' }} />
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16, paddingBottom: 16, borderBottom: '1px solid rgba(140, 116, 75, 0.25)' }}>
+          <img src="/assets/gem-brand-logo.png" alt="AethelCarats Fine Jewellery" style={{ width: 125, height: 'auto', objectFit: 'contain' }} />
           <IconButton onClick={() => setIsMobileOpen(false)} aria-label="Close mobile menu">
             <X size={22} />
           </IconButton>
         </div>
 
-        <div style={{ display: 'flex', gap: 10, marginBottom: 20, paddingBottom: 16, borderBottom: '1px solid #F0ECE3' }}>
-          <Link to="/wishlist" onClick={closeAllMenus} style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6, padding: '8px 10px', background: '#FAF7F2', border: '1px solid #E8E3D9', borderRadius: 4, textDecoration: 'none', color: '#1F1F1F', fontSize: '0.72rem', fontWeight: 600, letterSpacing: '0.08em' }}>
-            <Heart size={15} color="#C9A45C" /> WISHLIST ({wishlistCount})
+        <div style={{ display: 'flex', gap: 10, marginBottom: 20, paddingBottom: 16, borderBottom: '1px solid rgba(140, 116, 75, 0.2)' }}>
+          <Link to="/wishlist" onClick={closeAllMenus} style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6, padding: '8px 10px', background: '#151515', border: '1px solid rgba(140, 116, 75, 0.3)', borderRadius: 4, textDecoration: 'none', color: '#F5F1E8', fontSize: '0.72rem', fontWeight: 600, letterSpacing: '0.08em' }}>
+            <Heart size={15} color="#C9A96E" /> WISHLIST ({wishlistCount})
           </Link>
-          <Link to={isAuthenticated ? "/account" : "#"} onClick={() => { closeAllMenus(); if (!isAuthenticated) openAuthModal('signin'); }} style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6, padding: '8px 10px', background: '#FAF7F2', border: '1px solid #E8E3D9', borderRadius: 4, textDecoration: 'none', color: '#1F1F1F', fontSize: '0.72rem', fontWeight: 600, letterSpacing: '0.08em' }}>
-            <User size={15} color="#C9A45C" /> {isAuthenticated ? 'ACCOUNT' : 'SIGN IN'}
+          <Link to={isAuthenticated ? "/account" : "#"} onClick={() => { closeAllMenus(); if (!isAuthenticated) openAuthModal('signin'); }} style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6, padding: '8px 10px', background: '#151515', border: '1px solid rgba(140, 116, 75, 0.3)', borderRadius: 4, textDecoration: 'none', color: '#F5F1E8', fontSize: '0.72rem', fontWeight: 600, letterSpacing: '0.08em' }}>
+            <User size={15} color="#C9A96E" /> {isAuthenticated ? 'ACCOUNT' : 'SIGN IN'}
           </Link>
         </div>
 

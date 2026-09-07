@@ -29,14 +29,14 @@ export const downloadProductImportTemplate = (req: AuthRequest, res: Response) =
       'meta_description',
     ];
     const productsSample = [
-      'Floksy Jewel Demo Ring',
-      'FJ-DEMO-001',
-      'floksy-jewel-demo-ring',
+      'Aura Signature Solitaire Ring',
+      'AD-DEMO-001',
+      'aura-signature-solitaire-ring',
       'Ring',
       'Rings',
       'Draft',
-      'A luxury Floksy Jewel solitaire engagement ring designed with customizable options.',
-      'Floksy Jewel Demo Ring | Luxury Diamond Ring',
+      'A luxury Aura Diamond Atelier solitaire engagement ring designed with customizable options.',
+      'Aura Signature Solitaire Ring | Luxury Diamond Ring',
       'Luxury customizable solitaire diamond ring.',
     ];
     const wsProducts = XLSX.utils.aoa_to_sheet([productsHeaders, productsSample]);
@@ -55,34 +55,34 @@ export const downloadProductImportTemplate = (req: AuthRequest, res: Response) =
       'fluorescence',
     ];
     const diamondsSamples = [
-      ['FJ-DEMO-001', 'Round', 1.0, 'E', 'VS1', 'IGI', 'Excellent', 'Excellent', 'Excellent', 'None'],
-      ['FJ-DEMO-001', 'Oval', 2.0, 'E', 'VS1', 'IGI', 'Excellent', 'Excellent', 'Excellent', 'None'],
-      ['FJ-DEMO-001', 'Emerald', 4.0, 'D', 'VVS1', 'GIA', 'Excellent', 'Excellent', 'Excellent', 'None'],
+      ['AD-DEMO-001', 'Round', 1.0, 'E', 'VS1', 'IGI', 'Excellent', 'Excellent', 'Excellent', 'None'],
+      ['AD-DEMO-001', 'Oval', 2.0, 'E', 'VS1', 'IGI', 'Excellent', 'Excellent', 'Excellent', 'None'],
+      ['AD-DEMO-001', 'Emerald', 4.0, 'D', 'VVS1', 'GIA', 'Excellent', 'Excellent', 'Excellent', 'None'],
     ];
     const wsDiamonds = XLSX.utils.aoa_to_sheet([diamondsHeaders, ...diamondsSamples]);
 
     // Sheet 3: Metal Options
     const metalsHeaders = ['sku', 'metal_name', 'metal_code', 'price_adjustment'];
     const metalsSamples = [
-      ['FJ-DEMO-001', '14K Yellow Gold', '14KY', 0],
-      ['FJ-DEMO-001', '14K White Gold', '14KW', 100],
-      ['FJ-DEMO-001', '14K Rose Gold', '14KR', 100],
-      ['FJ-DEMO-001', '18K Yellow Gold', '18KY', 500],
-      ['FJ-DEMO-001', '18K White Gold', '18KW', 600],
-      ['FJ-DEMO-001', '18K Rose Gold', '18KR', 600],
-      ['FJ-DEMO-001', 'Silver', 'Ag', 0],
+      ['AD-DEMO-001', '14K Yellow Gold', '14KY', 0],
+      ['AD-DEMO-001', '14K White Gold', '14KW', 100],
+      ['AD-DEMO-001', '14K Rose Gold', '14KR', 100],
+      ['AD-DEMO-001', '18K Yellow Gold', '18KY', 500],
+      ['AD-DEMO-001', '18K White Gold', '18KW', 600],
+      ['AD-DEMO-001', '18K Rose Gold', '18KR', 600],
+      ['AD-DEMO-001', 'Silver', 'Ag', 0],
     ];
     const wsMetals = XLSX.utils.aoa_to_sheet([metalsHeaders, ...metalsSamples]);
 
     // Sheet 4: Ring Sizes
     const sizesHeaders = ['sku', 'ring_size', 'price_adjustment'];
     const sizesSamples = [
-      ['FJ-DEMO-001', 'US 4', 0],
-      ['FJ-DEMO-001', 'US 5', 0],
-      ['FJ-DEMO-001', 'US 6', 0],
-      ['FJ-DEMO-001', 'US 7', 0],
-      ['FJ-DEMO-001', 'US 8', 0],
-      ['FJ-DEMO-001', 'US 9', 0],
+      ['AD-DEMO-001', 'US 4', 0],
+      ['AD-DEMO-001', 'US 5', 0],
+      ['AD-DEMO-001', 'US 6', 0],
+      ['AD-DEMO-001', 'US 7', 0],
+      ['AD-DEMO-001', 'US 8', 0],
+      ['AD-DEMO-001', 'US 9', 0],
     ];
     const wsSizes = XLSX.utils.aoa_to_sheet([sizesHeaders, ...sizesSamples]);
 
@@ -97,27 +97,27 @@ export const downloadProductImportTemplate = (req: AuthRequest, res: Response) =
       'placeholder',
     ];
     const customSamples = [
-      ['FJ-DEMO-001', 'Initials', 'Dropdown', 'No', 'V', 0, ''],
-      ['FJ-DEMO-001', 'Initials', 'Dropdown', 'No', 'R', 0, ''],
-      ['FJ-DEMO-001', 'Initials', 'Dropdown', 'No', 'Z', 25, ''],
-      ['FJ-DEMO-001', 'Engraving', 'Text Input', 'No', '', 50, 'Enter your engraving'],
-      ['FJ-DEMO-001', 'Gift Packaging', 'Checkbox', 'No', 'Luxury Box', 35, ''],
+      ['AD-DEMO-001', 'Initials', 'Dropdown', 'No', 'V', 0, ''],
+      ['AD-DEMO-001', 'Initials', 'Dropdown', 'No', 'R', 0, ''],
+      ['AD-DEMO-001', 'Initials', 'Dropdown', 'No', 'Z', 25, ''],
+      ['AD-DEMO-001', 'Engraving', 'Text Input', 'No', '', 50, 'Enter your engraving'],
+      ['AD-DEMO-001', 'Gift Packaging', 'Checkbox', 'No', 'Luxury Box', 35, ''],
     ];
     const wsCustom = XLSX.utils.aoa_to_sheet([customHeaders, ...customSamples]);
 
     // Sheet 6: Accordions
     const accordionsHeaders = ['sku', 'section_title', 'content', 'display_order'];
     const accordionsSamples = [
-      ['FJ-DEMO-001', 'YOUR FLOKSY JEWEL EXPERIENCE', 'Every creation is handcrafted in our Surat atelier using certified conflict-free diamonds.', 1],
-      ['FJ-DEMO-001', 'PRODUCT & DIAMOND SPECIFICATIONS', 'Hand-set by master artisans under 40x microscopic precision.', 2],
-      ['FJ-DEMO-001', 'CRAFTSMANSHIP & SUSTAINABILITY', 'Sustainably crafted with 100% recycled 18K gold and Silver.', 3],
-      ['FJ-DEMO-001', 'SHIPPING & RETURNS', 'Dispatched via fully insured FedEx Priority Air.', 4],
+      ['AD-DEMO-001', 'YOUR ATELIER EXPERIENCE', 'Every creation is handcrafted in our master atelier using certified conflict-free diamonds.', 1],
+      ['AD-DEMO-001', 'PRODUCT & DIAMOND SPECIFICATIONS', 'Hand-set by master artisans under 40x microscopic precision.', 2],
+      ['AD-DEMO-001', 'CRAFTSMANSHIP & SUSTAINABILITY', 'Sustainably crafted with 100% recycled 18K gold and Silver.', 3],
+      ['AD-DEMO-001', 'SHIPPING & RETURNS', 'Dispatched via fully insured FedEx Priority Air.', 4],
     ];
     const wsAccordions = XLSX.utils.aoa_to_sheet([accordionsHeaders, ...accordionsSamples]);
 
     // Sheet 7: Instructions
     const instructions = [
-      ['FLOKSY JEWEL — BULK PRODUCT IMPORT INSTRUCTIONS'],
+      ['AURA DIAMOND ATELIER — BULK PRODUCT IMPORT INSTRUCTIONS'],
       [''],
       ['1. Products Sheet:', 'Define basic product details (product_name, sku, category, jewelry_type, status, etc.).'],
       ['2. Diamond Options Sheet:', 'Define diamond options by SKU (shape, carat, color, clarity, cut, lab). Unlimited carats allowed.'],
@@ -140,7 +140,7 @@ export const downloadProductImportTemplate = (req: AuthRequest, res: Response) =
     const buffer = XLSX.write(wb, { type: 'buffer', bookType: 'xlsx' });
 
     res.setHeader('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
-    res.setHeader('Content-Disposition', 'attachment; filename="floksy-jewel-product-import-template.xlsx"');
+    res.setHeader('Content-Disposition', 'attachment; filename="aura-product-import-template.xlsx"');
     res.send(buffer);
   } catch (error: any) {
     console.error('downloadProductImportTemplate error:', error);
@@ -254,7 +254,7 @@ const parseUploadedProductWorkbook = async (buffer: Buffer, mode: string, zipBuf
         price: parseFloat(row.price || 5000),
         currency: 'USD',
         stockQuantity: 10,
-        seoTitle: String(row.seo_title || `${name} | Floksy Jewel`),
+        seoTitle: String(row.seo_title || `${name} | Aura Diamond Atelier`),
         metaDescription: String(row.meta_description || ''),
         metaKeywords: '',
         mainImage: '',
@@ -347,7 +347,7 @@ const parseUploadedProductWorkbook = async (buffer: Buffer, mode: string, zipBuf
         }
       }
 
-      const mainImage = images[0] || '/assets/floksy_diamonds_cat.png';
+      const mainImage = images[0] || '/assets/gem_diamonds_cat.png';
       const secondaryImage = images[1] || null;
 
       // Extract Variations (VARIATION 1 & VARIATION 2)
@@ -427,7 +427,7 @@ const parseUploadedProductWorkbook = async (buffer: Buffer, mode: string, zipBuf
         price,
         currency,
         stockQuantity: quantity,
-        seoTitle: `${title} | Floksy Jewel`,
+        seoTitle: `${title} | Aura Diamond Atelier`,
         metaDescription: description.substring(0, 160),
         metaKeywords: tags || materialsStr,
         mainImage,
@@ -441,7 +441,7 @@ const parseUploadedProductWorkbook = async (buffer: Buffer, mode: string, zipBuf
         customOptionsJson,
         diamondsConfig: [],
         accordionsConfig: [
-          { id: 'exp', title: 'YOUR FLOKSY JEWEL EXPERIENCE', content: 'Every creation is handcrafted in our Surat atelier using certified conflict-free diamonds.' },
+          { id: 'exp', title: 'YOUR ATELIER EXPERIENCE', content: 'Every creation is handcrafted in our master atelier using certified conflict-free diamonds.' },
           { id: 'ship', title: 'SHIPPING & RETURNS', content: 'Dispatched via fully insured FedEx Priority Air.' },
         ],
         isValid,
@@ -629,32 +629,6 @@ export const downloadBulkImportErrorReport = (req: AuthRequest, res: Response) =
   res.status(404).json({ message: 'No import errors reported.' });
 };
 
-import { uploadToGcs } from '../services/gcsService';
-
-export const uploadMediaFromPc = async (req: AuthRequest, res: Response) => {
-  try {
-    const files = req.files as Express.Multer.File[];
-    if (!files || files.length === 0) {
-      return res.status(400).json({ message: 'No media files were selected.' });
-    }
-
-    const savedMedia = await Promise.all(
-      files.map(async (file) => {
-        const publicUrl = await uploadToGcs(file.buffer, file.originalname, file.mimetype);
-        return {
-          originalName: file.originalname,
-          url: publicUrl,
-        };
-      })
-    );
-
-    res.json({
-      message: 'Media uploaded successfully to persistent storage!',
-      media: savedMedia,
-    });
-  } catch (error: any) {
-    console.error('uploadMediaFromPc error:', error);
-    res.status(500).json({ message: `Media upload failed: ${error.message}` });
-  }
-};
+import { uploadMediaFiles } from './mediaController';
+export const uploadMediaFromPc = uploadMediaFiles;
 

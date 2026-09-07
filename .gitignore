@@ -7,6 +7,7 @@ dist/
 **/dist/
 build/
 **/build/
+/assets/
 *.tsbuildinfo
 
 # Environment & Secrets (NEVER COMMIT SECRETS)

@@ -1,4 +1,4 @@
-import PDFDocument from 'pdfkit';
+﻿import PDFDocument from 'pdfkit';
 import { Response } from 'express';
 
 export interface LuxuryPdfOptions {
@@ -16,11 +16,11 @@ export interface LuxuryPdfOptions {
 }
 
 const DEFAULT_COMPANY = {
-  name: 'FLOKSY JEWEL ATELIER',
+  name: 'AURA DIAMOND ATELIER',
   tagline: 'Fine Jewellery & Loose Diamond Vault',
   address: '740 Fifth Avenue, Suite 1800, New York, NY 10019',
-  email: 'concierge@floksyjewel.com',
-  phone: '+1 (800) 555-FLOKSY',
+  email: 'concierge@auroradiamonds.com',
+  phone: '+1 (800) 555-2872',
   taxId: 'US-TAX-88492019',
 };
 
@@ -49,7 +49,7 @@ export function drawHeader(doc: typeof PDFDocument.prototype, options: LuxuryPdf
     .fillColor(GOLD)
     .font('Helvetica-Bold')
     .fontSize(22)
-    .text('FLOKSY JEWEL', 40, 25);
+    .text('AURA DIAMOND ATELIER', 40, 25);
 
   doc
     .fillColor('#CCCCCC')
@@ -92,7 +92,7 @@ export function drawFooter(doc: typeof PDFDocument.prototype, currentPage: numbe
     .fillColor(GREY)
     .font('Helvetica')
     .fontSize(8)
-    .text('Floksy Jewel Atelier • Confidential Luxury Document • www.floksyjewel.com', 40, bottom, {
+    .text('Aura Diamond Atelier • Confidential Luxury Document • www.auroradiamonds.com', 40, bottom, {
       width: doc.page.width - 80,
       align: 'left',
     });

@@ -17,7 +17,7 @@ const Overlay = styled.div<{ $isOpen: boolean }>`
   left: 0;
   right: 0;
   bottom: 0;
-  background-color: rgba(24, 23, 21, 0.72);
+  background-color: rgba(0, 0, 0, 0.8);
   backdrop-filter: blur(8px);
   z-index: 9999;
   display: ${({ $isOpen }) => ($isOpen ? 'flex' : 'none')};
@@ -33,18 +33,19 @@ const Overlay = styled.div<{ $isOpen: boolean }>`
 `;
 
 const ModalCard = styled.div`
-  background: #ffffff;
-  border: 1px solid #d9d3c7;
+  background: #151515;
+  border: 1px solid rgba(140, 116, 75, 0.35);
   width: 100%;
   max-width: 500px;
   position: relative;
   padding: 44px 40px;
-  box-shadow: 0 24px 60px rgba(31, 31, 31, 0.18), 0 0 0 1px rgba(201, 164, 92, 0.25);
+  box-shadow: 0 24px 60px rgba(0, 0, 0, 0.6), 0 0 0 1px rgba(201, 169, 110, 0.25);
   box-sizing: border-box;
   animation: modalScaleUp 0.35s cubic-bezier(0.16, 1, 0.3, 1);
-  border-radius: 4px;
+  border-radius: 6px;
   max-height: 90vh;
   overflow-y: auto;
+  color: #F5F1E8;
 
   @keyframes modalScaleUp {
     from {
@@ -66,12 +67,12 @@ const CloseButton = styled.button`
   position: absolute;
   top: 18px;
   right: 18px;
-  background: #faf8f5;
-  border: 1px solid #e8e3d9;
+  background: #111111;
+  border: 1px solid rgba(140, 116, 75, 0.3);
   border-radius: 50%;
   width: 34px;
   height: 34px;
-  color: #1f1f1f;
+  color: #F5F1E8;
   cursor: pointer;
   display: flex;
   align-items: center;
@@ -79,8 +80,8 @@ const CloseButton = styled.button`
   transition: all 0.25s ease;
 
   &:hover {
-    color: #c9a45c;
-    border-color: #c9a45c;
+    color: #C9A96E;
+    border-color: #C9A96E;
     transform: rotate(90deg);
   }
 `;
@@ -95,12 +96,12 @@ const HeaderSection = styled.div`
     justify-content: center;
     width: 44px;
     height: 44px;
-    background: linear-gradient(135deg, #faf5eb 0%, #f4eae0 100%);
-    border: 1px solid #c9a45c;
+    background: #111111;
+    border: 1px solid #C9A96E;
     border-radius: 50%;
     margin-bottom: 12px;
-    color: #c9a45c;
-    box-shadow: 0 4px 14px rgba(201, 164, 92, 0.15);
+    color: #C9A96E;
+    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.4);
   }
 
   .brand-sub {
@@ -108,7 +109,7 @@ const HeaderSection = styled.div`
     font-weight: 700;
     letter-spacing: 0.22em;
     text-transform: uppercase;
-    color: #c9a45c;
+    color: #C9A96E;
     margin-bottom: 6px;
   }
 
@@ -117,7 +118,7 @@ const HeaderSection = styled.div`
     font-size: 2.2rem;
     letter-spacing: 0.08em;
     text-transform: uppercase;
-    color: #1f1f1f;
+    color: #F5F1E8;
     margin: 0 0 10px 0;
     font-weight: 500;
   }
@@ -125,7 +126,7 @@ const HeaderSection = styled.div`
   .gold-divider {
     width: 48px;
     height: 2px;
-    background: linear-gradient(90deg, transparent 0%, #c9a45c 50%, transparent 100%);
+    background: linear-gradient(90deg, transparent 0%, #C9A96E 50%, transparent 100%);
     margin: 0 auto;
   }
 `;
@@ -156,7 +157,7 @@ const FormGroup = styled.div`
     font-weight: 700;
     letter-spacing: 0.12em;
     text-transform: uppercase;
-    color: #1f1f1f;
+    color: #F5F1E8;
   }
 
   .input-wrapper {
@@ -168,19 +169,19 @@ const FormGroup = styled.div`
     width: 100%;
     padding: 12px 14px;
     font-size: 0.9rem;
-    color: #1f1f1f;
-    background-color: #faf5eb;
-    border: 1px solid #d9d3c7;
-    border-radius: 2px;
+    color: #F5F1E8;
+    background-color: #111111;
+    border: 1px solid rgba(140, 116, 75, 0.25);
+    border-radius: 4px;
     outline: none;
     box-sizing: border-box;
     font-family: 'Inter', sans-serif;
     transition: all 0.25s ease;
 
     &:focus {
-      border-color: #c9a45c;
-      background-color: #ffffff;
-      box-shadow: 0 0 0 4px rgba(201, 164, 92, 0.14);
+      border-color: #C9A96E;
+      background-color: #161616;
+      box-shadow: 0 0 0 4px rgba(201, 169, 110, 0.14);
     }
   }
 
@@ -191,13 +192,13 @@ const FormGroup = styled.div`
     transform: translateY(-50%);
     background: none;
     border: none;
-    color: #777;
+    color: #A8A8A8;
     cursor: pointer;
     display: flex;
     align-items: center;
 
     &:hover {
-      color: #c9a45c;
+      color: #C9A96E;
     }
   }
 `;
@@ -205,23 +206,23 @@ const FormGroup = styled.div`
 const SubmitButton = styled.button`
   width: 100%;
   padding: 15px;
-  background: linear-gradient(135deg, #1f1f1f 0%, #2b2a28 100%);
-  color: #ffffff;
+  background: #C9A96E;
+  color: #0B0B0B;
   font-size: 0.85rem;
-  font-weight: 600;
+  font-weight: 700;
   letter-spacing: 0.18em;
   text-transform: uppercase;
-  border: 1px solid #1f1f1f;
+  border: 1px solid #C9A96E;
+  border-radius: 4px;
   cursor: pointer;
   transition: all 0.3s ease;
   margin-top: 6px;
 
   &:hover {
-    background: linear-gradient(135deg, #c9a45c 0%, #b8944d 100%);
-    border-color: #c9a45c;
-    color: #1f1f1f;
-    box-shadow: 0 6px 20px rgba(201, 164, 92, 0.3);
+    background: #DFBA73;
+    border-color: #DFBA73;
     transform: translateY(-1px);
+    box-shadow: 0 6px 20px rgba(201, 169, 110, 0.3);
   }
 
   &:disabled {
@@ -233,11 +234,12 @@ const SubmitButton = styled.button`
 const GoogleButton = styled.button`
   width: 100%;
   padding: 12px;
-  background-color: #ffffff;
-  color: #1f1f1f;
-  border: 1px solid #d9d3c7;
+  background-color: #111111;
+  color: #F5F1E8;
+  border: 1px solid rgba(140, 116, 75, 0.3);
+  border-radius: 4px;
   font-size: 0.82rem;
-  font-weight: 500;
+  font-weight: 600;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -247,8 +249,8 @@ const GoogleButton = styled.button`
   margin-top: 12px;
 
   &:hover {
-    border-color: #c9a45c;
-    background-color: #faf5eb;
+    border-color: #C9A96E;
+    background-color: #161616;
   }
 
   svg {
@@ -261,32 +263,32 @@ const FooterRow = styled.div`
   text-align: center;
   margin-top: 24px;
   padding-top: 18px;
-  border-top: 1px solid #f7f2ea;
+  border-top: 1px solid rgba(140, 116, 75, 0.2);
   font-size: 0.84rem;
-  color: #6b6b6b;
+  color: #D8D2C5;
 
   button {
     background: none;
     border: none;
-    color: #1f1f1f;
+    color: #C9A96E;
     font-weight: 700;
     cursor: pointer;
     margin-left: 6px;
 
     &:hover {
-      color: #c9a45c;
+      color: #DFBA73;
       text-decoration: underline;
     }
   }
 `;
 
 const ErrorMsg = styled.div`
-  background-color: #fdf2f2;
-  border: 1px solid #f8b4b4;
-  color: #c53030;
+  background-color: rgba(239, 68, 68, 0.15);
+  border: 1px solid #ef4444;
+  color: #fca5a5;
   padding: 10px 14px;
   font-size: 0.82rem;
-  border-radius: 2px;
+  border-radius: 4px;
   margin-bottom: 14px;
   text-align: center;
 `;
@@ -346,7 +348,7 @@ export const RegisterModal: React.FC<RegisterModalProps> = ({
         password,
       });
       if (data.token) {
-        localStorage.setItem('floksy_token', data.token);
+        localStorage.setItem('app_auth_token', data.token);
         if (onSuccess) onSuccess();
         onClose();
       } else {
@@ -384,8 +386,8 @@ export const RegisterModal: React.FC<RegisterModalProps> = ({
         });
 
         if (res.token) {
-          localStorage.setItem('floksy_token', res.token);
-          localStorage.setItem('fj_customer_user', JSON.stringify(res.user));
+          localStorage.setItem('app_auth_token', res.token);
+          localStorage.setItem('app_user_profile', JSON.stringify(res.user));
           if (onSuccess) onSuccess();
           onClose();
         } else {
@@ -422,7 +424,7 @@ export const RegisterModal: React.FC<RegisterModalProps> = ({
           <div className="crest-logo">
             <Sparkles size={20} />
           </div>
-          <div className="brand-sub">FLOKSY JEWEL ATELIER</div>
+          <div className="brand-sub">AETHELCARATS</div>
           <h2>CREATE ACCOUNT</h2>
           <div className="gold-divider" />
         </HeaderSection>
@@ -459,7 +461,7 @@ export const RegisterModal: React.FC<RegisterModalProps> = ({
             <input
               id="reg-email"
               type="email"
-              placeholder="eleanor@floksyjewel.com"
+              placeholder="eleanor@auroradiamonds.com"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
             />

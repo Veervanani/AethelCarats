@@ -60,7 +60,7 @@ const getPayPalBaseUrl = async (): Promise<string> => {
  */
 export const createPayPalOrder = async (req: Request, res: Response) => {
   try {
-    const { amount, currency = 'USD', description = 'Floksy Jewel Order' } = req.body;
+    const { amount, currency = 'USD', description = 'Aura Diamond Atelier Order' } = req.body;
 
     if (!amount || isNaN(Number(amount)) || Number(amount) <= 0) {
       return res.status(400).json({ message: 'Valid payment amount is required' });

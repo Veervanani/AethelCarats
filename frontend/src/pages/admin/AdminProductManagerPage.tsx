@@ -59,7 +59,7 @@ const SkuChip = styled.span`
 
 const BulkActionBar = styled.div`
   position: sticky;
-  top: 10px;
+  top: 74px;
   z-index: 100;
   background: #19202a;
   color: #ffffff;

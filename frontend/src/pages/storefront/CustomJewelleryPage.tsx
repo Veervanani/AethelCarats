@@ -10,6 +10,7 @@ const PageWrapper = styled.div`
   margin: 0 auto;
   padding: 48px 24px 80px;
   box-sizing: border-box;
+  color: #F5F1E8;
 
   @media (max-width: 768px) {
     padding: 24px 16px 60px;
@@ -20,15 +21,17 @@ const HeroSection = styled.div`
   text-align: center;
   margin-bottom: 60px;
   padding: 48px 24px;
-  background-color: #faf5eb;
-  border: 1px solid #d9d3c7;
+  background-color: #151515;
+  border: 1px solid rgba(140, 116, 75, 0.3);
+  border-radius: 6px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
 
   .subtitle {
     font-size: 0.85rem;
     font-weight: 700;
     letter-spacing: 0.2em;
     text-transform: uppercase;
-    color: #c9a45c;
+    color: #C9A96E;
     margin-bottom: 12px;
   }
 
@@ -37,7 +40,7 @@ const HeroSection = styled.div`
     font-size: 3.2rem;
     letter-spacing: 0.08em;
     text-transform: uppercase;
-    color: #1f1f1f;
+    color: #F5F1E8;
     margin-bottom: 16px;
 
     @media (max-width: 768px) {
@@ -47,7 +50,7 @@ const HeroSection = styled.div`
 
   p {
     font-size: 1.05rem;
-    color: #6b6b6b;
+    color: #D8D2C5;
     max-width: 700px;
     margin: 0 auto 32px;
     line-height: 1.7;
@@ -58,19 +61,21 @@ const HeroSection = styled.div`
     align-items: center;
     gap: 8px;
     padding: 14px 32px;
-    background-color: #1f1f1f;
-    color: #ffffff;
+    background-color: #C9A96E;
+    color: #0B0B0B;
     font-size: 0.85rem;
-    font-weight: 600;
+    font-weight: 700;
     letter-spacing: 0.14em;
     text-transform: uppercase;
     border: none;
+    border-radius: 4px;
     cursor: pointer;
     transition: all 0.25s ease;
     text-decoration: none;
 
     &:hover {
-      background-color: #b8944d;
+      background-color: #DFBA73;
+      transform: translateY(-2px);
     }
   }
 `;
@@ -84,7 +89,7 @@ const ProcessSection = styled.div`
     font-size: 2.2rem;
     letter-spacing: 0.1em;
     text-transform: uppercase;
-    color: #1f1f1f;
+    color: #F5F1E8;
     margin-bottom: 40px;
   }
 `;
@@ -104,19 +109,27 @@ const ProcessGrid = styled.div`
 `;
 
 const ProcessCard = styled.div`
-  background-color: #ffffff;
-  border: 1px solid #d9d3c7;
+  background-color: #151515;
+  border: 1px solid rgba(140, 116, 75, 0.25);
+  border-radius: 6px;
   padding: 28px 20px;
   text-align: center;
   display: flex;
   flex-direction: column;
   align-items: center;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+  transition: border-color 0.2s ease, transform 0.2s ease;
+
+  &:hover {
+    border-color: #C9A96E;
+    transform: translateY(-3px);
+  }
 
   .num {
     font-family: 'Cormorant Garamond', serif;
     font-size: 1.6rem;
     font-weight: 700;
-    color: #c9a45c;
+    color: #C9A96E;
     margin-bottom: 12px;
   }
 
@@ -125,13 +138,13 @@ const ProcessCard = styled.div`
     font-weight: 700;
     letter-spacing: 0.1em;
     text-transform: uppercase;
-    color: #1f1f1f;
+    color: #F5F1E8;
     margin-bottom: 8px;
   }
 
   .desc {
     font-size: 0.82rem;
-    color: #6b6b6b;
+    color: #D8D2C5;
     line-height: 1.5;
   }
 `;
@@ -139,9 +152,11 @@ const ProcessCard = styled.div`
 const FormSection = styled.div`
   max-width: 850px;
   margin: 0 auto;
-  background-color: #ffffff;
-  border: 1px solid #d9d3c7;
+  background-color: #151515;
+  border: 1px solid rgba(140, 116, 75, 0.3);
+  border-radius: 6px;
   padding: 48px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
 
   @media (max-width: 768px) {
     padding: 28px 20px;
@@ -152,14 +167,14 @@ const FormSection = styled.div`
     font-size: 2rem;
     letter-spacing: 0.1em;
     text-transform: uppercase;
-    color: #1f1f1f;
+    color: #F5F1E8;
     margin-bottom: 8px;
     text-align: center;
   }
 
   .form-sub {
     font-size: 0.9rem;
-    color: #6b6b6b;
+    color: #D8D2C5;
     text-align: center;
     margin-bottom: 36px;
   }
@@ -186,10 +201,10 @@ const FormGroup = styled.div<{ $fullWidth?: boolean }>`
     font-weight: 600;
     letter-spacing: 0.1em;
     text-transform: uppercase;
-    color: #1f1f1f;
+    color: #F5F1E8;
 
     span.req {
-      color: #c9a45c;
+      color: #C9A96E;
       margin-left: 2px;
     }
   }
@@ -197,53 +212,59 @@ const FormGroup = styled.div<{ $fullWidth?: boolean }>`
   input, select, textarea {
     padding: 12px 14px;
     font-size: 0.9rem;
-    color: #1f1f1f;
-    background-color: #faf5eb;
-    border: 1px solid #d9d3c7;
-    border-radius: 2px;
+    color: #F5F1E8;
+    background-color: #111111;
+    border: 1px solid rgba(140, 116, 75, 0.25);
+    border-radius: 4px;
     outline: none;
     transition: all 0.2s ease;
 
     &:focus {
-      border-color: #c9a45c;
-      background-color: #ffffff;
+      border-color: #C9A96E;
+      background-color: #161616;
+    }
+
+    &::placeholder {
+      color: #777777;
     }
   }
 `;
 
 const InlineError = styled.span`
   font-size: 0.75rem;
-  color: #d32f2f;
+  color: #ff6b6b;
   margin-top: 2px;
 `;
 
 const UploadBox = styled.div`
-  border: 1px dashed #c9a45c;
-  background-color: #faf5eb;
+  border: 1px dashed rgba(140, 116, 75, 0.4);
+  background-color: #111111;
+  border-radius: 4px;
   padding: 24px;
   text-align: center;
   cursor: pointer;
   transition: all 0.2s ease;
 
   &:hover {
-    background-color: #ffffff;
+    border-color: #C9A96E;
+    background-color: #161616;
   }
 
   .upload-icon {
-    color: #c9a45c;
+    color: #C9A96E;
     margin-bottom: 8px;
   }
 
   p {
     font-size: 0.85rem;
-    color: #1f1f1f;
+    color: #F5F1E8;
     margin-bottom: 4px;
     font-weight: 600;
   }
 
   span {
     font-size: 0.75rem;
-    color: #6b6b6b;
+    color: #A8A8A8;
   }
 `;
 
@@ -251,19 +272,21 @@ const SubmitButton = styled.button`
   width: 100%;
   padding: 16px;
   margin-top: 28px;
-  background-color: #1f1f1f;
-  color: #ffffff;
+  background-color: #C9A96E;
+  color: #0B0B0B;
   font-size: 0.85rem;
-  font-weight: 600;
+  font-weight: 700;
   letter-spacing: 0.14em;
   text-transform: uppercase;
-  border: 1px solid #1f1f1f;
+  border: 1px solid #C9A96E;
+  border-radius: 4px;
   cursor: pointer;
   transition: all 0.2s ease;
 
   &:hover {
-    background-color: #b8944d;
-    border-color: #b8944d;
+    background-color: #DFBA73;
+    border-color: #DFBA73;
+    transform: translateY(-2px);
   }
 
   &:disabled {
@@ -277,11 +300,13 @@ const SuccessContainer = styled.div`
   margin: 40px auto;
   text-align: center;
   padding: 56px 36px;
-  background-color: #ffffff;
-  border: 1px solid #d9d3c7;
+  background-color: #151515;
+  border: 1px solid rgba(140, 116, 75, 0.3);
+  border-radius: 6px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
 
   .icon {
-    color: #c9a45c;
+    color: #C9A96E;
     margin-bottom: 20px;
   }
 
@@ -290,25 +315,26 @@ const SuccessContainer = styled.div`
     font-size: 2.2rem;
     letter-spacing: 0.1em;
     text-transform: uppercase;
-    color: #1f1f1f;
+    color: #F5F1E8;
     margin-bottom: 12px;
   }
 
   .ref-no {
     display: inline-block;
     padding: 8px 20px;
-    background-color: #faf5eb;
-    border: 1px solid #c9a45c;
+    background-color: #111111;
+    border: 1px solid #C9A96E;
+    border-radius: 4px;
     font-size: 1rem;
     font-weight: 700;
     letter-spacing: 0.12em;
-    color: #b8944d;
+    color: #C9A96E;
     margin-bottom: 20px;
   }
 
   p {
     font-size: 0.95rem;
-    color: #6b6b6b;
+    color: #D8D2C5;
     line-height: 1.6;
     margin-bottom: 32px;
   }
@@ -391,7 +417,7 @@ export const CustomJewelleryPage: React.FC = () => {
           <div className="subtitle">BESPOKE FINE JEWELLERY ATELIER</div>
           <h1>CUSTOM JEWELLERY & BESPOKE COMMISSIONS</h1>
           <p>
-            Collaborate directly with Floksy Jewel master gemologists and goldsmiths to craft one-of-a-kind engagement rings, wedding bands, and high jewellery tailored exclusively to your personal vision.
+            Collaborate directly with AethelCarats master gemologists and goldsmiths to craft one-of-a-kind engagement rings, wedding bands, and high jewellery tailored exclusively to your personal vision.
           </p>
           <a href="#commission-form" className="cta-btn">
             START YOUR CUSTOM DESIGN <ArrowRight size={16} />
@@ -402,14 +428,14 @@ export const CustomJewelleryPage: React.FC = () => {
       {/* 5-STEP PROCESS SECTION */}
       <RevealContainer yOffset={35}>
         <ProcessSection>
-          <div className="section-title">THE FLOKSY BESPOKE CREATION PROCESS</div>
+          <div className="section-title">THE AETHELCARATS BESPOKE CREATION PROCESS</div>
           <ProcessGrid>
             {[
               { num: '01', title: 'CONSULTATION', desc: 'Discuss your vision, metal preference, and stone specifications with our gemologists.' },
               { num: '02', title: 'BESPOKE 3D CAD', desc: 'Our atelier renders photorealistic 3D CAD models of your design from every angle.' },
               { num: '03', title: 'CAD APPROVAL', desc: 'Refine specifications and approve 3D proportions before physical crafting starts.' },
               { num: '04', title: 'MASTER CRAFTING', desc: 'Hand-set by goldsmiths with GIA/IGI certified loose diamonds or gemstones.' },
-              { num: '05', title: 'WHITE-GLOVE DELIVERY', desc: 'Complimentary insured transit in Floksy signature velvet presentation cases.' },
+              { num: '05', title: 'WHITE-GLOVE DELIVERY', desc: 'Complimentary insured transit in AethelCarats signature presentation cases.' },
             ].map((step, idx) => (
               <RevealContainer key={idx} staggerIndex={idx} yOffset={25}>
                 <ProcessCard>
@@ -430,7 +456,7 @@ export const CustomJewelleryPage: React.FC = () => {
           <h2>YOUR BESPOKE REQUEST HAS BEEN RECEIVED</h2>
           <div className="ref-no">REFERENCE ID: {successRef}</div>
           <p>
-            Thank you for entrusting Floksy Jewel with your custom creation. Our master gemologist will review your specifications and contact you on WhatsApp / Email within 24 hours with your initial 3D design concept.
+            Thank you for entrusting AethelCarats with your custom creation. Our master gemologist will review your specifications and contact you on WhatsApp / Email within 24 hours with your initial 3D design concept.
           </p>
           <button
             onClick={() => {
@@ -448,12 +474,13 @@ export const CustomJewelleryPage: React.FC = () => {
               });
             }}
             style={{
-              padding: '12px 28px',
-              backgroundColor: '#1f1f1f',
-              color: '#ffffff',
+              padding: '14px 32px',
+              backgroundColor: '#C9A96E',
+              color: '#0B0B0B',
               border: 'none',
-              fontSize: '0.8rem',
-              fontWeight: 600,
+              borderRadius: '4px',
+              fontSize: '0.85rem',
+              fontWeight: 700,
               letterSpacing: '0.12em',
               textTransform: 'uppercase',
               cursor: 'pointer',
@@ -484,7 +511,7 @@ export const CustomJewelleryPage: React.FC = () => {
                 <label>Email Address <span className="req">*</span></label>
                 <input
                   type="email"
-                  placeholder="e.g. eleanor@floksyjewel.com"
+                  placeholder="e.g. eleanor@auroradiamonds.com"
                   value={formData.email}
                   onChange={(e) => setFormData({ ...formData, email: e.target.value })}
                 />

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+﻿import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
 import { businessApi } from '../services/businessApi';
 import { Download, FileText, TrendingUp, Users, DollarSign, Database, HardDriveDownload, PlusCircle, Trash2, ShieldCheck, RefreshCw, RotateCcw } from 'lucide-react';
@@ -254,7 +254,7 @@ export const BusinessReportsPage: React.FC = () => {
       const wsSummary = XLSX.utils.json_to_sheet(summaryData);
       XLSX.utils.book_append_sheet(wb, wsSummary, 'Executive Summary');
 
-      const fileName = `Floksy_Jewel_Audit_Report_${new Date().toISOString().slice(0, 10)}.xlsx`;
+      const fileName = `Aura_Jewel_Audit_Report_${new Date().toISOString().slice(0, 10)}.xlsx`;
       XLSX.writeFile(wb, fileName);
     } catch (e) {
       console.error(e);

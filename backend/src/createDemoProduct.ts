@@ -1,9 +1,9 @@
-import { PrismaClient } from '@prisma/client';
+﻿import { PrismaClient } from '@prisma/client';
 
 const prisma = new PrismaClient();
 
 async function createDemoProduct() {
-  console.log('--- FLOKSY JEWEL DEMO PRODUCT GENERATOR ---');
+  console.log('--- AURA DIAMOND ATELIER DEMO PRODUCT GENERATOR ---');
 
   // 1. DELETE ALL EXISTING PRODUCTS TO START FRESH
   console.log('Deleting all existing product records...');
@@ -27,8 +27,8 @@ async function createDemoProduct() {
         name: 'Rings',
         slug: 'rings',
         description: 'Luxury Fine Jewelry Rings',
-        image: '/assets/floksy_rings_cat.png',
-        bannerImage: '/assets/floksy_rings_cat.png',
+        image: '/assets/gem_rings_cat.png',
+        bannerImage: '/assets/gem_rings_cat.png',
         link: '/rings',
         isActive: true,
       },
@@ -91,7 +91,7 @@ async function createDemoProduct() {
   const accordionsConfig = [
     {
       id: 'experience',
-      title: 'YOUR FLOKSY JEWEL EXPERIENCE',
+      title: 'YOUR AURA DIAMOND ATELIER EXPERIENCE',
       content: 'Every creation is handcrafted in our Surat atelier using certified conflict-free materials and 100% recycled precious metals.',
       enabled: true,
       defaultOpen: true,
@@ -137,26 +137,26 @@ async function createDemoProduct() {
   const internalTags = ['bestseller-candidate', 'yellow-gold', 'lab-grown', 'campaign-2026'];
   const seoSocial = {
     keywords: 'solitaire ring, lab grown diamond, 14k white gold ring, fine jewelry',
-    ogTitle: 'Floksy Jewel Signature Solitaire Ring | Fine Jewelry',
-    ogDescription: 'Explore the Floksy Jewel Signature Solitaire Ring with 7 precious metal options.',
-    socialImage: '/assets/floksy_rings_cat.png',
-    twitterTitle: 'Floksy Jewel Signature Solitaire Ring',
+    ogTitle: 'Aura Diamond Atelier Signature Solitaire Ring | Fine Jewelry',
+    ogDescription: 'Explore the Aura Diamond Atelier Signature Solitaire Ring with 7 precious metal options.',
+    socialImage: '/assets/gem_rings_cat.png',
+    twitterTitle: 'Aura Diamond Atelier Signature Solitaire Ring',
     twitterDescription: 'Handcrafted in Surat with 100% recycled precious metals.',
-    canonicalUrl: 'https://floksyjewel.com/product/floksy-jewel-signature-solitaire-ring',
+    canonicalUrl: 'https://auroradiamonds.com/product/aura-jewel-signature-solitaire-ring',
   };
 
   // 7. CREATE THE SINGLE CANONICAL DEMO PRODUCT
   const demoProduct = await prisma.product.create({
     data: {
-      name: 'Floksy Jewel Signature Solitaire Ring',
-      title: 'Floksy Jewel Signature Solitaire Ring',
+      name: 'Aura Diamond Atelier Signature Solitaire Ring',
+      title: 'Aura Diamond Atelier Signature Solitaire Ring',
       sku: 'FJ-DEMO-RING-001',
-      slug: 'floksy-jewel-signature-solitaire-ring',
+      slug: 'aura-jewel-signature-solitaire-ring',
       categoryId: ringsCategory.id,
       jewelleryType: 'Rings',
       status: 'ACTIVE',
-      shortDescription: 'A luxury Floksy Jewel solitaire ring with customizable metal options and ring sizes.',
-      fullDescription: 'A luxury Floksy Jewel solitaire ring handcrafted in Surat, featuring 7 precious metal options and customizable sizing.',
+      shortDescription: 'A luxury Aura Diamond Atelier solitaire ring with customizable metal options and ring sizes.',
+      fullDescription: 'A luxury Aura Diamond Atelier solitaire ring handcrafted in Surat, featuring 7 precious metal options and customizable sizing.',
       price: 2500,
       comparePrice: 3000,
       masterPrice14k: 2500,
@@ -173,10 +173,10 @@ async function createDemoProduct() {
       diamondDetailsJson: JSON.stringify(diamondDetails),
       internalTagsJson: JSON.stringify(internalTags),
       seoSocialJson: JSON.stringify(seoSocial),
-      metaTitle: 'Floksy Jewel Signature Solitaire Ring | Luxury Fine Jewelry',
-      metaDescription: 'Explore the Floksy Jewel Signature Solitaire Ring with customizable 7 precious metal options and personalized details.',
-      mainImage: '/assets/floksy_rings_cat.png',
-      secondaryImage: '/assets/floksy_rings_cat_2.png',
+      metaTitle: 'Aura Diamond Atelier Signature Solitaire Ring | Luxury Fine Jewelry',
+      metaDescription: 'Explore the Aura Diamond Atelier Signature Solitaire Ring with customizable 7 precious metal options and personalized details.',
+      mainImage: '/assets/gem_rings_cat.png',
+      secondaryImage: '/assets/gem_rings_cat_2.png',
     },
   });
 

@@ -15,16 +15,23 @@ import {
 
 const StickyTopHeader = styled.div`
   position: sticky;
-  top: 0;
+  top: 64px;
   z-index: 80;
   background: #ffffff;
-  border-bottom: 1px solid #e8e3d9;
+  border: 1px solid #e8e3d9;
+  border-radius: 8px;
   padding: 16px 24px;
   display: flex;
   justify-content: space-between;
   align-items: center;
+  flex-wrap: wrap;
+  gap: 16px;
   margin-bottom: 24px;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03);
+
+  @media (max-width: 900px) {
+    top: 58px;
+  }
 
   h1 {
     font-family: 'Cormorant Garamond', serif;
@@ -76,7 +83,7 @@ export const AdminHeaderManagerPage: React.FC = () => {
     announcementEnabled: true,
     announcementBg: '#12161a',
     announcementTextColor: '#fffdf9',
-    logoImage: '/assets/floksy_logo.svg',
+    logoImage: '/assets/gem_logo.svg',
     headerBg: '#ffffff',
     stickyHeader: true,
     showSearch: true,

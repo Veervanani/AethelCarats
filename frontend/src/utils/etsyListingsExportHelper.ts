@@ -1,4 +1,4 @@
-import * as XLSX from 'xlsx';
+﻿import * as XLSX from 'xlsx';
 import { Product } from '../types';
 
 export interface ExportEtsyOptions {
@@ -76,7 +76,7 @@ function sanitizeEtsyDescription(product: Product): string {
   raw = raw.replace(/\|\s*$/gm, '');
 
   if (!raw.trim()) {
-    raw = `${product.name || 'Fine luxury jewellery'}\n\nHandcrafted in solid 14K / 18K gold by Floksy Jewel. Certified conflict-free lab-grown diamonds with optical precision cut.`;
+    raw = `${product.name || 'Fine luxury jewellery'}\n\nHandcrafted in solid 14K / 18K gold by Aura Diamond Atelier. Certified conflict-free lab-grown diamonds with optical precision cut.`;
   }
 
   return raw.trim();
@@ -111,7 +111,7 @@ function generateEtsyTags(product: Product): string {
 }
 
 export function buildEtsyExportRows(products: Product[], options: ExportEtsyOptions = {}): any[][] {
-  const siteUrl = options.siteUrl || (typeof window !== 'undefined' ? window.location.origin : 'https://floksyjewel.com');
+  const siteUrl = options.siteUrl || (typeof window !== 'undefined' ? window.location.origin : 'https://auroradiamonds.com');
   const currencyCode = options.currencyCode || 'USD';
 
   const standardRingSizes = '3,3 1/2,4,4 1/2,5,5 1/2,6,6 1/2,7,7 1/2,8,8 1/2,9,9 1/2,10,10 1/2,11,11 1/2,12,12 1/2,13,13 1/2,14';
@@ -120,7 +120,7 @@ export function buildEtsyExportRows(products: Product[], options: ExportEtsyOpti
   const rows: any[][] = [];
 
   for (const product of products) {
-    const title = product.name || product.title || 'Floksy Jewel Fine Jewelry';
+    const title = product.name || product.title || 'Aura Diamond Atelier Fine Jewelry';
     const description = sanitizeEtsyDescription(product);
     const price = product.salePrice || product.price || 2500;
     const quantity = product.stockQuantity || 10;

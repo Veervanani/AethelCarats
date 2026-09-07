@@ -236,6 +236,11 @@ export interface HeroBanner {
   imagePath: string;
   mobileImagePath?: string;
   imageAlt?: string;
+  titleColor?: string;
+  subtitleColor?: string;
+  descriptionColor?: string;
+  primaryCtaTextColor?: string;
+  secondaryCtaTextColor?: string;
   isActive: boolean;
   displayOrder: number;
   createdAt?: string;

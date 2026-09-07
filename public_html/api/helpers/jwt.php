@@ -1,6 +1,6 @@
 <?php
 /**
- * Floksy Jewel — Lightweight HS256 JWT Implementation
+ * Aura Diamond Atelier — Lightweight HS256 JWT Implementation
  * Fully compatible with jsonwebtoken (Express JS).
  */
 
@@ -17,7 +17,7 @@ function base64UrlDecode(string $data): string {
 }
 
 function createJwt(array $payload, ?string $secret = null, int $expiresInSeconds = 604800): string {
-    $jwtSecret = $secret ?: getenv('JWT_SECRET') ?: ($_ENV['JWT_SECRET'] ?? 'floksy_jewel_super_secret_jwt_key_2026');
+    $jwtSecret = $secret ?: getenv('JWT_SECRET') ?: ($_ENV['JWT_SECRET'] ?? 'aura_atelier_super_secret_jwt_key_2026');
 
     $header = [
         'alg' => 'HS256',
@@ -41,7 +41,7 @@ function createJwt(array $payload, ?string $secret = null, int $expiresInSeconds
 }
 
 function verifyJwt(string $token, ?string $secret = null): ?array {
-    $jwtSecret = $secret ?: getenv('JWT_SECRET') ?: ($_ENV['JWT_SECRET'] ?? 'floksy_jewel_super_secret_jwt_key_2026');
+    $jwtSecret = $secret ?: getenv('JWT_SECRET') ?: ($_ENV['JWT_SECRET'] ?? 'aura_atelier_super_secret_jwt_key_2026');
 
     $parts = explode('.', $token);
     if (count($parts) !== 3) {

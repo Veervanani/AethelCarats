@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+﻿import React, { useState } from 'react';
 import styled from 'styled-components';
 import { businessApi } from '../services/businessApi';
 import { Employee } from '../types';
@@ -282,7 +282,7 @@ export const BusinessEmployeeFormModal: React.FC<{
 
             <FormGroup>
               <label>Email Address (Login Username) *</label>
-              <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} required placeholder="employee@floksyjewel.com" />
+              <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} required placeholder="employee@auroradiamonds.com" />
               <span className="helper-text">Used as the login username/email for system access</span>
             </FormGroup>
 

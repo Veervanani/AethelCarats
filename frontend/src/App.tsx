@@ -58,7 +58,6 @@ const ScrollToTop: React.FC = () => {
 };
 
 // Layouts
-import { AnnouncementBar } from './components/layout/AnnouncementBar';
 import { Header } from './components/layout/Header';
 import { Footer } from './components/layout/Footer';
 import { WhatsAppFloatingButton } from './components/ui/WhatsAppFloatingButton';
@@ -115,6 +114,7 @@ const AdminSettingsPage = lazy(() => import('./pages/admin/AdminSettingsPage').t
 const AdminMediaLibraryPage = lazy(() => import('./pages/admin/AdminMediaLibraryPage').then(m => ({ default: m.AdminMediaLibraryPage })));
 const AdminUserManagementPage = lazy(() => import('./pages/admin/AdminUserManagementPage').then(m => ({ default: m.AdminUserManagementPage })));
 const AdminHeaderManagerPage = lazy(() => import('./pages/admin/AdminHeaderManagerPage').then(m => ({ default: m.AdminHeaderManagerPage })));
+const AdminMegaMenuManagerPage = lazy(() => import('./pages/admin/AdminMegaMenuManagerPage').then(m => ({ default: m.AdminMegaMenuManagerPage })));
 const AdminFooterManagerPage = lazy(() => import('./pages/admin/AdminFooterManagerPage').then(m => ({ default: m.AdminFooterManagerPage })));
 const AdminFilterManagerPage = lazy(() => import('./pages/admin/AdminFilterManagerPage').then(m => ({ default: m.AdminFilterManagerPage })));
 const AdminDiamondFilterManagerPage = lazy(() => import('./pages/admin/AdminDiamondFilterManagerPage').then(m => ({ default: m.AdminDiamondFilterManagerPage })));
@@ -135,7 +135,7 @@ const AdminProductDetailsManagerPage = lazy(() => import('./pages/admin/AdminPro
 const AdminProductPageContentPage = lazy(() => import('./pages/admin/AdminProductPageContentPage').then(m => ({ default: m.AdminProductPageContentPage })));
 
 // Private Business ERP & Operations Pages
-export const PRIVATE_BUSINESS_PATH = '/flk-business-vault-8R2Lp9Kx7Qm4Nw6T';
+export const PRIVATE_BUSINESS_PATH = '/enterprise-hub-m7k4p9v2x1n8';
 
 const BusinessLayout = lazy(() => import('./business/layout/BusinessLayout').then(m => ({ default: m.BusinessLayout })));
 const BusinessDashboardPage = lazy(() => import('./business/pages/BusinessDashboardPage').then(m => ({ default: m.BusinessDashboardPage })));
@@ -158,12 +158,12 @@ const BusinessSettingsPage = lazy(() => import('./business/pages/BusinessSetting
 
 const ProtectedBusinessLayout: React.FC = () => {
   const { user, isAuthenticated, isLoading } = useAuth();
-  const token = localStorage.getItem('floksy_token') || localStorage.getItem('fj_admin_token');
+  const token = localStorage.getItem('app_auth_token') || localStorage.getItem('admin_session_token');
 
   if (isLoading) {
     return (
       <div style={{ padding: '80px', textAlign: 'center', fontFamily: 'Inter, sans-serif', fontSize: '1.2rem', color: '#0d1319' }}>
-        AUTHENTICATING BUSINESS OPERATIONS HUB...
+        AUTHENTICATING ENTERPRISE OPERATIONS HUB...
       </div>
     );
   }
@@ -197,21 +197,21 @@ const ProtectedBusinessLayout: React.FC = () => {
 
 const PageLoadingSpinner: React.FC = () => (
   <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: '400px', width: '100%' }}>
-    <div style={{ fontFamily: 'Cormorant Garamond, serif', fontSize: '1.2rem', color: '#c9a45c', letterSpacing: '0.12em', fontWeight: 600 }}>
-      LOADING FLOKSY JEWEL ATELIER...
+    <div style={{ fontFamily: 'Cormorant Garamond, serif', fontSize: '1.2rem', color: '#C9A96E', letterSpacing: '0.14em', fontWeight: 600 }}>
+      LOADING AETHELCARATS ATELIER...
     </div>
   </div>
 );
 
-export const PRIVATE_ADMIN_PATH = '/atelier-vault-7Kx9Qm4R2Lp8Nw6T';
+export const PRIVATE_ADMIN_PATH = '/vault-mgmt-k8m3x9q2v7';
 
 const ProtectedAdminLayout: React.FC = () => {
   const { user, isAuthenticated, isLoading, openAuthModal } = useAuth();
-  const token = localStorage.getItem('floksy_token') || localStorage.getItem('fj_admin_token');
+  const token = localStorage.getItem('app_auth_token') || localStorage.getItem('admin_session_token');
 
   if (isLoading) {
     return (
-      <div style={{ padding: '80px', textAlign: 'center', fontFamily: 'Cormorant Garamond, serif', fontSize: '1.5rem', color: '#c9a45c' }}>
+      <div style={{ padding: '80px', textAlign: 'center', fontFamily: 'Cormorant Garamond, serif', fontSize: '1.5rem', color: '#C9A96E' }}>
         AUTHENTICATING ATELIER ACCESS...
       </div>
     );
@@ -223,16 +223,16 @@ const ProtectedAdminLayout: React.FC = () => {
 
   if (user && user.role !== 'ADMIN' && user.role !== 'SUPER_ADMIN') {
     return (
-      <div style={{ maxWidth: '600px', margin: '80px auto', padding: '48px 32px', background: '#fff', border: '1px solid #d9d3c7', textAlign: 'center', boxShadow: '0 12px 36px rgba(31,31,31,0.08)' }}>
-        <h2 style={{ fontFamily: 'Cormorant Garamond, serif', fontSize: '2.2rem', letterSpacing: '0.1em', textTransform: 'uppercase', color: '#1f1f1f', marginBottom: '16px' }}>
+      <div style={{ maxWidth: '600px', margin: '80px auto', padding: '48px 32px', background: '#151515', border: '1px solid rgba(140, 116, 75, 0.25)', borderRadius: '8px', textAlign: 'center', boxShadow: '0 24px 60px rgba(0,0,0,0.5)' }}>
+        <h2 style={{ fontFamily: 'Cormorant Garamond, serif', fontSize: '2.2rem', letterSpacing: '0.1em', textTransform: 'uppercase', color: '#F5F1E8', marginBottom: '16px' }}>
           ACCESS DENIED
         </h2>
-        <p style={{ color: '#6b6b6b', fontSize: '0.95rem', lineHeight: '1.6', marginBottom: '28px' }}>
-          Administrator privileges are required to access the Floksy Jewel Atelier Management Portal. Your account ({user.email}) is currently assigned the role of <strong>{user.role}</strong>.
+        <p style={{ color: '#D8D2C5', fontSize: '0.95rem', lineHeight: '1.6', marginBottom: '28px' }}>
+          Administrator privileges are required to access the AethelCarats Management Portal. Your account ({user.email}) is currently assigned the role of <strong style={{ color: '#C9A96E' }}>{user.role}</strong>.
         </p>
         <button
           onClick={() => (window.location.href = '/')}
-          style={{ padding: '14px 28px', backgroundColor: '#1f1f1f', color: '#fff', fontSize: '0.8rem', fontWeight: 600, letterSpacing: '0.14em', textTransform: 'uppercase', border: 'none', cursor: 'pointer' }}
+          style={{ padding: '14px 28px', backgroundColor: '#C9A96E', color: '#0B0B0B', fontSize: '0.8rem', fontWeight: 700, letterSpacing: '0.14em', textTransform: 'uppercase', border: 'none', borderRadius: '4px', cursor: 'pointer' }}
         >
           RETURN TO STOREFRONT
         </button>
@@ -252,7 +252,6 @@ const StorefrontLayout: React.FC = () => {
 
   return (
     <>
-      <AnnouncementBar />
       <Header />
       <Suspense fallback={<PageLoadingSpinner />}>
         <PageTransition key={location.pathname}>
@@ -365,8 +364,9 @@ export const App: React.FC = () => {
                           <Route path="cms/page-builder" element={<AdminPageBuilderPage />} />
                           <Route path="cms/pages/:slug/sections/:sectionId/edit" element={<AdminSectionEditorPage />} />
                           <Route path="cms/sections/:sectionId/edit" element={<AdminSectionEditorPage />} />
-                          <Route path="cms/menu-manager" element={<AdminPageBuilderPage />} />
+                          <Route path="cms/menu-manager" element={<AdminMegaMenuManagerPage />} />
                           <Route path="header-manager" element={<AdminHeaderManagerPage />} />
+                          <Route path="megamenu-manager" element={<AdminMegaMenuManagerPage />} />
                           <Route path="footer-manager" element={<AdminFooterManagerPage />} />
                           <Route path="filters" element={<AdminFilterManagerPage />} />
                           <Route path="diamond-filters" element={<AdminDiamondFilterManagerPage />} />
@@ -380,6 +380,9 @@ export const App: React.FC = () => {
                           <Route path="users" element={<AdminUserManagementPage />} />
                           <Route path="activity-logs" element={<AdminLogsPage />} />
                         </Route>
+                        {/* Convenient Admin Aliases */}
+                        <Route path="/admin" element={<Navigate to={PRIVATE_ADMIN_PATH} replace />} />
+                        <Route path="/admin/login" element={<Navigate to={`${PRIVATE_ADMIN_PATH}/login`} replace />} />
                         <Route path="/admin/product-page-content" element={<ProtectedAdminLayout />}>
                           <Route index element={<AdminProductPageContentPage />} />
                         </Route>

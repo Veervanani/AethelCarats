@@ -1,4 +1,4 @@
-import * as XLSX from 'xlsx';
+﻿import * as XLSX from 'xlsx';
 import { Product } from '../types';
 
 export interface ExportShopifyOptions {
@@ -168,12 +168,12 @@ function cleanHtmlDescription(product: Product): string {
     parts.push('<p><strong>Care Instructions:</strong> ' + product.careInstructions.trim() + '</p>');
   }
 
-  const combined = parts.join('\n\n') || (product.name || 'Fine luxury jewellery piece handcrafted by Floksy Jewel.');
+  const combined = parts.join('\n\n') || (product.name || 'Fine luxury jewellery piece handcrafted by Aura Diamond Atelier.');
   return combined;
 }
 
 function generateTags(product: Product): string {
-  const tags: string[] = ['Fine Jewelry', 'Floksy Jewel', 'Luxury', 'Solid Gold', '14K Gold', '18K Gold'];
+  const tags: string[] = ['Fine Jewelry', 'Aura Diamond Atelier', 'Luxury', 'Solid Gold', '14K Gold', '18K Gold'];
 
   if (product.category?.name) tags.push(product.category.name);
   if (product.jewelleryType) tags.push(product.jewelleryType);
@@ -194,14 +194,14 @@ function generateTags(product: Product): string {
 }
 
 export function buildShopifyExportRows(products: Product[], options: ExportShopifyOptions = {}): any[][] {
-  const siteUrl = options.siteUrl || (typeof window !== 'undefined' ? window.location.origin : 'https://floksyjewel.com');
-  const vendor = options.vendor || 'Floksy Jewel';
+  const siteUrl = options.siteUrl || (typeof window !== 'undefined' ? window.location.origin : 'https://auroradiamonds.com');
+  const vendor = options.vendor || 'Aura Diamond Atelier';
 
   const rows: any[][] = [];
 
   for (const product of products) {
     const cat = getCategoryInfo(product);
-    const title = product.name || product.title || 'Floksy Jewel Item';
+    const title = product.name || product.title || 'Aura Diamond Atelier Item';
     const handle = product.slug || title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
     const description = cleanHtmlDescription(product);
     const tags = generateTags(product);
@@ -308,7 +308,7 @@ export function buildShopifyExportRows(products: Product[], options: ExportShopi
         isFirstRow ? 'Fine Jewelry, Lab Grown Diamond' : '',
         isFirstRow ? 'New' : '',
         isFirstRow ? 'FALSE' : '',
-        isFirstRow ? 'Floksy Jewel Atelier' : '',
+        isFirstRow ? 'Aura Diamond Atelier' : '',
         '', '', '', '',
       ];
 

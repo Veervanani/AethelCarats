@@ -1,6 +1,6 @@
-# 🚀 Floksy Jewel — Hostinger MySQL Deployment & Migration Guide
+# 🚀 Aura Diamond Atelier — MySQL Deployment & Local Setup Guide
 
-This guide provides complete instructions for deploying **Floksy Jewel** (React frontend + Node.js/TypeScript backend) to **Hostinger Web Hosting (Business Plan)** and migrating the database from **Google Cloud PostgreSQL 18** to **Hostinger MySQL 8 / MariaDB**.
+This guide provides complete instructions for deploying **Aura Diamond Atelier** (React frontend + Node.js/TypeScript & PHP backend) to local environment / MySQL 8 / MariaDB.
 
 ---
 
@@ -54,7 +54,7 @@ You have **2 Easy Methods** to import your complete database into Hostinger:
 ### STEP 3: Deploy Application Code from GitHub
 1. In Hostinger hPanel, go to **Advanced** → **Git**.
 2. Connect your GitHub repository:
-   - **Repository URL**: `https://github.com/Veervanani/floksy-jewel.git`
+   - **Repository URL**: `https://github.com/aethelcarats/AethelCarats.git`
    - **Branch**: `main`
    - **Target Directory**: `/public_html`
 3. Click **Create** & **Deploy**.

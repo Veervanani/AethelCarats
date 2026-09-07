@@ -5,6 +5,7 @@ import prisma from '../prisma';
 export type RoleType =
   | 'SUPER_ADMIN'
   | 'ADMIN'
+  | 'SALES_HR_MANAGER'
   | 'PRODUCT_MANAGER'
   | 'CONTENT_MANAGER'
   | 'ORDER_MANAGER'
@@ -30,7 +31,7 @@ export const authenticateToken = (req: AuthRequest, res: Response, next: NextFun
     return res.status(401).json({ message: 'Authentication required' });
   }
 
-  const secret = process.env.JWT_SECRET || 'floksy_jewel_super_secret_jwt_key_2026';
+  const secret = process.env.JWT_SECRET || 'aura_diamond_atelier_secure_jwt_key_9v8k4m2x7t';
 
   jwt.verify(token, secret, (err: any, decoded: any) => {
     if (err) {
@@ -101,6 +102,6 @@ export const requireRole = (allowedRoles: RoleType[]) => {
 };
 
 export const requireAdmin = requireRole(['ADMIN', 'SUPER_ADMIN']);
-export const requireBusinessRole = requireRole(['ADMIN', 'SUPER_ADMIN', 'SALES_MANAGER', 'SALES_EMPLOYEE', 'ACCOUNTANT']);
-export const requireBusinessAdmin = requireRole(['ADMIN', 'SUPER_ADMIN', 'SALES_MANAGER']);
-export const requireAccountantOrAdmin = requireRole(['ADMIN', 'SUPER_ADMIN', 'SALES_MANAGER', 'ACCOUNTANT']);
+export const requireBusinessRole = requireRole(['ADMIN', 'SUPER_ADMIN', 'SALES_HR_MANAGER', 'SALES_MANAGER', 'SALES_EMPLOYEE', 'ACCOUNTANT']);
+export const requireBusinessAdmin = requireRole(['ADMIN', 'SUPER_ADMIN', 'SALES_HR_MANAGER', 'SALES_MANAGER']);
+export const requireAccountantOrAdmin = requireRole(['ADMIN', 'SUPER_ADMIN', 'SALES_HR_MANAGER', 'SALES_MANAGER', 'ACCOUNTANT']);

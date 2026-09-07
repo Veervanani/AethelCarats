@@ -1,6 +1,6 @@
-<?php
+﻿<?php
 /**
- * Floksy Jewel — Products & Catalog Controller
+ * Aura Diamond Atelier — Products & Catalog Controller
  * Migrated from Node.js (productController.ts, filterController.ts) to PHP 8.3 / PDO MySQL
  */
 
@@ -28,7 +28,7 @@ if (!function_exists('getEtsyDescriptionMap')) {
             $csvPath = __DIR__ . '/../EtsyListingsDownload.csv';
         }
         if (!file_exists($csvPath)) {
-            $csvPath = 'd:/Floksy Jewel/EtsyListingsDownload.csv';
+            $csvPath = 'd:/Aura Diamond Atelier/EtsyListingsDownload.csv';
         }
 
         if (file_exists($csvPath) && ($handle = @fopen($csvPath, 'r')) !== false) {
@@ -68,10 +68,10 @@ if (!function_exists('getFullDescriptionForProduct')) {
         ensureDescriptionSchemaFix();
         $dbFull = trim($product['fullDescription'] ?? ($product['description'] ?? ''));
 
-        $standardSuffix = "\n\n💎 Handcrafted & Made to Order\nEvery piece we make is done to order right here in our Surat workshop. We never grab pre-made items off a shelf. Our team casts the metal and sets your stones one by one, which means your jewelry gets a proper, secure setting that can handle everyday life. If you need an engagement ring or just want a new piece for yourself, we put it together the right way.\n━━━━━━━━━━━━━━━━━━\n🎨 Customize Your Design\nWe handle both loose diamond sourcing and finished custom jewelry in-house, so changing up a design is no problem at all.\n✔️ Want a bigger center stone?\n✔️ Need a different prong style?\n✔️ Looking for a matching band?\n✔️ Need help sourcing a specific stone?\n✔️ Want a totally new custom design?\nSend over a message and we can work out the details.\n━━━━━━━━━━━━━━━━━━\n🚚 Production & Delivery\n⏱️ Crafting Time: Give us 7 to 12 business days to make it.\n🌐 Delivery: Secure shipping anywhere in the world.\n🎁 Packaging: Arrives packed and ready to gift.\n━━━━━━━━━━━━━━━━━━\n📋 Cancellations & Returns\n* Canceled within 3 hours: 10% fee applies.\n* Canceled after 6 hours: 20% fee applies.\n* Returns: Let us know within 7 days of delivery. Keep in mind that anything custom-made, personalized, or engraved is a final sale.\n━━━━━━━━━━━━━━━━━━\n❤️ About Floksy Jewel\nFloksy Jewel is an actual manufacturing workshop based in Surat. We do not use middlemen. We source the loose lab-grown and natural diamonds ourselves, and we cast and polish the final custom jewelry right here. That means you get the piece straight from the source.\n📩 Reach out if you need advice on picking a stone or want to start a custom build!";
+        $standardSuffix = "\n\n💎 Handcrafted & Made to Order\nEvery piece we make is done to order right here in our workshop. We never grab pre-made items off a shelf. Our master jewelers cast the metal and set your stones one by one, which means your jewelry gets a proper, secure setting that can handle everyday life. If you need an engagement ring or just want a new bespoke piece, we create it to perfection.\n━━━━━━━━━━━━━━━━━━\n🎨 Customize Your Design\nWe handle both loose diamond sourcing and finished custom jewelry in-house, so changing up a design is no problem at all.\n✔️ Want a bigger center stone?\n✔️ Need a different prong style?\n✔️ Looking for a matching band?\n✔️ Need help sourcing a specific stone?\n✔️ Want a totally new custom design?\nSend over a message and we can work out the details.\n━━━━━━━━━━━━━━━━━━\n🚚 Production & Delivery\n⏱️ Crafting Time: Give us 7 to 12 business days to make it.\n🌐 Delivery: Secure insured shipping anywhere in the world.\n🎁 Packaging: Arrives packed in luxury presentation box, ready to gift.\n━━━━━━━━━━━━━━━━━━\n📋 Cancellations & Returns\n* Canceled within 3 hours: 10% fee applies.\n* Canceled after 6 hours: 20% fee applies.\n* Returns: Let us know within 7 days of delivery. Keep in mind that anything custom-made, personalized, or engraved is a final sale.\n━━━━━━━━━━━━━━━━━━\n❤️ About Aura Diamond Atelier\nAura Diamond Atelier is a premier fine jewellery atelier. We source certified loose lab-grown and natural diamonds directly, and we cast and hand-finish every piece of fine jewellery in-house.\n📩 Reach out if you need advice on picking a stone or want to start a custom build!";
 
         // If dbFull is already complete (> 600 chars and has section headers), return it
-        if (!empty($dbFull) && strlen($dbFull) > 600 && str_contains($dbFull, 'Handcrafted') && str_contains($dbFull, 'Floksy Jewel')) {
+        if (!empty($dbFull) && strlen($dbFull) > 600 && str_contains($dbFull, 'Handcrafted') && str_contains($dbFull, 'Aura Diamond Atelier')) {
             return $dbFull;
         }
 
@@ -113,7 +113,7 @@ if (!function_exists('getFullDescriptionForProduct')) {
         }
 
         if (empty($cleanBase)) {
-            $cleanBase = !empty($title) ? $title : 'Floksy Jewel Fine Jewelry Piece';
+            $cleanBase = !empty($title) ? $title : 'Aura Atelier Fine Jewellery Piece';
         }
 
         return $cleanBase . $standardSuffix;
@@ -141,18 +141,18 @@ if (!function_exists('mapProductResponse')) {
         if (!$primaryImage && count($images) > 0) {
             $primaryImage = $images[0]['url'];
         }
-        if (!$primaryImage && !empty($product['mainImage']) && $product['mainImage'] !== '/assets/floksy_rings_cat.png') {
+        if (!$primaryImage && !empty($product['mainImage']) && $product['mainImage'] !== '/assets/gem_rings_cat.png') {
             $primaryImage = $product['mainImage'];
         }
         if (!$primaryImage) {
-            $primaryImage = $product['mainImage'] ?? '/assets/floksy_rings_cat.png';
+            $primaryImage = $product['mainImage'] ?? '/assets/gem_rings_cat.png';
         }
 
         $secondaryImage = null;
         if (count($images) > 1) {
             $secondaryImage = $images[1]['url'];
         }
-        if (!$secondaryImage && !empty($product['secondaryImage']) && $product['secondaryImage'] !== '/assets/floksy_rings_cat_2.png') {
+        if (!$secondaryImage && !empty($product['secondaryImage']) && $product['secondaryImage'] !== '/assets/gem_rings_cat.png') {
             $secondaryImage = $product['secondaryImage'];
         }
         if (!$secondaryImage) {
@@ -184,9 +184,9 @@ if (!function_exists('mapProductResponse')) {
         ]);
 
         $accordionsConfig = safeJsonParse($product['accordionsConfig'] ?? null, [
-            ['id' => 'experience', 'title' => 'YOUR FLOKSY JEWEL EXPERIENCE', 'content' => 'Every creation is handcrafted in our Surat atelier using certified conflict-free diamonds and 100% recycled precious metals.'],
+            ['id' => 'experience', 'title' => 'YOUR ATELIER EXPERIENCE', 'content' => 'Every creation is handcrafted in our atelier using certified conflict-free diamonds and 100% recycled precious metals.'],
             ['id' => 'details', 'title' => 'PRODUCT & DIAMOND SPECIFICATIONS', 'content' => 'Each diamond is individually selected for optimum brilliance, fire, and symmetry. Hand-set under 40x microscopic precision with official IGI / GIA certification detailing cut, color, clarity, and carat weight.'],
-            ['id' => 'craftsmanship', 'title' => 'CRAFTSMANSHIP & SUSTAINABILITY', 'content' => 'Handcrafted in our Surat atelier using 100% recycled solid gold. Ethically created with 100% Kimberley Process certified, conflict-free lab-grown & natural diamonds.'],
+            ['id' => 'craftsmanship', 'title' => 'CRAFTSMANSHIP & SUSTAINABILITY', 'content' => 'Handcrafted in our atelier using 100% recycled solid gold. Ethically created with 100% Kimberley Process certified, conflict-free lab-grown & natural diamonds.'],
             ['id' => 'shipping', 'title' => 'SHIPPING & DELIVERY', 'content' => 'After order confirmation, your order will be dispatched within 7-10 working days. Once dispatched, delivery is estimated within an additional 7-10 working days. All shipments are sent via fully insured Priority Air for secure and reliable delivery.']
         ]);
 
@@ -239,7 +239,7 @@ if (!function_exists('mapProductResponse')) {
         $isOnSale = $onSaleFlag || ($comparePrice !== null && $comparePrice > $effectivePrice);
         $salePrice = $isOnSale ? $effectivePrice : null;
 
-        $title = $product['title'] ?? ($product['name'] ?? 'Floksy Jewel Product');
+        $title = $product['title'] ?? ($product['name'] ?? 'Aura Atelier Creation');
         $diamondDetails = safeJsonParse($product['diamondDetailsJson'] ?? null, [
             'shape' => $product['shape'] ?? 'Round',
             'caratWeight' => (float) ($product['carat'] ?? 1.0),
@@ -263,7 +263,7 @@ if (!function_exists('mapProductResponse')) {
             'socialImage' => $product['ogImage'] ?? $primaryImage,
             'twitterTitle' => $product['metaTitle'] ?? $title,
             'twitterDescription' => $product['metaDescription'] ?? ($product['shortDescription'] ?? ''),
-            'canonicalUrl' => !empty($product['slug']) ? "https://floksyjewel.com/product/{$product['slug']}" : ''
+            'canonicalUrl' => !empty($product['slug']) ? "https://auroradiamonds.com/product/{$product['slug']}" : ''
         ]);
 
         $rawFull = getFullDescriptionForProduct($product);
@@ -392,7 +392,7 @@ if (!function_exists('mapProductResponse')) {
                         'verified' => true,
                         'date' => isset($r['createdAt']) ? date('m/d/y', strtotime($r['createdAt'])) : date('m/d/y'),
                         'createdAt' => $r['createdAt'] ?? date('Y-m-d H:i:s'),
-                        'productReviewed' => $r['productName'] ?? ($product['title'] ?? ($product['name'] ?? 'Floksy Jewel Creation')),
+                        'productReviewed' => $r['productName'] ?? ($product['title'] ?? ($product['name'] ?? 'Aura Atelier Creation')),
                         'response' => $r['response'] ?? null
                     ];
                 }, $rawList);
@@ -780,7 +780,7 @@ function handleAdminProductPageContent(): void {
             $defaultContent = [
                 'id' => $productId,
                 'productId' => $productId,
-                'heroTitle' => 'FLOKSY JEWEL ATELIER',
+                'heroTitle' => 'AURA DIAMOND ATELIER',
                 'heroSubtitle' => 'Handcrafted Fine Jewellery',
                 'heroShortDescription' => 'Discover master-crafted certified lab-grown & natural diamond creations.',
                 'heroAnnouncement' => 'Complimentary Priority Shipping & Insured Delivery',
@@ -791,19 +791,19 @@ function handleAdminProductPageContent(): void {
                     ['icon' => 'Award', 'title' => 'GIA / IGI Certification']
                 ]),
                 'accordionsJson' => json_encode([
-                    ['id' => 'experience', 'title' => 'YOUR FLOKSY JEWEL EXPERIENCE', 'content' => 'Every creation is handcrafted in our Surat atelier using certified conflict-free diamonds and 100% recycled precious metals.'],
+                    ['id' => 'experience', 'title' => 'YOUR ATELIER EXPERIENCE', 'content' => 'Every creation is handcrafted in our atelier using certified conflict-free diamonds and 100% recycled precious metals.'],
                     ['id' => 'details', 'title' => 'PRODUCT & DIAMOND SPECIFICATIONS', 'content' => 'Each diamond is individually selected for optimum brilliance, fire, and symmetry. Hand-set under 40x microscopic precision with official IGI / GIA certification detailing cut, color, clarity, and carat weight.'],
-                    ['id' => 'craftsmanship', 'title' => 'CRAFTSMANSHIP & SUSTAINABILITY', 'content' => 'Handcrafted in our Surat atelier using 100% recycled solid gold. Ethically created with 100% Kimberley Process certified, conflict-free lab-grown & natural diamonds.'],
+                    ['id' => 'craftsmanship', 'title' => 'CRAFTSMANSHIP & SUSTAINABILITY', 'content' => 'Handcrafted in our atelier using 100% recycled solid gold. Ethically created with 100% Kimberley Process certified, conflict-free lab-grown & natural diamonds.'],
                     ['id' => 'shipping', 'title' => 'SHIPPING & DELIVERY', 'content' => 'After order confirmation, your order will be dispatched within 7-10 working days. Once dispatched, delivery is estimated within an additional 7-10 working days. All shipments are sent via fully insured Priority Air for secure and reliable delivery.']
                 ]),
-                'packagingImageUrl' => '/assets/floksy_ring_box.png'
+                'packagingImageUrl' => '/assets/gem_ring_box.png'
             ];
             jsonResponse(['content' => $defaultContent, 'id' => $productId, 'productId' => $productId], 200);
             return;
         }
 
         // Dynamically sanitize stored content fields
-        $content['packagingImageUrl'] = '/assets/floksy_ring_box.png';
+        $content['packagingImageUrl'] = '/assets/gem_ring_box.png';
         if (isset($content['accordionsJson']) && is_string($content['accordionsJson'])) {
             $content['accordionsJson'] = str_replace('FedEx Priority Air', 'Priority Air', $content['accordionsJson']);
             $content['accordionsJson'] = str_replace('FedEx locations', 'express courier locations', $content['accordionsJson']);
@@ -1013,7 +1013,7 @@ function handleGetRingSizeGuide(): void {
                 'slug'          => 'find-your-ring-size',
                 'status'        => 'PUBLISHED',
                 'heroTitle'     => 'FIND YOUR PERFECT RING SIZE',
-                'heroSubtitle'  => 'Comprehensive Floksy Jewel Sizing Guide',
+                'heroSubtitle'  => 'Comprehensive Aura Atelier Sizing Guide',
                 'infoHeading'   => 'International Ring Size Conversion',
                 'infoDescription' => 'Measure your finger diameter or convert existing ring sizes using our standardized international chart.'
             ], 200);
@@ -1317,10 +1317,10 @@ function handleProductDetailsRoute(string $id): void {
  */
 function handleDownloadProductImportTemplate(): void {
     $csv = "product_name,sku,slug,jewelry_type,category,status,description,seo_title,meta_description\n";
-    $csv .= "Floksy Jewel Demo Ring,FJ-DEMO-001,floksy-jewel-demo-ring,Ring,Rings,Draft,A luxury Floksy Jewel solitaire engagement ring designed with customizable options.,Floksy Jewel Demo Ring | Luxury Diamond Ring,Luxury customizable solitaire diamond ring.\n";
+    $csv .= "Aura Signature Solitaire Ring,AD-DEMO-RING-001,aura-signature-solitaire-ring,Ring,Rings,Draft,A luxury solitaire diamond ring handcrafted to perfection.,Aura Signature Solitaire Ring | Luxury Diamond Ring,Luxury customizable solitaire diamond ring.\n";
 
     header('Content-Type: text/csv; charset=utf-8');
-    header('Content-Disposition: attachment; filename="floksy-jewel-product-import-template.csv"');
+    header('Content-Disposition: attachment; filename="aura-product-import-template.csv"');
     echo $csv;
     exit;
 }
@@ -1600,7 +1600,7 @@ function handleValidateProductBulkUpload(): void {
             'image1'          => $images[0] ?? '',
             'image2'          => $images[1] ?? '',
             'currency'        => $row['CURRENCY_CODE'] ?? 'USD',
-            'seoTitle'        => $row['seo_title'] ?? "{$name} | Floksy Jewel",
+            'seoTitle'        => $row['seo_title'] ?? "{$name} | Aura Diamond Atelier",
             'metaDescription' => $row['meta_description'] ?? '',
             'isDuplicate'     => $isDuplicate,
             'isValid'         => true,
@@ -1686,7 +1686,7 @@ function handleExecuteProductBulkUpload(): void {
                     'images'       => $imgs,
                     'image1'       => $imgs[0] ?? '',
                     'image2'       => $imgs[1] ?? '',
-                    'seoTitle'     => $row['seo_title'] ?? "{$name} | Floksy Jewel",
+                    'seoTitle'     => $row['seo_title'] ?? "{$name} | Aura Diamond Atelier",
                     'metaDescription' => $row['meta_description'] ?? ''
                 ];
             }
@@ -1701,7 +1701,7 @@ function handleExecuteProductBulkUpload(): void {
 
         foreach ($products as $p) {
             $name = trim($p['name'] ?? 'Jewellery Item');
-            $sku  = trim($p['sku'] ?? ('FJ-BLK-' . rand(1000, 9999)));
+            $sku  = trim($p['sku'] ?? ('AD-BLK-' . rand(1000, 9999)));
             $slug = trim($p['slug'] ?? strtolower(trim(preg_replace('/[^a-z0-9]+/i', '-', $name), '-')));
             $categoryName = trim($p['categoryName'] ?? ($p['category'] ?? 'Rings'));
             $status = strtoupper($p['status'] ?? 'ACTIVE');
@@ -1726,7 +1726,7 @@ function handleExecuteProductBulkUpload(): void {
                 if (!empty($p['mainImage'])) $extractedImages[] = $p['mainImage'];
             }
 
-            $mainImage = !empty($extractedImages[0]) ? $extractedImages[0] : '/assets/floksy_rings_cat.png';
+            $mainImage = !empty($extractedImages[0]) ? $extractedImages[0] : '/assets/gem_rings_cat.png';
             $secImage = !empty($extractedImages[1]) ? $extractedImages[1] : null;
 
             // Find or create Category

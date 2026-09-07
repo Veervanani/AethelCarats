@@ -1,6 +1,6 @@
-<?php
+﻿<?php
 /**
- * Floksy Jewel — Payment, PayPal, Receipt, Invoice & Financial Management Controller
+ * Aura Diamond Atelier — Payment, PayPal, Receipt, Invoice & Financial Management Controller
  * Migrated from Node.js (paymentController.ts, paypalController.ts, refundController.ts, statementController.ts) to PHP 8.3 / PDO MySQL
  */
 
@@ -63,7 +63,7 @@ function handleCreatePayPalOrder(): void {
     $body = json_decode($rawInput, true) ?? $_POST;
     $amount = (float) ($body['amount'] ?? 0);
     $currency = $body['currency'] ?? 'USD';
-    $description = $body['description'] ?? 'Floksy Jewel Order';
+    $description = $body['description'] ?? 'Aura Diamond Atelier Order';
 
     if ($amount <= 0) {
         jsonError('Valid payment amount is required', 400);
@@ -580,16 +580,16 @@ function handleGetPaymentSettings(): void {
         $rows = $stmt->fetchAll();
 
         $settings = [
-            'company_name' => 'FLOKSY JEWEL ATELIER',
+            'company_name' => 'AURA DIAMOND ATELIER',
             'company_address' => '740 Fifth Avenue, Suite 1800, New York, NY 10019',
-            'company_email' => 'contact@floksyjewel.com',
-            'company_phone' => '+91973785306',
+            'company_email' => 'concierge@auroradiamonds.com',
+            'company_phone' => '+1 (800) 555-2872',
             'company_tax_id' => 'US-TAX-88492019',
             'default_currency' => 'USD',
             'default_tax_rate' => '0',
-            'invoice_notes' => 'Thank you for choosing Floksy Jewel Atelier.',
+            'invoice_notes' => 'Thank you for choosing Aura Diamond Atelier.',
             'receipt_notes' => 'Official payment receipt.',
-            'statement_footer_text' => 'For inquiries regarding this statement, contact contact@floksyjewel.com.',
+            'statement_footer_text' => 'For inquiries regarding this statement, contact concierge@auroradiamonds.com.',
             'paypal_client_id' => '',
             'paypal_client_secret' => '',
             'paypal_mode' => 'sandbox',
@@ -614,7 +614,7 @@ function handleGetPaymentSettings(): void {
     } catch (Throwable $e) {
         error_log("handleGetPaymentSettings error: " . $e->getMessage());
         jsonResponse([
-            'company_name' => 'FLOKSY JEWEL ATELIER',
+            'company_name' => 'AURA DIAMOND ATELIER',
             'paypal_mode' => 'sandbox',
             'currency' => 'USD'
         ], 200);

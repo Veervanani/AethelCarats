@@ -1,4 +1,4 @@
-import { Response } from 'express';
+﻿import { Response } from 'express';
 import { AuthRequest } from '../middleware/auth';
 import prisma from '../prisma';
 
@@ -81,7 +81,7 @@ const DEFAULT_PRODUCT_SECTIONS = [
     description: 'General narrative overview, craftsmanship highlights, and diamond description.',
     displayOrder: 0,
     items: [
-      { title: 'Product Description', description: 'A luxury Floksy Jewel creation handcrafted in Surat, India.', displayOrder: 0 },
+      { title: 'Product Description', description: 'A luxury Aura Diamond Atelier creation handcrafted in Surat, India.', displayOrder: 0 },
       { title: 'Craftsmanship Description', description: 'Hand-set under 40x microscopic precision by master artisans.', displayOrder: 1 },
       { title: 'Diamond & Gemstone Description', description: 'Certified conflict-free diamonds with Kimberley Process compliance.', displayOrder: 2 },
       { title: 'Customization Options', description: 'Customizable with 7 precious metal selections and bespoke engraving.', displayOrder: 3 }
@@ -89,11 +89,11 @@ const DEFAULT_PRODUCT_SECTIONS = [
   },
   {
     type: 'EXPERIENCE',
-    title: 'YOUR FLOKSY JEWEL EXPERIENCE',
+    title: 'YOUR AURA DIAMOND ATELIER EXPERIENCE',
     description: 'Luxury atelier benefits and white-glove experience assurances.',
     displayOrder: 1,
     items: [
-      { title: 'Expert Guidance', description: 'Consult directly with Floksy Jewel specialists for sizing and diamond guidance.', icon: 'UserCheck', displayOrder: 0 },
+      { title: 'Expert Guidance', description: 'Consult directly with Aura Diamond Atelier specialists for sizing and diamond guidance.', icon: 'UserCheck', displayOrder: 0 },
       { title: 'Bespoke Craftsmanship', description: 'Custom CAD 3D photorealistic rendering and master goldsmithing.', icon: 'Sparkles', displayOrder: 1 },
       { title: 'Quality Assurance', description: 'Independently certified by GIA / IGI with 40x microscopic quality control.', icon: 'ShieldCheck', displayOrder: 2 },
       { title: 'Lifetime Service', description: 'Includes complimentary annual prong checking, sizing, and professional cleaning.', icon: 'Award', displayOrder: 3 }

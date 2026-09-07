@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react';
+﻿import React, { useState, useRef } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import styled, { keyframes } from 'styled-components';
 import {
@@ -323,7 +323,7 @@ export const AdminBulkProductUploadPage: React.FC = () => {
       const url = window.URL.createObjectURL(new Blob([response.data]));
       const link = document.createElement('a');
       link.href = url;
-      link.setAttribute('download', 'floksy-jewel-product-import-template.xlsx');
+      link.setAttribute('download', 'aura-product-import-template.xlsx');
       document.body.appendChild(link);
       link.click();
       link.remove();
@@ -464,7 +464,7 @@ export const AdminBulkProductUploadPage: React.FC = () => {
       const url = window.URL.createObjectURL(blob);
       const link = document.createElement('a');
       link.href = url;
-      link.setAttribute('download', 'floksy-import-error-report.xlsx');
+      link.setAttribute('download', 'aura-import-error-report.xlsx');
       document.body.appendChild(link);
       link.click();
       link.remove();
@@ -589,7 +589,7 @@ export const AdminBulkProductUploadPage: React.FC = () => {
     <div>
       <AdminPageHeader
         title="Bulk Product Upload"
-        description="Upload multiple products, pricing matrix, and media assets using Etsy CSV files (e.g. EtsyListingsDownload.csv), Shopify CSV, or Floksy Excel templates."
+        description="Upload multiple products, pricing matrix, and media assets using Etsy CSV files (e.g. EtsyListingsDownload.csv), Shopify CSV, or Aura Excel templates."
         actions={
           <div style={{ display: 'flex', gap: '10px' }}>
             <AdminButton
@@ -654,7 +654,7 @@ export const AdminBulkProductUploadPage: React.FC = () => {
               <DropZone $hasFile={Boolean(excelFile)} onClick={() => excelInputRef.current?.click()}>
                 <FileSpreadsheet size={36} className="icon" />
                 <div className="title">{excelFile ? excelFile.name : 'Choose CSV or Excel File (.csv, .xlsx, .xls)'}</div>
-                <div className="sub">{excelFile ? `${(excelFile.size / 1024).toFixed(1)} KB` : 'Supports Etsy CSV (EtsyListingsDownload.csv), Shopify, & Floksy Excel'}</div>
+                <div className="sub">{excelFile ? `${(excelFile.size / 1024).toFixed(1)} KB` : 'Supports Etsy CSV (EtsyListingsDownload.csv), Shopify, & Aura Excel'}</div>
               </DropZone>
             </Card>
 

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+﻿import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
 import { businessApi } from '../services/businessApi';
 import { BusinessDashboardMetrics } from '../types';
@@ -245,7 +245,7 @@ export const BusinessDashboardPage: React.FC = () => {
   const [month, setMonth] = useState<string>('All Months');
   const [currencyView, setCurrencyView] = useState<'USD' | 'INR'>('USD');
   const [dollarRate, setDollarRate] = useState<number>(() => {
-    const cached = localStorage.getItem('fj_biz_fx_rate');
+    const cached = localStorage.getItem('biz_fx_rate');
     return cached && !isNaN(Number(cached)) && Number(cached) > 0 ? Number(cached) : 94.55;
   });
 
@@ -258,7 +258,7 @@ export const BusinessDashboardPage: React.FC = () => {
           const dbRate = Number(res.settings.dollarRate);
           if (!isNaN(dbRate) && dbRate > 0) {
             setDollarRate(dbRate);
-            localStorage.setItem('fj_biz_fx_rate', String(dbRate));
+            localStorage.setItem('biz_fx_rate', String(dbRate));
           }
         }
       })
@@ -278,7 +278,7 @@ export const BusinessDashboardPage: React.FC = () => {
       if (res?.metrics?.dollarRate) {
         const metricRate = Number(res.metrics.dollarRate);
         if (!isNaN(metricRate) && metricRate > 0) {
-          localStorage.setItem('fj_biz_fx_rate', String(metricRate));
+          localStorage.setItem('biz_fx_rate', String(metricRate));
         }
       }
     } catch (e) {
@@ -295,7 +295,7 @@ export const BusinessDashboardPage: React.FC = () => {
   const handleDollarRateChange = (newVal: number) => {
     setDollarRate(newVal);
     if (!isNaN(newVal) && newVal > 0) {
-      localStorage.setItem('fj_biz_fx_rate', String(newVal));
+      localStorage.setItem('biz_fx_rate', String(newVal));
       // Immediately persist to MySQL database
       businessApi.updateSettings({ dollarRate: newVal, defaultFxRate: newVal }).catch((err) => {
         console.error('Failed to sync dollar rate to database:', err);

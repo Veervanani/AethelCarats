@@ -111,124 +111,62 @@ export const GlobalStyle = createGlobalStyle`
     color: ${theme.colors.white};
   }
 
-  /* Keyframe Animations */
-  @keyframes fadeInUp {
-    from {
-      opacity: 0;
-      transform: translateY(16px);
-    }
-    to {
-      opacity: 1;
-      transform: translateY(0);
-    }
+  /* =========================================================================
+     GLOBAL NO-ANIMATION ENFORCEMENT SITE-WIDE
+     ========================================================================= */
+  *, *::before, *::after {
+    animation: none !important;
+    animation-duration: 0s !important;
+    animation-delay: 0s !important;
+    animation-iteration-count: 1 !important;
+    transition: none !important;
+    transition-duration: 0s !important;
+    transition-delay: 0s !important;
+    scroll-behavior: auto !important;
   }
 
-  @keyframes fadeIn {
-    from { opacity: 0; }
-    to { opacity: 1; }
+  /* Force immediate full visibility on all content */
+  .fj-reveal, .fj-reveal-img, .fj-reveal.fj-reveal-active, .fj-reveal-img.fj-reveal-active {
+    opacity: 1 !important;
+    transform: none !important;
+    transition: none !important;
+    animation: none !important;
   }
 
-  @keyframes shimmer {
-    0% { background-position: -200% 0; }
-    100% { background-position: 200% 0; }
+  .fade-in-up, .shimmer-bg {
+    animation: none !important;
+    opacity: 1 !important;
+    transform: none !important;
   }
 
-  @keyframes fjMarqueeScroll {
-    0% {
-      transform: translate3d(0, 0, 0);
-    }
-    100% {
-      transform: translate3d(-50%, 0, 0);
-    }
+  /* Standard cross-browser scrollbar */
+  * {
+    scrollbar-width: thin;
+    scrollbar-color: #C9A96E transparent;
   }
 
-  @keyframes pulseGlow {
-    0%, 100% {
-      box-shadow: 0 0 0 0 rgba(201, 164, 92, 0.4);
-    }
-    50% {
-      box-shadow: 0 0 0 12px rgba(201, 164, 92, 0);
-    }
-  }
-
-  @keyframes scaleIn {
-    from {
-      opacity: 0;
-      transform: scale(0.96);
-    }
-    to {
-      opacity: 1;
-      transform: scale(1);
-    }
-  }
-
-  /* Utility Classes for Micro-Interactions */
-  .fade-in-up {
-    animation: fadeInUp 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards;
-  }
-
-  .shimmer-bg {
-    background: linear-gradient(90deg, #f2ede4 25%, #faf8f5 50%, #f2ede4 75%);
-    background-size: 200% 100%;
-    animation: shimmer 1.8s infinite;
-  }
-
-  /* Custom luxury scrollbar */
+  /* Custom luxury scrollbar - clearly visible in both Admin and Storefront */
   ::-webkit-scrollbar {
-    width: 6px;
-    height: 6px;
+    width: 8px;
+    height: 8px;
   }
 
   ::-webkit-scrollbar-track {
-    background: ${theme.colors.background};
+    background: transparent;
   }
 
   ::-webkit-scrollbar-thumb {
-    background: ${theme.colors.border};
-    border-radius: 3px;
+    background: #C9A96E;
+    border-radius: 4px;
+    border: 1px solid rgba(255, 255, 255, 0.15);
   }
 
   ::-webkit-scrollbar-thumb:hover {
-    background: ${theme.colors.gold};
+    background: #DFCA9B;
   }
 
-  /* GPU-Accelerated 10/10 Scroll Reveal & Stagger Animation Tokens */
-  .fj-reveal {
-    opacity: 0;
-    transform: translate3d(0, 35px, 0);
-    transition: opacity 0.85s cubic-bezier(0.22, 1, 0.36, 1), transform 0.85s cubic-bezier(0.22, 1, 0.36, 1);
-    will-change: opacity, transform;
-  }
-
-  .fj-reveal-img {
-    opacity: 0;
-    transform: translate3d(0, 25px, 0) scale(1.015);
-    transition: opacity 0.9s cubic-bezier(0.22, 1, 0.36, 1), transform 0.9s cubic-bezier(0.22, 1, 0.36, 1);
-    will-change: opacity, transform;
-  }
-
-  .fj-reveal.fj-reveal-active, .fj-reveal-img.fj-reveal-active {
-    opacity: 1;
-    transform: translate3d(0, 0, 0) scale(1);
-  }
-
-  .fj-stagger-1 { transition-delay: 0.08s; }
-  .fj-stagger-2 { transition-delay: 0.16s; }
-  .fj-stagger-3 { transition-delay: 0.24s; }
-  .fj-stagger-4 { transition-delay: 0.32s; }
-
-  /* Respect User Motion Preferences */
-  @media (prefers-reduced-motion: reduce) {
-    *, *::before, *::after {
-      animation-duration: 0.01ms !important;
-      animation-iteration-count: 1 !important;
-      transition-duration: 0.01ms !important;
-      scroll-behavior: auto !important;
-    }
-    .fj-reveal, .fj-reveal-img {
-      opacity: 1 !important;
-      transform: none !important;
-    }
+  ::-webkit-scrollbar-thumb:active {
+    background: #B38E4F;
   }
 
   /* Sticky Layout Fix: Prevent overflow rules on html, body, #root from breaking position: sticky */

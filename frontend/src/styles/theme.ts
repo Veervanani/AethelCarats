@@ -1,25 +1,27 @@
 export const theme = {
   colors: {
-    background: '#FAF9F6',       // Luxury Soft Ivory Canvas
-    gold: '#C9A45C',             // Signature Luxury Gold
-    deepGold: '#B8934B',         // Rich Gold Hover / Active State
-    champagne: '#E6C687',        // Warm Metallic Highlight Accent
-    textPrimary: '#171717',      // Ultra-Deep Charcoal / Obsidian Text
-    textSecondary: '#6E6B65',    // Refined Muted Warm Gray
-    textMuted: '#9B968D',        // Light Muted Subtext
-    border: '#E6E1D7',           // Subtle Luxury Border
-    borderLight: '#F2EDE4',      // Soft Inner Divider Line
-    white: '#FFFFFF',            // Pure White Surface
+    background: '#0B0B0B',       // Deep Charcoal Black Canvas
+    surface: '#151515',          // Soft Black Card & Modal Surface
+    surfaceElevated: '#1C1C1C',  // Elevated Soft Black Surface
+    gold: '#C9A96E',             // Champagne Gold Accent
+    deepGold: '#B89656',         // Rich Champagne Gold Hover / Active State
+    champagne: '#C9A96E',        // Champagne Gold Highlight
+    textPrimary: '#F5F1E8',      // Warm Ivory Luxury Text
+    textSecondary: '#D8D2C5',    // Soft Ivory / Refined Muted Text
+    textMuted: '#A8A8A8',        // Muted Grey Subtext & Helper
+    border: 'rgba(140, 116, 75, 0.25)', // Subtle Gold Border
+    borderLight: 'rgba(201, 169, 110, 0.15)', // Soft Inner Gold Divider Line
+    goldBorder: '#8C744B',       // Subtle Champagne Gold Border
+    white: '#FFFFFF',            // Pure White
     pureWhite: '#FFFFFF',
-    surface: '#FFFFFF',
-    lightGold: '#FAF5EB',        // Gentle Gold Tinted Background
-    goldGlow: 'rgba(201, 164, 92, 0.18)', // Soft Glow Aura
-    darkBg: '#0F1317',           // Deep Atelier Charcoal Background
-    darkSurface: '#161B22',      // Atelier Card Surface
-    darkBorder: '#28303B',       // Atelier Subtle Border
+    lightGold: '#1C1914',        // Gentle Dark Gold-Tinted Surface
+    goldGlow: 'rgba(201, 169, 110, 0.22)', // Soft Gold Glow Aura
+    darkBg: '#0B0B0B',           // Deep Atelier Black Background
+    darkSurface: '#151515',      // Atelier Card Surface
+    darkBorder: '#8C744B',       // Atelier Subtle Gold Border
     success: '#2E7D32',
-    error: '#D32F2F',
-    warning: '#ED6C02',
+    error: '#E53E3E',
+    warning: '#D97706',
   },
   fonts: {
     heading: "'Cormorant Garamond', 'Playfair Display', Georgia, serif",

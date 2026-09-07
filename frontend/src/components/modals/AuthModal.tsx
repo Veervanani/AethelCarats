@@ -10,7 +10,7 @@ const Overlay = styled.div<{ $isOpen: boolean }>`
   left: 0;
   right: 0;
   bottom: 0;
-  background-color: rgba(24, 23, 21, 0.72);
+  background-color: rgba(0, 0, 0, 0.85);
   backdrop-filter: blur(8px);
   z-index: 9999;
   display: ${({ $isOpen }) => ($isOpen ? 'flex' : 'none')};
@@ -26,13 +26,13 @@ const Overlay = styled.div<{ $isOpen: boolean }>`
 `;
 
 const ModalCard = styled.div`
-  background: #ffffff;
-  border: 1px solid #d9d3c7;
+  background: #151515;
+  border: 1px solid rgba(140, 116, 75, 0.35);
   width: 100%;
   max-width: 520px;
   position: relative;
   padding: 44px 40px;
-  box-shadow: 0 24px 60px rgba(31, 31, 31, 0.18), 0 0 0 1px rgba(201, 164, 92, 0.25);
+  box-shadow: 0 24px 60px rgba(0, 0, 0, 0.8), 0 0 30px rgba(201, 169, 110, 0.15);
   box-sizing: border-box;
   animation: modalScaleUp 0.35s cubic-bezier(0.16, 1, 0.3, 1);
   border-radius: 4px;
@@ -59,12 +59,12 @@ const CloseButton = styled.button`
   position: absolute;
   top: 18px;
   right: 18px;
-  background: #faf8f5;
-  border: 1px solid #e8e3d9;
+  background: #111111;
+  border: 1px solid rgba(140, 116, 75, 0.25);
   border-radius: 50%;
   width: 34px;
   height: 34px;
-  color: #1f1f1f;
+  color: #F5F1E8;
   cursor: pointer;
   display: flex;
   align-items: center;
@@ -72,8 +72,8 @@ const CloseButton = styled.button`
   transition: all 0.25s ease;
 
   &:hover {
-    color: #c9a45c;
-    border-color: #c9a45c;
+    color: #C9A96E;
+    border-color: #C9A96E;
     transform: rotate(90deg);
   }
 `;
@@ -88,12 +88,12 @@ const HeaderSection = styled.div`
     justify-content: center;
     width: 44px;
     height: 44px;
-    background: linear-gradient(135deg, #faf5eb 0%, #f4eae0 100%);
-    border: 1px solid #c9a45c;
+    background: linear-gradient(135deg, #1f1f1f 0%, #111111 100%);
+    border: 1px solid #C9A96E;
     border-radius: 50%;
     margin-bottom: 12px;
-    color: #c9a45c;
-    box-shadow: 0 4px 14px rgba(201, 164, 92, 0.15);
+    color: #C9A96E;
+    box-shadow: 0 4px 14px rgba(201, 169, 110, 0.25);
   }
 
   .brand-sub {
@@ -101,7 +101,7 @@ const HeaderSection = styled.div`
     font-weight: 700;
     letter-spacing: 0.22em;
     text-transform: uppercase;
-    color: #c9a45c;
+    color: #C9A96E;
     margin-bottom: 6px;
   }
 
@@ -110,7 +110,7 @@ const HeaderSection = styled.div`
     font-size: 2.2rem;
     letter-spacing: 0.08em;
     text-transform: uppercase;
-    color: #1f1f1f;
+    color: #F5F1E8;
     margin: 0 0 10px 0;
     font-weight: 500;
   }
@@ -118,7 +118,7 @@ const HeaderSection = styled.div`
   .gold-divider {
     width: 48px;
     height: 2px;
-    background: linear-gradient(90deg, transparent 0%, #c9a45c 50%, transparent 100%);
+    background: linear-gradient(90deg, transparent 0%, #C9A96E 50%, transparent 100%);
     margin: 0 auto;
   }
 `;
@@ -155,17 +155,18 @@ const FormGroup = styled.div`
     font-weight: 700;
     letter-spacing: 0.12em;
     text-transform: uppercase;
-    color: #1f1f1f;
+    color: #F5F1E8;
   }
 
   .forgot-link {
     font-size: 0.74rem;
-    color: #6b6b6b;
+    color: #A8A8A8;
     text-decoration: none;
     cursor: pointer;
+    transition: color 0.2s ease;
 
     &:hover {
-      color: #c9a45c;
+      color: #C9A96E;
       text-decoration: underline;
     }
   }
@@ -179,19 +180,23 @@ const FormGroup = styled.div`
     width: 100%;
     padding: 12px 14px;
     font-size: 0.9rem;
-    color: #1f1f1f;
-    background-color: #faf5eb;
-    border: 1px solid #d9d3c7;
+    color: #F5F1E8;
+    background-color: #111111;
+    border: 1px solid rgba(140, 116, 75, 0.25);
     border-radius: 2px;
     outline: none;
     box-sizing: border-box;
     font-family: 'Inter', sans-serif;
     transition: all 0.2s ease;
 
+    &::placeholder {
+      color: #666666;
+    }
+
     &:focus {
-      border-color: #c9a45c;
-      background-color: #ffffff;
-      box-shadow: 0 0 0 3px rgba(201, 164, 92, 0.14);
+      border-color: #C9A96E;
+      background-color: #0B0B0B;
+      box-shadow: 0 0 0 3px rgba(201, 169, 110, 0.2);
     }
   }
 
@@ -202,11 +207,15 @@ const FormGroup = styled.div`
     transform: translateY(-50%);
     background: none;
     border: none;
-    color: #777;
+    color: #A8A8A8;
     cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: color 0.2s ease;
 
     &:hover {
-      color: #c9a45c;
+      color: #C9A96E;
     }
   }
 `;
@@ -214,27 +223,29 @@ const FormGroup = styled.div`
 const SubmitButton = styled.button`
   width: 100%;
   padding: 15px;
-  background: linear-gradient(135deg, #1f1f1f 0%, #2b2a28 100%);
-  color: #ffffff;
+  background-color: #C9A96E;
+  color: #0B0B0B;
   font-size: 0.82rem;
-  font-weight: 600;
+  font-weight: 700;
   letter-spacing: 0.18em;
   text-transform: uppercase;
-  border: 1px solid #1f1f1f;
+  border: 1px solid #C9A96E;
+  border-radius: 2px;
   cursor: pointer;
   transition: all 0.25s ease;
   margin-top: 6px;
 
   &:hover {
-    background: linear-gradient(135deg, #c9a45c 0%, #b8944d 100%);
-    border-color: #c9a45c;
-    color: #1f1f1f;
-    box-shadow: 0 6px 18px rgba(201, 164, 92, 0.25);
+    background-color: #DFBA73;
+    border-color: #DFBA73;
+    box-shadow: 0 6px 20px rgba(201, 169, 110, 0.35);
+    transform: translateY(-1px);
   }
 
   &:disabled {
     opacity: 0.6;
     cursor: not-allowed;
+    transform: none;
   }
 `;
 
@@ -247,15 +258,15 @@ const Divider = styled.div`
   &::before, &::after {
     content: '';
     flex: 1;
-    border-bottom: 1px solid #e8e3d9;
+    border-bottom: 1px solid rgba(140, 116, 75, 0.2);
   }
 
   span {
     padding: 0 12px;
     font-size: 0.72rem;
     font-weight: 600;
-    letter-spacing: 0.1em;
-    color: #888;
+    letter-spacing: 0.12em;
+    color: #A8A8A8;
     text-transform: uppercase;
   }
 `;
@@ -263,9 +274,10 @@ const Divider = styled.div`
 const GoogleButton = styled.button`
   width: 100%;
   padding: 12px;
-  background-color: #ffffff;
-  color: #1f1f1f;
-  border: 1px solid #d9d3c7;
+  background-color: #111111;
+  color: #F5F1E8;
+  border: 1px solid rgba(140, 116, 75, 0.25);
+  border-radius: 2px;
   font-size: 0.84rem;
   font-weight: 500;
   display: flex;
@@ -276,8 +288,8 @@ const GoogleButton = styled.button`
   transition: all 0.25s ease;
 
   &:hover {
-    border-color: #c9a45c;
-    background-color: #faf5eb;
+    border-color: #C9A96E;
+    background-color: #1a1a1a;
   }
 
   svg {
@@ -290,30 +302,29 @@ const FooterRow = styled.div`
   text-align: center;
   margin-top: 24px;
   padding-top: 16px;
-  border-top: 1px solid #f7f2ea;
+  border-top: 1px solid rgba(140, 116, 75, 0.2);
   font-size: 0.82rem;
-  color: #6b6b6b;
+  color: #A8A8A8;
 
   button {
     background: none;
     border: none;
-    color: #1f1f1f;
+    color: #C9A96E;
     font-weight: 700;
     letter-spacing: 0.05em;
     cursor: pointer;
     margin-left: 6px;
 
     &:hover {
-      color: #c9a45c;
       text-decoration: underline;
     }
   }
 `;
 
 const ErrorMsg = styled.div`
-  background-color: #fdf2f2;
-  border: 1px solid #f8b4b4;
-  color: #c53030;
+  background-color: rgba(229, 62, 62, 0.15);
+  border: 1px solid rgba(229, 62, 62, 0.4);
+  color: #FC8181;
   padding: 10px 14px;
   font-size: 0.8rem;
   border-radius: 2px;
@@ -322,9 +333,9 @@ const ErrorMsg = styled.div`
 `;
 
 const SuccessMsg = styled.div`
-  background-color: #f0fff4;
-  border: 1px solid #9ae6b4;
-  color: #276749;
+  background-color: rgba(56, 161, 105, 0.15);
+  border: 1px solid rgba(56, 161, 105, 0.4);
+  color: #68D391;
   padding: 10px 14px;
   font-size: 0.8rem;
   border-radius: 2px;
@@ -474,7 +485,7 @@ export const AuthModal: React.FC = () => {
           <div className="crest-logo">
             <Sparkles size={20} />
           </div>
-          <div className="brand-sub">FLOKSY JEWEL ATELIER</div>
+          <div className="brand-sub">AETHELCARATS</div>
           <h2>
             {authModalMode === 'signin' && 'SIGN IN'}
             {authModalMode === 'register' && 'CREATE ACCOUNT'}
@@ -515,7 +526,7 @@ export const AuthModal: React.FC = () => {
             <label>Email Address</label>
             <input
               type="email"
-              placeholder="eleanor@floksyjewel.com"
+              placeholder="eleanor@aethelcarats.com"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               autoFocus={authModalMode !== 'register'}
@@ -561,9 +572,9 @@ export const AuthModal: React.FC = () => {
                 id="rememberMe"
                 checked={rememberMe}
                 onChange={(e) => setRememberMe(e.target.checked)}
-                style={{ width: '16px', height: '16px', accentColor: '#c9a45c', cursor: 'pointer' }}
+                style={{ width: '16px', height: '16px', accentColor: '#C9A96E', cursor: 'pointer' }}
               />
-              <label htmlFor="rememberMe" style={{ fontSize: '0.8rem', color: '#555', cursor: 'pointer', textTransform: 'none', fontWeight: 400 }}>
+              <label htmlFor="rememberMe" style={{ fontSize: '0.8rem', color: '#A8A8A8', cursor: 'pointer', textTransform: 'none', fontWeight: 400 }}>
                 Remember me on this device (14-day persistent login)
               </label>
             </div>

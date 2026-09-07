@@ -38,7 +38,7 @@ export function exportOrdersToExcel(orders: any[], res: Response) {
   const buffer = XLSX.write(workbook, { type: 'buffer', bookType: 'xlsx' });
 
   res.setHeader('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
-  res.setHeader('Content-Disposition', `attachment; filename="Floksy_Jewel_Orders_${new Date().toISOString().split('T')[0]}.xlsx"`);
+  res.setHeader('Content-Disposition', `attachment; filename="Aura_Atelier_Orders_${new Date().toISOString().split('T')[0]}.xlsx"`);
   res.send(buffer);
 }
 
@@ -64,7 +64,7 @@ export function exportPaymentsToExcel(payments: any[], res: Response) {
   const buffer = XLSX.write(workbook, { type: 'buffer', bookType: 'xlsx' });
 
   res.setHeader('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
-  res.setHeader('Content-Disposition', `attachment; filename="Floksy_Jewel_Payments_${new Date().toISOString().split('T')[0]}.xlsx"`);
+  res.setHeader('Content-Disposition', `attachment; filename="Aura_Atelier_Payments_${new Date().toISOString().split('T')[0]}.xlsx"`);
   res.send(buffer);
 }
 
@@ -94,6 +94,6 @@ export function exportOrdersToCsv(orders: any[], res: Response) {
   const csv = XLSX.utils.sheet_to_csv(worksheet);
 
   res.setHeader('Content-Type', 'text/csv');
-  res.setHeader('Content-Disposition', `attachment; filename="Floksy_Jewel_Orders_${new Date().toISOString().split('T')[0]}.csv"`);
+  res.setHeader('Content-Disposition', `attachment; filename="Aura_Atelier_Orders_${new Date().toISOString().split('T')[0]}.csv"`);
   res.send(csv);
 }

@@ -1,10 +1,10 @@
-import { PrismaClient } from '@prisma/client';
+﻿import { PrismaClient } from '@prisma/client';
 
 const prisma = new PrismaClient();
 
 async function cleanupAndKeepSingleDemoProduct() {
   console.log('==================================================');
-  console.log('FLOKSY JEWEL DATABASE CLEANUP — SINGLE DEMO PRODUCT');
+  console.log('AURA DIAMOND ATELIER DATABASE CLEANUP — SINGLE DEMO PRODUCT');
   console.log('==================================================');
 
   // 1. DELETE ALL PRODUCT-SPECIFIC CHILD RECORDS
@@ -32,9 +32,9 @@ async function cleanupAndKeepSingleDemoProduct() {
       data: {
         name: 'Rings',
         slug: 'rings',
-        description: 'Luxury Floksy Jewel Diamond Rings',
-        image: '/assets/floksy_rings_cat.png',
-        bannerImage: '/assets/floksy_rings_cat.png',
+        description: 'Luxury Diamond Atelier Rings',
+        image: '/assets/gem_rings_cat.png',
+        bannerImage: '/assets/gem_rings_cat.png',
         link: '/rings',
         isActive: true,
       },
@@ -178,8 +178,8 @@ async function cleanupAndKeepSingleDemoProduct() {
   const accordionsConfig = [
     {
       id: 'experience',
-      title: 'YOUR FLOKSY JEWEL EXPERIENCE',
-      content: 'Every creation is handcrafted in our Surat atelier using certified conflict-free diamonds and 100% recycled precious metals.',
+      title: 'YOUR ATELIER EXPERIENCE',
+      content: 'Every creation is handcrafted in our master atelier using certified conflict-free diamonds and 100% recycled precious metals.',
     },
     {
       id: 'specifications',
@@ -200,7 +200,7 @@ async function cleanupAndKeepSingleDemoProduct() {
 
   // F. Build Metal x Ring Size Variations (No Diamond in Variations Matrix)
   const demoVariations: any[] = [];
-  const baseSku = 'FJ-DEMO-RING-001';
+  const baseSku = 'AD-DEMO-RING-001';
   for (const m of metalsConfig) {
     for (const sz of availableRingSizes) {
       const price = 5000 + m.priceAdjustment;
@@ -220,14 +220,14 @@ async function cleanupAndKeepSingleDemoProduct() {
   console.log('3. Inserting the single official demo product into database...');
   const demoProduct = await prisma.product.create({
     data: {
-      name: 'Floksy Jewel Signature Solitaire Ring',
-      sku: 'FJ-DEMO-RING-001',
-      slug: 'floksy-jewel-signature-solitaire-ring',
+      name: 'Aura Signature Solitaire Ring',
+      sku: 'AD-DEMO-RING-001',
+      slug: 'aura-signature-solitaire-ring',
       categoryId: ringsCategory.id,
       jewelleryType: 'Ring',
       status: 'DRAFT',
-      shortDescription: 'A luxury Floksy Jewel solitaire engagement ring created as a demonstration product for testing the Metal, Ring Size, Diamond Selection, Custom Options, and dynamic pricing systems.',
-      fullDescription: 'A luxury Floksy Jewel solitaire engagement ring created as a demonstration product for testing the Metal, Ring Size, Diamond Selection, Custom Options, and dynamic pricing systems.',
+      shortDescription: 'A luxury solitaire engagement ring created as a demonstration product for testing the Metal, Ring Size, Diamond Selection, Custom Options, and dynamic pricing systems.',
+      fullDescription: 'A luxury solitaire engagement ring created as a demonstration product for testing the Metal, Ring Size, Diamond Selection, Custom Options, and dynamic pricing systems.',
       price: 5500,
       metal: '18K Yellow Gold',
       shape: 'Round',
@@ -243,8 +243,8 @@ async function cleanupAndKeepSingleDemoProduct() {
       customOptionsJson: JSON.stringify(customOptions),
       accordionsConfig: JSON.stringify(accordionsConfig),
       variationsJson: JSON.stringify(demoVariations),
-      metaTitle: 'Floksy Jewel Signature Solitaire Ring | Luxury Diamond Ring',
-      metaDescription: 'Explore the Floksy Jewel Signature Solitaire Ring with customizable diamond selection, premium metals, ring sizes, and personalized details.',
+      metaTitle: 'Aura Signature Solitaire Ring | Luxury Diamond Ring',
+      metaDescription: 'Explore the Aura Signature Solitaire Ring with customizable diamond selection, premium metals, ring sizes, and personalized details.',
       mainImage: '',
       secondaryImage: null,
     },

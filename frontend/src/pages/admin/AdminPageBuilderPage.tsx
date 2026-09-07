@@ -33,17 +33,23 @@ import {
 
 const StickyTopBar = styled.div`
   position: sticky;
-  top: 0;
+  top: 64px;
   z-index: 90;
   background: #ffffff;
-  border-bottom: 1px solid #e8e3d9;
+  border: 1px solid #e8e3d9;
+  border-radius: 8px;
   padding: 16px 28px;
   display: flex;
   justify-content: space-between;
   align-items: center;
+  flex-wrap: wrap;
   gap: 16px;
   margin-bottom: 24px;
   box-shadow: 0 4px 16px rgba(0, 0, 0, 0.03);
+
+  @media (max-width: 900px) {
+    top: 58px;
+  }
 
   @media (max-width: 1024px) {
     flex-direction: column;

@@ -4,7 +4,7 @@ import styled from 'styled-components';
 import { BookOpen, ArrowRight, ChevronRight, Calendar, Tag, Sparkles } from 'lucide-react';
 import { api } from '../../services/api';
 import { SafeImage } from '../../components/ui/SafeImage';
-import { WhyFloksyJewelNav } from '../../components/ui/WhyFloksyJewelNav';
+import { WhyAuraDiamondNav } from '../../components/ui/WhyAuraDiamondNav';
 import { RevealContainer } from '../../components/ui/RevealContainer';
 
 interface BlogPost {
@@ -26,7 +26,7 @@ const ARTICLES: BlogPost[] = [
     category: 'Diamond Education',
     date: 'August 2026',
     excerpt: 'Demystifying diamond grading reports. Discover how master gemmologists evaluate diamond brilliance, cut precision, and clarity inclusion grades.',
-    image: '/assets/why-floksy/sustainability-hero.jpg',
+    image: '/assets/why-aura/sustainability-hero.jpg',
     featured: true,
   },
   {
@@ -36,7 +36,7 @@ const ARTICLES: BlogPost[] = [
     category: 'Buying Guide',
     date: 'July 2026',
     excerpt: 'Comparing chemical structures, environmental impact, certified GIA/IGI reports, and long-term value between earth-mined and lab-grown diamonds.',
-    image: '/assets/why-floksy/price-match-hero.jpg',
+    image: '/assets/why-aura/price-match-hero.jpg',
   },
   {
     id: 'b3',
@@ -45,7 +45,7 @@ const ARTICLES: BlogPost[] = [
     category: 'Design & Style',
     date: 'July 2026',
     excerpt: 'From classic four-prong solitaire settings to intricate vintage halos, explore how metal choices and claw designs highlight your diamond.',
-    image: '/assets/why-floksy/returns-refunds-hero.jpg',
+    image: '/assets/why-aura/returns-refunds-hero.jpg',
   },
   {
     id: 'b4',
@@ -54,13 +54,13 @@ const ARTICLES: BlogPost[] = [
     category: 'Jewellery Care',
     date: 'June 2026',
     excerpt: 'Essential cleaning tips, safe storage advice, and annual inspection protocols to protect your gold and platinum diamond heirlooms.',
-    image: '/assets/why-floksy/lifetime-warranty-hero.jpg',
+    image: '/assets/why-aura/lifetime-warranty-hero.jpg',
   },
 ];
 
 const PageWrapper = styled.div`
-  background-color: #f7f6f2;
-  color: #1a1918;
+  background-color: #0B0B0B;
+  color: #F5F1E8;
   min-height: 100vh;
   padding-bottom: 80px;
 `;
@@ -73,20 +73,20 @@ const BreadcrumbsBar = styled.div`
   align-items: center;
   gap: 8px;
   font-size: 0.8rem;
-  color: #77736c;
+  color: #A8A8A8;
 
   a {
-    color: #77736c;
+    color: #A8A8A8;
     text-decoration: none;
     transition: color 0.2s ease;
 
     &:hover {
-      color: #c9a45c;
+      color: #C9A96E;
     }
   }
 
   span.current {
-    color: #1a1918;
+    color: #F5F1E8;
     font-weight: 500;
   }
 `;
@@ -111,7 +111,7 @@ const HeroSection = styled.section`
       font-size: 0.8rem;
       letter-spacing: 0.18em;
       text-transform: uppercase;
-      color: #c9a45c;
+      color: #C9A96E;
       font-weight: 600;
       margin-bottom: 12px;
       display: block;
@@ -121,7 +121,7 @@ const HeroSection = styled.section`
       font-family: 'Cormorant Garamond', serif;
       font-size: 3.2rem;
       font-weight: 500;
-      color: #1a1918;
+      color: #F5F1E8;
       margin-bottom: 20px;
       letter-spacing: -0.01em;
       line-height: 1.1;
@@ -133,7 +133,7 @@ const HeroSection = styled.section`
 
     p.subtitle {
       font-size: 1.05rem;
-      color: #55524d;
+      color: #D8D2C5;
       line-height: 1.7;
       margin-bottom: 28px;
     }
@@ -141,9 +141,10 @@ const HeroSection = styled.section`
 
   .image-side {
     position: relative;
-    border-radius: 4px;
+    border-radius: 6px;
     overflow: hidden;
-    box-shadow: 0 12px 32px rgba(0, 0, 0, 0.06);
+    box-shadow: 0 16px 40px rgba(0, 0, 0, 0.4);
+    border: 1px solid rgba(140, 116, 75, 0.25);
 
     img {
       width: 100%;
@@ -164,14 +165,15 @@ const ContentContainer = styled.main`
 `;
 
 const FeaturedCard = styled.div`
-  background: #fffdf9;
-  border: 1px solid #e8e3d9;
-  border-radius: 4px;
+  background: #151515;
+  border: 1px solid rgba(140, 116, 75, 0.25);
+  border-radius: 6px;
   overflow: hidden;
   display: grid;
   grid-template-columns: 1.2fr 1fr;
   gap: 32px;
   margin-bottom: 64px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
 
   @media (max-width: 992px) {
     grid-template-columns: 1fr;
@@ -205,7 +207,7 @@ const FeaturedCard = styled.div`
       font-size: 0.78rem;
       letter-spacing: 0.1em;
       text-transform: uppercase;
-      color: #c9a45c;
+      color: #C9A96E;
       font-weight: 600;
       margin-bottom: 12px;
     }
@@ -213,14 +215,14 @@ const FeaturedCard = styled.div`
     h2 {
       font-family: 'Cormorant Garamond', serif;
       font-size: 2.2rem;
-      color: #1a1918;
+      color: #F5F1E8;
       line-height: 1.2;
       margin-bottom: 16px;
     }
 
     p {
       font-size: 0.95rem;
-      color: #55524d;
+      color: #D8D2C5;
       line-height: 1.6;
       margin-bottom: 24px;
     }
@@ -229,16 +231,17 @@ const FeaturedCard = styled.div`
       display: inline-flex;
       align-items: center;
       gap: 8px;
-      color: #1a1918;
+      color: #C9A96E;
       font-size: 0.85rem;
       letter-spacing: 0.12em;
       text-transform: uppercase;
       font-weight: 600;
       text-decoration: none;
-      transition: color 0.2s ease;
+      transition: all 0.2s ease;
 
       &:hover {
-        color: #c9a45c;
+        color: #DFBA73;
+        transform: translateX(4px);
       }
     }
   }
@@ -247,7 +250,7 @@ const FeaturedCard = styled.div`
 const SectionTitle = styled.h2`
   font-family: 'Cormorant Garamond', serif;
   font-size: 2.2rem;
-  color: #1a1918;
+  color: #F5F1E8;
   margin-bottom: 32px;
   text-align: center;
 `;
@@ -267,17 +270,19 @@ const ArticleGrid = styled.div`
 `;
 
 const ArticleCard = styled.article`
-  background: #fffdf9;
-  border: 1px solid #e8e3d9;
-  border-radius: 4px;
+  background: #151515;
+  border: 1px solid rgba(140, 116, 75, 0.25);
+  border-radius: 6px;
   overflow: hidden;
   display: flex;
   flex-direction: column;
-  transition: transform 0.2s ease, border-color 0.2s ease;
+  transition: transform 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
 
   &:hover {
     transform: translateY(-4px);
-    border-color: #c9a45c;
+    border-color: #C9A96E;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
   }
 
   .card-img {
@@ -308,7 +313,7 @@ const ArticleCard = styled.article`
       font-size: 0.75rem;
       letter-spacing: 0.08em;
       text-transform: uppercase;
-      color: #c9a45c;
+      color: #C9A96E;
       font-weight: 600;
       margin-bottom: 10px;
     }
@@ -316,14 +321,14 @@ const ArticleCard = styled.article`
     h3 {
       font-family: 'Cormorant Garamond', serif;
       font-size: 1.4rem;
-      color: #1a1918;
+      color: #F5F1E8;
       line-height: 1.3;
       margin-bottom: 12px;
     }
 
     p {
       font-size: 0.88rem;
-      color: #55524d;
+      color: #D8D2C5;
       line-height: 1.6;
       margin-bottom: 20px;
       flex: 1;
@@ -334,15 +339,16 @@ const ArticleCard = styled.article`
       letter-spacing: 0.12em;
       text-transform: uppercase;
       font-weight: 600;
-      color: #1a1918;
+      color: #C9A96E;
       text-decoration: none;
       display: inline-flex;
       align-items: center;
       gap: 6px;
-      transition: color 0.2s ease;
+      transition: all 0.2s ease;
 
       &:hover {
-        color: #c9a45c;
+        color: #DFBA73;
+        transform: translateX(3px);
       }
     }
   }
@@ -353,7 +359,7 @@ export const BlogPage: React.FC = () => {
 
   useEffect(() => {
     // Dynamic SEO Metadata
-    document.title = 'Floksy Jewel Journal | Jewellery & Diamond Insights';
+    document.title = 'AethelCarats Journal | Jewellery & Diamond Insights';
 
     // Fetch live blog posts from DB API
     api.getBlogPosts().then((data) => {
@@ -365,7 +371,7 @@ export const BlogPage: React.FC = () => {
           category: 'Editorial',
           date: new Date(p.publishDate || p.createdAt).toLocaleDateString('en-US', { month: 'long', year: 'numeric' }),
           excerpt: p.excerpt || '',
-          image: p.featuredImage || '/assets/why-floksy/sustainability-hero.jpg',
+          image: p.featuredImage || '/assets/why-aura/sustainability-hero.jpg',
         })));
       }
     }).catch(console.error);
@@ -378,17 +384,17 @@ export const BlogPage: React.FC = () => {
       '@graph': [
         {
           '@type': 'WebPage',
-          '@id': 'https://floksyjewel.com/blog#webpage',
-          'url': 'https://floksyjewel.com/blog',
-          'name': 'The Floksy Jewel Journal | Jewellery & Diamond Editorial',
+          '@id': 'https://aethelcarats.com/blog#webpage',
+          'url': 'https://aethelcarats.com/blog',
+          'name': 'The AethelCarats Journal | Jewellery & Diamond Editorial',
           'description': 'Editorial insights and guides on diamonds, fine jewellery craftsmanship, and design.',
         },
         {
           '@type': 'BreadcrumbList',
-          '@id': 'https://floksyjewel.com/blog#breadcrumb',
+          '@id': 'https://aethelcarats.com/blog#breadcrumb',
           'itemListElement': [
-            { '@type': 'ListItem', 'position': 1, 'name': 'Home', 'item': 'https://floksyjewel.com' },
-            { '@type': 'ListItem', 'position': 2, 'name': 'Journal', 'item': 'https://floksyjewel.com/blog' }
+            { '@type': 'ListItem', 'position': 1, 'name': 'Home', 'item': 'https://aethelcarats.com' },
+            { '@type': 'ListItem', 'position': 2, 'name': 'Journal', 'item': 'https://aethelcarats.com/blog' }
           ]
         }
       ]
@@ -415,13 +421,13 @@ export const BlogPage: React.FC = () => {
         <HeroSection>
           <div className="text-side">
             <span className="eyebrow">EDITORIAL INSIGHTS & EDUCATION</span>
-            <h1>The Floksy Jewel Journal</h1>
+            <h1>The AethelCarats Journal</h1>
             <p className="subtitle">
               Expert diamond guides, high-jewellery craftsmanship stories, and style inspiration curated by our master gemmologists and designers.
             </p>
           </div>
           <div className="image-side">
-            <SafeImage src="/assets/why-floksy/blog-hero.jpg" alt="Floksy Jewel Editorial Jewellery Journal" />
+            <SafeImage src="/assets/why-aura/blog-hero.jpg" alt="AethelCarats Editorial Jewellery Journal" />
           </div>
         </HeroSection>
       </RevealContainer>
@@ -473,7 +479,7 @@ export const BlogPage: React.FC = () => {
         </ArticleGrid>
       </ContentContainer>
 
-      <WhyFloksyJewelNav />
+      <WhyAuraDiamondNav />
     </PageWrapper>
   );
 };

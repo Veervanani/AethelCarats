@@ -3,8 +3,8 @@ import path from 'path';
 import fs from 'fs';
 import prisma from '../prisma';
 
-const BUCKET_NAME = process.env.GCS_BUCKET_NAME || 'floksyjewel-product-media';
-const GCP_PROJECT_ID = process.env.GCP_PROJECT_ID || 'floksy-jewels';
+const BUCKET_NAME = process.env.GCS_BUCKET_NAME || 'aura-atelier-product-media';
+const GCP_PROJECT_ID = process.env.GCP_PROJECT_ID || 'aura-atelier';
 
 let storageInstance: Storage | null = null;
 
@@ -124,7 +124,7 @@ export async function migrateLocalImagesToGcs(): Promise<number> {
           mainUrl = gcsUrl;
           updated = true;
         } else {
-          mainUrl = '/assets/floksy_rings_cat.png';
+          mainUrl = '/assets/gem_rings_cat.png';
           updated = true;
         }
       }
@@ -138,7 +138,7 @@ export async function migrateLocalImagesToGcs(): Promise<number> {
           secUrl = gcsUrl;
           updated = true;
         } else {
-          secUrl = '/assets/floksy_rings_cat_2.png';
+          secUrl = '/assets/gem_rings_cat_2.png';
           updated = true;
         }
       }

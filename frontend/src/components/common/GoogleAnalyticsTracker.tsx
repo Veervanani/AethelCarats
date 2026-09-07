@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from 'react';
+﻿import React, { useEffect, useRef } from 'react';
 import { useLocation } from 'react-router-dom';
 import { api } from '../../services/api';
 
@@ -6,8 +6,8 @@ declare global {
   interface Window {
     dataLayer?: any[];
     gtag?: (...args: any[]) => void;
-    floksyTrackEcommerce?: (eventName: string, params?: Record<string, any>) => void;
-    floksyTrackingConfig?: {
+    auraTrackEcommerce?: (eventName: string, params?: Record<string, any>) => void;
+    auraTrackingConfig?: {
       tagIds: string[];
       merchantCenterIds: string[];
       gtmId?: string;
@@ -69,7 +69,7 @@ export const GoogleAnalyticsTracker: React.FC = () => {
           .map((id) => id.trim())
           .filter(Boolean);
 
-        window.floksyTrackingConfig = {
+        window.auraTrackingConfig = {
           tagIds,
           merchantCenterIds: mcIds,
           gtmId: settings.google_tag_manager_id || 'GT-NFXXGC34',
@@ -103,10 +103,10 @@ export const GoogleAnalyticsTracker: React.FC = () => {
         });
 
         // 2. Inject official gtag.js script if not present
-        const existingScript = document.getElementById('floksy-gtag-script');
+        const existingScript = document.getElementById('aura-gtag-script');
         if (!existingScript) {
           const script = document.createElement('script');
-          script.id = 'floksy-gtag-script';
+          script.id = 'aura-gtag-script';
           script.async = true;
           script.src = `https://www.googletagmanager.com/gtag/js?id=${primaryTagId}`;
           document.head.appendChild(script);
@@ -114,9 +114,9 @@ export const GoogleAnalyticsTracker: React.FC = () => {
 
         // 3. Inject Google Tag Manager (GTM) if configured
         const gtmId = settings.google_tag_manager_id || 'GT-NFXXGC34';
-        if (gtmId && !document.getElementById('floksy-gtm-script')) {
+        if (gtmId && !document.getElementById('aura-gtm-script')) {
           const gtmScript = document.createElement('script');
-          gtmScript.id = 'floksy-gtm-script';
+          gtmScript.id = 'aura-gtm-script';
           gtmScript.innerHTML = `
             (function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
             new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
@@ -128,9 +128,9 @@ export const GoogleAnalyticsTracker: React.FC = () => {
         }
 
         // 4. Inject Facebook / Meta Pixel if configured
-        if (settings.facebook_pixel_id && !document.getElementById('floksy-fb-pixel')) {
+        if (settings.facebook_pixel_id && !document.getElementById('aura-fb-pixel')) {
           const fbScript = document.createElement('script');
-          fbScript.id = 'floksy-fb-pixel';
+          fbScript.id = 'aura-fb-pixel';
           fbScript.innerHTML = `
             !function(f,b,e,v,n,t,s)
             {if(f.fbq)return;n=f.fbq=function(){n.callMethod?
@@ -147,10 +147,10 @@ export const GoogleAnalyticsTracker: React.FC = () => {
         }
 
         // 5. Inject custom head scripts if configured (isolated in try-catch to protect against broken user scripts)
-        if (settings.custom_head_scripts && !document.getElementById('floksy-custom-head-scripts')) {
+        if (settings.custom_head_scripts && !document.getElementById('aura-custom-head-scripts')) {
           try {
             const headContainer = document.createElement('div');
-            headContainer.id = 'floksy-custom-head-scripts';
+            headContainer.id = 'aura-custom-head-scripts';
             headContainer.style.display = 'none';
             headContainer.innerHTML = settings.custom_head_scripts;
             document.head.appendChild(headContainer);
@@ -179,7 +179,7 @@ export const GoogleAnalyticsTracker: React.FC = () => {
         }
 
         // 6. Global eCommerce Helper
-        window.floksyTrackEcommerce = (eventName: string, params: Record<string, any> = {}) => {
+        window.auraTrackEcommerce = (eventName: string, params: Record<string, any> = {}) => {
           if (typeof window.gtag === 'function') {
             activeTagsRef.current.forEach((id) => {
               window.gtag?.('event', eventName, {

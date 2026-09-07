@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+﻿import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
 import { Copy, Check, Upload, Trash2 } from 'lucide-react';
 import { api } from '../../services/api';
@@ -72,18 +72,18 @@ const MediaCard = styled.div`
 `;
 
 const DEFAULT_ASSETS = [
-  { id: '1', name: 'Floksy Hero Luxury Banner', url: '/assets/floksy-hero-luxury.webp' },
-  { id: '2', name: 'Floksy Jewel Brand Logo', url: '/assets/floksy-jewel-logo.png' },
-  { id: '3', name: 'Solitaire Ring Editorial', url: '/assets/floksy_solitaire_ring_perfect.png' },
+  { id: '1', name: 'Aura Hero Luxury Banner', url: '/assets/gem-hero-luxury.webp' },
+  { id: '2', name: 'Aura Diamond Atelier Brand Logo', url: '/assets/gem-brand-logo.png' },
+  { id: '3', name: 'Solitaire Ring Editorial', url: '/assets/gem_solitaire_ring_perfect.png' },
   { id: '4', name: 'Marquise Diamond Jewelry Set', url: '/assets/GOLD-MARQUISE-DIAMOND-JEWELRY-SET.webp' },
-  { id: '5', name: 'Loose Diamond Vault Banner', url: '/assets/floksy_diamonds_cat.png' },
-  { id: '6', name: 'Rings Category Card', url: '/assets/floksy_rings_cat.png' },
-  { id: '7', name: 'Fashion Rings Promo Card #2', url: '/assets/floksy_rings_cat_2.png' },
-  { id: '8', name: 'Earrings Category Card', url: '/assets/floksy_earrings_cat.png' },
-  { id: '9', name: 'Necklaces Category Card', url: '/assets/floksy_necklaces_cat.png' },
-  { id: '10', name: 'Bracelets Category Card', url: '/assets/floksy_bracelets_cat.png' },
-  { id: '11', name: 'Pendants Category Card', url: '/assets/floksy_pendants_cat.png' },
-  { id: '12', name: 'Bespoke CAD Craftsmanship', url: '/assets/floksy_bracelets_editorial_right_new.png' },
+  { id: '5', name: 'Loose Diamond Vault Banner', url: '/assets/gem_diamonds_cat.png' },
+  { id: '6', name: 'Rings Category Card', url: '/assets/gem_rings_cat.png' },
+  { id: '7', name: 'Fashion Rings Promo Card #2', url: '/assets/gem_rings_cat_2.png' },
+  { id: '8', name: 'Earrings Category Card', url: '/assets/gem_earrings_cat.png' },
+  { id: '9', name: 'Necklaces Category Card', url: '/assets/gem_necklaces_cat.png' },
+  { id: '10', name: 'Bracelets Category Card', url: '/assets/gem_bracelets_cat.png' },
+  { id: '11', name: 'Pendants Category Card', url: '/assets/aura_pendants_cat.png' },
+  { id: '12', name: 'Bespoke CAD Craftsmanship', url: '/assets/gem_bracelets_editorial_right_new.png' },
 ];
 
 export const AdminMediaLibraryPage: React.FC = () => {
@@ -162,7 +162,7 @@ export const AdminMediaLibraryPage: React.FC = () => {
           <div style={{ flex: 2, minWidth: 300 }}>
             <AdminInput
               type="text"
-              placeholder="Image URL or Path (e.g. /assets/floksy_hero_luxury.webp)"
+              placeholder="Image URL or Path (e.g. /assets/aura_hero_luxury.webp)"
               value={newUrlInput}
               onChange={(e) => setNewUrlInput(e.target.value)}
             />

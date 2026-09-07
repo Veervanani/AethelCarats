@@ -6,22 +6,22 @@ import { api } from '../../services/api';
 import { RevealContainer } from '../ui/RevealContainer';
 
 const FooterWrapper = styled.footer`
-  background-color: #faf9f6;
-  color: #1f1f1f;
-  border-top: 1px solid #e6e1d7;
+  background-color: #0B0B0B;
+  color: #F5F1E8;
+  border-top: 1px solid rgba(140, 116, 75, 0.25);
   padding: 72px 32px 40px;
   width: 100%;
   box-sizing: border-box;
 `;
 
-const FooterInner = styled.div`
+const FooterInner = styled.div<{ $colCount: number }>`
   max-width: 1400px;
   margin: 0 auto;
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
+  grid-template-columns: repeat(${({ $colCount }) => Math.max(1, $colCount || 4)}, 1fr);
   gap: 48px;
 
-  @media (max-width: 992px) {
+  @media (max-width: 1100px) {
     grid-template-columns: repeat(2, 1fr);
     gap: 40px;
   }
@@ -37,9 +37,9 @@ const FooterColumn = styled.div`
     font-family: 'Cormorant Garamond', Georgia, serif;
     font-size: 15px;
     font-weight: 600;
-    letter-spacing: 0.16em;
+    letter-spacing: 0.18em;
     text-transform: uppercase;
-    color: #1f1f1f;
+    color: #C9A96E;
     margin-bottom: 22px;
     position: relative;
     display: inline-block;
@@ -51,7 +51,7 @@ const FooterColumn = styled.div`
       left: 0;
       width: 24px;
       height: 1.5px;
-      background-color: #c9a45c;
+      background-color: #C9A96E;
     }
   }
 
@@ -66,13 +66,13 @@ const FooterColumn = styled.div`
 
   li a {
     font-size: 13.5px;
-    color: #6e6b65;
+    color: #D8D2C5;
     text-decoration: none;
     transition: all 0.2s ease;
 
     &:hover {
-      color: #c9a45c;
-      padding-left: 3px;
+      color: #C9A96E;
+      padding-left: 4px;
     }
   }
 `;
@@ -82,29 +82,30 @@ const NewsletterColumn = styled.div`
     font-family: 'Cormorant Garamond', Georgia, serif;
     font-size: 15px;
     font-weight: 600;
-    letter-spacing: 0.16em;
+    letter-spacing: 0.18em;
     text-transform: uppercase;
-    color: #1f1f1f;
+    color: #C9A96E;
     margin-bottom: 10px;
   }
 
   p.subtitle {
     font-size: 13.5px;
-    color: #6e6b65;
+    color: #A8A8A8;
     margin-bottom: 22px;
+    line-height: 1.5;
   }
 `;
 
 const NewsletterForm = styled.form`
   display: flex;
   align-items: center;
-  border-bottom: 1.5px solid #1f1f1f;
+  border-bottom: 1.5px solid rgba(140, 116, 75, 0.45);
   padding-bottom: 8px;
   margin-bottom: 16px;
   transition: border-color 0.2s ease;
 
   &:focus-within {
-    border-color: #c9a45c;
+    border-color: #C9A96E;
   }
 `;
 
@@ -113,12 +114,12 @@ const NewsletterInput = styled.input`
   border: none;
   background: transparent;
   font-size: 13.5px;
-  color: #1f1f1f;
+  color: #F5F1E8;
   outline: none;
   padding-right: 12px;
 
   &::placeholder {
-    color: #9b968d;
+    color: #777777;
   }
 `;
 
@@ -129,20 +130,20 @@ const NewsletterSubmit = styled.button`
   font-weight: 700;
   letter-spacing: 0.18em;
   text-transform: uppercase;
-  color: #1f1f1f;
+  color: #C9A96E;
   cursor: pointer;
   padding: 0;
   transition: color 0.2s ease;
 
   &:hover {
-    color: #c9a45c;
+    color: #DFCA9B;
   }
 `;
 
 const ConsentText = styled.p`
   font-size: 11.5px;
   line-height: 1.6;
-  color: #8c877d;
+  color: #888888;
   margin: 0;
 `;
 
@@ -166,19 +167,23 @@ const SocialLink = styled.a`
   font-size: 12.5px;
   font-weight: 600;
   letter-spacing: 0.1em;
-  color: #1f1f1f;
+  color: #D8D2C5;
   text-decoration: none;
   transition: all 0.2s ease;
 
   &:hover {
-    color: #c9a45c;
+    color: #C9A96E;
     transform: translateY(-2px);
+  }
+
+  svg {
+    color: #C9A96E;
   }
 `;
 
 const BottomDivider = styled.hr`
   border: none;
-  border-top: 1px solid #e6e1d7;
+  border-top: 1px solid rgba(140, 116, 75, 0.2);
   margin: 36px 0 28px;
 `;
 
@@ -189,7 +194,7 @@ const BottomBar = styled.div`
   justify-content: space-between;
   align-items: center;
   font-size: 12px;
-  color: #77736c;
+  color: #A8A8A8;
 
   @media (max-width: 992px) {
     flex-direction: column;
@@ -198,40 +203,49 @@ const BottomBar = styled.div`
   }
 `;
 
-const FooterLogo = styled.img`
-  width: 140px;
-  height: auto;
-  max-height: 48px;
-  object-fit: contain;
+const FooterBrandText = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  text-decoration: none;
 
-  @media (max-width: 1024px) {
-    width: 115px;
-    max-height: 40px;
+  .brand-name {
+    font-family: 'Cormorant Garamond', 'Playfair Display', Georgia, serif;
+    font-size: 1.35rem;
+    font-weight: 600;
+    letter-spacing: 0.18em;
+    color: #F5F1E8;
+    text-transform: uppercase;
+    line-height: 1;
+
+    span.gold-accent {
+      color: #C9A96E;
+    }
   }
 
-  @media (max-width: 576px) {
-    width: 105px;
-    max-height: 36px;
+  .brand-sub {
+    font-size: 0.52rem;
+    letter-spacing: 0.28em;
+    text-transform: uppercase;
+    color: #A8A8A8;
+    margin-top: 3px;
+    font-weight: 500;
   }
 `;
 
 const BrandCopyright = styled.div`
   display: flex;
   align-items: center;
-  gap: 16px;
-
-  .brand-logo {
-    font-family: 'Cormorant Garamond', 'Playfair Display', serif;
-    font-size: 1.2rem;
-    font-weight: 500;
-    letter-spacing: 0.14em;
-    color: #242321;
-    text-transform: uppercase;
-  }
+  gap: 20px;
 
   .copy {
     font-size: 12px;
-    color: #8c877d;
+    color: #A8A8A8;
+  }
+
+  @media (max-width: 768px) {
+    flex-direction: column;
+    gap: 8px;
   }
 `;
 
@@ -242,12 +256,12 @@ const LegalLinks = styled.div`
 
   a {
     font-size: 12px;
-    color: #77736c;
+    color: #A8A8A8;
     text-decoration: none;
     transition: color 0.2s ease;
 
     &:hover {
-      color: #242321;
+      color: #C9A96E;
     }
   }
 
@@ -261,65 +275,95 @@ export const Footer: React.FC = () => {
   const [email, setEmail] = useState('');
   const [subscribed, setSubscribed] = useState(false);
   const [footerConfig, setFooterConfig] = useState<any>({
-    copyrightText: '© 2026 FLOKSY JEWEL. ALL RIGHTS RESERVED.',
-    contactEmail: 'contact@floksyjewel.com',
+    brandName: 'AETHELCARATS FINE JEWELLERY ATELIER',
+    logoImage: '/assets/gem-brand-logo.png',
+    copyrightText: `© ${new Date().getFullYear()} AethelCarats Fine Jewellery Atelier. All Rights Reserved.`,
+    contactEmail: 'concierge@aethelcarats.com',
     contactPhone: '+91973785306',
     address: 'Surat, India',
+    newsletterHeading: 'JOIN AETHELCARATS ATELIER',
+    newsletterSubtitle: 'Subscribe to receive bespoke invitations and private collection releases.',
+    newsletterPlaceholder: 'Email Address',
+    newsletterButtonText: 'JOIN',
+    newsletterConsentText: 'I agree to receive promotional emails from AethelCarats Fine Jewellery Atelier. You can unsubscribe at any time.',
+    newsletterPrivacyUrl: '/privacy-policy',
+    columns: [
+      {
+        title: 'THE HOUSE',
+        links: [
+          { label: 'Quality & Craftsmanship', url: '/about-us' },
+          { label: 'Diamond Sustainability', url: '/sustainability' },
+          { label: 'Atelier Journal', url: '/blog' },
+          { label: 'Sale Exclusions', url: '/sale-exclusions' },
+        ],
+      },
+      {
+        title: 'COLLECTIONS',
+        links: [
+          { label: 'Diamond Rings', url: '/rings' },
+          { label: 'Fine Earrings', url: '/earrings' },
+          { label: 'Riviere Necklaces', url: '/necklaces' },
+          { label: 'Tennis Bracelets', url: '/bracelets' },
+          { label: 'Solitaire Pendants', url: '/pendants' },
+          { label: 'The Diamond Vault', url: '/diamonds' },
+        ],
+      },
+      {
+        title: 'CLIENT SERVICES',
+        links: [
+          { label: 'Phone: +91973785306', url: 'tel:+91973785306', isExternal: true },
+          { label: 'Email: contact@auroradiamonds.com', url: 'mailto:contact@auroradiamonds.com', isExternal: true },
+          { label: 'Contact Concierge', url: '/contact-us' },
+          { label: 'Complimentary Insured Shipping', url: '/shipping-delivery' },
+          { label: 'Returns & Exchange', url: '/returns-refunds' },
+          { label: 'Lifetime Warranty', url: '/lifetime-warranty' },
+          { label: 'Frequently Asked Questions', url: '/faq' },
+        ],
+      },
+    ],
+    legalLinks: [
+      { label: 'Terms & Conditions', url: '/terms-of-service' },
+      { label: 'Privacy Policy', url: '/privacy-policy' },
+      { label: 'Site Map', url: '/sitemap' },
+    ],
   });
 
   React.useEffect(() => {
     api.getSiteSettings().then((res: any) => {
       if (res) {
-        let contactEmail = res.contactEmail || 'contact@floksyjewel.com';
-        let contactPhone = res.contactPhone || '+91973785306';
-
         let parsedFooterSettings: any = {};
         if (res.footer_settings) {
           try {
             parsedFooterSettings = typeof res.footer_settings === 'string' ? JSON.parse(res.footer_settings) : res.footer_settings;
-            if (parsedFooterSettings?.email) contactEmail = parsedFooterSettings.email;
-            if (parsedFooterSettings?.phone) contactPhone = parsedFooterSettings.phone;
-          } catch (e) {
-            // Silently ignore non-JSON string values
-          }
+          } catch (e) {}
         }
 
         let parsedFooterConfig: any = {};
         if (res.footer_config) {
           try {
             parsedFooterConfig = typeof res.footer_config === 'string' ? JSON.parse(res.footer_config) : res.footer_config;
-            if (parsedFooterConfig?.contactEmail && (!res.footer_settings || !res.footer_settings.email)) contactEmail = parsedFooterConfig.contactEmail;
-            if (parsedFooterConfig?.contactPhone && (!res.footer_settings || !res.footer_settings.phone)) contactPhone = parsedFooterConfig.contactPhone;
-          } catch (e) {
-            // Silently ignore non-JSON string values
-          }
+          } catch (e) {}
         }
 
-        let siteSettingsData: any = {};
-        if (res.site_settings) {
-          try {
-            siteSettingsData = typeof res.site_settings === 'string' ? JSON.parse(res.site_settings) : res.site_settings;
-          } catch (e) {
-            // Silently ignore non-JSON string values
-          }
-        }
+        const merged = {
+          ...parsedFooterConfig,
+          ...parsedFooterSettings,
+        };
 
-        // Sanitize any remaining old placeholder strings
-        if (!contactEmail || contactEmail.includes('concierge@floksyjewel.com') || contactEmail.includes('example.com') || contactEmail.includes('gmail.com')) {
-          contactEmail = 'contact@floksyjewel.com';
-        }
-        if (!contactPhone || contactPhone.includes('555-3565') || contactPhone.includes('(800)')) {
-          contactPhone = '+91973785306';
+        if (!merged.columns || !Array.isArray(merged.columns) || merged.columns.length === 0) {
+          if (parsedFooterConfig.columns && Array.isArray(parsedFooterConfig.columns) && parsedFooterConfig.columns.length > 0) {
+            merged.columns = parsedFooterConfig.columns;
+          }
         }
 
         setFooterConfig((prev: any) => ({
           ...prev,
-          ...(res || {}),
-          ...siteSettingsData,
-          ...parsedFooterConfig,
-          ...parsedFooterSettings,
-          contactEmail,
-          contactPhone,
+          ...merged,
+          brandName: merged.brandName || res.storeName || prev.brandName,
+          copyrightText: merged.copyrightText || prev.copyrightText,
+          contactEmail: merged.email || merged.contactEmail || res.contactEmail || prev.contactEmail,
+          contactPhone: merged.phone || merged.contactPhone || res.contactPhone || prev.contactPhone,
+          address: merged.address || res.storeAddress || prev.address,
         }));
       }
     }).catch(console.error);
@@ -351,9 +395,9 @@ export const Footer: React.FC = () => {
     return defaultBase;
   };
 
-  const instagramHref = resolveSocialUrl('instagram', 'https://www.instagram.com/floksyjewel');
-  const facebookHref = resolveSocialUrl('facebook', 'https://facebook.com/floksyjewel');
-  const pinterestHref = resolveSocialUrl('pinterest', 'https://pinterest.com/floksyjewel');
+  const instagramHref = resolveSocialUrl('instagram', 'https://www.instagram.com/aethelcarats');
+  const facebookHref = resolveSocialUrl('facebook', 'https://facebook.com/aethelcarats');
+  const pinterestHref = resolveSocialUrl('pinterest', 'https://pinterest.com/aethelcarats');
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -363,78 +407,116 @@ export const Footer: React.FC = () => {
     }
   };
 
+  const renderedColumns = Array.isArray(footerConfig.columns) && footerConfig.columns.length > 0
+    ? footerConfig.columns
+    : [
+        {
+          title: 'THE HOUSE',
+          links: [
+            { label: 'Quality & Craftsmanship', url: '/about-us' },
+            { label: 'Diamond Sustainability', url: '/sustainability' },
+            { label: 'Aura Journal', url: '/blog' },
+            { label: 'Sale Exclusions', url: '/sale-exclusions' },
+          ],
+        },
+        {
+          title: 'COLLECTIONS',
+          links: [
+            { label: 'Diamond Rings', url: '/rings' },
+            { label: 'Fine Earrings', url: '/earrings' },
+            { label: 'Riviere Necklaces', url: '/necklaces' },
+            { label: 'Tennis Bracelets', url: '/bracelets' },
+            { label: 'Solitaire Pendants', url: '/pendants' },
+            { label: 'The Diamond Vault', url: '/diamonds' },
+          ],
+        },
+        {
+          title: 'CLIENT SERVICES',
+          links: [
+            { label: `Phone: ${footerConfig.contactPhone || '+91973785306'}`, url: `tel:${footerConfig.contactPhone || '+91973785306'}`, isExternal: true },
+            { label: `Email: ${footerConfig.contactEmail || 'contact@auroradiamonds.com'}`, url: `mailto:${footerConfig.contactEmail || 'contact@auroradiamonds.com'}`, isExternal: true },
+            { label: 'Contact Concierge', url: '/contact-us' },
+            { label: 'Complimentary Insured Shipping', url: '/shipping-delivery' },
+            { label: 'Returns & Exchange', url: '/returns-refunds' },
+            { label: 'Lifetime Warranty', url: '/lifetime-warranty' },
+            { label: 'Frequently Asked Questions', url: '/faq' },
+          ],
+        },
+      ];
+
+  const renderedLegalLinks = Array.isArray(footerConfig.legalLinks) && footerConfig.legalLinks.length > 0
+    ? footerConfig.legalLinks
+    : [
+        { label: 'Terms & Conditions', url: '/terms-of-service' },
+        { label: 'Privacy Policy', url: '/privacy-policy' },
+        { label: 'Site Map', url: '/sitemap' },
+      ];
+
   return (
     <FooterWrapper>
-      <FooterInner>
-        {/* COLUMN 1: THE HOUSE */}
-        <RevealContainer delay={0.0} yOffset={25}>
-          <FooterColumn>
-            <h4>THE HOUSE</h4>
-            <ul>
-              <li><Link to="/about-us">Quality & Craftsmanship</Link></li>
-              <li><Link to="/sustainability">Diamond Sustainability</Link></li>
-              <li><Link to="/blog">Floksy Journal</Link></li>
-              <li><Link to="/sale-exclusions">Sale Exclusions</Link></li>
-            </ul>
-          </FooterColumn>
-        </RevealContainer>
-
-        {/* COLUMN 2: COLLECTIONS */}
-        <RevealContainer delay={0.1} yOffset={25}>
-          <FooterColumn>
-            <h4>COLLECTIONS</h4>
-            <ul>
-              <li><Link to="/rings">Diamond Rings</Link></li>
-              <li><Link to="/earrings">Fine Earrings</Link></li>
-              <li><Link to="/necklaces">Riviere Necklaces</Link></li>
-              <li><Link to="/bracelets">Tennis Bracelets</Link></li>
-              <li><Link to="/pendants">Solitaire Pendants</Link></li>
-              <li><Link to="/diamonds">The Diamond Vault</Link></li>
-            </ul>
-          </FooterColumn>
-        </RevealContainer>
-
-        {/* COLUMN 3: CLIENT SERVICES */}
-        <RevealContainer delay={0.2} yOffset={25}>
-          <FooterColumn>
-            <h4>CLIENT SERVICES</h4>
-            <ul>
-              <li><a href={`tel:${footerConfig.contactPhone || '+91973785306'}`}>Phone: {footerConfig.contactPhone || '+91973785306'}</a></li>
-              <li><a href={`mailto:${footerConfig.contactEmail || 'contact@floksyjewel.com'}`}>Email: {footerConfig.contactEmail || 'contact@floksyjewel.com'}</a></li>
-              <li><Link to="/contact-us">Contact Concierge</Link></li>
-              <li><Link to="/shipping-delivery">Complimentary Insured Shipping</Link></li>
-              <li><Link to="/returns-refunds">Returns & Exchange</Link></li>
-              <li><Link to="/lifetime-warranty">Lifetime Warranty</Link></li>
-              <li><Link to="/faq">Frequently Asked Questions</Link></li>
-            </ul>
-          </FooterColumn>
-        </RevealContainer>
+      <FooterInner $colCount={renderedColumns.length + 1}>
+        {/* DYNAMIC COLUMNS */}
+        {renderedColumns.map((col: any, colIdx: number) => (
+          <RevealContainer key={colIdx} delay={colIdx * 0.1} yOffset={25}>
+            <FooterColumn>
+              <h4>{col.title}</h4>
+              <ul>
+                {(col.links || []).map((link: any, linkIdx: number) => {
+                  const isExt = link.isExternal || link.url?.startsWith('http') || link.url?.startsWith('tel:') || link.url?.startsWith('mailto:');
+                  return (
+                    <li key={linkIdx}>
+                      {isExt ? (
+                        <a
+                          href={link.url}
+                          target={link.url?.startsWith('http') ? '_blank' : undefined}
+                          rel={link.url?.startsWith('http') ? 'noopener noreferrer' : undefined}
+                        >
+                          {link.label}
+                        </a>
+                      ) : (
+                        <Link to={link.url || '/'}>{link.label}</Link>
+                      )}
+                    </li>
+                  );
+                })}
+              </ul>
+            </FooterColumn>
+          </RevealContainer>
+        ))}
 
         {/* COLUMN 4: NEWSLETTER */}
-        <RevealContainer delay={0.3} yOffset={25}>
+        <RevealContainer delay={renderedColumns.length * 0.1} yOffset={25}>
           <NewsletterColumn>
-            <h4>JOIN FLOKSY JEWEL</h4>
-            <p className="subtitle">Subscribe to receive bespoke invitations and private collection releases.</p>
+            <h4>{footerConfig.newsletterHeading || 'JOIN AETHELCARATS ATELIER'}</h4>
+            <p className="subtitle">
+              {footerConfig.newsletterSubtitle || 'Subscribe to receive bespoke invitations and private collection releases.'}
+            </p>
 
             {subscribed ? (
-              <p style={{ fontSize: 13, color: '#242321', fontWeight: 600 }}>
-                Thank you for subscribing to Floksy Jewel.
+              <p style={{ fontSize: 13, color: '#C9A96E', fontWeight: 600 }}>
+                Thank you for subscribing to {footerConfig.brandName || 'AethelCarats Fine Jewellery Atelier'}.
               </p>
             ) : (
               <NewsletterForm onSubmit={handleSubmit}>
                 <NewsletterInput
                   type="email"
-                  placeholder="Email Address"
+                  placeholder={footerConfig.newsletterPlaceholder || 'Email Address'}
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   required
                 />
-                <NewsletterSubmit type="submit">JOIN</NewsletterSubmit>
+                <NewsletterSubmit type="submit">
+                  {footerConfig.newsletterButtonText || 'JOIN'}
+                </NewsletterSubmit>
               </NewsletterForm>
             )}
 
             <ConsentText>
-              I agree to receive promotional emails from Floksy Jewel. You can unsubscribe at any time. By clicking join, you accept our <Link to="/privacy-policy" style={{ color: '#8c877d', textDecoration: 'underline' }}>Privacy Policy</Link>.
+              {footerConfig.newsletterConsentText || 'I agree to receive promotional emails from AethelCarats Fine Jewellery Atelier. You can unsubscribe at any time.'}{' '}
+              By clicking join, you accept our{' '}
+              <Link to={footerConfig.newsletterPrivacyUrl || '/privacy-policy'} style={{ color: '#C9A96E', textDecoration: 'underline' }}>
+                Privacy Policy
+              </Link>.
             </ConsentText>
           </NewsletterColumn>
         </RevealContainer>
@@ -442,15 +524,21 @@ export const Footer: React.FC = () => {
 
       {/* SOCIAL MEDIA */}
       <SocialRow>
-        <SocialLink href={facebookHref} target="_blank" rel="noopener noreferrer">
-          <Facebook size={16} color="#242321" /> Facebook
-        </SocialLink>
-        <SocialLink href={instagramHref} target="_blank" rel="noopener noreferrer">
-          <Instagram size={16} color="#242321" /> Instagram
-        </SocialLink>
-        <SocialLink href={pinterestHref} target="_blank" rel="noopener noreferrer">
-          <Pinterest size={16} color="#242321" /> Pinterest
-        </SocialLink>
+        {facebookHref && (
+          <SocialLink href={facebookHref} target="_blank" rel="noopener noreferrer">
+            <Facebook size={16} color="#C9A96E" /> Facebook
+          </SocialLink>
+        )}
+        {instagramHref && (
+          <SocialLink href={instagramHref} target="_blank" rel="noopener noreferrer">
+            <Instagram size={16} color="#C9A96E" /> Instagram
+          </SocialLink>
+        )}
+        {pinterestHref && (
+          <SocialLink href={pinterestHref} target="_blank" rel="noopener noreferrer">
+            <Pinterest size={16} color="#C9A96E" /> Pinterest
+          </SocialLink>
+        )}
       </SocialRow>
 
       <BottomDivider />
@@ -458,16 +546,32 @@ export const Footer: React.FC = () => {
       {/* BOTTOM FOOTER */}
       <BottomBar>
         <BrandCopyright>
-          <Link to="/" onClick={() => window.scrollTo(0, 0)} aria-label="Floksy Jewel Homepage">
-            <FooterLogo src="/assets/floksy-jewel-logo.png" alt="Floksy Jewel Fine Jewellery" />
+          <Link to="/" onClick={() => window.scrollTo(0, 0)} aria-label="AethelCarats Homepage" style={{ textDecoration: 'none' }}>
+            <FooterBrandText>
+              <div className="brand-name">
+                AETHEL<span className="gold-accent">CARATS</span>
+              </div>
+              <div className="brand-sub">FINE JEWELLERY ATELIER</div>
+            </FooterBrandText>
           </Link>
-          <span className="copy">&copy; {new Date().getFullYear()} Floksy Jewel</span>
+          <span className="copy">
+            {footerConfig.copyrightText || `© ${new Date().getFullYear()} AethelCarats Fine Jewellery. All Rights Reserved.`}
+          </span>
         </BrandCopyright>
 
         <LegalLinks>
-          <Link to="/terms-of-service">Terms & Conditions</Link>
-          <Link to="/privacy-policy">Privacy Policy</Link>
-          <Link to="/sitemap">Site Map</Link>
+          {renderedLegalLinks.map((ll: any, idx: number) => {
+            const isExt = ll.isExternal || ll.url?.startsWith('http');
+            return isExt ? (
+              <a key={idx} href={ll.url} target="_blank" rel="noopener noreferrer">
+                {ll.label}
+              </a>
+            ) : (
+              <Link key={idx} to={ll.url || '/'}>
+                {ll.label}
+              </Link>
+            );
+          })}
         </LegalLinks>
       </BottomBar>
     </FooterWrapper>

@@ -50,8 +50,8 @@ const OverlayContainer = styled.div`
   width: 92%;
   max-width: 1100px;
   max-height: 88vh;
-  background-color: #fffdf9;
-  border: 1px solid #e8e3d9;
+  background-color: #111111;
+  border: 1px solid rgba(140, 116, 75, 0.25);
   box-shadow: 0 20px 60px rgba(0, 0, 0, 0.25);
   border-radius: 2px;
   display: flex;
@@ -73,7 +73,7 @@ const OverlayHeader = styled.div`
   justify-content: space-between;
   align-items: center;
   padding: 24px 32px 16px;
-  border-bottom: 1px solid #e8e3d9;
+  border-bottom: 1px solid rgba(140, 116, 75, 0.25);
 
   .title {
     font-family: 'Cormorant Garamond', 'Playfair Display', serif;
@@ -81,7 +81,7 @@ const OverlayHeader = styled.div`
     font-weight: 500;
     letter-spacing: 0.14em;
     text-transform: uppercase;
-    color: #242321;
+    color: #F5F1E8;
   }
 
   @media (max-width: 576px) {
@@ -92,7 +92,7 @@ const OverlayHeader = styled.div`
 const CloseButton = styled.button`
   background: transparent;
   border: none;
-  color: #242321;
+  color: #F5F1E8;
   cursor: pointer;
   padding: 4px;
   display: flex;
@@ -101,14 +101,14 @@ const CloseButton = styled.button`
   transition: color 0.15s ease;
 
   &:hover {
-    color: #c9a45c;
+    color: #C9A96E;
   }
 `;
 
 const SearchInputSection = styled.div`
   padding: 24px 32px;
-  border-bottom: 1px solid #e8e3d9;
-  background-color: #ffffff;
+  border-bottom: 1px solid rgba(140, 116, 75, 0.25);
+  background-color: #151515;
 
   @media (max-width: 576px) {
     padding: 16px 20px;
@@ -123,7 +123,7 @@ const SearchInputWrapper = styled.div`
   .search-icon {
     position: absolute;
     left: 18px;
-    color: #8c877d;
+    color: #A8A8A8;
   }
 
   .clear-icon {
@@ -131,7 +131,7 @@ const SearchInputWrapper = styled.div`
     right: 18px;
     background: transparent;
     border: none;
-    color: #8c877d;
+    color: #A8A8A8;
     cursor: pointer;
     display: flex;
     align-items: center;
@@ -139,7 +139,7 @@ const SearchInputWrapper = styled.div`
     padding: 4px;
 
     &:hover {
-      color: #242321;
+      color: #F5F1E8;
     }
   }
 `;
@@ -149,9 +149,9 @@ const SearchInput = styled.input`
   padding: 16px 48px 16px 52px;
   font-size: 1.1rem;
   font-family: 'Inter', sans-serif;
-  color: #242321;
-  background-color: #faf8f5;
-  border: 1.5px solid #e8e3d9;
+  color: #F5F1E8;
+  background-color: #0B0B0B;
+  border: 1.5px solid rgba(140, 116, 75, 0.3);
   border-radius: 2px;
   outline: none;
   transition: border-color 0.2s ease, background-color 0.2s ease;
@@ -161,8 +161,8 @@ const SearchInput = styled.input`
   }
 
   &:focus {
-    border-color: #c9a45c;
-    background-color: #ffffff;
+    border-color: #C9A96E;
+    background-color: #151515;
   }
 
   @media (max-width: 576px) {
@@ -187,7 +187,7 @@ const PopularSearchesSection = styled.div`
     font-weight: 700;
     letter-spacing: 0.14em;
     text-transform: uppercase;
-    color: #c9a45c;
+    color: #C9A96E;
     margin-bottom: 16px;
   }
 `;
@@ -200,12 +200,12 @@ const PopularGrid = styled.div`
 
 const PopularChip = styled.button`
   padding: 10px 18px;
-  background-color: #ffffff;
-  border: 1px solid #e8e3d9;
+  background-color: #151515;
+  border: 1px solid rgba(140, 116, 75, 0.25);
   border-radius: 2px;
   font-size: 0.85rem;
   font-weight: 500;
-  color: #242321;
+  color: #F5F1E8;
   cursor: pointer;
   transition: all 0.2s ease;
   display: flex;
@@ -213,9 +213,9 @@ const PopularChip = styled.button`
   gap: 8px;
 
   &:hover {
-    border-color: #c9a45c;
-    color: #c9a45c;
-    background-color: #faf8f5;
+    border-color: #C9A96E;
+    color: #C9A96E;
+    background-color: #0B0B0B;
   }
 
   .arrow {
@@ -240,7 +240,7 @@ const ResultsHeader = styled.div`
     font-weight: 700;
     letter-spacing: 0.12em;
     text-transform: uppercase;
-    color: #242321;
+    color: #F5F1E8;
   }
 `;
 
@@ -255,14 +255,15 @@ const ResultTabBtn = styled.button<{ $active: boolean }>`
   font-weight: 600;
   letter-spacing: 0.08em;
   text-transform: uppercase;
-  background-color: ${({ $active }) => ($active ? '#242321' : 'transparent')};
-  color: ${({ $active }) => ($active ? '#ffffff' : '#55524d')};
-  border: 1px solid ${({ $active }) => ($active ? '#242321' : '#e8e3d9')};
+  background-color: ${({ $active }) => ($active ? '#C9A96E' : '#151515')};
+  color: ${({ $active }) => ($active ? '#0B0B0B' : '#D8D2C5')};
+  border: 1px solid ${({ $active }) => ($active ? '#C9A96E' : 'rgba(140, 116, 75, 0.3)')};
   cursor: pointer;
   transition: all 0.15s ease;
 
   &:hover {
-    border-color: #242321;
+    border-color: #C9A96E;
+    color: ${({ $active }) => ($active ? '#0B0B0B' : '#C9A96E')};
   }
 `;
 
@@ -286,8 +287,8 @@ const ResultsGrid = styled.div`
 `;
 
 const ItemCard = styled.div`
-  background-color: #ffffff;
-  border: 1px solid #e8e3d9;
+  background-color: #151515;
+  border: 1px solid rgba(140, 116, 75, 0.25);
   padding: 12px;
   cursor: pointer;
   transition: all 0.2s ease;
@@ -295,7 +296,7 @@ const ItemCard = styled.div`
   flex-direction: column;
 
   &:hover {
-    border-color: #c9a45c;
+    border-color: #C9A96E;
     box-shadow: 0 4px 16px rgba(0, 0, 0, 0.06);
     transform: translateY(-2px);
   }
@@ -305,7 +306,7 @@ const ItemCard = styled.div`
     aspect-ratio: 1;
     overflow: hidden;
     margin-bottom: 12px;
-    background-color: #faf8f5;
+    background-color: #0B0B0B;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -320,7 +321,7 @@ const ItemCard = styled.div`
   .name {
     font-size: 0.85rem;
     font-weight: 600;
-    color: #242321;
+    color: #F5F1E8;
     margin-bottom: 4px;
     line-height: 1.3;
     display: -webkit-box;
@@ -338,7 +339,7 @@ const ItemCard = styled.div`
   .price {
     font-size: 0.88rem;
     font-weight: 700;
-    color: #c9a45c;
+    color: #C9A96E;
     margin-top: auto;
   }
 `;
@@ -359,7 +360,7 @@ const EmptyState = styled.div`
     font-family: 'Cormorant Garamond', serif;
     font-size: 1.5rem;
     letter-spacing: 0.1em;
-    color: #242321;
+    color: #F5F1E8;
     margin-bottom: 8px;
     text-transform: uppercase;
   }
@@ -384,9 +385,9 @@ const ActionButton = styled.button`
   font-weight: 600;
   letter-spacing: 0.1em;
   text-transform: uppercase;
-  border: 1px solid #242321;
+  border: 1px solid #C9A96E;
   background-color: transparent;
-  color: #242321;
+  color: #C9A96E;
   cursor: pointer;
   transition: all 0.2s ease;
   display: flex;
@@ -394,8 +395,8 @@ const ActionButton = styled.button`
   gap: 6px;
 
   &:hover {
-    background-color: #242321;
-    color: #ffffff;
+    background-color: #C9A96E;
+    color: #0B0B0B;
   }
 `;
 
@@ -533,7 +534,7 @@ export const SearchOverlay: React.FC<SearchOverlayProps> = ({ isOpen, onClose })
               type="text"
               value={query}
               onChange={(e) => setQuery(e.target.value)}
-              placeholder="Search FLOKSY JEWEL..."
+              placeholder="Search AETHELCARATS..."
             />
             {query && (
               <button className="clear-icon" onClick={() => setQuery('')} aria-label="Clear search">
@@ -621,7 +622,7 @@ export const SearchOverlay: React.FC<SearchOverlayProps> = ({ isOpen, onClose })
                     <ItemCard key={`prod-${product.id}`} onClick={() => handleProductClick(product)}>
                       <div className="img-wrapper">
                         <img
-                          src={product.primaryImage || (product.images && product.images[0] ? product.images[0].url : '/assets/floksy_rings_cat.png')}
+                          src={product.primaryImage || (product.images && product.images[0] ? product.images[0].url : '/assets/gem_rings_cat.png')}
                           alt={product.name}
                         />
                       </div>
@@ -637,7 +638,7 @@ export const SearchOverlay: React.FC<SearchOverlayProps> = ({ isOpen, onClose })
                     <ItemCard key={`dia-${diamond.id}`} onClick={() => handleDiamondClick(diamond)}>
                       <div className="img-wrapper">
                         <img
-                          src="/assets/floksy_diamonds_vault.png"
+                          src="/assets/gem_diamonds_vault.png"
                           alt={`${diamond.carat}ct ${diamond.shape} Diamond`}
                         />
                       </div>

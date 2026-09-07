@@ -10,12 +10,12 @@ import { api } from '../../services/api';
 import { Product, Category } from '../../types';
 import { ProductCard } from '../../components/ui/ProductCard';
 import { SafeImage } from '../../components/ui/SafeImage';
-import { FloksyFilterBar } from '../../components/ui/FloksyFilterBar';
+import { AuraFilterBar } from '../../components/ui/AuraFilterBar';
 import { normalizeShape } from '../../config/diamondShapes';
 import { RevealContainer } from '../../components/ui/RevealContainer';
 
 const PageOuterWrapper = styled.div`
-  background-color: #F9F7F2;
+  background-color: #0B0B0B;
   min-height: 100vh;
   width: 100%;
 `;
@@ -26,7 +26,7 @@ const PageContainer = styled.div`
   padding: 24px 24px 80px;
   box-sizing: border-box;
   overflow-x: hidden;
-  background-color: #F9F7F2;
+  background-color: #0B0B0B;
 
   @media (max-width: 768px) {
     padding: 16px 16px 60px;
@@ -38,27 +38,27 @@ const BreadcrumbNav = styled.nav`
   align-items: center;
   gap: 8px;
   font-size: 0.8rem;
-  color: #77736c;
+  color: #A8A8A8;
   margin-bottom: 24px;
   letter-spacing: 0.05em;
 
   a {
-    color: #77736c;
+    color: #A8A8A8;
     text-decoration: none;
     transition: color 0.15s ease;
 
     &:hover {
-      color: #c9a45c;
+      color: #C9A96E;
     }
   }
 
   span.separator {
-    color: #c9a45c;
+    color: #C9A96E;
     font-size: 0.7rem;
   }
 
   span.current {
-    color: #242321;
+    color: #F5F1E8;
     font-weight: 600;
   }
 `;
@@ -71,7 +71,7 @@ const CategoryHeader = styled.div`
     font-size: 2.8rem;
     font-weight: 500;
     letter-spacing: 0.08em;
-    color: #242321;
+    color: #F5F1E8;
     margin-bottom: 12px;
   }
 
@@ -86,7 +86,7 @@ const CategoryHeader = styled.div`
 const DescriptionWrapper = styled.div`
   max-width: 920px;
   line-height: 1.65;
-  color: #55524d;
+  color: #D8D2C5;
   font-size: 0.95rem;
 
   p {
@@ -97,7 +97,7 @@ const DescriptionWrapper = styled.div`
 const ExpandToggleBtn = styled.button`
   background: none;
   border: none;
-  color: #c9a45c;
+  color: #C9A96E;
   font-size: 0.82rem;
   font-weight: 600;
   letter-spacing: 0.06em;
@@ -117,7 +117,7 @@ const ExpandToggleBtn = styled.button`
 const CategoryNavSection = styled.div`
   margin-bottom: 40px;
   padding-bottom: 16px;
-  border-bottom: 1px solid #e8e3d9;
+  border-bottom: 1px solid rgba(140, 116, 75, 0.2);
   position: relative;
   width: 100%;
 
@@ -135,21 +135,21 @@ const NavArrow = styled.button<{ $direction: 'prev' | 'next' }>`
   width: 40px;
   height: 40px;
   border-radius: 50%;
-  background-color: #fffdf9;
-  border: 1px solid #e8e3d9;
-  color: #242321;
+  background-color: #151515;
+  border: 1px solid rgba(140, 116, 75, 0.3);
+  color: #F5F1E8;
   display: flex;
   align-items: center;
   justify-content: center;
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.6);
   z-index: 20;
   cursor: pointer;
   transition: all 0.2s ease;
 
   &:hover {
-    background-color: #242321;
-    color: #fffdf9;
-    border-color: #242321;
+    background-color: #C9A96E;
+    color: #0B0B0B;
+    border-color: #C9A96E;
   }
 
   @media (max-width: 768px) {
@@ -179,12 +179,12 @@ const CategoryNavCard = styled(Link)<{ $active?: boolean }>`
 const CardImageWrapper = styled.div<{ $active?: boolean }>`
   width: 100%;
   aspect-ratio: 16 / 10;
-  border-radius: 8px;
+  border-radius: 6px;
   overflow: hidden;
   margin-bottom: 10px;
-  background-color: #faf5eb;
-  border: ${({ $active }) => ($active ? '2.5px solid #C9A45C' : '1px solid #e8e3d9')};
-  box-shadow: ${({ $active }) => ($active ? '0 6px 20px rgba(201, 164, 92, 0.35)' : '0 2px 8px rgba(0, 0, 0, 0.04)')};
+  background-color: #0B0B0B;
+  border: ${({ $active }) => ($active ? '2px solid #C9A96E' : '1px solid rgba(140, 116, 75, 0.25)')};
+  box-shadow: ${({ $active }) => ($active ? '0 6px 20px rgba(201, 169, 110, 0.35)' : '0 2px 8px rgba(0, 0, 0, 0.4)')};
   transform: ${({ $active }) => ($active ? 'scale(1.03)' : 'none')};
   transition: all 0.25s ease;
   box-sizing: border-box;
@@ -197,9 +197,9 @@ const CardImageWrapper = styled.div<{ $active?: boolean }>`
   }
 
   ${CategoryNavCard}:hover & {
-    border-color: #C9A45C;
+    border-color: #C9A96E;
     transform: translateY(-2px);
-    box-shadow: 0 8px 24px rgba(201, 164, 92, 0.3);
+    box-shadow: 0 8px 24px rgba(201, 169, 110, 0.35);
 
     img {
       transform: scale(1.06);
@@ -210,12 +210,16 @@ const CardImageWrapper = styled.div<{ $active?: boolean }>`
 const CardTitle = styled.span<{ $active?: boolean }>`
   font-size: 0.88rem;
   font-weight: ${({ $active }) => ($active ? '700' : '600')};
-  letter-spacing: 0.04em;
+  letter-spacing: 0.06em;
   text-transform: uppercase;
-  color: ${({ $active }) => ($active ? '#C9A45C' : '#242321')};
+  color: ${({ $active }) => ($active ? '#C9A96E' : '#D8D2C5')};
   text-align: left;
   margin-left: 2px;
   transition: color 0.2s ease;
+
+  ${CategoryNavCard}:hover & {
+    color: #C9A96E;
+  }
 `;
 
 const ProductGrid = styled.div`
@@ -245,7 +249,7 @@ const shimmer = keyframes`
 
 const SkeletonCard = styled.div`
   aspect-ratio: 3 / 4;
-  background: linear-gradient(90deg, #f3efe6 0%, #e8e3d9 50%, #f3efe6 100%);
+  background: linear-gradient(90deg, #151515 0%, #1f1f1f 50%, #151515 100%);
   background-size: 400px 100%;
   animation: ${shimmer} 1.4s infinite;
   border-radius: 4px;
@@ -254,40 +258,297 @@ const SkeletonCard = styled.div`
 const EmptyState = styled.div`
   text-align: center;
   padding: 64px 20px;
-  background-color: #fdfbf7;
-  border: 1px dashed #e8e3d9;
+  background-color: #151515;
+  border: 1px solid rgba(140, 116, 75, 0.25);
+  border-radius: 4px;
   margin: 40px 0;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.6);
 
   h3 {
     font-family: 'Cormorant Garamond', serif;
-    font-size: 1.8rem;
-    color: #242321;
+    font-size: 2rem;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: #F5F1E8;
     margin-bottom: 12px;
   }
 
   p {
     font-size: 0.95rem;
-    color: #77736c;
-    margin-bottom: 20px;
+    color: #A8A8A8;
+    margin-bottom: 24px;
+  }
+`;
+
+const ClearFiltersBtn = styled.button`
+  padding: 12px 24px;
+  background-color: #C9A96E;
+  color: #0B0B0B;
+  font-size: 0.82rem;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  border: 1px solid #C9A96E;
+  border-radius: 2px;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  margin: 0 auto;
+  transition: all 0.25s ease;
+
+  &:hover {
+    background-color: #DFBA73;
+    border-color: #DFBA73;
+    box-shadow: 0 4px 18px rgba(201, 169, 110, 0.35);
+    transform: translateY(-1px);
   }
 `;
 
 const DEFAULT_CATEGORIES: any[] = [
-  { id: 'rings', name: 'Rings', slug: 'rings', description: 'Discover FLOKSY JEWEL solitaire studs, drop earrings, and diamond huggies.', image: '/assets/floksy_rings_cat.png' },
-  { id: 'earrings', name: 'Earrings', slug: 'earrings', description: 'Discover FLOKSY JEWEL solitaire studs, drop earrings, and diamond huggies.', image: '/assets/floksy_earrings_cat.png' },
-  { id: 'necklaces', name: 'Necklaces', slug: 'necklaces', description: 'Discover FLOKSY JEWEL diamond rivière necklaces, solitaire pendants, and statement colliers.', image: '/assets/floksy_necklaces_cat.png' },
-  { id: 'bracelets', name: 'Bracelets', slug: 'bracelets', description: 'Explore FLOKSY JEWEL diamond tennis bracelets, line cuffs, and high-jewellery bangles.', image: '/assets/floksy_bracelets_cat.png' },
-  { id: 'pendants', name: 'Pendants', slug: 'pendants', description: 'Explore FLOKSY JEWEL solitaire diamond pendants and custom halo medallion drops.', image: '/assets/floksy_pendants_cat.png' },
-  { id: 'diamonds', name: 'Diamonds', slug: 'diamonds', description: 'Browse GIA & IGI authenticated loose diamonds across Round, Oval, Emerald, and Cushion cuts.', image: '/assets/floksy_diamonds_cat.png' },
-  { id: 'collections', name: 'Collections', slug: 'collections', description: 'Explore the complete FLOKSY JEWEL portfolio of handcrafted fine jewellery.', image: '/assets/GOLD-MARQUISE-DIAMOND-JEWELRY-SET.webp' },
+  { id: 'rings', name: 'Rings', slug: 'rings', description: 'Discover AETHELCARATS engagement rings, diamond wedding bands, and bespoke solitaires.', image: '/assets/gem_rings_cat.png' },
+  { id: 'earrings', name: 'Earrings', slug: 'earrings', description: 'Discover AETHELCARATS solitaire studs, drop earrings, and diamond huggies.', image: '/assets/gem_earrings_cat.png' },
+  { id: 'necklaces', name: 'Necklaces', slug: 'necklaces', description: 'Discover AETHELCARATS diamond rivière necklaces, solitaire pendants, and statement colliers.', image: '/assets/gem_necklaces_cat.png' },
+  { id: 'bracelets', name: 'Bracelets', slug: 'bracelets', description: 'Explore AETHELCARATS diamond tennis bracelets, line cuffs, and high-jewellery bangles.', image: '/assets/gem_bracelets_cat.png' },
+  { id: 'pendants', name: 'Pendants', slug: 'pendants', description: 'Explore AETHELCARATS solitaire diamond pendants and custom halo medallion drops.', image: '/assets/aura_pendants_cat.png' },
+  { id: 'diamonds', name: 'Diamonds', slug: 'diamonds', description: 'Browse GIA & IGI authenticated loose diamonds across Round, Oval, Emerald, and Cushion cuts.', image: '/assets/gem_diamonds_cat.png' },
+  { id: 'collections', name: 'Collections', slug: 'collections', description: 'Explore the complete AETHELCARATS portfolio of handcrafted fine jewellery.', image: '/assets/GOLD-MARQUISE-DIAMOND-JEWELRY-SET.webp' },
 ];
+
+export const MEGA_MENU_TITLES: Record<string, { title: string; subtitle?: string }> = {
+  // Rings
+  'womens-wedding': {
+    title: "Women's Wedding Rings",
+    subtitle: "Explore our handcrafted collection of women's wedding rings, diamond bands, and eternity rings in 18K gold and platinum."
+  },
+  'mens-wedding': {
+    title: "Men's Wedding Bands",
+    subtitle: "Discover refined men's wedding bands engineered in 18K solid gold, platinum, and comfort-fit silhouettes."
+  },
+  'eternity': {
+    title: "Eternity Rings",
+    subtitle: "Endless brilliance. Explore full and half eternity rings set with conflict-free diamonds."
+  },
+  'anniversary': {
+    title: "Anniversary Rings",
+    subtitle: "Commemorate unforgettable milestones with handcrafted diamond anniversary rings."
+  },
+  'ready-to-ship': {
+    title: "Ready To Ship Engagement Rings",
+    subtitle: "In stock and ready to dispatch within 24 hours in luxury presentation packaging."
+  },
+  'diamond': {
+    title: "Diamond Rings",
+    subtitle: "Curated collection of brilliant natural and lab-grown diamond rings."
+  },
+  'gemstone': {
+    title: "Gemstone Rings",
+    subtitle: "Exquisite sapphire, emerald, ruby, and precious gemstone rings."
+  },
+  'emerald': {
+    title: "Emerald Rings",
+    subtitle: "Vibrant Colombian and Zambian emerald rings in bespoke settings."
+  },
+  'sapphire': {
+    title: "Sapphire Rings",
+    subtitle: "Royal blue and fancy sapphire rings set in 18K gold and platinum."
+  },
+  'pearl': {
+    title: "Pearl Rings",
+    subtitle: "Luminous South Sea and Akoya cultured pearl fine jewelry rings."
+  },
+  'stackable': {
+    title: "Stackable Rings",
+    subtitle: "Delicate and striking bands designed to mix, match, and stack seamlessly."
+  },
+  'fashion': {
+    title: "Fashion & Cocktail Rings",
+    subtitle: "Bold contemporary statement rings crafted for modern elegance."
+  },
+  'signet': {
+    title: "Signet Rings",
+    subtitle: "Classic and modern monogram-ready signet rings in solid gold."
+  },
+  'mens': {
+    title: "Men's Rings",
+    subtitle: "Sophisticated men's signet, diamond, and precious metal rings."
+  },
+  'infinity': {
+    title: "Infinity Rings",
+    subtitle: "Timeless infinity motif diamond and fine gold rings."
+  },
+  'solitaire': {
+    title: "Solitaire Rings",
+    subtitle: "Classic solitaire settings highlighting the center diamond with pure sophistication."
+  },
+  'wedding-bands': {
+    title: "Wedding Bands",
+    subtitle: "Handcrafted wedding bands in 18K yellow gold, white gold, rose gold, and platinum."
+  },
+  'aura-collection': {
+    title: "NEW Aura Collection",
+    subtitle: "Exclusive modern silhouettes designed in our master jewellery atelier."
+  },
+
+  // Earrings
+  'all-earrings': {
+    title: "All Earrings",
+    subtitle: "Explore our full suite of diamond stud, drop, hoop, and huggie earrings."
+  },
+  'studs': {
+    title: "Stud Earrings",
+    subtitle: "Timeless solitaire and halo diamond stud earrings for everyday luxury."
+  },
+  'drop': {
+    title: "Drop & Dangle Earrings",
+    subtitle: "Graceful diamond drop and chandelier earrings designed for maximum movement and light."
+  },
+  'hoops': {
+    title: "Hoop Earrings",
+    subtitle: "Diamond pavé and fine gold hoops in micro, midi, and statement diameters."
+  },
+  'huggies': {
+    title: "Diamond Huggies",
+    subtitle: "Effortless snug-fit diamond huggie earrings for curated ear styling."
+  },
+  'solitaire-studs': {
+    title: "Solitaire Studs",
+    subtitle: "Four-prong and bezel-set diamond solitaire studs in 18K gold and platinum."
+  },
+  'pear-drops': {
+    title: "Pear Cut Drops",
+    subtitle: "Elongated pear cut diamond drop earrings with mesmerizing brilliance."
+  },
+  'halo-studs': {
+    title: "Halo Studs",
+    subtitle: "Center diamonds enveloped in a halo of microscopic pavé diamonds."
+  },
+  'cluster': {
+    title: "Cluster Earrings",
+    subtitle: "Artistic diamond clusters designed for magnificent scintillation."
+  },
+  'diamond-drop-earrings': {
+    title: "Diamond Drop Earrings",
+    subtitle: "Handcrafted pear cuts and fancy diamond drops."
+  },
+
+  // Necklaces
+  'all-necklaces': {
+    title: "All Necklaces",
+    subtitle: "Discover Rivière colliers, solitaire pendants, and layering diamond chains."
+  },
+  'diamond-necklaces': {
+    title: "Diamond Necklaces",
+    subtitle: "Handcrafted diamond necklaces in fine 18K solid gold."
+  },
+  'tennis': {
+    title: "Tennis Necklaces",
+    subtitle: "Continuous lines of matched brilliant diamonds crafted with fluid flexibility."
+  },
+  'statement': {
+    title: "Statement Necklaces",
+    subtitle: "High-jewellery colliers and dramatic diamond statement necklaces."
+  },
+  'chokers': {
+    title: "Choker Necklaces",
+    subtitle: "Close-fitting modern choker necklaces set with fiery diamonds."
+  },
+  'graduated': {
+    title: "Graduated Tennis Necklaces",
+    subtitle: "Gracefully graduating diamonds culminating in an extraordinary centerpiece."
+  },
+  'marquise-pear': {
+    title: "Marquise & Pear Clusters",
+    subtitle: "Intricate floral and geometric clusters of fancy marquise and pear diamonds."
+  },
+  'chains': {
+    title: "Layering Chains",
+    subtitle: "Fine 18K solid gold chains crafted for effortless layered style."
+  },
+  'diamond-tennis-necklace': {
+    title: "Diamond Tennis Necklace",
+    subtitle: "18K fine gold setting with seamless diamond articulation."
+  },
+
+  // Bracelets
+  'all-bracelets': {
+    title: "All Bracelets",
+    subtitle: "Explore our collection of tennis bracelets, solid gold bangles, and chain cuffs."
+  },
+  'tennis-bracelets': {
+    title: "Tennis Bracelets",
+    subtitle: "The definitive diamond tennis bracelet, handcrafted with microscopic precision."
+  },
+  'bangles': {
+    title: "Bangles",
+    subtitle: "Structured diamond bangles and stacking bracelets in solid 18K gold."
+  },
+  'chain': {
+    title: "Chain Bracelets",
+    subtitle: "Fluid link and charm chain bracelets set with sparkling diamond accents."
+  },
+  'cuff': {
+    title: "Cuff Bracelets",
+    subtitle: "Open cuff bracelets with bold architectural lines and pavé detailing."
+  },
+  'emerald-cut': {
+    title: "Emerald Cut Tennis Bracelets",
+    subtitle: "Clean geometric emerald cut diamonds in seamless four-prong settings."
+  },
+  'round-brilliant': {
+    title: "Round Brilliant Tennis",
+    subtitle: "Timeless Round brilliant diamonds mounted in flexible gold links."
+  },
+  'stacking': {
+    title: "Stacking Bangles",
+    subtitle: "Slender diamond and polished gold bangles made for stacking."
+  },
+  'emerald-tennis-bracelet': {
+    title: "Emerald Tennis Bracelet",
+    subtitle: "Bezel and prong settings handcrafted in solid 18K gold."
+  },
+
+  // Pendants
+  'all-pendants': {
+    title: "All Pendants",
+    subtitle: "Hand-set solitaire and halo pendants suspended on delicate gold chains."
+  },
+  'solitaire-pendants': {
+    title: "Solitaire Pendants",
+    subtitle: "Exquisite four-prong diamond solitaires on 18K gold chains."
+  },
+  'halo-pendants': {
+    title: "Halo Pendants",
+    subtitle: "Radiant center gemstones framed by luminous diamond halos."
+  },
+  'pear-cut-pendants': {
+    title: "Pear Cut Pendants",
+    subtitle: "Graceful tear-drop silhouette diamond and gemstone pendants."
+  },
+  'gemstone-pendants': {
+    title: "Gemstone Pendants",
+    subtitle: "Natural sapphire, emerald, and ruby pendants in bespoke mountings."
+  },
+  'round': {
+    title: "Round Brilliant Pendants",
+    subtitle: "Classic round brilliant diamonds suspended on delicate gold chains."
+  },
+  'oval': {
+    title: "Oval Cut Pendants",
+    subtitle: "Elongated oval cut diamonds offering unmatched elegance."
+  },
+  'marquise': {
+    title: "Marquise Pendants",
+    subtitle: "Dramatic eye-shaped marquise diamond pendants."
+  },
+};
 
 export const ProductListPage: React.FC = () => {
   const location = useLocation();
   const [searchParams, setSearchParams] = useSearchParams();
 
   const rawPath = location.pathname.replace('/', '') || 'rings';
-  const categorySlug = rawPath === 'atelier-vault-7Kx9Qm4R2Lp8Nw6T' ? 'rings' : rawPath;
+  const categorySlug = rawPath === 'vault-mgmt-k8m3x9q2v7' ? 'rings' : rawPath;
 
   const [products, setProducts] = useState<Product[]>([]);
   const [categories, setCategories] = useState<Category[]>(DEFAULT_CATEGORIES);
@@ -342,6 +603,12 @@ export const ProductListPage: React.FC = () => {
   // Update URL search parameters when filters change
   useEffect(() => {
     const params: Record<string, string> = {};
+    const existingCat = searchParams.get('category');
+    const existingCol = searchParams.get('collection');
+
+    if (existingCat && existingCat !== categorySlug) params.category = existingCat;
+    if (existingCol) params.collection = existingCol;
+
     if (gender !== 'All') params.gender = gender;
     if (ringStyle !== 'All') params.style = ringStyle;
     if (ringSize !== 'All') params.ringSize = ringSize;
@@ -395,11 +662,19 @@ export const ProductListPage: React.FC = () => {
   // Fetch products matching all active filters (AND logic)
   const fetchProducts = () => {
     setLoading(true);
-    const targetCat = categorySlug === 'collections' ? 'All' : categorySlug;
+    let targetCat = categorySlug === 'collections' ? 'All' : categorySlug;
+    const subCatParam = searchParams.get('category');
+    const colParam = searchParams.get('collection');
+
+    if (subCatParam && subCatParam !== categorySlug) {
+      targetCat = subCatParam;
+    }
+
     const normalizedShapeVal = normalizeShape(stoneShape);
 
     const params: Record<string, any> = {
       ...(targetCat !== 'All' && { category: targetCat }),
+      ...(colParam && { collection: colParam }),
       sort: sortOption,
     };
 
@@ -435,6 +710,7 @@ export const ProductListPage: React.FC = () => {
     fetchProducts();
   }, [
     categorySlug,
+    location.search,
     gender,
     ringStyle,
     ringSize,
@@ -451,15 +727,36 @@ export const ProductListPage: React.FC = () => {
     sortOption,
   ]);
 
-  const activeCategoryRecord = categories.find((c) => c.slug === categorySlug);
-  const categoryTitle =
+  const subCatParam = searchParams.get('category');
+  const collectionParam = searchParams.get('collection');
+  const styleParam = searchParams.get('style');
+
+  const activeMegaMenuKey = (subCatParam && subCatParam !== categorySlug ? subCatParam : null) || collectionParam;
+  const activeMegaMenuMeta = activeMegaMenuKey ? MEGA_MENU_TITLES[activeMegaMenuKey] : null;
+
+  const baseCategoryRecord = categories.find((c) => c.slug === categorySlug);
+  const baseCategoryTitle =
     categorySlug === 'collections'
       ? 'Fine Jewellery Collections'
-      : activeCategoryRecord?.name || (categorySlug.charAt(0).toUpperCase() + categorySlug.slice(1).toLowerCase());
+      : baseCategoryRecord?.name || (categorySlug.charAt(0).toUpperCase() + categorySlug.slice(1).toLowerCase());
 
-  const categoryDesc =
-    activeCategoryRecord?.description ||
-    'Discover FLOKSY JEWEL solitaire studs, drop earrings, and fine handcrafted diamond jewellery.';
+  let categoryTitle = baseCategoryTitle;
+  let categoryDesc =
+    baseCategoryRecord?.description ||
+    'Discover AETHELCARATS solitaire studs, drop earrings, and fine handcrafted diamond jewellery.';
+
+  if (activeMegaMenuMeta) {
+    categoryTitle = activeMegaMenuMeta.title;
+    if (activeMegaMenuMeta.subtitle) categoryDesc = activeMegaMenuMeta.subtitle;
+  } else if (subCatParam && subCatParam !== categorySlug && subCatParam !== 'All') {
+    categoryTitle = subCatParam.replace(/-/g, ' ').replace(/\b\w/g, (l) => l.toUpperCase());
+  } else if (collectionParam && collectionParam !== 'All') {
+    categoryTitle = collectionParam.replace(/-/g, ' ').replace(/\b\w/g, (l) => l.toUpperCase());
+  } else if (styleParam && styleParam !== 'All' && styleParam !== 'Any') {
+    categoryTitle = `${styleParam} ${baseCategoryTitle}`;
+  }
+
+  const isSubCategoryActive = categoryTitle !== baseCategoryTitle;
 
   const resetFilters = () => {
     setGender('All');
@@ -488,7 +785,15 @@ export const ProductListPage: React.FC = () => {
           <span className="separator">/</span>
           <Link to="/rings">Jewelry</Link>
           <span className="separator">/</span>
-          <span className="current">{categoryTitle}</span>
+          {isSubCategoryActive ? (
+            <>
+              <Link to={`/${categorySlug}`}>{baseCategoryTitle}</Link>
+              <span className="separator">/</span>
+              <span className="current">{categoryTitle}</span>
+            </>
+          ) : (
+            <span className="current">{baseCategoryTitle}</span>
+          )}
         </BreadcrumbNav>
 
         {/* Category Header */}
@@ -544,12 +849,12 @@ export const ProductListPage: React.FC = () => {
             >
               {(() => {
                 const defaultCategories = [
-                  { name: 'Rings', slug: 'rings', image: '/assets/floksy_rings_cat.png' },
-                  { name: 'Earrings', slug: 'earrings', image: '/assets/floksy_earrings_cat.png' },
-                  { name: 'Bracelets', slug: 'bracelets', image: '/assets/floksy_bracelets_cat.png' },
-                  { name: 'Necklaces', slug: 'necklaces', image: '/assets/floksy_necklaces_cat.png' },
-                  { name: 'Pendants', slug: 'pendants', image: '/assets/floksy_pendants_cat.png' },
-                  { name: 'Diamonds', slug: 'diamonds', image: '/assets/floksy_diamonds_cat.png' },
+                  { name: 'Rings', slug: 'rings', image: '/assets/gem_rings_cat.png' },
+                  { name: 'Earrings', slug: 'earrings', image: '/assets/gem_earrings_cat.png' },
+                  { name: 'Bracelets', slug: 'bracelets', image: '/assets/gem_bracelets_cat.png' },
+                  { name: 'Necklaces', slug: 'necklaces', image: '/assets/gem_necklaces_cat.png' },
+                  { name: 'Pendants', slug: 'pendants', image: '/assets/aura_pendants_cat.png' },
+                  { name: 'Diamonds', slug: 'diamonds', image: '/assets/gem_diamonds_cat.png' },
                   { name: 'Collections', slug: 'collections', image: '/assets/GOLD-MARQUISE-DIAMOND-JEWELRY-SET.webp' },
                 ];
 
@@ -558,7 +863,7 @@ export const ProductListPage: React.FC = () => {
                 return list.map((cat: any) => {
                   const slugName = cat.slug || cat.name?.toLowerCase();
                   const isActive = slugName === categorySlug || (categorySlug === 'rings' && slugName === 'rings');
-                  const defaultImage = defaultCategories.find((d) => d.slug === slugName)?.image || '/assets/floksy_rings_cat.png';
+                  const defaultImage = defaultCategories.find((d) => d.slug === slugName)?.image || '/assets/gem_rings_cat.png';
 
                   return (
                     <SwiperSlide key={cat.id || slugName}>
@@ -580,49 +885,49 @@ export const ProductListPage: React.FC = () => {
           </CategoryNavSection>
         </RevealContainer>
 
-        {/* Floksy Custom Luxury Filter Bar */}
-        <RevealContainer yOffset={25}>
-          <FloksyFilterBar
-          selectedFilters={{
-            gender: gender !== 'All' ? [gender] : [],
-            style: ringStyle !== 'All' ? [ringStyle] : [],
-            shape: stoneShape !== 'All' ? [stoneShape] : [],
-            metal: metal !== 'All' ? [metal] : [],
-            diamond: diamondType !== 'All' ? [diamondType] : [],
-            ringSize: ringSize !== 'All' ? [ringSize] : [],
-            carat: totalCarat !== 'All' ? [totalCarat] : [],
-            clarity: clarity !== 'Any' ? [clarity] : [],
-            color: color !== 'Any' ? [color] : [],
-            cut: cut !== 'Any' ? [cut] : [],
-            certification: certification !== 'Any' ? [certification] : [],
-          }}
-          onFilterChange={(key, values) => {
-            const val = values[0] || 'All';
-            if (key === 'gender') setGender(val);
-            if (key === 'style') setRingStyle(val);
-            if (key === 'shape') setStoneShape(normalizeShape(val));
-            if (key === 'metal') setMetal(val);
-            if (key === 'diamond') setDiamondType(val);
-            if (key === 'ringSize') setRingSize(val);
-            if (key === 'carat') setTotalCarat(val);
-            if (key === 'clarity') setClarity(val);
-            if (key === 'color') setColor(val);
-            if (key === 'cut') setCut(val);
-            if (key === 'certification') setCertification(val);
-          }}
-          onClearAll={resetFilters}
-          sortValue={sortOption}
-          onSortChange={(val) => setSortOption(val)}
-          totalResults={products.length}
-          minPrice={minPriceVal}
-          maxPrice={maxPriceVal}
-          onPriceChange={(min, max) => {
-            setMinPriceVal(min);
-            setMaxPriceVal(max);
-          }}
-          categorySlug={categorySlug}
-        />
-      </RevealContainer>
+        {/* Aura Custom Luxury Filter Bar */}
+        <div style={{ position: 'relative', zIndex: 100, overflow: 'visible' }}>
+          <AuraFilterBar
+            selectedFilters={{
+              gender: gender !== 'All' ? [gender] : [],
+              style: ringStyle !== 'All' ? [ringStyle] : [],
+              shape: stoneShape !== 'All' ? [stoneShape] : [],
+              metal: metal !== 'All' ? [metal] : [],
+              diamond: diamondType !== 'All' ? [diamondType] : [],
+              ringSize: ringSize !== 'All' ? [ringSize] : [],
+              carat: totalCarat !== 'All' ? [totalCarat] : [],
+              clarity: clarity !== 'Any' ? [clarity] : [],
+              color: color !== 'Any' ? [color] : [],
+              cut: cut !== 'Any' ? [cut] : [],
+              certification: certification !== 'Any' ? [certification] : [],
+            }}
+            onFilterChange={(key: string, values: string[]) => {
+              const val = values[0] || 'All';
+              if (key === 'gender') setGender(val);
+              if (key === 'style') setRingStyle(val);
+              if (key === 'shape') setStoneShape(normalizeShape(val));
+              if (key === 'metal') setMetal(val);
+              if (key === 'diamond') setDiamondType(val);
+              if (key === 'ringSize') setRingSize(val);
+              if (key === 'carat') setTotalCarat(val);
+              if (key === 'clarity') setClarity(val);
+              if (key === 'color') setColor(val);
+              if (key === 'cut') setCut(val);
+              if (key === 'certification') setCertification(val);
+            }}
+            onClearAll={resetFilters}
+            sortValue={sortOption}
+            onSortChange={(val: string) => setSortOption(val)}
+            totalResults={products.length}
+            minPrice={minPriceVal}
+            maxPrice={maxPriceVal}
+            onPriceChange={(min: number, max: number) => {
+              setMinPriceVal(min);
+              setMaxPriceVal(max);
+            }}
+            categorySlug={categorySlug}
+          />
+        </div>
 
         {/* Product Grid */}
         {loading ? (
@@ -635,9 +940,9 @@ export const ProductListPage: React.FC = () => {
           <EmptyState>
             <h3>NO JEWELLERY FOUND</h3>
             <p>We couldn't find pieces matching your selected filters.</p>
-            <ExpandToggleBtn onClick={resetFilters} style={{ margin: '0 auto', fontSize: '0.85rem' }}>
+            <ClearFiltersBtn onClick={resetFilters}>
               <RotateCcw size={14} /> CLEAR FILTERS
-            </ExpandToggleBtn>
+            </ClearFiltersBtn>
           </EmptyState>
         ) : (
           <ProductGrid>

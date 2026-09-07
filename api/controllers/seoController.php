@@ -1,6 +1,6 @@
-<?php
+﻿<?php
 /**
- * Floksy Jewel — SEO Metadata, Redirects, Sitemap & Robots.txt Controller
+ * Aura Diamond Atelier — SEO Metadata, Redirects, Sitemap & Robots.txt Controller
  * Migrated from Node.js (seoController.ts) to PHP 8.3 / PDO MySQL
  */
 
@@ -39,13 +39,13 @@ function handleGetSeoMetadata(): void {
             jsonResponse($seo, 200);
         } else {
             jsonResponse([
-                'seoTitle'        => 'FLOKSY JEWEL | High Jewellery & Natural Diamond Vault',
-                'metaDescription' => 'Discover Floksy Jewel bespoke fine jewellery collections and certified loose diamonds in The Diamond Vault.',
-                'canonicalUrl'    => 'https://floksyjewel.com',
+                'seoTitle'        => 'AURA DIAMOND ATELIER | High Jewellery & Natural Diamond Vault',
+                'metaDescription' => 'Discover Aura Diamond Atelier bespoke fine jewellery collections and certified loose diamonds in The Diamond Vault.',
+                'canonicalUrl'    => 'https://auroradiamonds.com',
                 'robots'          => 'index, follow',
-                'ogTitle'         => 'FLOKSY JEWEL | International Luxury Fine Jewellery',
+                'ogTitle'         => 'AURA DIAMOND ATELIER | International Luxury Fine Jewellery',
                 'ogDescription'   => 'Certified natural & lab-grown diamonds, engagement rings, bespoke craftsmanship.',
-                'ogImage'         => '/assets/floksy_hero_desktop.png'
+                'ogImage'         => '/assets/gem_hero_desktop.png'
             ], 200);
         }
 
@@ -60,7 +60,7 @@ function handleGetSeoMetadata(): void {
  */
 function handleGenerateSitemapXml(): void {
     try {
-        $baseUrl = getenv('PUBLIC_SITE_URL') ?: 'https://floksyjewel.com';
+        $baseUrl = getenv('PUBLIC_SITE_URL') ?: 'https://auroradiamonds.com';
         $pdo = getDatabaseConnection();
 
         $prodStmt = $pdo->query("SELECT `slug`, `updatedAt` FROM `product` WHERE `status` = 'ACTIVE'");
@@ -129,7 +129,7 @@ function handleGenerateSitemapXml(): void {
  * GET /robots.txt
  */
 function handleGenerateRobotsTxt(): void {
-    $baseUrl = getenv('PUBLIC_SITE_URL') ?: 'https://floksyjewel.com';
+    $baseUrl = getenv('PUBLIC_SITE_URL') ?: 'https://auroradiamonds.com';
     $txt = "User-agent: *\n";
     $txt .= "Disallow: /admin/\n";
     $txt .= "Disallow: /account/\n";

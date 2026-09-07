@@ -1,4 +1,4 @@
-import axios from 'axios';
+﻿import axios from 'axios';
 
 const getBaseURL = () => {
   if ((import.meta as any).env?.VITE_API_URL) {
@@ -21,7 +21,7 @@ const API = axios.create({
 });
 
 API.interceptors.request.use((config) => {
-  const token = localStorage.getItem('fj_admin_token') || localStorage.getItem('floksy_token');
+  const token = localStorage.getItem('admin_session_token') || localStorage.getItem('app_auth_token');
   if (token) {
     config.headers.Authorization = `Bearer ${token}`;
   }
@@ -160,7 +160,7 @@ export const financialApi = {
 
   // DATA EXPORT (EXCEL & CSV)
   downloadExportFile: async (format: 'excel' | 'csv', type = 'orders', fromDate?: string, toDate?: string) => {
-    const token = localStorage.getItem('fj_admin_token') || localStorage.getItem('floksy_token');
+    const token = localStorage.getItem('admin_session_token') || localStorage.getItem('app_auth_token');
     const params: any = { format, type };
     if (fromDate) params.fromDate = fromDate;
     if (toDate) params.toDate = toDate;
@@ -180,7 +180,7 @@ export const financialApi = {
     const link = document.createElement('a');
     link.href = downloadUrl;
     const ext = format === 'csv' ? 'csv' : 'xlsx';
-    link.setAttribute('download', `Floksy_Jewel_${type}_${new Date().toISOString().split('T')[0]}.${ext}`);
+    link.setAttribute('download', `Aura_Jewel_${type}_${new Date().toISOString().split('T')[0]}.${ext}`);
     document.body.appendChild(link);
     link.click();
     link.remove();
@@ -188,7 +188,7 @@ export const financialApi = {
 
   // AUTHENTICATED PDF DOWNLOAD TRIGGER
   downloadPdfBlob: async (url: string, filename: string) => {
-    const token = localStorage.getItem('fj_admin_token') || localStorage.getItem('floksy_token');
+    const token = localStorage.getItem('admin_session_token') || localStorage.getItem('app_auth_token');
     const response = await axios.get(url, {
       responseType: 'blob',
       headers: {

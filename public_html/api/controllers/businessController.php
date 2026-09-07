@@ -1,6 +1,6 @@
-<?php
+﻿<?php
 /**
- * Floksy Jewel — Business Hub & Operations Controller (PHP / MySQL PDO)
+ * Aura Diamond Atelier — Enterprise Operations Hub Controller (PHP / MySQL PDO)
  * Handles Dashboard, Employees, Attendance, 46-column Sales Tracker, Commissions,
  * Targets, Customers, Suppliers, Excel Migration & Audit Trail on Hostinger / Apache.
  */
@@ -240,73 +240,6 @@ function ensureBusinessTablesExist(PDO $pdo): void {
         $pdo->exec("INSERT IGNORE INTO `business_settings` (`settingKey`, `settingValue`, `updatedAt`) VALUES ('dollarRate', '94.55', NOW())");
         $pdo->exec("INSERT IGNORE INTO `business_settings` (`settingKey`, `settingValue`, `updatedAt`) VALUES ('gstRate', '0.015', NOW())");
         $pdo->exec("INSERT IGNORE INTO `business_settings` (`settingKey`, `settingValue`, `updatedAt`) VALUES ('baseCurrency', 'USD', NOW())");
-    } catch (\Throwable $e) {}
-
-    // 10. Seed initial requested employees ONLY IF EMPLOYEE TABLE IS TOTALLY EMPTY
-    try {
-        $empCount = (int)$pdo->query("SELECT COUNT(*) FROM `employee`")->fetchColumn();
-        if ($empCount === 0) {
-            $employeesToSeed = [
-                [
-                    'id' => 'emp-rutu-001',
-                    'employeeCode' => 'EMP-1001',
-                    'name' => 'Rutu',
-                    'email' => 'rutu@floksyjewel.com',
-                    'phone' => '+91 98765 43210',
-                    'department' => 'Sales',
-                    'designation' => 'Sales Manager',
-                    'role' => 'SALES_MANAGER',
-                    'status' => 'ACTIVE',
-                    'monthlyTarget' => 150000,
-                    'notes' => 'Sales Manager leading retail and high jewellery sales'
-                ],
-                [
-                    'id' => 'emp-jyoti-002',
-                    'employeeCode' => 'EMP-1002',
-                    'name' => 'Jyoti',
-                    'email' => 'jyoti@floksyjewel.com',
-                    'phone' => '+91 98765 43211',
-                    'department' => 'Sales',
-                    'designation' => 'Sales Executive',
-                    'role' => 'SALES_EMPLOYEE',
-                    'status' => 'ACTIVE',
-                    'monthlyTarget' => 80000,
-                    'notes' => 'Sales Executive specializing in diamond and custom jewelry'
-                ],
-                [
-                    'id' => 'emp-twinkle-003',
-                    'employeeCode' => 'EMP-1003',
-                    'name' => 'Twinkle',
-                    'email' => 'twinkle@floksyjewel.com',
-                    'phone' => '+91 98765 43212',
-                    'department' => 'Sales',
-                    'designation' => 'Sales Executive',
-                    'role' => 'SALES_EMPLOYEE',
-                    'status' => 'ACTIVE',
-                    'monthlyTarget' => 80000,
-                    'notes' => 'Sales Executive handling fine jewellery and solitaire sales'
-                ]
-            ];
-
-            $seedStmt = $pdo->prepare("INSERT IGNORE INTO `employee` (`id`, `employeeCode`, `name`, `email`, `phone`, `department`, `designation`, `role`, `status`, `monthlyTarget`, `notes`, `createdAt`, `updatedAt`) 
-                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, NOW(), NOW())");
-
-            foreach ($employeesToSeed as $e) {
-                $seedStmt->execute([
-                    $e['id'],
-                    $e['employeeCode'],
-                    $e['name'],
-                    $e['email'],
-                    $e['phone'],
-                    $e['department'],
-                    $e['designation'],
-                    $e['role'],
-                    $e['status'],
-                    $e['monthlyTarget'],
-                    $e['notes']
-                ]);
-            }
-        }
     } catch (\Throwable $e) {}
 }
 
@@ -1975,7 +1908,7 @@ function syncBusinessCustomersFromSales(PDO $pdo): void {
             $country = !empty($sc['country']) ? trim($sc['country']) : null;
             $staff = !empty($sc['assignedStaff']) ? trim($sc['assignedStaff']) : 'Sales Team';
             $companyDesc = $country ? ($rawName . ' (' . $country . ')') : null;
-            $dummyEmail = 'client.' . substr(md5($norm), 0, 8) . '@floksyjewel.internal';
+            $dummyEmail = 'client.' . substr(md5($norm), 0, 8) . '@aura-atelier.internal';
 
             if (isset($existingMap[$norm])) {
                 $custId = $existingMap[$norm];
@@ -2042,7 +1975,7 @@ function handleGetBusinessCustomers(): void {
     $customers = array_map(function($c) {
         $cName = $c['name'] ?? $c['clientName'] ?? 'Client';
         $cEmail = $c['email'] ?? '';
-        if (str_contains($cEmail, '@floksyjewel.internal')) {
+        if (str_contains($cEmail, '@aura-atelier.internal')) {
             $cEmail = '-';
         }
         return [
@@ -2356,73 +2289,14 @@ function handleResetBusinessData(): void {
     // 2. Delete all attendance and targets
     $pdo->exec("DELETE FROM `attendance`");
     $pdo->exec("DELETE FROM `salestarget`");
+    $pdo->exec("DELETE FROM `commissionrule`");
+    $pdo->exec("DELETE FROM `commissionplan`");
 
-    // 3. Clear existing employees and reseed only Rutu, Jyoti, Twinkle
-    $pdo->exec("DELETE FROM `employee`");
-
-    $employeesToSeed = [
-        [
-            'id' => 'emp-rutu-001',
-            'employeeCode' => 'EMP-1001',
-            'name' => 'Rutu',
-            'email' => 'rutu@floksyjewel.com',
-            'phone' => '+91 98765 43210',
-            'department' => 'Sales',
-            'designation' => 'Sales Manager',
-            'role' => 'SALES_MANAGER',
-            'status' => 'ACTIVE',
-            'monthlyTarget' => 150000,
-            'notes' => 'Sales Manager leading retail and high jewellery sales'
-        ],
-        [
-            'id' => 'emp-jyoti-002',
-            'employeeCode' => 'EMP-1002',
-            'name' => 'Jyoti',
-            'email' => 'jyoti@floksyjewel.com',
-            'phone' => '+91 98765 43211',
-            'department' => 'Sales',
-            'designation' => 'Sales Executive',
-            'role' => 'SALES_EMPLOYEE',
-            'status' => 'ACTIVE',
-            'monthlyTarget' => 80000,
-            'notes' => 'Sales Executive specializing in diamond and custom jewelry'
-        ],
-        [
-            'id' => 'emp-twinkle-003',
-            'employeeCode' => 'EMP-1003',
-            'name' => 'Twinkle',
-            'email' => 'twinkle@floksyjewel.com',
-            'phone' => '+91 98765 43212',
-            'department' => 'Sales',
-            'designation' => 'Sales Executive',
-            'role' => 'SALES_EMPLOYEE',
-            'status' => 'ACTIVE',
-            'monthlyTarget' => 80000,
-            'notes' => 'Sales Executive handling fine jewellery and solitaire sales'
-        ]
-    ];
-
-    $seedStmt = $pdo->prepare("INSERT INTO `employee` (`id`, `employeeCode`, `name`, `email`, `phone`, `department`, `designation`, `role`, `status`, `monthlyTarget`, `notes`, `createdAt`, `updatedAt`) 
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, NOW(), NOW())");
-
-    foreach ($employeesToSeed as $e) {
-        $seedStmt->execute([
-            $e['id'],
-            $e['employeeCode'],
-            $e['name'],
-            $e['email'],
-            $e['phone'],
-            $e['department'],
-            $e['designation'],
-            $e['role'],
-            $e['status'],
-            $e['monthlyTarget'],
-            $e['notes']
-        ]);
-    }
+    // Remove legacy demo employees
+    $pdo->exec("DELETE FROM `employee` WHERE `employeeCode` IN ('EMP-1001', 'EMP-1002', 'EMP-1003', 'EMP001', 'EMP002', 'EMP003', 'DEMO001') OR `email` LIKE '%auroradiamonds.com%'");
 
     jsonResponse([
-        'message' => 'All sales and old employees removed. Rutu (Sales Manager), Jyoti, and Twinkle re-seeded as fresh staff.',
+        'message' => 'All sales, attendance, and commission records reset successfully.',
         'success' => true
     ]);
 }
@@ -2574,7 +2448,7 @@ function performAutomatedWeeklyBackup(PDO $pdo): void {
 
         $snapshot = [
             'meta' => [
-                'system' => 'Floksy Jewel Business Hub',
+                'system' => 'Enterprise Operations Hub',
                 'backupType' => 'AUTOMATIC_WEEKLY',
                 'weekNumber' => $weekNumber,
                 'year' => $year,
@@ -2653,7 +2527,7 @@ function handleCreateManualBackup(): void {
 
     $snapshot = [
         'meta' => [
-            'system' => 'Floksy Jewel Business Hub',
+            'system' => 'Enterprise Operations Hub',
             'backupType' => 'MANUAL_SNAPSHOT',
             'timestamp' => date('Y-m-d H:i:s'),
             'totalRecords' => count($sales) + count($employees) + count($customers) + count($attendance) + count($commissions)

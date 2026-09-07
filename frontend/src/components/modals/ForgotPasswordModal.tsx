@@ -15,7 +15,7 @@ const Overlay = styled.div<{ $isOpen: boolean }>`
   left: 0;
   right: 0;
   bottom: 0;
-  background-color: rgba(24, 23, 21, 0.72);
+  background-color: rgba(0, 0, 0, 0.8);
   backdrop-filter: blur(8px);
   z-index: 9999;
   display: ${({ $isOpen }) => ($isOpen ? 'flex' : 'none')};
@@ -26,16 +26,17 @@ const Overlay = styled.div<{ $isOpen: boolean }>`
 `;
 
 const ModalCard = styled.div`
-  background: #ffffff;
-  border: 1px solid #d9d3c7;
+  background: #151515;
+  border: 1px solid rgba(140, 116, 75, 0.35);
   width: 100%;
   max-width: 440px;
   position: relative;
   padding: 44px 40px;
-  box-shadow: 0 24px 60px rgba(31, 31, 31, 0.18), 0 0 0 1px rgba(201, 164, 92, 0.25);
+  box-shadow: 0 24px 60px rgba(0, 0, 0, 0.6), 0 0 0 1px rgba(201, 169, 110, 0.25);
   box-sizing: border-box;
   animation: modalScaleUp 0.35s cubic-bezier(0.16, 1, 0.3, 1);
-  border-radius: 4px;
+  border-radius: 6px;
+  color: #F5F1E8;
 
   @media (max-width: 576px) {
     padding: 32px 20px;
@@ -46,12 +47,12 @@ const CloseButton = styled.button`
   position: absolute;
   top: 18px;
   right: 18px;
-  background: #faf8f5;
-  border: 1px solid #e8e3d9;
+  background: #111111;
+  border: 1px solid rgba(140, 116, 75, 0.3);
   border-radius: 50%;
   width: 34px;
   height: 34px;
-  color: #1f1f1f;
+  color: #F5F1E8;
   cursor: pointer;
   display: flex;
   align-items: center;
@@ -59,8 +60,8 @@ const CloseButton = styled.button`
   transition: all 0.25s ease;
 
   &:hover {
-    color: #c9a45c;
-    border-color: #c9a45c;
+    color: #C9A96E;
+    border-color: #C9A96E;
     transform: rotate(90deg);
   }
 `;
@@ -75,12 +76,12 @@ const HeaderSection = styled.div`
     justify-content: center;
     width: 44px;
     height: 44px;
-    background: linear-gradient(135deg, #faf5eb 0%, #f4eae0 100%);
-    border: 1px solid #c9a45c;
+    background: #111111;
+    border: 1px solid #C9A96E;
     border-radius: 50%;
     margin-bottom: 12px;
-    color: #c9a45c;
-    box-shadow: 0 4px 14px rgba(201, 164, 92, 0.15);
+    color: #C9A96E;
+    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.4);
   }
 
   .brand-sub {
@@ -88,7 +89,7 @@ const HeaderSection = styled.div`
     font-weight: 700;
     letter-spacing: 0.22em;
     text-transform: uppercase;
-    color: #c9a45c;
+    color: #C9A96E;
     margin-bottom: 6px;
   }
 
@@ -97,14 +98,14 @@ const HeaderSection = styled.div`
     font-size: 2.1rem;
     letter-spacing: 0.08em;
     text-transform: uppercase;
-    color: #1f1f1f;
+    color: #F5F1E8;
     margin: 0 0 10px 0;
     font-weight: 500;
   }
 
   p {
     font-size: 0.85rem;
-    color: #6b6b6b;
+    color: #D8D2C5;
     margin: 0;
     line-height: 1.5;
   }
@@ -126,24 +127,24 @@ const FormGroup = styled.div`
     font-weight: 700;
     letter-spacing: 0.12em;
     text-transform: uppercase;
-    color: #1f1f1f;
+    color: #F5F1E8;
   }
 
   input {
     width: 100%;
     padding: 12px 14px;
     font-size: 0.9rem;
-    color: #1f1f1f;
-    background-color: #faf5eb;
-    border: 1px solid #d9d3c7;
-    border-radius: 2px;
+    color: #F5F1E8;
+    background-color: #111111;
+    border: 1px solid rgba(140, 116, 75, 0.25);
+    border-radius: 4px;
     outline: none;
     box-sizing: border-box;
 
     &:focus {
-      border-color: #c9a45c;
-      background-color: #ffffff;
-      box-shadow: 0 0 0 4px rgba(201, 164, 92, 0.14);
+      border-color: #C9A96E;
+      background-color: #161616;
+      box-shadow: 0 0 0 4px rgba(201, 169, 110, 0.14);
     }
   }
 `;
@@ -151,28 +152,29 @@ const FormGroup = styled.div`
 const SubmitButton = styled.button`
   width: 100%;
   padding: 15px;
-  background: linear-gradient(135deg, #1f1f1f 0%, #2b2a28 100%);
-  color: #ffffff;
+  background: #C9A96E;
+  color: #0B0B0B;
   font-size: 0.85rem;
-  font-weight: 600;
+  font-weight: 700;
   letter-spacing: 0.18em;
   text-transform: uppercase;
-  border: 1px solid #1f1f1f;
+  border: 1px solid #C9A96E;
+  border-radius: 4px;
   cursor: pointer;
   transition: all 0.3s ease;
 
   &:hover {
-    background: linear-gradient(135deg, #c9a45c 0%, #b8944d 100%);
-    border-color: #c9a45c;
-    color: #1f1f1f;
-    box-shadow: 0 6px 20px rgba(201, 164, 92, 0.3);
+    background: #DFBA73;
+    border-color: #DFBA73;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(201, 169, 110, 0.3);
   }
 `;
 
 const BackToLoginButton = styled.button`
   background: none;
   border: none;
-  color: #6b6b6b;
+  color: #D8D2C5;
   font-size: 0.84rem;
   font-weight: 600;
   cursor: pointer;
@@ -184,7 +186,7 @@ const BackToLoginButton = styled.button`
   width: 100%;
 
   &:hover {
-    color: #c9a45c;
+    color: #C9A96E;
   }
 `;
 
@@ -193,13 +195,13 @@ const SuccessCard = styled.div`
   padding: 10px 0;
 
   .icon {
-    color: #c9a45c;
+    color: #C9A96E;
     margin-bottom: 12px;
   }
 
   p {
     font-size: 0.9rem;
-    color: #1f1f1f;
+    color: #D8D2C5;
     line-height: 1.6;
     margin-bottom: 20px;
   }
@@ -248,7 +250,7 @@ export const ForgotPasswordModal: React.FC<ForgotPasswordModalProps> = ({
           <div className="crest-logo">
             <Sparkles size={20} />
           </div>
-          <div className="brand-sub">FLOKSY JEWEL ATELIER</div>
+          <div className="brand-sub">AETHELCARATS</div>
           <h2>RESET PASSWORD</h2>
           {!isSubmitted && <p>Enter your email address and we will send you instructions to reset your password.</p>}
         </HeaderSection>
@@ -260,7 +262,7 @@ export const ForgotPasswordModal: React.FC<ForgotPasswordModalProps> = ({
               <input
                 id="reset-email"
                 type="email"
-                placeholder="eleanor@floksyjewel.com"
+                placeholder="eleanor@auroradiamonds.com"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 required

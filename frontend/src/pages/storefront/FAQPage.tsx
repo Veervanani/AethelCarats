@@ -17,8 +17,8 @@ const DEFAULT_FAQS: FAQItem[] = [
   {
     id: 'd1',
     category: 'Diamonds',
-    question: 'What types of diamonds does Floksy Jewel offer?',
-    answer: 'Floksy Jewel offers both premium certified Natural Diamonds and ethically created Lab-Grown Diamonds. Every diamond in our vault is meticulously hand-selected by master gemmologists for exceptional brilliance, clarity, and cut precision.',
+    question: 'What types of diamonds does AethelCarats offer?',
+    answer: 'AethelCarats offers both premium certified Natural Diamonds and ethically created Lab-Grown Diamonds. Every diamond in our vault is meticulously hand-selected by master gemmologists for exceptional brilliance, clarity, and cut precision.',
   },
   {
     id: 'd2',
@@ -30,7 +30,7 @@ const DEFAULT_FAQS: FAQItem[] = [
     id: 'd3',
     category: 'Diamonds',
     question: 'What diamond certifications are available?',
-    answer: 'All major diamonds at Floksy Jewel are accompanied by independent gemmological certificates from world-renowned laboratories, including GIA (Gemological Institute of America) and IGI (International Gemological Institute), detailing exact carat, colour, clarity, and cut grades.',
+    answer: 'All major diamonds at AethelCarats are accompanied by independent gemmological certificates from world-renowned laboratories, including GIA (Gemological Institute of America) and IGI (International Gemological Institute), detailing exact carat, colour, clarity, and cut grades.',
   },
   {
     id: 'd4',
@@ -63,7 +63,7 @@ const DEFAULT_FAQS: FAQItem[] = [
   {
     id: 'c1',
     category: 'Custom Jewellery',
-    question: 'Can Floksy Jewel create custom jewellery from scratch?',
+    question: 'Can AethelCarats create custom jewellery from scratch?',
     answer: 'Yes. Our Bespoke Atelier specialises in custom engagement rings, wedding bands, high-jewellery necklaces, and bespoke pendants. We partner with you from initial sketch through 3D CAD modeling to hand-finishing.',
   },
   {
@@ -165,8 +165,8 @@ const DEFAULT_FAQS: FAQItem[] = [
 ];
 
 const PageWrapper = styled.div`
-  background-color: #f7f6f2;
-  color: #1a1918;
+  background-color: #0B0B0B;
+  color: #F5F1E8;
   min-height: 100vh;
   padding-bottom: 80px;
 `;
@@ -179,20 +179,20 @@ const BreadcrumbsBar = styled.div`
   align-items: center;
   gap: 8px;
   font-size: 0.8rem;
-  color: #77736c;
+  color: #A8A8A8;
 
   a {
-    color: #77736c;
+    color: #A8A8A8;
     text-decoration: none;
     transition: color 0.2s ease;
 
     &:hover {
-      color: #c9a45c;
+      color: #C9A96E;
     }
   }
 
   span.current {
-    color: #1a1918;
+    color: #F5F1E8;
     font-weight: 500;
   }
 `;
@@ -207,7 +207,7 @@ const HeroSection = styled.section`
     font-family: 'Cormorant Garamond', serif;
     font-size: 3rem;
     font-weight: 500;
-    color: #1a1918;
+    color: #F5F1E8;
     margin-bottom: 16px;
     letter-spacing: -0.01em;
 
@@ -218,7 +218,7 @@ const HeroSection = styled.section`
 
   p.subtitle {
     font-size: 1.1rem;
-    color: #55524d;
+    color: #D8D2C5;
     max-width: 680px;
     margin: 0 auto 32px;
     line-height: 1.6;
@@ -233,17 +233,21 @@ const SearchContainer = styled.div`
   input {
     width: 100%;
     padding: 16px 20px 16px 48px;
-    border: 1px solid #e8e3d9;
+    border: 1px solid rgba(140, 116, 75, 0.3);
     border-radius: 30px;
-    background: #fffdf9;
+    background: #111111;
     font-size: 0.95rem;
-    color: #1a1918;
+    color: #F5F1E8;
     outline: none;
-    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.03);
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
     transition: border-color 0.2s ease;
 
     &:focus {
-      border-color: #c9a45c;
+      border-color: #C9A96E;
+    }
+
+    &::placeholder {
+      color: #777777;
     }
   }
 
@@ -252,7 +256,7 @@ const SearchContainer = styled.div`
     left: 18px;
     top: 50%;
     transform: translateY(-50%);
-    color: #8c877d;
+    color: #C9A96E;
   }
 `;
 
@@ -273,14 +277,14 @@ const CategoryPill = styled.button<{ $active: boolean }>`
   letter-spacing: 0.05em;
   font-weight: 500;
   cursor: pointer;
-  border: 1px solid ${({ $active }) => ($active ? '#1a1918' : '#e8e3d9')};
-  background: ${({ $active }) => ($active ? '#1a1918' : '#fffdf9')};
-  color: ${({ $active }) => ($active ? '#fffdf9' : '#55524d')};
+  border: 1px solid ${({ $active }) => ($active ? '#C9A96E' : 'rgba(140, 116, 75, 0.25)')};
+  background: ${({ $active }) => ($active ? '#C9A96E' : '#151515')};
+  color: ${({ $active }) => ($active ? '#0B0B0B' : '#D8D2C5')};
   transition: all 0.2s ease;
 
   &:hover {
-    border-color: #c9a45c;
-    color: ${({ $active }) => ($active ? '#fffdf9' : '#c9a45c')};
+    border-color: #C9A96E;
+    color: ${({ $active }) => ($active ? '#0B0B0B' : '#C9A96E')};
   }
 `;
 
@@ -294,11 +298,12 @@ const FAQList = styled.div`
 `;
 
 const FAQAccordionCard = styled.div<{ $open: boolean }>`
-  background: #fffdf9;
-  border: 1px solid ${({ $open }) => ($open ? '#c9a45c' : '#e8e3d9')};
-  border-radius: 4px;
+  background: #151515;
+  border: 1px solid ${({ $open }) => ($open ? '#C9A96E' : 'rgba(140, 116, 75, 0.25)')};
+  border-radius: 6px;
   overflow: hidden;
-  transition: border-color 0.2s ease;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
 `;
 
 const AccordionHeader = styled.button`
@@ -317,19 +322,20 @@ const AccordionHeader = styled.button`
     font-family: 'Cormorant Garamond', serif;
     font-size: 1.3rem;
     font-weight: 600;
-    color: #1a1918;
+    color: #F5F1E8;
     line-height: 1.4;
   }
 
   .toggle-icon {
-    width: 28px;
-    height: 28px;
+    width: 32px;
+    height: 32px;
     border-radius: 50%;
-    background: #f5f2ea;
+    background: #1F1F1F;
+    border: 1px solid rgba(140, 116, 75, 0.3);
     display: flex;
     align-items: center;
     justify-content: center;
-    color: #c9a45c;
+    color: #C9A96E;
     flex-shrink: 0;
   }
 `;
@@ -342,10 +348,10 @@ const AccordionBody = styled.div<{ $open: boolean }>`
 
   .body-inner {
     padding: 0 28px 24px;
-    color: #55524d;
+    color: #D8D2C5;
     font-size: 0.95rem;
     line-height: 1.7;
-    border-top: 1px solid #f5f2ea;
+    border-top: 1px solid rgba(140, 116, 75, 0.15);
     padding-top: 16px;
   }
 `;
@@ -357,21 +363,23 @@ const StillHaveQuestions = styled.section`
 `;
 
 const QuestionsCard = styled.div`
-  background: #1a1918;
-  color: #fffdf9;
+  background: #151515;
+  color: #F5F1E8;
   padding: 40px;
-  border-radius: 4px;
+  border-radius: 6px;
+  border: 1px solid rgba(140, 116, 75, 0.3);
   text-align: center;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
 
   h2 {
     font-family: 'Cormorant Garamond', serif;
-    font-size: 2rem;
-    color: #fffdf9;
+    font-size: 2.2rem;
+    color: #F5F1E8;
     margin-bottom: 12px;
   }
 
   p {
-    color: #d9d3c7;
+    color: #D8D2C5;
     font-size: 0.95rem;
     max-width: 540px;
     margin: 0 auto 24px;
@@ -388,7 +396,7 @@ const QuestionsCard = styled.div`
       display: inline-flex;
       align-items: center;
       gap: 8px;
-      padding: 12px 24px;
+      padding: 14px 28px;
       border-radius: 4px;
       font-size: 0.85rem;
       letter-spacing: 0.1em;
@@ -399,19 +407,22 @@ const QuestionsCard = styled.div`
     }
 
     a.primary-btn {
-      background: #c9a45c;
-      color: #1a1918;
+      background: #C9A96E;
+      color: #0B0B0B;
       &:hover {
-        background: #fffdf9;
+        background: #DFBA73;
+        transform: translateY(-2px);
       }
     }
 
     a.secondary-btn {
-      border: 1px solid #fffdf9;
-      color: #fffdf9;
+      border: 1px solid rgba(140, 116, 75, 0.4);
+      color: #F5F1E8;
+      background: #1F1F1F;
       &:hover {
-        border-color: #c9a45c;
-        color: #c9a45c;
+        border-color: #C9A96E;
+        color: #C9A96E;
+        transform: translateY(-2px);
       }
     }
   }
@@ -438,7 +449,7 @@ export const FAQPage: React.FC = () => {
 
   useEffect(() => {
     // Dynamic SEO Metadata
-    document.title = 'Floksy Jewel FAQ | Diamonds, Jewellery, Orders & Shipping';
+    document.title = 'AethelCarats FAQ | Diamonds, Jewellery, Orders & Shipping';
     
     // Fetch FAQs from DB API
     api.getFaqs().then((data) => {
@@ -454,7 +465,7 @@ export const FAQPage: React.FC = () => {
 
     const metaDesc = document.querySelector('meta[name="description"]');
     if (metaDesc) {
-      metaDesc.setAttribute('content', 'Find answers to common Floksy Jewel questions about diamonds, fine jewellery, custom designs, orders, shipping, returns and customer care.');
+      metaDesc.setAttribute('content', 'Find answers to common AethelCarats questions about diamonds, fine jewellery, custom designs, orders, shipping, returns and customer care.');
     }
 
     // JSON-LD FAQPage Structured Data
@@ -475,23 +486,23 @@ export const FAQPage: React.FC = () => {
       '@graph': [
         {
           '@type': 'WebPage',
-          '@id': 'https://floksyjewel.com/faq#webpage',
-          'url': 'https://floksyjewel.com/faq',
-          'name': 'Floksy Jewel Frequently Asked Questions',
+          '@id': 'https://aethelcarats.com/faq#webpage',
+          'url': 'https://aethelcarats.com/faq',
+          'name': 'AethelCarats Frequently Asked Questions',
           'description': 'Find answers to common questions about diamonds, jewellery, custom orders, shipping and returns.',
         },
         {
           '@type': 'FAQPage',
-          '@id': 'https://floksyjewel.com/faq#faqpage',
+          '@id': 'https://aethelcarats.com/faq#faqpage',
           'mainEntity': faqEntities,
         },
         {
           '@type': 'BreadcrumbList',
-          '@id': 'https://floksyjewel.com/faq#breadcrumb',
+          '@id': 'https://aethelcarats.com/faq#breadcrumb',
           'itemListElement': [
-            { '@type': 'ListItem', 'position': 1, 'name': 'Home', 'item': 'https://floksyjewel.com' },
-            { '@type': 'ListItem', 'position': 2, 'name': 'Customer Care', 'item': 'https://floksyjewel.com/faq' },
-            { '@type': 'ListItem', 'position': 3, 'name': 'FAQ', 'item': 'https://floksyjewel.com/faq' }
+            { '@type': 'ListItem', 'position': 1, 'name': 'Home', 'item': 'https://aethelcarats.com' },
+            { '@type': 'ListItem', 'position': 2, 'name': 'Customer Care', 'item': 'https://aethelcarats.com/faq' },
+            { '@type': 'ListItem', 'position': 3, 'name': 'FAQ', 'item': 'https://aethelcarats.com/faq' }
           ]
         }
       ]

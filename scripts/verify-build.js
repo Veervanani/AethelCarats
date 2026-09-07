@@ -118,7 +118,7 @@ try {
   fs.writeFileSync(path.resolve(rootDistDir, '.htaccess'), htaccessContent, 'utf8');
   fs.writeFileSync(path.resolve(rootPublicHtmlDir, '.htaccess'), htaccessContent, 'utf8');
 
-  // 6. Copy root index.html and root public files (floksy-jewel-logo.png, etc.) to root directory
+  // 6. Copy root index.html and root public files to root directory
   const rootIndexHtml = path.resolve(rootDir, 'index.html');
   fs.copyFileSync(targetIndexHtml, rootIndexHtml);
 

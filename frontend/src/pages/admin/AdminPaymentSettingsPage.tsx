@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+﻿import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
 import { Save, CheckCircle, Shield, Building, DollarSign, FileText } from 'lucide-react';
 import { financialApi } from '../../services/financialApi';
@@ -89,16 +89,16 @@ const SaveBtn = styled.button`
 
 export const AdminPaymentSettingsPage: React.FC = () => {
   const [settings, setSettings] = useState<Record<string, string>>({
-    company_name: 'FLOKSY JEWEL ATELIER',
+    company_name: 'AURA DIAMOND ATELIER',
     company_address: '740 Fifth Avenue, Suite 1800, New York, NY 10019',
-    company_email: 'contact@floksyjewel.com',
+    company_email: 'contact@auroradiamonds.com',
     company_phone: '+91973785306',
     company_tax_id: 'US-TAX-88492019',
     default_currency: 'USD',
     default_tax_rate: '0',
-    invoice_notes: 'Thank you for choosing Floksy Jewel Atelier.',
+    invoice_notes: 'Thank you for choosing Aura Diamond Atelier.',
     receipt_notes: 'Official payment receipt.',
-    statement_footer_text: 'For inquiries regarding this statement, contact contact@floksyjewel.com.',
+    statement_footer_text: 'For inquiries regarding this statement, contact contact@auroradiamonds.com.',
     paypal_client_id: '',
     paypal_client_secret: '',
     paypal_mode: 'sandbox',

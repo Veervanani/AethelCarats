@@ -321,7 +321,7 @@ export const createSale = async (req: AuthRequest, res: Response) => {
         where: { name: cleanCustName },
       });
       if (!cust) {
-        const dummyEmail = `client_${Date.now()}@internal-sales.floksyjewel.com`;
+        const dummyEmail = `client_${Date.now()}@internal-sales.aura-atelier.internal`;
         cust = await prisma.customer.create({
           data: {
             name: cleanCustName,

@@ -1,4 +1,4 @@
-import fs from 'fs';
+﻿import fs from 'fs';
 import path from 'path';
 
 /**
@@ -24,7 +24,7 @@ function convertPostgresDumpToMysql() {
   console.log(`📊 Processing ${lines.length} lines from PostgreSQL dump...`);
 
   let mysqlSql = `-- ==========================================================================\n`;
-  mysqlSql += `-- HOSTINGER MYSQL / MARIADB MIGRATION DUMP FOR FLOKSY JEWEL\n`;
+  mysqlSql += `-- HOSTINGER MYSQL / MARIADB MIGRATION DUMP FOR AURA DIAMOND ATELIER\n`;
   mysqlSql += `-- Generated from Google Cloud SQL PostgreSQL 18 Backup\n`;
   mysqlSql += `-- Date: ${new Date().toISOString()}\n`;
   mysqlSql += `-- ==========================================================================\n\n`;

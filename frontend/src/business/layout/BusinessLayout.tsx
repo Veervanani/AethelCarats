@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+﻿import React, { useState, useEffect } from 'react';
 import { Link, Outlet, useNavigate, useLocation } from 'react-router-dom';
 import styled from 'styled-components';
 import { PRIVATE_BUSINESS_PATH } from '../../App';
@@ -332,7 +332,7 @@ export const BusinessLayout: React.FC = () => {
   const { user, logout } = useAuth();
   const [isMobileOpen, setIsMobileOpen] = useState(false);
   const [isCollapsed, setIsCollapsed] = useState<boolean>(() => {
-    return localStorage.getItem('fj_biz_sidebar_collapsed') === 'true';
+    return localStorage.getItem('biz_sidebar_state') === 'true';
   });
   const [isCheckedIn, setIsCheckedIn] = useState<boolean>(false);
   const [loadingClock, setLoadingClock] = useState<boolean>(false);
@@ -340,7 +340,7 @@ export const BusinessLayout: React.FC = () => {
   const toggleCollapse = () => {
     setIsCollapsed((prev) => {
       const next = !prev;
-      localStorage.setItem('fj_biz_sidebar_collapsed', String(next));
+      localStorage.setItem('biz_sidebar_state', String(next));
       return next;
     });
   };
@@ -392,7 +392,7 @@ export const BusinessLayout: React.FC = () => {
     if (p.includes('/reports')) return 'Business & Profit Reports';
     if (p.includes('/audit-logs')) return 'Activity Audit Trail';
     if (p.includes('/settings')) return 'Business & Currency Settings';
-    return 'Floksy Jewel Business System';
+    return 'Enterprise Operations Hub';
   };
 
   return (
@@ -402,8 +402,8 @@ export const BusinessLayout: React.FC = () => {
         <SidebarHeader $collapsed={isCollapsed}>
           <div>
             <span className="brand-badge">INTERNAL ERP</span>
-            <div className="brand-title">{isCollapsed ? 'FJ' : 'FLOKSY JEWEL'}</div>
-            {!isCollapsed && <span className="brand-sub">BUSINESS OPERATIONS</span>}
+            <div className="brand-title">{isCollapsed ? 'AURA' : 'AURA DIAMOND'}</div>
+            {!isCollapsed && <span className="brand-sub">OPERATIONS HUB</span>}
           </div>
           <button
             type="button"
@@ -505,7 +505,7 @@ export const BusinessLayout: React.FC = () => {
             </MobileMenuButton>
             <div>
               <div className="hub-subtitle" style={{ fontSize: '0.68rem', color: '#64748b', fontWeight: 600, letterSpacing: '0.04em' }}>
-                FLOKSY JEWEL BUSINESS HUB
+                AURA DIAMOND ATELIER BUSINESS HUB
               </div>
               <div style={{ fontSize: '1rem', fontWeight: 700, color: '#0f172a' }}>{getPageTitle()}</div>
             </div>

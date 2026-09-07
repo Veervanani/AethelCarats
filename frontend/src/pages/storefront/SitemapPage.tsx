@@ -3,11 +3,11 @@ import { Link } from 'react-router-dom';
 import styled from 'styled-components';
 import { Map, ChevronRight, Gem, ShieldCheck, Sparkles, BookOpen, FileText, Phone } from 'lucide-react';
 import { SafeImage } from '../../components/ui/SafeImage';
-import { WhyFloksyJewelNav } from '../../components/ui/WhyFloksyJewelNav';
+import { WhyAuraDiamondNav } from '../../components/ui/WhyAuraDiamondNav';
 
 const PageWrapper = styled.div`
-  background-color: #f7f6f2;
-  color: #1a1918;
+  background-color: #0B0B0B;
+  color: #F5F1E8;
   min-height: 100vh;
   padding-bottom: 80px;
 `;
@@ -20,20 +20,20 @@ const BreadcrumbsBar = styled.div`
   align-items: center;
   gap: 8px;
   font-size: 0.8rem;
-  color: #77736c;
+  color: #A8A8A8;
 
   a {
-    color: #77736c;
+    color: #A8A8A8;
     text-decoration: none;
     transition: color 0.2s ease;
 
     &:hover {
-      color: #c9a45c;
+      color: #C9A96E;
     }
   }
 
   span.current {
-    color: #1a1918;
+    color: #F5F1E8;
     font-weight: 500;
   }
 `;
@@ -48,7 +48,7 @@ const HeroSection = styled.section`
     font-family: 'Cormorant Garamond', serif;
     font-size: 3rem;
     font-weight: 500;
-    color: #1a1918;
+    color: #F5F1E8;
     margin-bottom: 16px;
     letter-spacing: -0.01em;
 
@@ -59,7 +59,7 @@ const HeroSection = styled.section`
 
   p.subtitle {
     font-size: 1.1rem;
-    color: #55524d;
+    color: #D8D2C5;
     max-width: 680px;
     margin: 0 auto;
     line-height: 1.6;
@@ -84,27 +84,35 @@ const SitemapGrid = styled.main`
 `;
 
 const CategoryCard = styled.div`
-  background: #fffdf9;
-  border: 1px solid #e8e3d9;
+  background: #151515;
+  border: 1px solid rgba(140, 116, 75, 0.25);
   padding: 32px 24px;
-  border-radius: 4px;
+  border-radius: 6px;
   display: flex;
   flex-direction: column;
   gap: 16px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+  transition: transform 0.2s ease, border-color 0.2s ease;
+
+  &:hover {
+    transform: translateY(-3px);
+    border-color: #C9A96E;
+  }
 
   .card-header {
     display: flex;
     align-items: center;
     gap: 12px;
     padding-bottom: 16px;
-    border-bottom: 1px solid #e8e3d9;
+    border-bottom: 1px solid rgba(140, 116, 75, 0.2);
 
     .icon-box {
       width: 36px;
       height: 36px;
       border-radius: 50%;
-      background: #1a1918;
-      color: #c9a45c;
+      background: #1F1F1F;
+      border: 1px solid rgba(140, 116, 75, 0.3);
+      color: #C9A96E;
       display: flex;
       align-items: center;
       justify-content: center;
@@ -113,7 +121,7 @@ const CategoryCard = styled.div`
     h2 {
       font-family: 'Cormorant Garamond', serif;
       font-size: 1.35rem;
-      color: #1a1918;
+      color: #F5F1E8;
     }
   }
 
@@ -127,7 +135,7 @@ const CategoryCard = styled.div`
 
     li a {
       font-size: 0.9rem;
-      color: #55524d;
+      color: #D8D2C5;
       text-decoration: none;
       transition: color 0.2s ease;
       display: inline-flex;
@@ -135,7 +143,7 @@ const CategoryCard = styled.div`
       gap: 6px;
 
       &:hover {
-        color: #c9a45c;
+        color: #C9A96E;
       }
     }
   }
@@ -144,10 +152,10 @@ const CategoryCard = styled.div`
 export const SitemapPage: React.FC = () => {
   useEffect(() => {
     // Dynamic SEO Metadata
-    document.title = 'Site Map | Floksy Jewel';
+    document.title = 'Site Map | AethelCarats';
     const metaDesc = document.querySelector('meta[name="description"]');
     if (metaDesc) {
-      metaDesc.setAttribute('content', 'Explore the complete site map of Floksy Jewel fine jewellery collections, certified diamonds, customer care services, and brand policies.');
+      metaDesc.setAttribute('content', 'Explore the complete site map of AethelCarats fine jewellery collections, certified diamonds, customer care services, and brand policies.');
     }
 
     // JSON-LD Structured Data
@@ -158,17 +166,17 @@ export const SitemapPage: React.FC = () => {
       '@graph': [
         {
           '@type': 'WebPage',
-          '@id': 'https://floksyjewel.com/sitemap#webpage',
-          'url': 'https://floksyjewel.com/sitemap',
-          'name': 'Site Map | Floksy Jewel',
-          'description': 'Human-readable site index for Floksy Jewel jewellery collections, diamond vault, and concierge services.',
+          '@id': 'https://aethelcarats.com/sitemap#webpage',
+          'url': 'https://aethelcarats.com/sitemap',
+          'name': 'Site Map | AethelCarats',
+          'description': 'Human-readable site index for AethelCarats jewellery collections, diamond vault, and concierge services.',
         },
         {
           '@type': 'BreadcrumbList',
-          '@id': 'https://floksyjewel.com/sitemap#breadcrumb',
+          '@id': 'https://aethelcarats.com/sitemap#breadcrumb',
           'itemListElement': [
-            { '@type': 'ListItem', 'position': 1, 'name': 'Home', 'item': 'https://floksyjewel.com' },
-            { '@type': 'ListItem', 'position': 2, 'name': 'Site Map', 'item': 'https://floksyjewel.com/sitemap' }
+            { '@type': 'ListItem', 'position': 1, 'name': 'Home', 'item': 'https://aethelcarats.com' },
+            { '@type': 'ListItem', 'position': 2, 'name': 'Site Map', 'item': 'https://aethelcarats.com/sitemap' }
           ]
         }
       ]
@@ -189,7 +197,7 @@ export const SitemapPage: React.FC = () => {
       </BreadcrumbsBar>
 
       <HeroSection>
-        <h1>Floksy Jewel Site Map</h1>
+        <h1>AethelCarats Site Map</h1>
         <p className="subtitle">
           Complete directory of our fine jewellery collections, diamond vault, bespoke concierge services, and atelier policies.
         </p>
@@ -205,7 +213,7 @@ export const SitemapPage: React.FC = () => {
             <li><Link to="/rings">Diamond Rings</Link></li>
             <li><Link to="/earrings">Earrings</Link></li>
             <li><Link to="/necklaces">Necklaces & Pendants</Link></li>
-            <li><Link to="/bracelets">Bracelets & Bangle</Link></li>
+            <li><Link to="/bracelets">Bracelets & Bangles</Link></li>
             <li><Link to="/pendants">Pendants</Link></li>
             <li><Link to="/collections">All Collections</Link></li>
           </ul>
@@ -248,7 +256,7 @@ export const SitemapPage: React.FC = () => {
             <li><Link to="/contact-us">Contact Concierge</Link></li>
             <li><Link to="/faq">Frequently Asked Questions</Link></li>
             <li><Link to="/about-us">Quality & Value</Link></li>
-            <li><Link to="/blog">Floksy Jewel Journal</Link></li>
+            <li><Link to="/blog">AethelCarats Journal</Link></li>
             <li><Link to="/sale-exclusions">Sale Exclusions</Link></li>
             <li><Link to="/terms-of-service">Terms & Conditions</Link></li>
             <li><Link to="/privacy-policy">Privacy Policy</Link></li>
@@ -256,7 +264,7 @@ export const SitemapPage: React.FC = () => {
         </CategoryCard>
       </SitemapGrid>
 
-      <WhyFloksyJewelNav />
+      <WhyAuraDiamondNav />
     </PageWrapper>
   );
 };

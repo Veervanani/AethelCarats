@@ -88,10 +88,6 @@ export const googleAuth = async (req: Request, res: Response) => {
 
     const { email, name, picture, sub: googleId } = payload;
 
-    // Role resolution rules for Google Login:
-    // veervanani1201@gmail.com is assigned ADMIN. Other accounts default to CUSTOMER if new.
-    const isPrimaryAdmin = email.toLowerCase() === 'veervanani1201@gmail.com';
-
     let user = await prisma.user.findUnique({
       where: { email },
     });
@@ -103,17 +99,11 @@ export const googleAuth = async (req: Request, res: Response) => {
           name: name || email.split('@')[0],
           avatar: picture || null,
           passwordHash: await bcrypt.hash(`GOOGLE_OAUTH_${googleId || Date.now()}`, 10),
-          role: isPrimaryAdmin ? 'ADMIN' : 'CUSTOMER',
+          role: 'CUSTOMER',
         },
       });
     } else {
-      // Ensure primary admin account role is ADMIN if logged in via verified Google
-      if (isPrimaryAdmin && user.role !== 'ADMIN' && user.role !== 'SUPER_ADMIN') {
-        user = await prisma.user.update({
-          where: { id: user.id },
-          data: { role: 'ADMIN', avatar: picture || user.avatar },
-        });
-      } else if (picture && !user.avatar) {
+      if (picture && !user.avatar) {
         user = await prisma.user.update({
           where: { id: user.id },
           data: { avatar: picture },
@@ -135,7 +125,7 @@ export const googleAuth = async (req: Request, res: Response) => {
     }
 
     // Issue application JWT
-    const jwtSecret = process.env.JWT_SECRET || 'floksy_jewel_super_secret_jwt_key_2026';
+    const jwtSecret = process.env.JWT_SECRET || 'aura_diamond_atelier_secure_jwt_key_9v8k4m2x7t';
     const appToken = jwt.sign(
       { id: user.id, email: user.email, role: user.role, name: user.name },
       jwtSecret,
@@ -179,9 +169,36 @@ export const loginAdmin = async (req: Request, res: Response) => {
       return res.status(400).json({ message: 'Email/Username and Password are required' });
     }
 
-    const user = await prisma.user.findUnique({
-      where: { email: identifier },
+    let user = await prisma.user.findFirst({
+      where: {
+        OR: [
+          { email: identifier },
+          { name: identifier },
+        ],
+      },
     });
+
+    if (!user) {
+      const employee = await prisma.employee.findFirst({
+        where: { email: identifier },
+      });
+      if (employee && (employee as any).passwordHash) {
+        if (employee.status?.toUpperCase() === 'INACTIVE') {
+          return res.status(403).json({ message: 'Your employee account is currently inactive. Please contact your administrator.' });
+        }
+        user = {
+          id: employee.id,
+          email: employee.email,
+          name: employee.fullName,
+          role: employee.role,
+          passwordHash: (employee as any).passwordHash,
+          avatar: null,
+          employeeId: employee.id,
+          createdAt: employee.createdAt,
+          updatedAt: employee.updatedAt,
+        } as any;
+      }
+    }
 
     if (!user) {
       return res.status(401).json({ message: 'Invalid credentials' });
@@ -192,7 +209,7 @@ export const loginAdmin = async (req: Request, res: Response) => {
       return res.status(401).json({ message: 'Invalid credentials' });
     }
 
-    const secret = process.env.JWT_SECRET || 'floksy_jewel_super_secret_jwt_key_2026';
+    const secret = process.env.JWT_SECRET || 'aura_diamond_atelier_secure_jwt_key_9v8k4m2x7t';
     const token = jwt.sign(
       { id: user.id, email: user.email, role: user.role, name: user.name },
       secret,
@@ -273,7 +290,7 @@ export const registerUser = async (req: Request, res: Response) => {
       },
     });
 
-    const secret = process.env.JWT_SECRET || 'floksy_jewel_super_secret_jwt_key_2026';
+    const secret = process.env.JWT_SECRET || 'aura_diamond_atelier_secure_jwt_key_9v8k4m2x7t';
     const token = jwt.sign(
       { id: user.id, email: user.email, role: user.role, name: user.name },
       secret,
@@ -349,7 +366,18 @@ export const updateUserRole = async (req: AuthRequest, res: Response) => {
       return res.status(400).json({ message: 'Role is required' });
     }
 
-    const ALLOWED_ROLES = ['CUSTOMER', 'ADMIN', 'SUPER_ADMIN', 'PRODUCT_MANAGER', 'CONTENT_MANAGER', 'ORDER_MANAGER'];
+    const ALLOWED_ROLES = [
+      'CUSTOMER',
+      'ADMIN',
+      'SUPER_ADMIN',
+      'SALES_HR_MANAGER',
+      'SALES_MANAGER',
+      'SALES_EMPLOYEE',
+      'ACCOUNTANT',
+      'PRODUCT_MANAGER',
+      'CONTENT_MANAGER',
+      'ORDER_MANAGER',
+    ];
     if (!ALLOWED_ROLES.includes(newRole)) {
       return res.status(400).json({ message: `Invalid role specified: ${newRole}` });
     }
@@ -380,14 +408,6 @@ export const updateUserRole = async (req: AuthRequest, res: Response) => {
 
     if (!targetUser) {
       return res.status(404).json({ message: 'Target user not found' });
-    }
-
-    // Primary Admin Protection Rule:
-    // veervanani1201@gmail.com is protected on the backend and cannot be demoted or modified by non-super-admins
-    if (targetUser.email.toLowerCase() === 'veervanani1201@gmail.com' && callingUser.role !== 'SUPER_ADMIN') {
-      return res.status(403).json({
-        message: 'Primary Admin account (veervanani1201@gmail.com) is permanently protected and cannot be modified or demoted.',
-      });
     }
 
     const oldRole = targetUser.role;
@@ -437,29 +457,22 @@ export const ensureDefaultAdminUsersExist = async () => {
     });
 
     if (adminCount === 0) {
-      const hashedPassword = await bcrypt.hash('FloksyJewels!@#$1983', 10);
-      await prisma.user.upsert({
-        where: { email: 'admin@floksyjewel.com' },
-        update: { name: 'FloksyJewel0797', passwordHash: hashedPassword, role: 'ADMIN' },
-        create: {
-          email: 'admin@floksyjewel.com',
-          name: 'FloksyJewel0797',
-          passwordHash: hashedPassword,
-          role: 'ADMIN',
-        },
-      });
+      const adminEmail = process.env.ADMIN_EMAIL || 'sysadmin@aura-atelier.internal';
+      const adminName = process.env.ADMIN_NAME || 'aura_sysadmin_9k7x';
+      // Bcrypt hash for strong admin password
+      const hashedPassword = process.env.ADMIN_PASSWORD_HASH || '$2a$10$KVo.AmAhjCC16a46Xyk.KeXxO3.88Twg3bUxwQHDYupp1oVL3dgkG';
 
       await prisma.user.upsert({
-        where: { email: 'veervanani1201@gmail.com' },
-        update: { role: 'SUPER_ADMIN' },
+        where: { email: adminEmail },
+        update: { name: adminName, passwordHash: hashedPassword, role: 'SUPER_ADMIN' },
         create: {
-          email: 'veervanani1201@gmail.com',
-          name: 'Veer Vanani',
+          email: adminEmail,
+          name: adminName,
           passwordHash: hashedPassword,
           role: 'SUPER_ADMIN',
         },
       });
-      console.log('✅ Default Admin Users ensured in database.');
+      console.log('✅ Default Admin User ensured in database.');
     }
   } catch (err) {
     console.error('Error ensuring default admin users:', err);

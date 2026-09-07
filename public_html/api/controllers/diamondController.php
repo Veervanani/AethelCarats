@@ -1,6 +1,6 @@
-<?php
+﻿<?php
 /**
- * Floksy Jewel — Diamonds & Diamond Vault Controller
+ * Aura Diamond Atelier — Diamonds & Diamond Vault Controller
  * Migrated from Node.js (diamondController.ts, diamondFilterController.ts) to PHP 8.3 / PDO MySQL
  */
 
@@ -302,9 +302,9 @@ function handleGetWhatsAppInquiry(string $id): void {
             jsonError('Diamond not found', 404);
         }
 
-        $host = $_SERVER['HTTP_HOST'] ?? 'floksyjewel.com';
+        $host = $_SERVER['HTTP_HOST'] ?? 'auroradiamonds.com';
         $diamondUrl = "https://{$host}/diamonds/{$diamond['diamondId']}";
-        $text = "Hello Floksy Jewel,\n\nI am interested in this diamond:\n\nDiamond ID: {$diamond['diamondId']}\nShape: {$diamond['shape']}\nCarat: {$diamond['carat']}ct\nColor: {$diamond['color']}\nClarity: {$diamond['clarity']}\nCut: " . ($diamond['cut'] ?: 'N/A') . "\nCertificate: " . ($diamond['lab'] ?: 'N/A') . "\nCertificate No: " . ($diamond['certificateNumber'] ?: 'N/A') . "\nPrice: $" . number_format((float)$diamond['price']) . "\n\nDiamond Link:\n{$diamondUrl}";
+        $text = "Hello Aura Diamond Atelier,\n\nI am interested in this diamond:\n\nDiamond ID: {$diamond['diamondId']}\nShape: {$diamond['shape']}\nCarat: {$diamond['carat']}ct\nColor: {$diamond['color']}\nClarity: {$diamond['clarity']}\nCut: " . ($diamond['cut'] ?: 'N/A') . "\nCertificate: " . ($diamond['lab'] ?: 'N/A') . "\nCertificate No: " . ($diamond['certificateNumber'] ?: 'N/A') . "\nPrice: $" . number_format((float)$diamond['price']) . "\n\nDiamond Link:\n{$diamondUrl}";
 
         $waNumber = '447900123456';
         $waStmt = $pdo->prepare("SELECT `value` FROM `sitesetting` WHERE `key` = 'whatsapp_config' LIMIT 1");
@@ -827,10 +827,10 @@ function handleExecuteDiamondImport(): void {
 
 function handleDownloadExcelTemplate(): void {
     $csv = "Diamond ID,Stock ID,SKU,Diamond Type,Shape,Carat,Color,Clarity,Cut,Polish,Symmetry,Fluorescence,Length,Width,Depth,Table %,Depth %,Crown,Pavilion,Girdle,Culet,Lab,Certificate Number,Certificate URL,Price,Currency,Image URL,Video URL,Certificate PDF URL,Status\n";
-    $csv .= "D10099,STK-10099,SKU-10099,NATURAL,Round,1.25,E,VS1,Excellent,Excellent,Excellent,None,6.85,6.88,4.22,57,61.5,34.5,40.8,Medium,None,GIA,GIA-22019948,https://www.gia.edu,4200,USD,/assets/floksy_diamonds_cat.png,,,AVAILABLE\n";
+    $csv .= "D10099,STK-10099,SKU-10099,NATURAL,Round,1.25,E,VS1,Excellent,Excellent,Excellent,None,6.85,6.88,4.22,57,61.5,34.5,40.8,Medium,None,GIA,GIA-22019948,https://www.gia.edu,4200,USD,/assets/gem_diamonds_cat.png,,,AVAILABLE\n";
 
     header('Content-Type: text/csv; charset=utf-8');
-    header('Content-Disposition: attachment; filename="Floksy_Jewel_Diamond_Import_Template.csv"');
+    header('Content-Disposition: attachment; filename="Aura_Diamond_Import_Template.csv"');
     echo $csv;
     exit;
 }

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+﻿import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
 import { FileText, Download, Calendar, Filter, Eye, DollarSign, Printer, Table as TableIcon } from 'lucide-react';
 import { financialApi } from '../../services/financialApi';
@@ -200,7 +200,7 @@ export const AdminStatementsPage: React.FC = () => {
       <PageHeader>
         <h1>Statements & Financial Reports Hub</h1>
         <p style={{ color: '#666', fontSize: '0.85rem' }}>
-          Generate, preview, and download official Floksy Jewel PDFs and Excel reports.
+          Generate, preview, and download official Aura Diamond Atelier PDFs and Excel reports.
         </p>
       </PageHeader>
 

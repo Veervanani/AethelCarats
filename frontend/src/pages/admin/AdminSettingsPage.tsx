@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+﻿import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
 import {
   Save,
@@ -142,22 +142,22 @@ const Notification = styled.div`
 
 export const AdminSettingsPage: React.FC = () => {
   const [settings, setSettings] = useState<Record<string, string>>({
-    storeName: 'FLOKSY JEWEL',
-    contactEmail: 'contact@floksyjewel.com',
+    storeName: 'AURA DIAMOND ATELIER',
+    contactEmail: 'contact@auroradiamonds.com',
     contactPhone: '+91973785306',
     whatsappNumber: '+91973785306',
     freeShippingThreshold: '1000',
-    publicSiteUrl: 'https://floksyjewel.com',
-    instagramUrl: 'https://www.instagram.com/floksyjewel',
-    facebookUrl: 'https://facebook.com/floksyjewel',
-    pinterestUrl: 'https://pinterest.com/floksyjewel',
+    publicSiteUrl: 'https://auroradiamonds.com',
+    instagramUrl: 'https://www.instagram.com/auradiamondatelier',
+    facebookUrl: 'https://facebook.com/auradiamondatelier',
+    pinterestUrl: 'https://pinterest.com/auradiamondatelier',
     storeAddress: 'Surat, India',
     enableConsultAtelierExpert: 'true',
-    consultTitle: 'Consult a Floksy Jewel Expert',
+    consultTitle: 'Consult a Aura Diamond Atelier Expert',
     consultDescription: 'Speak directly with our jewelry specialists regarding custom design, diamond selection, or sizing guidance.',
     consultPhone: '+91973785306',
-    consultPhoneLabel: 'Call Floksy Jewel',
-    consultEmail: 'contact@floksyjewel.com',
+    consultPhoneLabel: 'Call Aura Diamond Atelier',
+    consultEmail: 'contact@auroradiamonds.com',
     consultEmailLabel: 'Email Concierge',
     consultCloseLabel: 'Close',
     // Google Analytics, Google Tag & Tracking
@@ -218,7 +218,7 @@ export const AdminSettingsPage: React.FC = () => {
         whatsapp_config: {
           inquiryNumber: cleanWaNumber,
           displayNumber: settings.whatsappDisplayNumber || cleanWaNumber,
-          defaultMessage: settings.whatsappDefaultMessage || 'Hello Floksy Jewel, I am interested in your fine jewellery collection.',
+          defaultMessage: settings.whatsappDefaultMessage || 'Hello Aura Diamond Atelier, I am interested in your fine jewellery collection.',
         }
       };
 
@@ -236,7 +236,7 @@ export const AdminSettingsPage: React.FC = () => {
 
       await api.updateSiteSetting('footer_settings', {
         ...currentFooterSettings,
-        brandName: settings.storeName !== undefined ? settings.storeName : (currentFooterSettings.brandName ?? 'FLOKSY JEWEL'),
+        brandName: settings.storeName !== undefined ? settings.storeName : (currentFooterSettings.brandName ?? 'AURA DIAMOND ATELIER'),
         email: settings.contactEmail !== undefined ? settings.contactEmail : currentFooterSettings.email,
         phone: settings.contactPhone !== undefined ? settings.contactPhone : currentFooterSettings.phone,
         address: settings.storeAddress !== undefined ? settings.storeAddress : (currentFooterSettings.address ?? 'Surat, India'),
@@ -247,7 +247,7 @@ export const AdminSettingsPage: React.FC = () => {
       await api.updateSiteSetting('whatsapp_config', {
         inquiryNumber: cleanWaNumber,
         displayNumber: settings.whatsappDisplayNumber || cleanWaNumber,
-        defaultMessage: settings.whatsappDefaultMessage || 'Hello Floksy Jewel, I am interested in your fine jewellery collection.',
+        defaultMessage: settings.whatsappDefaultMessage || 'Hello Aura Diamond Atelier, I am interested in your fine jewellery collection.',
       });
       await api.updateSiteSetting('whatsappNumber', cleanWaNumber);
 
@@ -400,7 +400,7 @@ export const AdminSettingsPage: React.FC = () => {
           </FormGroup>
           <FormGroup>
             <label>Public Website URL (Canonical Domain)</label>
-            <input value={settings.publicSiteUrl || ''} onChange={(e) => handleChange('publicSiteUrl', e.target.value)} placeholder="https://floksyjewel.com" />
+            <input value={settings.publicSiteUrl || ''} onChange={(e) => handleChange('publicSiteUrl', e.target.value)} placeholder="https://auroradiamonds.com" />
           </FormGroup>
           <FormGroup>
             <label>Physical Address / Showroom Location</label>
@@ -439,7 +439,7 @@ export const AdminSettingsPage: React.FC = () => {
             <input
               value={settings.whatsappDefaultMessage || ''}
               onChange={(e) => handleChange('whatsappDefaultMessage', e.target.value)}
-              placeholder="Hello Floksy Jewel Atelier, I am interested in..."
+              placeholder="Hello Aura Diamond Atelier, I am interested in..."
             />
           </FormGroup>
         </Grid>
@@ -464,7 +464,7 @@ export const AdminSettingsPage: React.FC = () => {
             <input
               value={settings.consultTitle || ''}
               onChange={(e) => handleChange('consultTitle', e.target.value)}
-              placeholder="Consult a Floksy Atelier Expert"
+              placeholder="Consult a Aura Atelier Expert"
             />
           </FormGroup>
           <FormGroup style={{ gridColumn: 'span 2' }}>
@@ -473,7 +473,7 @@ export const AdminSettingsPage: React.FC = () => {
               rows={3}
               value={settings.consultDescription || ''}
               onChange={(e) => handleChange('consultDescription', e.target.value)}
-              placeholder="Speak directly with our Floksy Jewel specialists..."
+              placeholder="Speak directly with our Aura Diamond Atelier specialists..."
               style={{ padding: '10px 14px', border: '1px solid #e8e3d9', borderRadius: 4, fontSize: '0.9rem', outline: 'none', fontFamily: 'inherit' }}
             />
           </FormGroup>
@@ -499,7 +499,7 @@ export const AdminSettingsPage: React.FC = () => {
               type="email"
               value={settings.consultEmail || ''}
               onChange={(e) => handleChange('consultEmail', e.target.value)}
-              placeholder="contact@floksyjewel.com"
+              placeholder="contact@auroradiamonds.com"
             />
           </FormGroup>
           <FormGroup>

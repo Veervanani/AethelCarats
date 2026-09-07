@@ -1,13 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import styled from 'styled-components';
-import { Phone, Mail, MessageCircle, MapPin, Clock, ShieldCheck, CheckCircle, ArrowRight, ChevronRight } from 'lucide-react';
+import { Phone, Mail, MessageCircle, MapPin, CheckCircle, ChevronRight } from 'lucide-react';
 import { api } from '../../services/api';
 import { RevealContainer } from '../../components/ui/RevealContainer';
 
 const PageWrapper = styled.div`
-  background-color: #f7f6f2;
-  color: #1a1918;
+  background-color: #0B0B0B;
+  color: #F5F1E8;
   min-height: 100vh;
   padding-bottom: 80px;
 `;
@@ -20,21 +20,21 @@ const BreadcrumbsBar = styled.div`
   align-items: center;
   gap: 8px;
   font-size: 0.8rem;
-  color: #77736c;
+  color: #A8A8A8;
 
   a {
-    color: #77736c;
+    color: #A8A8A8;
     text-decoration: none;
     transition: color 0.2s ease;
 
     &:hover {
-      color: #c9a45c;
+      color: #C9A96E;
     }
   }
 
   span.current {
-    color: #1a1918;
-    font-weight: 500;
+    color: #C9A96E;
+    font-weight: 600;
   }
 `;
 
@@ -48,9 +48,9 @@ const HeroSection = styled.section`
     font-family: 'Cormorant Garamond', serif;
     font-size: 3rem;
     font-weight: 500;
-    color: #1a1918;
+    color: #F5F1E8;
     margin-bottom: 16px;
-    letter-spacing: -0.01em;
+    letter-spacing: 0.04em;
 
     @media (max-width: 768px) {
       font-size: 2.2rem;
@@ -58,8 +58,8 @@ const HeroSection = styled.section`
   }
 
   p.subtitle {
-    font-size: 1.1rem;
-    color: #55524d;
+    font-size: 1.05rem;
+    color: #D8D2C5;
     max-width: 680px;
     margin: 0 auto;
     line-height: 1.6;
@@ -72,29 +72,32 @@ const ContentGrid = styled.div`
   padding: 0 24px;
   display: grid;
   grid-template-columns: 1fr 1.3fr;
-  gap: 64px;
+  gap: 48px;
 
   @media (max-width: 992px) {
     grid-template-columns: 1fr;
-    gap: 48px;
+    gap: 40px;
   }
 `;
 
 const ContactInfoCard = styled.div`
-  background: #fffdf9;
-  border: 1px solid #e8e3d9;
+  background: #151515;
+  border: 1px solid rgba(140, 116, 75, 0.25);
+  border-radius: 4px;
   padding: 40px;
   display: flex;
   flex-direction: column;
   gap: 32px;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
 
   h2 {
     font-family: 'Cormorant Garamond', serif;
     font-size: 1.8rem;
-    color: #1a1918;
+    color: #F5F1E8;
     margin-bottom: 8px;
     padding-bottom: 16px;
-    border-bottom: 1px solid #e8e3d9;
+    border-bottom: 1px solid rgba(140, 116, 75, 0.2);
+    letter-spacing: 0.08em;
   }
 `;
 
@@ -107,9 +110,9 @@ const ContactMethod = styled.div`
     width: 44px;
     height: 44px;
     border-radius: 50%;
-    background: #f5f2ea;
-    border: 1px solid #e8e3d9;
-    color: #c9a45c;
+    background: #111111;
+    border: 1px solid rgba(140, 116, 75, 0.3);
+    color: #C9A96E;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -125,25 +128,25 @@ const ContactMethod = styled.div`
       font-size: 0.75rem;
       text-transform: uppercase;
       letter-spacing: 0.12em;
-      color: #77736c;
-      font-weight: 600;
+      color: #A8A8A8;
+      font-weight: 700;
     }
 
     a, span {
       font-size: 1.05rem;
-      color: #1a1918;
+      color: #F5F1E8;
       text-decoration: none;
       font-weight: 500;
       transition: color 0.2s ease;
     }
 
     a:hover {
-      color: #c9a45c;
+      color: #C9A96E;
     }
 
     p.note {
       font-size: 0.85rem;
-      color: #77736c;
+      color: #A8A8A8;
       margin-top: 2px;
     }
   }
@@ -154,36 +157,41 @@ const WhatsAppCTA = styled.a`
   align-items: center;
   justify-content: center;
   gap: 10px;
-  background: #1a1918;
-  color: #fffdf9;
+  background: #111111;
+  border: 1px solid rgba(140, 116, 75, 0.3);
+  color: #F5F1E8;
   padding: 14px 24px;
-  border-radius: 4px;
+  border-radius: 2px;
   font-size: 0.85rem;
   letter-spacing: 0.12em;
   text-transform: uppercase;
-  font-weight: 600;
+  font-weight: 700;
   text-decoration: none;
-  transition: all 0.2s ease;
+  transition: all 0.25s ease;
   margin-top: 8px;
 
   &:hover {
-    background: #c9a45c;
-    color: #1a1918;
+    background: #C9A96E;
+    border-color: #C9A96E;
+    color: #0B0B0B;
   }
 `;
 
 const FormContainer = styled.div`
-  background: #fffdf9;
-  border: 1px solid #e8e3d9;
+  background: #151515;
+  border: 1px solid rgba(140, 116, 75, 0.25);
+  border-radius: 4px;
   padding: 40px;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
 
   h2 {
     font-family: 'Cormorant Garamond', serif;
     font-size: 1.8rem;
-    color: #1a1918;
+    color: #F5F1E8;
     margin-bottom: 24px;
     padding-bottom: 16px;
-    border-bottom: 1px solid #e8e3d9;
+    border-bottom: 1px solid rgba(140, 116, 75, 0.2);
+    letter-spacing: 0.08em;
   }
 
   @media (max-width: 576px) {
@@ -214,26 +222,32 @@ const FormGroup = styled.div<{ $fullWidth?: boolean }>`
   }
 
   label {
-    font-size: 0.8rem;
+    font-size: 0.78rem;
     text-transform: uppercase;
-    letter-spacing: 0.08em;
-    font-weight: 600;
-    color: #4a4741;
+    letter-spacing: 0.1em;
+    font-weight: 700;
+    color: #F5F1E8;
   }
 
   input, select, textarea {
     padding: 12px 16px;
-    border: 1px solid #e8e3d9;
-    background: #fffdf9;
+    border: 1px solid rgba(140, 116, 75, 0.25);
+    background: #111111;
     font-size: 0.95rem;
-    color: #1a1918;
-    border-radius: 4px;
+    color: #F5F1E8;
+    border-radius: 2px;
     outline: none;
     font-family: inherit;
-    transition: border-color 0.2s ease;
+    transition: all 0.2s ease;
+
+    &::placeholder {
+      color: #666666;
+    }
 
     &:focus {
-      border-color: #c9a45c;
+      border-color: #C9A96E;
+      background: #0B0B0B;
+      box-shadow: 0 0 0 3px rgba(201, 169, 110, 0.2);
     }
   }
 
@@ -245,21 +259,22 @@ const FormGroup = styled.div<{ $fullWidth?: boolean }>`
 
 const SubmitBtn = styled.button`
   width: 100%;
-  background: #1a1918;
-  color: #fffdf9;
-  border: none;
+  background: #C9A96E;
+  color: #0B0B0B;
+  border: 1px solid #C9A96E;
   padding: 16px;
   font-size: 0.85rem;
-  letter-spacing: 0.15em;
+  letter-spacing: 0.16em;
   text-transform: uppercase;
-  font-weight: 600;
+  font-weight: 700;
   cursor: pointer;
-  border-radius: 4px;
-  transition: all 0.2s ease;
+  border-radius: 2px;
+  transition: all 0.25s ease;
 
   &:hover {
-    background: #c9a45c;
-    color: #1a1918;
+    background: #DFBA73;
+    border-color: #DFBA73;
+    box-shadow: 0 4px 18px rgba(201, 169, 110, 0.35);
   }
 
   &:disabled {
@@ -270,7 +285,7 @@ const SubmitBtn = styled.button`
 
 const PrivacyNote = styled.p`
   font-size: 0.8rem;
-  color: #77736c;
+  color: #A8A8A8;
   margin-top: 12px;
   text-align: center;
   line-height: 1.5;
@@ -283,13 +298,16 @@ const ConciergeBanner = styled.section`
 `;
 
 const ConciergeInner = styled.div`
-  background: #1a1918;
-  color: #fffdf9;
+  background: #151515;
+  border: 1px solid rgba(140, 116, 75, 0.3);
+  color: #F5F1E8;
   padding: 48px;
+  border-radius: 4px;
   display: flex;
   justify-content: space-between;
   align-items: center;
   gap: 32px;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.6);
 
   @media (max-width: 768px) {
     flex-direction: column;
@@ -301,34 +319,35 @@ const ConciergeInner = styled.div`
     h2 {
       font-family: 'Cormorant Garamond', serif;
       font-size: 2.2rem;
-      color: #fffdf9;
+      color: #F5F1E8;
       margin-bottom: 12px;
+      letter-spacing: 0.08em;
     }
 
     p {
       font-size: 1rem;
-      color: #d9d3c7;
+      color: #D8D2C5;
       max-width: 580px;
       line-height: 1.6;
     }
   }
 
   a.banner-btn {
-    background: #c9a45c;
-    color: #1a1918;
+    background: #C9A96E;
+    color: #0B0B0B;
     padding: 14px 28px;
     font-size: 0.85rem;
-    letter-spacing: 0.12em;
+    letter-spacing: 0.14em;
     text-transform: uppercase;
-    font-weight: 600;
+    font-weight: 700;
     text-decoration: none;
     white-space: nowrap;
-    border-radius: 4px;
-    transition: all 0.2s ease;
+    border-radius: 2px;
+    transition: all 0.25s ease;
 
     &:hover {
-      background: #fffdf9;
-      color: #1a1918;
+      background: #DFBA73;
+      box-shadow: 0 4px 18px rgba(201, 169, 110, 0.35);
     }
   }
 `;
@@ -349,16 +368,14 @@ export const ContactUsPage: React.FC = () => {
   const [contactInfo, setContactInfo] = useState({
     phone: '+91973785306',
     displayPhone: '+91973785306',
-    email: 'contact@floksyjewel.com',
+    email: 'contact@auroradiamonds.com',
     address: 'Surat, India',
     whatsappNumber: '91973785306',
   });
 
   useEffect(() => {
-    // Dynamic SEO Metadata
-    document.title = 'Contact Floksy Jewel | Diamond & Fine Jewellery Concierge';
+    document.title = 'Contact AethelCarats | Diamond & Fine Jewellery Concierge';
     
-    // Fetch CMS Page Data
     api.getPageBySlug('contact-us').then((data) => {
       if (data) {
         let content = {};
@@ -371,14 +388,9 @@ export const ContactUsPage: React.FC = () => {
           }
         }
         setCmsPage({ ...data, cmsContent: content });
-
-        if (data.seoMetadata?.seoTitle) {
-          document.title = data.seoMetadata.seoTitle;
-        }
       }
     }).catch(console.error);
 
-    // Dynamic site settings
     api.getSiteSettings().then((settings) => {
       if (settings) {
         if (settings.contactPhone) {
@@ -399,47 +411,6 @@ export const ContactUsPage: React.FC = () => {
   }, []);
 
   const cms = cmsPage?.cmsContent || {};
-
-  useEffect(() => {
-    // JSON-LD Structured Data
-    const script = document.createElement('script');
-    script.type = 'application/ld+json';
-    script.innerHTML = JSON.stringify({
-      '@context': 'https://schema.org',
-      '@graph': [
-        {
-          '@type': 'Organization',
-          '@id': 'https://floksyjewel.com/#organization',
-          'name': 'Floksy Jewel',
-          'url': 'https://floksyjewel.com',
-          'telephone': contactInfo.phone,
-          'email': contactInfo.email,
-          'logo': 'https://floksyjewel.com/assets/floksy-jewel-logo.png',
-        },
-        {
-          '@type': 'ContactPage',
-          '@id': 'https://floksyjewel.com/contact-us#webpage',
-          'url': 'https://floksyjewel.com/contact-us',
-          'name': 'Contact Floksy Jewel',
-          'description': 'Contact Floksy Jewel for diamond and fine jewellery enquiries.',
-        },
-        {
-          '@type': 'BreadcrumbList',
-          '@id': 'https://floksyjewel.com/contact-us#breadcrumb',
-          'itemListElement': [
-            { '@type': 'ListItem', 'position': 1, 'name': 'Home', 'item': 'https://floksyjewel.com' },
-            { '@type': 'ListItem', 'position': 2, 'name': 'Customer Care', 'item': 'https://floksyjewel.com/contact-us' },
-            { '@type': 'ListItem', 'position': 3, 'name': 'Contact Us', 'item': 'https://floksyjewel.com/contact-us' }
-          ]
-        }
-      ]
-    });
-    document.head.appendChild(script);
-
-    return () => {
-      document.head.removeChild(script);
-    };
-  }, [contactInfo.email, contactInfo.phone]);
 
   const handleChange = (field: string, value: string) => {
     setFormData((prev) => ({ ...prev, [field]: value }));
@@ -467,7 +438,7 @@ export const ContactUsPage: React.FC = () => {
       });
     } catch (error) {
       console.error('Contact form submission error:', error);
-      setSubmitted(true); // Graceful fallback UX
+      setSubmitted(true);
     } finally {
       setSubmitting(false);
     }
@@ -485,190 +456,196 @@ export const ContactUsPage: React.FC = () => {
 
       <RevealContainer yOffset={35}>
         <HeroSection>
-          <h1>{cms.heading || 'Contact Floksy Jewel'}</h1>
-          <p className="subtitle">
-            {cms.subheading || 'Personalised assistance for diamonds, fine jewellery and bespoke creations. Our dedicated atelier team is at your service.'}
+          <h1 style={{ color: cms.headingColor || undefined }}>{cms.heading || 'Contact AethelCarats Atelier'}</h1>
+          <p className="subtitle" style={{ color: cms.subheadingColor || undefined }}>
+            {cms.subheading || 'Personalised assistance for certified diamonds, fine jewellery, and bespoke creations. Our dedicated atelier team is at your service.'}
           </p>
         </HeroSection>
       </RevealContainer>
 
       <ContentGrid>
-        <ContactInfoCard>
-          <div>
-            <h2>{cms.customerCareHeading || 'CUSTOMER CARE'}</h2>
-            <p style={{ color: '#55524d', fontSize: '0.95rem', lineHeight: '1.6', marginTop: 8 }}>
-              {cms.customerCareDescription || 'Our diamond specialists and master jewellers are available to guide you through diamond selection, sizing, or custom CAD requests.'}
-            </p>
-          </div>
-
-          <ContactMethod>
-            <div className="icon-wrapper">
-              <Phone size={20} />
-            </div>
-            <div className="details">
-              <label>{cms.phoneLabel || 'Telephone Assistance'}</label>
-              <a href={`tel:${(cms.phone || contactInfo.phone).replace(/[^\d+]/g, '')}`}>{cms.phone || contactInfo.displayPhone}</a>
-              <p className="note">{cms.businessHours || 'Mon – Sat: 9:00 AM – 7:00 PM GMT'}</p>
-            </div>
-          </ContactMethod>
-
-          <ContactMethod>
-            <div className="icon-wrapper">
-              <Mail size={20} />
-            </div>
-            <div className="details">
-              <label>{cms.emailLabel || 'Email Concierge'}</label>
-              <a href={`mailto:${cms.email || contactInfo.email}`}>{cms.email || contactInfo.email}</a>
-              <p className="note">{cms.responseTime || 'Responses within 24 business hours'}</p>
-            </div>
-          </ContactMethod>
-
-          <ContactMethod>
-            <div className="icon-wrapper">
-              <MapPin size={20} />
-            </div>
-            <div className="details">
-              <label>{cms.locationLabel || 'Private Atelier Appointments'}</label>
-              <span>{cms.address || contactInfo.address || 'Surat, India'}</span>
-              <p className="note">{cms.appointmentDescription || 'By private appointment only'}</p>
-            </div>
-          </ContactMethod>
-
-          <div>
-            <WhatsAppCTA
-              href={`https://wa.me/${(cms.whatsappNumber || contactInfo.whatsappNumber || '91973785306').replace(/[^\d]/g, '') || '91973785306'}?text=${encodeURIComponent('Hello Floksy Jewel Atelier, I would like to inquire about fine jewellery and diamond assistance.')}`}
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              <MessageCircle size={18} /> WhatsApp Concierge
-            </WhatsAppCTA>
-          </div>
-        </ContactInfoCard>
-
-        <FormContainer>
-          <h2>{cms.formHeading || 'Send an Enquiry'}</h2>
-
-          {submitted ? (
-            <div style={{ textAlign: 'center', padding: '40px 20px' }}>
-              <CheckCircle size={48} color="#c9a45c" style={{ margin: '0 auto 16px' }} />
-              <h3 style={{ fontFamily: 'Cormorant Garamond, serif', fontSize: '1.8rem', marginBottom: 12 }}>
-                Thank You for Contacting Us
-              </h3>
-              <p style={{ color: '#55524d', lineHeight: '1.6', fontSize: '0.95rem' }}>
-                Your enquiry has been submitted successfully. A Floksy Jewel concierge specialist will respond to your request within 24 hours.
+        <RevealContainer delay={0.0} yOffset={25}>
+          <ContactInfoCard>
+            <div>
+              <h2 style={{ color: cms.customerCareColor || undefined }}>{cms.customerCareHeading || 'ATELIER CONCIERGE'}</h2>
+              <p style={{ color: cms.customerCareColor || '#D8D2C5', fontSize: '0.95rem', lineHeight: '1.6', marginTop: 8 }}>
+                {cms.customerCareDescription || 'Our diamond specialists and master goldsmiths are available to guide you through diamond selection, sizing, or custom CAD requests.'}
               </p>
             </div>
-          ) : (
-            <form onSubmit={handleSubmit}>
-              <FormRow>
-                <FormGroup>
-                  <label>{cms.firstNameLabel || 'FIRST NAME'} *</label>
-                  <input
-                    type="text"
+
+            <ContactMethod>
+              <div className="icon-wrapper">
+                <Phone size={20} />
+              </div>
+              <div className="details">
+                <label style={{ color: cms.phoneColor || undefined }}>{cms.phoneLabel || 'Telephone Assistance'}</label>
+                <a href={`tel:${(cms.phone || contactInfo.phone).replace(/[^\d+]/g, '')}`}>{cms.phone || contactInfo.displayPhone}</a>
+                <p className="note">{cms.businessHours || 'Mon – Sat: 9:00 AM – 7:00 PM GMT'}</p>
+              </div>
+            </ContactMethod>
+
+            <ContactMethod>
+              <div className="icon-wrapper">
+                <Mail size={20} />
+              </div>
+              <div className="details">
+                <label style={{ color: cms.emailColor || undefined }}>{cms.emailLabel || 'Email Concierge'}</label>
+                <a href={`mailto:${cms.email || contactInfo.email}`}>{cms.email || contactInfo.email}</a>
+                <p className="note">{cms.responseTime || 'Responses within 24 business hours'}</p>
+              </div>
+            </ContactMethod>
+
+            <ContactMethod>
+              <div className="icon-wrapper">
+                <MapPin size={20} />
+              </div>
+              <div className="details">
+                <label style={{ color: cms.appointmentColor || undefined }}>{cms.locationLabel || 'Private Atelier Appointments'}</label>
+                <span>{cms.address || contactInfo.address || 'Surat, India'}</span>
+                <p className="note">{cms.appointmentDescription || 'By private appointment only'}</p>
+              </div>
+            </ContactMethod>
+
+            <div>
+              <WhatsAppCTA
+                href={`https://wa.me/${(cms.whatsappNumber || contactInfo.whatsappNumber || '91973785306').replace(/[^\d]/g, '') || '91973785306'}?text=${encodeURIComponent('Hello AethelCarats, I would like to inquire about fine jewellery and diamond assistance.')}`}
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                <MessageCircle size={18} /> WhatsApp Concierge
+              </WhatsAppCTA>
+            </div>
+          </ContactInfoCard>
+        </RevealContainer>
+
+        <RevealContainer delay={0.1} yOffset={25}>
+          <FormContainer>
+            <h2 style={{ color: cms.formHeadingColor || undefined }}>{cms.formHeading || 'Send an Enquiry'}</h2>
+
+            {submitted ? (
+              <div style={{ textAlign: 'center', padding: '40px 20px' }}>
+                <CheckCircle size={48} color="#C9A96E" style={{ margin: '0 auto 16px' }} />
+                <h3 style={{ fontFamily: 'Cormorant Garamond, serif', fontSize: '1.8rem', color: '#F5F1E8', marginBottom: 12 }}>
+                  Thank You for Contacting Us
+                </h3>
+                <p style={{ color: '#D8D2C5', lineHeight: '1.6', fontSize: '0.95rem' }}>
+                  Your enquiry has been submitted successfully. An AethelCarats concierge specialist will respond to your request within 24 hours.
+                </p>
+              </div>
+            ) : (
+              <form onSubmit={handleSubmit}>
+                <FormRow>
+                  <FormGroup>
+                    <label>{cms.firstNameLabel || 'FIRST NAME'} *</label>
+                    <input
+                      type="text"
+                      required
+                      placeholder={cms.firstNamePlaceholder || 'Enter your first name'}
+                      value={formData.firstName}
+                      onChange={(e) => handleChange('firstName', e.target.value)}
+                    />
+                  </FormGroup>
+                  <FormGroup>
+                    <label>{cms.lastNameLabel || 'LAST NAME'} *</label>
+                    <input
+                      type="text"
+                      required
+                      placeholder={cms.lastNamePlaceholder || 'Enter your last name'}
+                      value={formData.lastName}
+                      onChange={(e) => handleChange('lastName', e.target.value)}
+                    />
+                  </FormGroup>
+                </FormRow>
+
+                <FormRow>
+                  <FormGroup>
+                    <label>{cms.emailInputLabel || 'EMAIL ADDRESS'} *</label>
+                    <input
+                      type="email"
+                      required
+                      placeholder={cms.emailInputPlaceholder || 'name@example.com'}
+                      value={formData.email}
+                      onChange={(e) => handleChange('email', e.target.value)}
+                    />
+                  </FormGroup>
+                  <FormGroup>
+                    <label>{cms.phoneInputLabel || 'PHONE NUMBER'}</label>
+                    <input
+                      type="tel"
+                      placeholder={cms.phoneInputPlaceholder || '+1 (555) 000-0000'}
+                      value={formData.phone}
+                      onChange={(e) => handleChange('phone', e.target.value)}
+                    />
+                  </FormGroup>
+                </FormRow>
+
+                <FormGroup $fullWidth>
+                  <label>{cms.enquiryTypeLabel || 'ENQUIRY TYPE'} *</label>
+                  <select
+                    value={formData.enquiryType}
+                    onChange={(e) => handleChange('enquiryType', e.target.value)}
+                  >
+                    {Array.isArray(cms.enquiryTypes) && cms.enquiryTypes.length > 0 ? (
+                      cms.enquiryTypes
+                        .filter((t: any) => t.isEnabled !== false)
+                        .map((t: any) => (
+                          <option key={t.id || t.name} value={t.name}>
+                            {t.name}
+                          </option>
+                        ))
+                    ) : (
+                      <>
+                        <option value="Diamond Enquiry">Diamond Enquiry</option>
+                        <option value="Jewellery Enquiry">Jewellery Enquiry</option>
+                        <option value="Custom CAD">Custom CAD</option>
+                        <option value="Wholesale">Wholesale</option>
+                        <option value="General Question">General Question</option>
+                      </>
+                    )}
+                  </select>
+                </FormGroup>
+
+                <FormGroup $fullWidth>
+                  <label>{cms.messageLabel || 'MESSAGE'} *</label>
+                  <textarea
                     required
-                    placeholder={cms.firstNamePlaceholder || 'Enter your first name'}
-                    value={formData.firstName}
-                    onChange={(e) => handleChange('firstName', e.target.value)}
+                    placeholder={cms.messagePlaceholder || 'Please describe how we can assist you with your diamond or jewellery selection...'}
+                    value={formData.message}
+                    onChange={(e) => handleChange('message', e.target.value)}
                   />
                 </FormGroup>
-                <FormGroup>
-                  <label>{cms.lastNameLabel || 'LAST NAME'} *</label>
-                  <input
-                    type="text"
-                    required
-                    placeholder={cms.lastNamePlaceholder || 'Enter your last name'}
-                    value={formData.lastName}
-                    onChange={(e) => handleChange('lastName', e.target.value)}
-                  />
-                </FormGroup>
-              </FormRow>
 
-              <FormRow>
-                <FormGroup>
-                  <label>{cms.emailInputLabel || 'EMAIL ADDRESS'} *</label>
-                  <input
-                    type="email"
-                    required
-                    placeholder={cms.emailInputPlaceholder || 'name@example.com'}
-                    value={formData.email}
-                    onChange={(e) => handleChange('email', e.target.value)}
-                  />
-                </FormGroup>
-                <FormGroup>
-                  <label>{cms.phoneInputLabel || 'PHONE NUMBER'}</label>
-                  <input
-                    type="tel"
-                    placeholder={cms.phoneInputPlaceholder || '+1 (555) 000-0000'}
-                    value={formData.phone}
-                    onChange={(e) => handleChange('phone', e.target.value)}
-                  />
-                </FormGroup>
-              </FormRow>
+                <SubmitBtn type="submit" disabled={submitting}>
+                  {submitting ? 'SENDING ENQUIRY...' : 'SEND ENQUIRY'}
+                </SubmitBtn>
 
-              <FormGroup $fullWidth>
-                <label>{cms.enquiryTypeLabel || 'ENQUIRY TYPE'} *</label>
-                <select
-                  value={formData.enquiryType}
-                  onChange={(e) => handleChange('enquiryType', e.target.value)}
-                >
-                  {Array.isArray(cms.enquiryTypes) && cms.enquiryTypes.length > 0 ? (
-                    cms.enquiryTypes
-                      .filter((t: any) => t.isEnabled !== false)
-                      .map((t: any) => (
-                        <option key={t.id || t.name} value={t.name}>
-                          {t.name}
-                        </option>
-                      ))
-                  ) : (
-                    <>
-                      <option value="Diamond Enquiry">Diamond Enquiry</option>
-                      <option value="Jewellery Enquiry">Jewellery Enquiry</option>
-                      <option value="Custom CAD">Custom CAD</option>
-                      <option value="Wholesale">Wholesale</option>
-                      <option value="General Question">General Question</option>
-                    </>
-                  )}
-                </select>
-              </FormGroup>
-
-              <FormGroup $fullWidth>
-                <label>{cms.messageLabel || 'MESSAGE'} *</label>
-                <textarea
-                  required
-                  placeholder={cms.messagePlaceholder || 'Please describe how we can assist you with your diamond or jewellery selection...'}
-                  value={formData.message}
-                  onChange={(e) => handleChange('message', e.target.value)}
-                />
-              </FormGroup>
-
-              <SubmitBtn type="submit" disabled={submitting}>
-                {submitting ? 'SENDING ENQUIRY...' : 'SEND ENQUIRY'}
-              </SubmitBtn>
-
-              <PrivacyNote>
-                Your information is used only to respond to your enquiry and provide requested assistance.
-              </PrivacyNote>
-            </form>
-          )}
-        </FormContainer>
+                <PrivacyNote>
+                  Your information is used strictly to respond to your enquiry and provide requested concierge assistance.
+                </PrivacyNote>
+              </form>
+            )}
+          </FormContainer>
+        </RevealContainer>
       </ContentGrid>
 
-      <ConciergeBanner>
-        <ConciergeInner>
-          <div className="text-content">
-            <h2>Private Jewellery Concierge</h2>
-            <p>
-              Looking for a bespoke diamond ring, advice on certified lab-grown diamonds, or custom 3D CAD design? Our master jewellers are here to assist you at every step.
-            </p>
-          </div>
-          <a
-            href={`mailto:${contactInfo.email}?subject=Private%20Concierge%20Inquiry`}
-            className="banner-btn"
-          >
-            SPEAK WITH OUR CONCIERGE
-          </a>
-        </ConciergeInner>
-      </ConciergeBanner>
+      <RevealContainer yOffset={35}>
+        <ConciergeBanner>
+          <ConciergeInner>
+            <div className="text-content">
+              <h2>Private Jewellery Concierge</h2>
+              <p>
+                Looking for a bespoke diamond ring, advice on certified diamonds, or custom 3D CAD design? Our master jewellers are here to assist you at every step.
+              </p>
+            </div>
+            <a
+              href={`mailto:${contactInfo.email}?subject=Private%20Concierge%20Inquiry`}
+              className="banner-btn"
+            >
+              SPEAK WITH OUR CONCIERGE
+            </a>
+          </ConciergeInner>
+        </ConciergeBanner>
+      </RevealContainer>
     </PageWrapper>
   );
 };

@@ -21,6 +21,7 @@ const PageWrapper = styled.div`
   max-width: 1300px;
   margin: 0 auto;
   padding: 32px 24px 80px;
+  color: #F5F1E8;
 
   @media (max-width: 768px) {
     padding: 16px 16px 60px;
@@ -32,19 +33,19 @@ const BreadcrumbBar = styled.nav`
   align-items: center;
   gap: 8px;
   font-size: 0.8rem;
-  color: #77736c;
+  color: #A8A8A8;
   margin-bottom: 32px;
 
   a {
-    color: #55514b;
+    color: #A8A8A8;
     text-decoration: none;
     &:hover {
-      color: #c9a45c;
+      color: #C9A96E;
     }
   }
 
   span.current {
-    color: #1f1f1f;
+    color: #F5F1E8;
     font-weight: 600;
   }
 `;
@@ -67,14 +68,14 @@ const HeroText = styled.div`
   h1 {
     font-family: 'Cormorant Garamond', serif;
     font-size: 3rem;
-    color: #1f1f1f;
+    color: #F5F1E8;
     line-height: 1.15;
     margin-bottom: 16px;
   }
 
   p.subtitle {
     font-size: 1.15rem;
-    color: #c9a45c;
+    color: #C9A96E;
     font-weight: 600;
     letter-spacing: 0.05em;
     text-transform: uppercase;
@@ -83,16 +84,18 @@ const HeroText = styled.div`
 
   p.desc {
     font-size: 1rem;
-    color: #55514b;
+    color: #D8D2C5;
     line-height: 1.8;
   }
 `;
 
 const HeroMedia = styled.div`
   aspect-ratio: 4 / 3;
-  background: #f5f2ea;
+  background: #151515;
+  border: 1px solid rgba(140, 116, 75, 0.25);
   border-radius: 6px;
   overflow: hidden;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
 
   img {
     width: 100%;
@@ -110,27 +113,29 @@ const IntroSection = styled.div`
   h2 {
     font-family: 'Cormorant Garamond', serif;
     font-size: 2.2rem;
-    color: #1f1f1f;
+    color: #F5F1E8;
     margin-bottom: 16px;
   }
 
   p {
     font-size: 1rem;
-    color: #55514b;
+    color: #D8D2C5;
     line-height: 1.8;
   }
 `;
 
-// SECTION 3: DARK NAVY CTA BAND
+// SECTION 3: DARK CTA BAND
 const DarkCtaBand = styled.div`
-  background: #19202a;
-  color: #fff;
+  background: #151515;
+  border: 1px solid rgba(140, 116, 75, 0.3);
+  color: #F5F1E8;
   padding: 48px 32px;
   border-radius: 6px;
   display: flex;
   justify-content: space-between;
   align-items: center;
   margin-bottom: 80px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
 
   @media (max-width: 768px) {
     flex-direction: column;
@@ -141,14 +146,14 @@ const DarkCtaBand = styled.div`
   h3 {
     font-family: 'Cormorant Garamond', serif;
     font-size: 2rem;
-    color: #fffdf9;
+    color: #F5F1E8;
     margin: 0;
   }
 
   a.cta-btn {
     padding: 14px 28px;
-    background: #c9a45c;
-    color: #1f1f1f;
+    background: #C9A96E;
+    color: #0B0B0B;
     font-weight: 700;
     letter-spacing: 0.1em;
     text-transform: uppercase;
@@ -158,8 +163,8 @@ const DarkCtaBand = styled.div`
     transition: all 0.2s ease;
 
     &:hover {
-      background: #fffdf9;
-      color: #1f1f1f;
+      background: #DFBA73;
+      transform: translateY(-2px);
     }
   }
 `;
@@ -181,21 +186,21 @@ const SplitSection = styled.div`
     h3 {
       font-family: 'Cormorant Garamond', serif;
       font-size: 2.2rem;
-      color: #1f1f1f;
+      color: #F5F1E8;
       margin-bottom: 16px;
     }
 
     p {
       font-size: 0.95rem;
-      color: #55514b;
+      color: #D8D2C5;
       line-height: 1.8;
       margin-bottom: 24px;
     }
 
     button.action-btn {
       padding: 14px 24px;
-      background: #1f1f1f;
-      color: #c9a45c;
+      background: #C9A96E;
+      color: #0B0B0B;
       border: none;
       font-weight: 700;
       letter-spacing: 0.1em;
@@ -203,21 +208,23 @@ const SplitSection = styled.div`
       font-size: 0.82rem;
       border-radius: 4px;
       cursor: pointer;
+      transition: all 0.2s ease;
 
       &:hover {
-        background: #c9a45c;
-        color: #1f1f1f;
+        background: #DFBA73;
+        transform: translateY(-2px);
       }
     }
   }
 
   .media-side {
-    background: #f5f2ea;
-    border: 1px solid #e8e3d9;
+    background: #151515;
+    border: 1px solid rgba(140, 116, 75, 0.25);
     border-radius: 6px;
     overflow: hidden;
     padding: 24px;
     text-align: center;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
 
     img {
       max-width: 100%;
@@ -240,15 +247,22 @@ const MethodsGrid = styled.div`
 `;
 
 const MethodCard = styled.div`
-  background: #faf8f5;
-  border: 1px solid #e8e3d9;
+  background: #151515;
+  border: 1px solid rgba(140, 116, 75, 0.25);
   border-radius: 6px;
   padding: 32px 24px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+  transition: transform 0.2s ease, border-color 0.2s ease;
+
+  &:hover {
+    transform: translateY(-3px);
+    border-color: #C9A96E;
+  }
 
   .num {
     font-family: 'Cormorant Garamond', serif;
     font-size: 2.5rem;
-    color: #c9a45c;
+    color: #C9A96E;
     font-weight: 700;
     margin-bottom: 12px;
   }
@@ -256,13 +270,13 @@ const MethodCard = styled.div`
   h4 {
     font-family: 'Cormorant Garamond', serif;
     font-size: 1.4rem;
-    color: #1f1f1f;
+    color: #F5F1E8;
     margin-bottom: 12px;
   }
 
   p {
     font-size: 0.88rem;
-    color: #55514b;
+    color: #D8D2C5;
     line-height: 1.7;
   }
 `;
@@ -277,7 +291,7 @@ const TableContainer = styled.div`
   h3 {
     font-family: 'Cormorant Garamond', serif;
     font-size: 2.2rem;
-    color: #1f1f1f;
+    color: #F5F1E8;
     margin-bottom: 20px;
     text-align: center;
   }
@@ -288,27 +302,29 @@ const ConversionTable = styled.table`
   min-width: 600px;
   border-collapse: collapse;
   font-size: 0.85rem;
-  background: #fff;
-  border: 1px solid #e8e3d9;
+  background: #151515;
+  border: 1px solid rgba(140, 116, 75, 0.25);
+  color: #D8D2C5;
 
   th,
   td {
     padding: 12px 16px;
     text-align: center;
-    border: 1px solid #e8e3d9;
+    border: 1px solid rgba(140, 116, 75, 0.2);
   }
 
   th {
-    background: #1f1f1f;
-    color: #fff;
+    background: #1F1F1F;
+    color: #F5F1E8;
     font-weight: 700;
     letter-spacing: 0.05em;
     text-transform: uppercase;
     font-size: 0.78rem;
+    border-bottom: 1px solid rgba(140, 116, 75, 0.35);
   }
 
   tr:nth-child(even) {
-    background: #faf8f5;
+    background: #111111;
   }
 `;
 
@@ -316,7 +332,8 @@ const ConversionTable = styled.table`
 const ModalOverlay = styled.div`
   position: fixed;
   inset: 0;
-  background: rgba(0, 0, 0, 0.6);
+  background: rgba(0, 0, 0, 0.75);
+  backdrop-filter: blur(4px);
   z-index: 99999;
   display: flex;
   align-items: center;
@@ -325,13 +342,15 @@ const ModalOverlay = styled.div`
 `;
 
 const ModalBox = styled.div`
-  background: #fffdf9;
+  background: #151515;
+  border: 1px solid rgba(140, 116, 75, 0.3);
   border-radius: 8px;
   padding: 36px;
   max-width: 500px;
   width: 100%;
   position: relative;
-  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
+  color: #F5F1E8;
 `;
 
 export const FindYourRingSizePage: React.FC = () => {
@@ -405,11 +424,11 @@ export const FindYourRingSizePage: React.FC = () => {
           <p className="subtitle">Ring Sizer & Conversion Guide</p>
           <h1>How To Measure Your Ring Size</h1>
           <p className="desc">
-            Discovering your ideal ring size ensures maximum comfort and security for your bespoke Floksy Jewel creation. Follow our complimentary guide, printable sizer, and international conversion matrix.
+            Discovering your ideal ring size ensures maximum comfort and security for your bespoke AethelCarats creation. Follow our complimentary guide, printable sizer, and international conversion matrix.
           </p>
         </HeroText>
         <HeroMedia>
-          <SafeImage src="/assets/floksy_solitaire_ring_perfect.png" alt="Floksy Jewel Ring Sizing" />
+          <SafeImage src="/assets/gem_solitaire_ring_perfect.png" alt="AethelCarats Ring Sizing" />
         </HeroMedia>
       </HeroSection>
 
@@ -417,7 +436,7 @@ export const FindYourRingSizePage: React.FC = () => {
       <IntroSection>
         <h2>Finding Your Ring Size</h2>
         <p>
-          Finding the right ring size is one of the most essential steps when choosing an engagement ring or wedding band. Floksy Jewel provides complimentary resizing within 30 days for all non-custom creation orders.
+          Finding the right ring size is one of the most essential steps when choosing an engagement ring or wedding band. AethelCarats provides complimentary resizing within 30 days for all non-custom creation orders.
         </p>
       </IntroSection>
 
@@ -426,7 +445,7 @@ export const FindYourRingSizePage: React.FC = () => {
         <DarkCtaBand>
           <div>
             <h3>Browse Our Selection of Fine Rings</h3>
-            <p style={{ margin: '8px 0 0', color: '#aaa', fontSize: '0.9rem' }}>Handcrafted 18K Gold & Platinum Solitaires</p>
+            <p style={{ margin: '8px 0 0', color: '#A8A8A8', fontSize: '0.9rem' }}>Handcrafted 18K Gold & Platinum Solitaires</p>
           </div>
           <Link to="/rings" className="cta-btn">
             FIND YOUR RING
@@ -440,14 +459,14 @@ export const FindYourRingSizePage: React.FC = () => {
           <div className="content-side">
             <h3>Complimentary Plastic Ring Sizer</h3>
             <p>
-              Receive a free Floksy Jewel belt-style plastic ring sizer delivered directly to your doorstep. It works like a belt around your finger for easy, accurate measurements at home.
+              Receive a free AethelCarats belt-style plastic ring sizer delivered directly to your doorstep. It works like a belt around your finger for easy, accurate measurements at home.
             </p>
             <button className="action-btn" onClick={() => setShowSizerModal(true)}>
               REQUEST FREE RING SIZER
             </button>
           </div>
           <div className="media-side">
-            <SafeImage src="/assets/why-floksy/craftsmanship-hero.jpg" alt="Free Ring Sizer" style={{ borderRadius: 4 }} />
+            <SafeImage src="/assets/why-aura/craftsmanship-hero.jpg" alt="Free Ring Sizer" style={{ borderRadius: 4 }} />
           </div>
         </SplitSection>
       </RevealContainer>
@@ -456,11 +475,11 @@ export const FindYourRingSizePage: React.FC = () => {
       <RevealContainer yOffset={35}>
         <SplitSection>
           <div className="media-side">
-            <div style={{ padding: 20, background: '#fff', border: '1px solid #d9d3c7', borderRadius: 4 }}>
-              <div style={{ fontWeight: 700, fontSize: '1.2rem', marginBottom: 12, color: '#1f1f1f' }}>US Standard Diameter Circles</div>
+            <div style={{ padding: 20, background: '#111111', border: '1px solid rgba(140, 116, 75, 0.25)', borderRadius: 6 }}>
+              <div style={{ fontWeight: 700, fontSize: '1.2rem', marginBottom: 12, color: '#F5F1E8' }}>US Standard Diameter Circles</div>
               <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 12 }}>
                 {['5', '6', '7', '8', '9', '10', '11', '12'].map((s) => (
-                  <div key={s} style={{ padding: 12, border: '1.5px dashed #c9a45c', borderRadius: '50%', aspectRatio: '1/1', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 700, fontSize: '0.85rem' }}>
+                  <div key={s} style={{ padding: 12, border: '1.5px dashed #C9A96E', color: '#F5F1E8', borderRadius: '50%', aspectRatio: '1/1', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 700, fontSize: '0.85rem' }}>
                     US {s}
                   </div>
                 ))}
@@ -480,7 +499,7 @@ export const FindYourRingSizePage: React.FC = () => {
       </RevealContainer>
 
       {/* HOW TO MEASURE AT HOME */}
-      <h3 style={{ fontFamily: 'Cormorant Garamond, serif', fontSize: '2.2rem', textAlign: 'center', marginBottom: 32 }}>How To Measure At Home</h3>
+      <h3 style={{ fontFamily: 'Cormorant Garamond, serif', fontSize: '2.2rem', textAlign: 'center', color: '#F5F1E8', marginBottom: 32 }}>How To Measure At Home</h3>
       <MethodsGrid>
         <MethodCard>
           <div className="num">01</div>
@@ -517,7 +536,7 @@ export const FindYourRingSizePage: React.FC = () => {
           <tbody>
             {CONVERSION_DATA.map((row: any) => (
               <tr key={row.us}>
-                <td style={{ fontWeight: 700, color: '#c9a45c' }}>US {row.us}</td>
+                <td style={{ fontWeight: 700, color: '#C9A96E' }}>US {row.us}</td>
                 <td>{row.uk}</td>
                 <td>{row.eu}</td>
                 <td>{row.diameter}</td>
@@ -529,20 +548,20 @@ export const FindYourRingSizePage: React.FC = () => {
       </TableContainer>
 
       {/* BETWEEN SIZES GUIDANCE */}
-      <IntroSection style={{ background: '#faf8f5', padding: '40px 32px', borderRadius: 6, border: '1px solid #e8e3d9' }}>
-        <h3 style={{ fontFamily: 'Cormorant Garamond, serif', fontSize: '1.8rem', color: '#1f1f1f', marginBottom: 12 }}>Between Two Sizes?</h3>
-        <p style={{ fontSize: '0.92rem', color: '#55514b', lineHeight: 1.8 }}>
+      <IntroSection style={{ background: '#151515', padding: '40px 32px', borderRadius: 6, border: '1px solid rgba(140, 116, 75, 0.25)', boxShadow: '0 8px 24px rgba(0,0,0,0.3)' }}>
+        <h3 style={{ fontFamily: 'Cormorant Garamond, serif', fontSize: '1.8rem', color: '#F5F1E8', marginBottom: 12 }}>Between Two Sizes?</h3>
+        <p style={{ fontSize: '0.92rem', color: '#D8D2C5', lineHeight: 1.8 }}>
           If you fall between two sizes, we always recommend sizing up. Fingers fluctuate in size depending on temperature, humidity, and time of day (typically slightly larger in the evening). Wider band styles (above 4mm) also feel tighter than slim solitaire bands.
         </p>
       </IntroSection>
 
       {/* FINAL CTA */}
-      <div style={{ textAlign: 'center', marginTop: 80, paddingTop: 48, borderTop: '1px solid #e8e3d9' }}>
-        <h2 style={{ fontFamily: 'Cormorant Garamond, serif', fontSize: '2.5rem', marginBottom: 16 }}>Find Your Perfect Floksy Jewel Ring</h2>
-        <p style={{ color: '#666', fontSize: '1rem', maxWidth: 600, margin: '0 auto 28px' }}>
+      <div style={{ textAlign: 'center', marginTop: 80, paddingTop: 48, borderTop: '1px solid rgba(140, 116, 75, 0.25)' }}>
+        <h2 style={{ fontFamily: 'Cormorant Garamond, serif', fontSize: '2.5rem', color: '#F5F1E8', marginBottom: 16 }}>Find Your Perfect AethelCarats Ring</h2>
+        <p style={{ color: '#D8D2C5', fontSize: '1rem', maxWidth: 600, margin: '0 auto 28px' }}>
           Explore our certified GIA natural and lab diamond solitaire engagement rings and eternity bands.
         </p>
-        <Link to="/rings" style={{ padding: '16px 36px', background: '#1f1f1f', color: '#c9a45c', textDecoration: 'none', fontWeight: 700, letterSpacing: '0.1em', borderRadius: 4, display: 'inline-block' }}>
+        <Link to="/rings" style={{ padding: '16px 36px', background: '#C9A96E', color: '#0B0B0B', textDecoration: 'none', fontWeight: 700, letterSpacing: '0.1em', borderRadius: 4, display: 'inline-block' }}>
           SHOP RINGS CATALOGUE
         </Link>
       </div>
@@ -551,20 +570,20 @@ export const FindYourRingSizePage: React.FC = () => {
       {showSizerModal && (
         <ModalOverlay onClick={() => setShowSizerModal(false)}>
           <ModalBox onClick={(e) => e.stopPropagation()}>
-            <button onClick={() => setShowSizerModal(false)} style={{ position: 'absolute', top: 16, right: 16, background: 'none', border: 'none', cursor: 'pointer' }}>
+            <button onClick={() => setShowSizerModal(false)} style={{ position: 'absolute', top: 16, right: 16, background: 'none', border: 'none', cursor: 'pointer', color: '#A8A8A8' }}>
               <X size={20} />
             </button>
 
             {sizerSubmitted ? (
               <div style={{ textAlign: 'center', padding: '24px 0' }}>
-                <CheckCircle size={48} color="#137333" style={{ marginBottom: 16 }} />
-                <h3 style={{ fontFamily: 'Cormorant Garamond, serif', fontSize: '1.8rem', marginBottom: 8 }}>Free Sizer Requested!</h3>
-                <p style={{ color: '#666', fontSize: '0.9rem' }}>We are mailing your complimentary Floksy Jewel Ring Sizer to your address. Estimated arrival: 3-5 business days.</p>
+                <CheckCircle size={48} color="#C9A96E" style={{ marginBottom: 16 }} />
+                <h3 style={{ fontFamily: 'Cormorant Garamond, serif', fontSize: '1.8rem', color: '#F5F1E8', marginBottom: 8 }}>Free Sizer Requested!</h3>
+                <p style={{ color: '#D8D2C5', fontSize: '0.9rem' }}>We are mailing your complimentary AethelCarats Ring Sizer to your address. Estimated arrival: 3-5 business days.</p>
               </div>
             ) : (
               <form onSubmit={handleSizerSubmit}>
-                <h3 style={{ fontFamily: 'Cormorant Garamond, serif', fontSize: '1.8rem', marginBottom: 12 }}>Request Free Ring Sizer</h3>
-                <p style={{ color: '#666', fontSize: '0.85rem', marginBottom: 20 }}>We will mail a free plastic belt sizer directly to your home.</p>
+                <h3 style={{ fontFamily: 'Cormorant Garamond, serif', fontSize: '1.8rem', color: '#F5F1E8', marginBottom: 12 }}>Request Free Ring Sizer</h3>
+                <p style={{ color: '#D8D2C5', fontSize: '0.85rem', marginBottom: 20 }}>We will mail a free plastic belt sizer directly to your home.</p>
 
                 <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
                   <input
@@ -573,7 +592,7 @@ export const FindYourRingSizePage: React.FC = () => {
                     placeholder="Full Name"
                     value={formInput.name}
                     onChange={(e) => setFormInput({ ...formInput, name: e.target.value })}
-                    style={{ padding: 10, border: '1px solid #d9d3c7', borderRadius: 4 }}
+                    style={{ padding: 12, background: '#111111', color: '#F5F1E8', border: '1px solid rgba(140, 116, 75, 0.25)', borderRadius: 4, outline: 'none' }}
                   />
                   <input
                     type="email"
@@ -581,7 +600,7 @@ export const FindYourRingSizePage: React.FC = () => {
                     placeholder="Email Address"
                     value={formInput.email}
                     onChange={(e) => setFormInput({ ...formInput, email: e.target.value })}
-                    style={{ padding: 10, border: '1px solid #d9d3c7', borderRadius: 4 }}
+                    style={{ padding: 12, background: '#111111', color: '#F5F1E8', border: '1px solid rgba(140, 116, 75, 0.25)', borderRadius: 4, outline: 'none' }}
                   />
                   <input
                     type="text"
@@ -589,7 +608,7 @@ export const FindYourRingSizePage: React.FC = () => {
                     placeholder="Shipping Street Address"
                     value={formInput.address}
                     onChange={(e) => setFormInput({ ...formInput, address: e.target.value })}
-                    style={{ padding: 10, border: '1px solid #d9d3c7', borderRadius: 4 }}
+                    style={{ padding: 12, background: '#111111', color: '#F5F1E8', border: '1px solid rgba(140, 116, 75, 0.25)', borderRadius: 4, outline: 'none' }}
                   />
                   <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>
                     <input
@@ -598,7 +617,7 @@ export const FindYourRingSizePage: React.FC = () => {
                       placeholder="City"
                       value={formInput.city}
                       onChange={(e) => setFormInput({ ...formInput, city: e.target.value })}
-                      style={{ padding: 10, border: '1px solid #d9d3c7', borderRadius: 4 }}
+                      style={{ padding: 12, background: '#111111', color: '#F5F1E8', border: '1px solid rgba(140, 116, 75, 0.25)', borderRadius: 4, outline: 'none' }}
                     />
                     <input
                       type="text"
@@ -606,11 +625,11 @@ export const FindYourRingSizePage: React.FC = () => {
                       placeholder="Postal Code"
                       value={formInput.postalCode}
                       onChange={(e) => setFormInput({ ...formInput, postalCode: e.target.value })}
-                      style={{ padding: 10, border: '1px solid #d9d3c7', borderRadius: 4 }}
+                      style={{ padding: 12, background: '#111111', color: '#F5F1E8', border: '1px solid rgba(140, 116, 75, 0.25)', borderRadius: 4, outline: 'none' }}
                     />
                   </div>
 
-                  <button type="submit" style={{ marginTop: 12, padding: 14, background: '#1f1f1f', color: '#c9a45c', border: 'none', borderRadius: 4, fontWeight: 700, cursor: 'pointer' }}>
+                  <button type="submit" style={{ marginTop: 12, padding: 14, background: '#C9A96E', color: '#0B0B0B', border: 'none', borderRadius: 4, fontWeight: 700, cursor: 'pointer', letterSpacing: '0.08em' }}>
                     SUBMIT MAILING REQUEST
                   </button>
                 </div>

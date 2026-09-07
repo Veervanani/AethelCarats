@@ -5,11 +5,11 @@ import { ensureStorefrontCmsSeeded } from './services/seedService';
 const prisma = new PrismaClient();
 
 async function main() {
-  console.log('🌱 Starting Floksy Jewel database seeding...');
+  console.log('🌱 Starting Aura Diamond Atelier database seeding...');
 
   // 1. Admin User Seeding (Idempotent, Hashed Password, Environment Secret Support)
-  const initialUsername = process.env.ADMIN_INITIAL_USERNAME || 'fv_atelier_7Kx9';
-  const initialPassword = process.env.ADMIN_INITIAL_PASSWORD || 'R7!mQ2#vL9@xT4$pN8zW';
+  const initialUsername = process.env.ADMIN_INITIAL_USERNAME || 'sysadmin@aura-atelier.internal';
+  const initialPassword = process.env.ADMIN_INITIAL_PASSWORD || 'Vx9#mK2$pQ8*wL4@nR7z';
 
   const passwordHash = await bcrypt.hash(initialPassword, 10);
   const adminUser = await prisma.user.upsert({
@@ -17,11 +17,11 @@ async function main() {
     update: {
       passwordHash,
       role: 'ADMIN',
-      name: 'Floksy Atelier Administrator',
+      name: 'Aura Atelier Administrator',
     },
     create: {
       email: initialUsername,
-      name: 'Floksy Atelier Administrator',
+      name: 'Aura Atelier Administrator',
       passwordHash,
       role: 'ADMIN',
     },
@@ -30,11 +30,11 @@ async function main() {
 
   // 2. Categories
   const categoriesData = [
-    { name: 'Rings', slug: 'rings', description: 'Timeless engagement, solitaire, and eternity rings.', bannerImage: '/assets/floksy_rings_cat.png' },
-    { name: 'Earrings', slug: 'earrings', description: 'Exquisite diamond studs, drops, and hoops.', bannerImage: '/assets/floksy_earrings_cat.png' },
-    { name: 'Necklaces', slug: 'necklaces', description: 'Sophisticated riviere and solitaire diamond necklaces.', bannerImage: '/assets/floksy_necklaces_cat.png' },
-    { name: 'Bracelets', slug: 'bracelets', description: 'Tennis bracelets and sculpted gold cuffs.', bannerImage: '/assets/floksy_bracelets_cat.png' },
-    { name: 'Pendants', slug: 'pendants', description: 'Delicate gemstone and solitaire diamond pendants.', bannerImage: '/assets/floksy_pendants_cat.png' },
+    { name: 'Rings', slug: 'rings', description: 'Timeless engagement, solitaire, and eternity rings.', bannerImage: '/assets/gem_rings_cat.png' },
+    { name: 'Earrings', slug: 'earrings', description: 'Exquisite diamond studs, drops, and hoops.', bannerImage: '/assets/gem_earrings_cat.png' },
+    { name: 'Necklaces', slug: 'necklaces', description: 'Sophisticated riviere and solitaire diamond necklaces.', bannerImage: '/assets/gem_necklaces_cat.png' },
+    { name: 'Bracelets', slug: 'bracelets', description: 'Tennis bracelets and sculpted gold cuffs.', bannerImage: '/assets/gem_bracelets_cat.png' },
+    { name: 'Pendants', slug: 'pendants', description: 'Delicate gemstone and solitaire diamond pendants.', bannerImage: '/assets/gem_pendants_cat.png' },
   ];
 
   const categories = [];
@@ -49,9 +49,9 @@ async function main() {
 
   // 3. Collections
   const collectionsData = [
-    { name: 'Signature Collection', slug: 'signature-collection', description: 'Our quintessential high jewellery designs.', bannerImage: '/assets/floksy_rings_cat.png', isFeatured: true },
-    { name: 'Solitaire Selection', slug: 'solitaire-selection', description: 'Pure brilliance centered on exceptional diamonds.', bannerImage: '/assets/floksy_rings_cat.png', isFeatured: true },
-    { name: 'High Jewellery 2026', slug: 'high-jewellery-2026', description: 'Handcrafted luxury pieces produced in limited atelier editions.', bannerImage: '/assets/floksy_editorial_banner.png', isFeatured: true },
+    { name: 'Signature Collection', slug: 'signature-collection', description: 'Our quintessential high jewellery designs.', bannerImage: '/assets/gem_rings_cat.png', isFeatured: true },
+    { name: 'Solitaire Selection', slug: 'solitaire-selection', description: 'Pure brilliance centered on exceptional diamonds.', bannerImage: '/assets/gem_rings_cat.png', isFeatured: true },
+    { name: 'High Jewellery 2026', slug: 'high-jewellery-2026', description: 'Handcrafted luxury pieces produced in limited atelier editions.', bannerImage: '/assets/editorial_banner.png', isFeatured: true },
   ];
 
   const collections = [];
@@ -68,7 +68,7 @@ async function main() {
   const productsData = [
     {
       name: 'The Aurelia Solitaire Diamond Ring',
-      sku: 'FJ-RNG-001',
+      sku: 'AD-RNG-001',
       slug: 'aurelia-solitaire-diamond-ring',
       categoryId: categories[0].id,
       collectionId: collections[0].id,
@@ -88,14 +88,14 @@ async function main() {
       cut: 'Excellent',
       price: 6850,
       comparePrice: 7500,
-      mainImage: '/assets/floksy-solitaire-ring-editorial.png',
-      secondaryImage: '/assets/floksy_rings_cat.png',
+      mainImage: '/assets/gem_rings_cat.png',
+      secondaryImage: '/assets/gem_rings_cat_2.png',
       isFeatured: true,
       isBestseller: true,
     },
     {
       name: 'Celestial Oval Diamond Halo Ring',
-      sku: 'FJ-RNG-002',
+      sku: 'AD-RNG-002',
       slug: 'celestial-oval-diamond-halo-ring',
       categoryId: categories[0].id,
       collectionId: collections[1].id,
@@ -115,13 +115,13 @@ async function main() {
       cut: 'Excellent',
       price: 11400,
       comparePrice: 12800,
-      mainImage: '/assets/floksy_only_at_4.png',
-      secondaryImage: '/assets/floksy-solitaire-ring-editorial.png',
+      mainImage: '/assets/gem_rings_cat_2.png',
+      secondaryImage: '/assets/gem_rings_cat.png',
       isFeatured: true,
     },
     {
       name: 'Eternity Pavé Diamond Band',
-      sku: 'FJ-RNG-003',
+      sku: 'AD-RNG-003',
       slug: 'eternity-pave-diamond-band',
       categoryId: categories[0].id,
       collectionId: collections[0].id,
@@ -141,13 +141,13 @@ async function main() {
       cut: 'Excellent',
       price: 8900,
       comparePrice: 9800,
-      mainImage: '/assets/floksy_only_at_2.png',
-      secondaryImage: '/assets/floksy_only_at_1.png',
+      mainImage: '/assets/gem_rings_cat.png',
+      secondaryImage: '/assets/gem_rings_cat_2.png',
       isBestseller: true,
     },
     {
       name: 'The Monarch Emerald Cut Solitaire',
-      sku: 'FJ-RNG-004',
+      sku: 'AD-RNG-004',
       slug: 'the-monarch-emerald-cut-solitaire',
       categoryId: categories[0].id,
       collectionId: collections[2].id,
@@ -167,13 +167,13 @@ async function main() {
       cut: 'Excellent',
       price: 14500,
       comparePrice: 16000,
-      mainImage: '/assets/floksy_only_at_3.png',
-      secondaryImage: '/assets/floksy_cad_craftsmanship.png',
+      mainImage: '/assets/gem_rings_cat_2.png',
+      secondaryImage: '/assets/gem_rings_cat.png',
       isFeatured: true,
     },
     {
       name: 'Seraphina Three-Stone Pear Diamond Ring',
-      sku: 'FJ-RNG-005',
+      sku: 'AD-RNG-005',
       slug: 'seraphina-three-stone-pear-diamond-ring',
       categoryId: categories[0].id,
       collectionId: collections[0].id,
@@ -193,12 +193,12 @@ async function main() {
       cut: 'Excellent',
       price: 12800,
       comparePrice: 14200,
-      mainImage: '/assets/floksy_only_at_1.png',
-      secondaryImage: '/assets/floksy_rings_cat.png',
+      mainImage: '/assets/gem_rings_cat.png',
+      secondaryImage: '/assets/gem_rings_cat_2.png',
     },
     {
       name: 'Royal Cushion Cut Diamond Halo Ring',
-      sku: 'FJ-RNG-006',
+      sku: 'AD-RNG-006',
       slug: 'royal-cushion-cut-diamond-halo-ring',
       categoryId: categories[0].id,
       collectionId: collections[1].id,
@@ -218,14 +218,14 @@ async function main() {
       cut: 'Excellent',
       price: 16200,
       comparePrice: 18000,
-      mainImage: '/assets/floksy_rings_cat.png',
-      secondaryImage: '/assets/floksy_only_at_4.png',
+      mainImage: '/assets/gem_rings_cat.png',
+      secondaryImage: '/assets/gem_rings_cat_2.png',
       isFeatured: true,
       isBestseller: true,
     },
     {
       name: 'Gentleman’s Brushed Gold & Diamond Band',
-      sku: 'FJ-RNG-007',
+      sku: 'AD-RNG-007',
       slug: 'gentlemans-brushed-gold-diamond-band',
       categoryId: categories[0].id,
       collectionId: collections[0].id,
@@ -245,12 +245,12 @@ async function main() {
       cut: 'Very Good',
       price: 3450,
       comparePrice: 3900,
-      mainImage: '/assets/floksy_only_at_3.png',
-      secondaryImage: '/assets/floksy_cad_craftsmanship.png',
+      mainImage: '/assets/gem_rings_cat.png',
+      secondaryImage: '/assets/gem_rings_cat_2.png',
     },
     {
       name: 'Valiant Platinum Bevelled Men’s Ring',
-      sku: 'FJ-RNG-008',
+      sku: 'AD-RNG-008',
       slug: 'valiant-platinum-bevelled-mens-ring',
       categoryId: categories[0].id,
       collectionId: collections[2].id,
@@ -270,12 +270,12 @@ async function main() {
       cut: 'Excellent',
       price: 4200,
       comparePrice: 4600,
-      mainImage: '/assets/floksy_only_at_2.png',
-      secondaryImage: '/assets/floksy_only_at_1.png',
+      mainImage: '/assets/gem_rings_cat_2.png',
+      secondaryImage: '/assets/gem_rings_cat.png',
     },
     {
       name: 'Eternity Pavé Diamond Drop Earrings',
-      sku: 'FJ-EAR-001',
+      sku: 'AD-EAR-001',
       slug: 'eternity-pave-diamond-drop-earrings',
       categoryId: categories[1].id,
       collectionId: collections[0].id,
@@ -291,12 +291,12 @@ async function main() {
       color: 'F',
       clarity: 'VS1',
       price: 4950,
-      mainImage: '/assets/floksy_earrings_cat.png',
-      secondaryImage: '/assets/floksy_editorial_banner.png',
+      mainImage: '/assets/gem_earrings_cat.png',
+      secondaryImage: '/assets/editorial_banner.png',
     },
     {
       name: 'Veritas Emerald Cut Tennis Bracelet',
-      sku: 'FJ-BRC-001',
+      sku: 'AD-BRC-001',
       slug: 'veritas-emerald-cut-tennis-bracelet',
       categoryId: categories[3].id,
       collectionId: collections[2].id,
@@ -312,12 +312,12 @@ async function main() {
       color: 'E',
       clarity: 'VVS1',
       price: 24500,
-      mainImage: '/assets/floksy_bracelets_cat.png',
-      secondaryImage: '/assets/floksy_cad_craftsmanship.png',
+      mainImage: '/assets/gem_bracelets_cat.png',
+      secondaryImage: '/assets/gem_bracelets_cat.png',
     },
     {
       name: 'Sovereign Pear Diamond Pendant',
-      sku: 'FJ-PND-001',
+      sku: 'AD-PND-001',
       slug: 'sovereign-pear-diamond-pendant',
       categoryId: categories[4].id,
       collectionId: collections[0].id,
@@ -333,8 +333,8 @@ async function main() {
       color: 'D',
       clarity: 'VVS2',
       price: 8900,
-      mainImage: '/assets/floksy_pendants_cat.png',
-      secondaryImage: '/assets/GOLD-MARQUISE-DIAMOND-JEWELRY-SET.webp',
+      mainImage: '/assets/gem_pendants_cat.png',
+      secondaryImage: '/assets/gem_necklaces_cat.png',
     },
   ];
 
@@ -361,7 +361,7 @@ async function main() {
     if (prodData.secondaryImage) {
       imageRecords.push({ productId: prod.id, url: prodData.secondaryImage, altText: `${prodData.name} - Side View`, position: 1 });
     }
-    imageRecords.push({ productId: prod.id, url: '/assets/floksy_cad_craftsmanship.png', altText: `${prodData.name} - Atelier Craftsmanship`, position: 2 });
+    imageRecords.push({ productId: prod.id, url: '/assets/gem_rings_cat.png', altText: `${prodData.name} - Atelier Craftsmanship`, position: 2 });
 
     await prisma.productImage.createMany({
       data: imageRecords,
@@ -470,13 +470,13 @@ async function main() {
               {
                 title: 'DIAMOND ESSENTIALS',
                 subtitle: '18K Atelier Edition',
-                image: '/assets/floksy_rings_cat.png',
+                image: '/assets/gem_rings_cat.png',
                 url: '/rings/aurelia-solitaire-diamond-ring'
               },
               {
                 title: 'FASHION RINGS',
                 subtitle: 'Sculpted Fine Bands',
-                image: '/assets/floksy_only_at_4.png',
+                image: '/assets/gem_rings_cat_2.png',
                 url: '/rings/celestial-oval-diamond-halo-ring'
               }
             ]
@@ -554,13 +554,13 @@ async function main() {
               {
                 title: 'DESIGN YOUR OWN EARRINGS',
                 subtitle: 'Pair Certified Diamonds',
-                image: '/assets/floksy_earrings_cat.png',
+                image: '/assets/gem_earrings_cat.png',
                 url: '/custom-jewellery'
               },
               {
                 title: 'DIAMOND ESSENTIALS',
                 subtitle: 'Timeless Stud Collection',
-                image: '/assets/floksy_only_at_1.png',
+                image: '/assets/gem_earrings_cat.png',
                 url: '/earrings'
               }
             ]
@@ -625,13 +625,13 @@ async function main() {
               {
                 title: 'RIVIERE NECKLACES',
                 subtitle: 'Seamless Diamond Line',
-                image: '/assets/floksy_necklaces_cat.png',
+                image: '/assets/gem_necklaces_cat.png',
                 url: '/necklaces'
               },
               {
                 title: 'SOLITAIRE PENDANTS',
                 subtitle: 'High Brilliance Centers',
-                image: '/assets/floksy_pendants_cat.png',
+                image: '/assets/gem_pendants_cat.png',
                 url: '/pendants'
               }
             ]
@@ -695,13 +695,13 @@ async function main() {
               {
                 title: 'TENNIS BRACELETS',
                 subtitle: 'Emerald & Round Cuts',
-                image: '/assets/floksy_bracelets_cat.png',
+                image: '/assets/gem_bracelets_cat.png',
                 url: '/bracelets/veritas-emerald-cut-tennis-bracelet'
               },
               {
                 title: 'HIGH JEWELLERY CUFFS',
                 subtitle: 'Sculpted Gold Atelier',
-                image: '/assets/floksy_only_at_4.png',
+                image: '/assets/gem_bracelets_cat.png',
                 url: '/bracelets'
               }
             ]
@@ -764,13 +764,13 @@ async function main() {
               {
                 title: 'SOLITAIRE PENDANTS',
                 subtitle: '18K Basket Settings',
-                image: '/assets/floksy_pendants_cat.png',
+                image: '/assets/gem_pendants_cat.png',
                 url: '/pendants/sovereign-pear-diamond-pendant'
               },
               {
                 title: 'PEAR CUT PENDANTS',
                 subtitle: 'Dramatic Teardrop',
-                image: '/assets/floksy_necklaces_cat.png',
+                image: '/assets/gem_necklaces_cat.png',
                 url: '/pendants'
               }
             ]
@@ -844,13 +844,13 @@ async function main() {
               {
                 title: 'GIA & IGI LOOSE DIAMONDS',
                 subtitle: 'Direct Atelier Vault',
-                image: '/assets/floksy_diamonds_cat.png',
+                image: '/assets/gem_diamonds_cat.png',
                 url: '/diamonds'
               },
               {
                 title: 'NATURAL VS LAB-GROWN',
                 subtitle: 'Complete Sourcing Guide',
-                image: '/assets/floksy_only_at_3.png',
+                image: '/assets/gem_diamonds_cat.png',
                 url: '/diamonds?type=NATURAL'
               }
             ]
@@ -862,7 +862,7 @@ async function main() {
       title: 'CUSTOMISE',
       url: '/custom-jewellery',
       position: 7,
-      megaMenu: null, // NO MEGA MENU FOR CUSTOMISE! Simple direct link!
+      megaMenu: null,
     },
   ];
 
@@ -885,25 +885,25 @@ async function main() {
       name: 'Rings',
       slug: 'rings',
       link: '/rings',
-      image: '/assets/floksy_rings_cat.png',
+      image: '/assets/gem_rings_cat.png',
       sortOrder: 1,
       isActive: true,
-      description: 'Explore FLOKSY JEWEL’s signature collection of fine rings. Handcrafted by master goldsmiths using GIA certified diamonds, natural gemstones, and fine 18K yellow, white, and rose gold or 950 platinum. From solitaire engagement rings to diamond-encrusted eternity bands, each piece embodies timeless luxury.',
+      description: 'Explore AURA DIAMOND ATELIER’s signature collection of fine rings. Handcrafted by master goldsmiths using GIA certified diamonds, natural gemstones, and fine 18K yellow, white, and rose gold or 950 platinum. From solitaire engagement rings to diamond-encrusted eternity bands, each piece embodies timeless luxury.',
     },
     {
       name: 'Earrings',
       slug: 'earrings',
       link: '/earrings',
-      image: '/assets/floksy_earrings_cat.png',
+      image: '/assets/gem_earrings_cat.png',
       sortOrder: 2,
       isActive: true,
-      description: 'Discover FLOKSY JEWEL solitaire studs, drop earrings, and diamond huggies.',
+      description: 'Discover AURA DIAMOND ATELIER solitaire studs, drop earrings, and diamond huggies.',
     },
     {
       name: 'Bracelets',
       slug: 'bracelets',
       link: '/bracelets',
-      image: '/assets/floksy_bracelets_cat.png',
+      image: '/assets/gem_bracelets_cat.png',
       sortOrder: 3,
       isActive: true,
       description: 'Exquisite diamond tennis bracelets and sculpted gold bangles.',
@@ -912,7 +912,7 @@ async function main() {
       name: 'Necklaces',
       slug: 'necklaces',
       link: '/necklaces',
-      image: '/assets/floksy_necklaces_cat.png',
+      image: '/assets/gem_necklaces_cat.png',
       sortOrder: 4,
       isActive: true,
       description: 'Graduated diamond line rivieres and solitaire pendants.',
@@ -921,7 +921,7 @@ async function main() {
       name: 'Collections',
       slug: 'collections',
       link: '/collections',
-      image: '/assets/floksy_only_at_1.png',
+      image: '/assets/gem_rings_cat_2.png',
       sortOrder: 5,
       isActive: true,
       description: 'Curated bespoke atelier collections.',
@@ -930,7 +930,7 @@ async function main() {
       name: 'Diamond Essentials',
       slug: 'diamond-essentials',
       link: '/diamonds',
-      image: '/assets/floksy_diamonds_cat.png',
+      image: '/assets/gem_diamonds_cat.png',
       sortOrder: 6,
       isActive: true,
       description: 'Certified natural and lab-grown loose diamonds.',
@@ -961,7 +961,7 @@ async function main() {
         eyebrow: 'THE SIGNATURE COLLECTION 2026',
         heading: 'Handcrafted Elegance & Exceptional Diamonds',
         description: 'Immerse yourself in world-class craftsmanship, ethically sourced diamonds, and timeless bespoke creations.',
-        desktopImage: '/assets/floksy-hero-luxury.webp',
+        desktopImage: '/assets/gem_hero_desktop.png',
         button1Text: 'EXPLORE RINGS',
         button1Link: '/rings',
         button2Text: 'THE DIAMOND VAULT',
@@ -981,7 +981,7 @@ async function main() {
       position: 3,
       content: JSON.stringify({
         enableBanner: true,
-        desktopImage: '/assets/GOLD-MARQUISE-DIAMOND-JEWELRY-SET.webp',
+        desktopImage: '/assets/gem_rings_cat.png',
         heading: 'A NEW EXPRESSION OF FINE JEWELLERY',
         description: 'Designed with intention. Crafted with precision. Made to be treasured for generations.',
         buttonText: 'EXPLORE THE COLLECTION',
@@ -998,7 +998,7 @@ async function main() {
         eyebrow: 'AUTHENTICATED LOOSE DIAMONDS',
         heading: 'Discover Exceptional Diamond Shapes',
         description: 'Select your ideal cut from certified GIA & IGI diamonds, ethically sourced and precision-cut for maximum fire and brilliance.',
-        leftImage: '/assets/floksy_diamonds_cat.png',
+        leftImage: '/assets/gem_diamonds_cat.png',
         shapes: [
           { name: 'ROUND', shape: 'round', url: '/diamonds?shape=round', svg: '/assets/diamonds/Round.svg', enabled: true, altText: 'Round Cut Diamond', desktopSize: '48px', tabletSize: '44px', mobileSize: '40px' },
           { name: 'OVAL', shape: 'oval', url: '/diamonds?shape=oval', svg: '/assets/diamonds/Oval.svg', enabled: true, altText: 'Oval Cut Diamond', desktopSize: '48px', tabletSize: '44px', mobileSize: '40px' },
@@ -1016,8 +1016,8 @@ async function main() {
       position: 4,
       content: JSON.stringify({
         heading: 'Unrivalled Atelier Artistry',
-        description: 'Every Floksy Jewel creation undergoes meticulous hand-finishing, master CAD prototyping, and precision setting by master jewelers with decades of heritage.',
-        image: '/assets/floksy_cad_craftsmanship.png',
+        description: 'Every Aura Diamond Atelier creation undergoes meticulous hand-finishing, master CAD prototyping, and precision setting by master jewelers with decades of heritage.',
+        image: '/assets/gem_rings_cat.png',
       }),
     },
     {
@@ -1026,7 +1026,7 @@ async function main() {
       content: JSON.stringify({
         heading: 'Words from Our Clients',
         testimonials: [
-          { quote: 'The bespoke engagement ring exceeded all expectations. Floksy Jewel made the entire process seamless from CAD design to final delivery.', author: 'Eleanor V., New York' },
+          { quote: 'The bespoke engagement ring exceeded all expectations. Aura Diamond Atelier made the entire process seamless from CAD design to final delivery.', author: 'Eleanor V., New York' },
           { quote: 'The Diamond Vault gave us complete transparency and unmatched pricing on a GIA certified 2.50ct oval diamond.', author: 'Marcus & Sophia, Zurich' },
         ]
       }),
@@ -1067,7 +1067,7 @@ async function main() {
 
   await ensureStorefrontCmsSeeded();
 
-  console.log('🎉 Floksy Jewel database seeding complete successfully!');
+  console.log('🎉 Aura Diamond Atelier database seeding complete successfully!');
 }
 
 main()

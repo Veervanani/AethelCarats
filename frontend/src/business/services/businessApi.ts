@@ -33,7 +33,7 @@ const API = axios.create({
 });
 
 API.interceptors.request.use((config) => {
-  const token = localStorage.getItem('fj_admin_token') || localStorage.getItem('floksy_token');
+  const token = localStorage.getItem('admin_session_token') || localStorage.getItem('app_auth_token');
   if (token) {
     config.headers.Authorization = `Bearer ${token}`;
   }

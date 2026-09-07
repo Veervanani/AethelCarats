@@ -2,14 +2,13 @@ import React, { useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import styled from 'styled-components';
 import { Sparkles, ShieldCheck, Award, Heart, Mail, ChevronRight } from 'lucide-react';
-import { api } from '../../services/api';
 import { SafeImage } from '../../components/ui/SafeImage';
-import { WhyFloksyJewelNav } from '../../components/ui/WhyFloksyJewelNav';
+import { WhyAuraDiamondNav } from '../../components/ui/WhyAuraDiamondNav';
 import { RevealContainer } from '../../components/ui/RevealContainer';
 
 const PageWrapper = styled.div`
-  background-color: #f7f6f2;
-  color: #1a1918;
+  background-color: #0B0B0B;
+  color: #F5F1E8;
   min-height: 100vh;
   padding-bottom: 80px;
 `;
@@ -22,21 +21,21 @@ const BreadcrumbsBar = styled.div`
   align-items: center;
   gap: 8px;
   font-size: 0.8rem;
-  color: #77736c;
+  color: #A8A8A8;
 
   a {
-    color: #77736c;
+    color: #A8A8A8;
     text-decoration: none;
     transition: color 0.2s ease;
 
     &:hover {
-      color: #c9a45c;
+      color: #C9A96E;
     }
   }
 
   span.current {
-    color: #1a1918;
-    font-weight: 500;
+    color: #C9A96E;
+    font-weight: 600;
   }
 `;
 
@@ -60,8 +59,8 @@ const HeroSection = styled.section`
       font-size: 0.8rem;
       letter-spacing: 0.18em;
       text-transform: uppercase;
-      color: #c9a45c;
-      font-weight: 600;
+      color: #C9A96E;
+      font-weight: 700;
       margin-bottom: 12px;
       display: block;
     }
@@ -70,9 +69,9 @@ const HeroSection = styled.section`
       font-family: 'Cormorant Garamond', serif;
       font-size: 3.2rem;
       font-weight: 500;
-      color: #1a1918;
+      color: #F5F1E8;
       margin-bottom: 20px;
-      letter-spacing: -0.01em;
+      letter-spacing: 0.04em;
       line-height: 1.1;
 
       @media (max-width: 768px) {
@@ -82,7 +81,7 @@ const HeroSection = styled.section`
 
     p.subtitle {
       font-size: 1.05rem;
-      color: #55524d;
+      color: #D8D2C5;
       line-height: 1.7;
       margin-bottom: 28px;
     }
@@ -92,7 +91,8 @@ const HeroSection = styled.section`
     position: relative;
     border-radius: 4px;
     overflow: hidden;
-    box-shadow: 0 12px 32px rgba(0, 0, 0, 0.06);
+    border: 1px solid rgba(140, 116, 75, 0.25);
+    box-shadow: 0 12px 32px rgba(0, 0, 0, 0.6);
 
     img {
       width: 100%;
@@ -116,24 +116,26 @@ const ContentGrid = styled.main`
 `;
 
 const EditorialBlock = styled.section`
-  background: #fffdf9;
-  border: 1px solid #e8e3d9;
+  background: #151515;
+  border: 1px solid rgba(140, 116, 75, 0.25);
   padding: 36px;
   border-radius: 4px;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
 
   h2 {
     font-family: 'Cormorant Garamond', serif;
     font-size: 1.8rem;
     font-weight: 500;
-    color: #1a1918;
+    color: #F5F1E8;
+    letter-spacing: 0.08em;
     margin-bottom: 16px;
     padding-bottom: 12px;
-    border-bottom: 1px solid #e8e3d9;
+    border-bottom: 1px solid rgba(140, 116, 75, 0.2);
   }
 
   p {
     font-size: 0.95rem;
-    color: #55524d;
+    color: #D8D2C5;
     line-height: 1.7;
     margin-bottom: 14px;
 
@@ -147,7 +149,7 @@ const PillarsGrid = styled.div`
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   gap: 20px;
-  margin-top: 20px;
+  margin-top: 24px;
 
   @media (max-width: 768px) {
     grid-template-columns: 1fr;
@@ -155,8 +157,8 @@ const PillarsGrid = styled.div`
 `;
 
 const PillarTile = styled.div`
-  background: #f9f7f2;
-  border: 1px solid #e8e3d9;
+  background: #111111;
+  border: 1px solid rgba(140, 116, 75, 0.25);
   padding: 24px;
   border-radius: 4px;
 
@@ -164,8 +166,9 @@ const PillarTile = styled.div`
     width: 40px;
     height: 40px;
     border-radius: 50%;
-    background: #1a1918;
-    color: #c9a45c;
+    background: #151515;
+    border: 1px solid rgba(140, 116, 75, 0.3);
+    color: #C9A96E;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -175,13 +178,14 @@ const PillarTile = styled.div`
   h3 {
     font-family: 'Cormorant Garamond', serif;
     font-size: 1.25rem;
-    color: #1a1918;
+    color: #F5F1E8;
+    letter-spacing: 0.06em;
     margin-bottom: 6px;
   }
 
   p {
     font-size: 0.88rem;
-    color: #55524d;
+    color: #A8A8A8;
     line-height: 1.5;
   }
 `;
@@ -193,21 +197,24 @@ const CTABanner = styled.section`
 `;
 
 const CTABannerInner = styled.div`
-  background: #1a1918;
-  color: #fffdf9;
+  background: #151515;
+  border: 1px solid rgba(140, 116, 75, 0.3);
+  color: #F5F1E8;
   padding: 40px;
   border-radius: 4px;
   text-align: center;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.6);
 
   h2 {
     font-family: 'Cormorant Garamond', serif;
     font-size: 2rem;
-    color: #fffdf9;
+    letter-spacing: 0.1em;
+    color: #F5F1E8;
     margin-bottom: 12px;
   }
 
   p {
-    color: #d9d3c7;
+    color: #D8D2C5;
     font-size: 0.95rem;
     max-width: 540px;
     margin: 0 auto 24px;
@@ -218,69 +225,27 @@ const CTABannerInner = styled.div`
     display: inline-flex;
     align-items: center;
     gap: 8px;
-    background: #c9a45c;
-    color: #1a1918;
+    background: #C9A96E;
+    color: #0B0B0B;
     padding: 14px 28px;
-    border-radius: 4px;
+    border-radius: 2px;
     font-size: 0.85rem;
-    letter-spacing: 0.1em;
+    letter-spacing: 0.14em;
     text-transform: uppercase;
-    font-weight: 600;
+    font-weight: 700;
     text-decoration: none;
-    transition: all 0.2s ease;
+    transition: all 0.25s ease;
 
     &:hover {
-      background: #fffdf9;
+      background: #DFBA73;
+      box-shadow: 0 4px 18px rgba(201, 169, 110, 0.35);
     }
   }
 `;
 
 export const AboutUsPage: React.FC = () => {
   useEffect(() => {
-    // Dynamic SEO Metadata
-    document.title = 'Quality & Value | Floksy Jewel';
-    const metaDesc = document.querySelector('meta[name="description"]');
-    if (metaDesc) {
-      metaDesc.setAttribute('content', 'Discover Floksy Jewel commitment to master craftsmanship, certified diamonds, transparent pricing, and personalized luxury jewellery concierge services.');
-    }
-
-    // JSON-LD Structured Data
-    const script = document.createElement('script');
-    script.type = 'application/ld+json';
-    script.innerHTML = JSON.stringify({
-      '@context': 'https://schema.org',
-      '@graph': [
-        {
-          '@type': 'Organization',
-          '@id': 'https://floksyjewel.com/#organization',
-          'name': 'Floksy Jewel',
-          'url': 'https://floksyjewel.com',
-          'logo': 'https://floksyjewel.com/assets/floksy-jewel-logo.png',
-          'description': 'Luxury fine jewellery atelier specializing in certified natural & lab-grown diamonds, bespoke engagement rings, and high jewellery.',
-        },
-        {
-          '@type': 'WebPage',
-          '@id': 'https://floksyjewel.com/about-us#webpage',
-          'url': 'https://floksyjewel.com/about-us',
-          'name': 'Quality & Value | Floksy Jewel Brand Story',
-          'description': 'Learn about our heritage, master goldsmith craftsmanship, and ethical diamond sourcing.',
-        },
-        {
-          '@type': 'BreadcrumbList',
-          '@id': 'https://floksyjewel.com/about-us#breadcrumb',
-          'itemListElement': [
-            { '@type': 'ListItem', 'position': 1, 'name': 'Home', 'item': 'https://floksyjewel.com' },
-            { '@type': 'ListItem', 'position': 2, 'name': 'About Floksy Jewel', 'item': 'https://floksyjewel.com/about-us' },
-            { '@type': 'ListItem', 'position': 3, 'name': 'Quality & Value', 'item': 'https://floksyjewel.com/about-us' }
-          ]
-        }
-      ]
-    });
-    document.head.appendChild(script);
-
-    return () => {
-      document.head.removeChild(script);
-    };
+    document.title = 'Quality & Value | AethelCarats Fine Jewellery';
   }, []);
 
   return (
@@ -288,7 +253,7 @@ export const AboutUsPage: React.FC = () => {
       <BreadcrumbsBar>
         <Link to="/">Home</Link>
         <ChevronRight size={12} />
-        <span>About Floksy Jewel</span>
+        <span>About AethelCarats</span>
         <ChevronRight size={12} />
         <span className="current">Quality & Value</span>
       </BreadcrumbsBar>
@@ -299,7 +264,7 @@ export const AboutUsPage: React.FC = () => {
             <span className="eyebrow">OUR HERITAGE & ATELIER PHILOSOPHY</span>
             <h1>Quality & Value</h1>
             <p className="subtitle">
-              Luxury jewellery should feel exceptional in every detail. Floksy Jewel bridges master European craftsmanship with direct diamond sightholder sourcing to deliver uncompromised quality without traditional retail inflation.
+              Luxury jewellery should feel exceptional in every detail. AethelCarats bridges master artisanal goldsmithing with direct diamond sightholder sourcing to deliver uncompromised quality without traditional retail inflation.
             </p>
             <Link
               to="/collections"
@@ -307,14 +272,14 @@ export const AboutUsPage: React.FC = () => {
                 display: 'inline-flex',
                 alignItems: 'center',
                 gap: 8,
-                background: '#1a1918',
-                color: '#fffdf9',
+                background: '#C9A96E',
+                color: '#0B0B0B',
                 padding: '14px 28px',
-                borderRadius: 4,
+                borderRadius: 2,
                 fontSize: '0.85rem',
-                letterSpacing: '0.12em',
+                letterSpacing: '0.14em',
                 textTransform: 'uppercase',
-                fontWeight: 600,
+                fontWeight: 700,
                 textDecoration: 'none',
               }}
             >
@@ -322,7 +287,7 @@ export const AboutUsPage: React.FC = () => {
             </Link>
           </div>
           <div className="image-side">
-            <SafeImage src="/assets/why-floksy/about-us-hero.jpg" alt="Master Jeweller Setting Diamond in Atelier" />
+            <SafeImage src="/assets/why-aura/about-us-hero.jpg" alt="Master Jeweller Setting Diamond in Atelier" />
           </div>
         </HeroSection>
       </RevealContainer>
@@ -330,9 +295,9 @@ export const AboutUsPage: React.FC = () => {
       <ContentGrid>
         <RevealContainer yOffset={35}>
           <EditorialBlock>
-            <h2>The Floksy Jewel Standard</h2>
+            <h2>The AethelCarats Atelier Standard</h2>
             <p>
-              Founded on the belief that fine jewellery should be timeless, transparent, and personally meaningful, Floksy Jewel creates solitaire rings, tennis bracelets, high-jewellery necklaces, and bespoke heirlooms.
+              Founded on the belief that fine jewellery should be timeless, transparent, and personally meaningful, AethelCarats creates solitaire rings, tennis bracelets, high-jewellery necklaces, and bespoke heirlooms.
             </p>
             <p>
               Every piece is forged in solid 14K Gold, 18K Gold, or Platinum 950, and set with hand-selected certified diamonds verified for superior brilliance, symmetry, and fire.
@@ -388,7 +353,7 @@ export const AboutUsPage: React.FC = () => {
       <RevealContainer yOffset={35}>
         <CTABanner>
           <CTABannerInner>
-            <h2>Experience Floksy Jewel Luxury</h2>
+            <h2>Experience AethelCarats Luxury</h2>
             <p>
               Speak with a diamond specialist or browse our curated collection of fine jewellery.
             </p>
@@ -399,7 +364,7 @@ export const AboutUsPage: React.FC = () => {
         </CTABanner>
       </RevealContainer>
 
-      <WhyFloksyJewelNav />
+      <WhyAuraDiamondNav />
     </PageWrapper>
   );
 };

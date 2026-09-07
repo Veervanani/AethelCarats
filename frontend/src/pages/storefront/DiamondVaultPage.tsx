@@ -28,6 +28,7 @@ const PageWrapper = styled.div`
   margin: 0 auto;
   padding: 40px 24px 80px;
   box-sizing: border-box;
+  color: #F5F1E8;
 
   @media (max-width: ${({ theme }) => theme.breakpoints.tablet}) {
     padding: 24px 16px 60px;
@@ -43,7 +44,7 @@ const TitleHeader = styled.div`
     font-size: 3rem;
     letter-spacing: 0.1em;
     text-transform: uppercase;
-    color: ${({ theme }) => theme.colors.textPrimary};
+    color: #F5F1E8;
     margin-bottom: 12px;
 
     @media (max-width: 768px) {
@@ -58,7 +59,7 @@ const TitleHeader = styled.div`
 
   p {
     font-size: 1.05rem;
-    color: ${({ theme }) => theme.colors.textSecondary};
+    color: #D8D2C5;
 
     @media (max-width: 480px) {
       font-size: 0.88rem;
@@ -84,12 +85,13 @@ const TypeTab = styled.button<{ $active: boolean }>`
   font-weight: 600;
   letter-spacing: 0.15em;
   text-transform: uppercase;
-  background-color: ${({ $active, theme }) => ($active ? theme.colors.textPrimary : 'transparent')};
-  color: ${({ $active, theme }) => ($active ? theme.colors.white : theme.colors.textPrimary)};
-  border: 1px solid ${({ theme }) => theme.colors.textPrimary};
+  background-color: ${({ $active }) => ($active ? '#C9A96E' : 'transparent')};
+  color: ${({ $active }) => ($active ? '#0B0B0B' : '#F5F1E8')};
+  border: 1px solid ${({ $active }) => ($active ? '#C9A96E' : 'rgba(140, 116, 75, 0.35)')};
   transition: all 0.2s ease;
   box-sizing: border-box;
   cursor: pointer;
+  border-radius: 4px;
 
   @media (max-width: 576px) {
     padding: 10px 16px;
@@ -98,8 +100,9 @@ const TypeTab = styled.button<{ $active: boolean }>`
   }
 
   &:hover {
-    background-color: ${({ theme }) => theme.colors.textPrimary};
-    color: ${({ theme }) => theme.colors.white};
+    background-color: #DFBA73;
+    color: #0B0B0B;
+    border-color: #DFBA73;
   }
 `;
 
@@ -130,7 +133,7 @@ const ShapeSvgImg = styled.img<{ $selected?: boolean }>`
   filter: ${({ $selected }) =>
     $selected
       ? 'brightness(0) saturate(100%) invert(69%) sepia(26%) saturate(1048%) hue-rotate(5deg) brightness(92%) contrast(87%)'
-      : 'brightness(0.2)'};
+      : 'brightness(0) invert(0.85)'};
   transition: filter 0.2s ease, transform 0.2s ease;
 `;
 
@@ -140,9 +143,10 @@ const ShapeBtn = styled.button<{ $selected: boolean }>`
   align-items: center;
   justify-content: center;
   padding: 12px 6px;
-  background-color: ${({ $selected, theme }) => ($selected ? theme.colors.white : '#fffdf9')};
-  border: 1px solid ${({ $selected, theme }) => ($selected ? theme.colors.gold : theme.colors.border)};
-  box-shadow: ${({ $selected }) => ($selected ? '0 2px 10px rgba(201, 164, 92, 0.25)' : 'none')};
+  background-color: ${({ $selected }) => ($selected ? '#1E1E1E' : '#151515')};
+  border: 1px solid ${({ $selected }) => ($selected ? '#C9A96E' : 'rgba(140, 116, 75, 0.25)')};
+  border-radius: 4px;
+  box-shadow: ${({ $selected }) => ($selected ? '0 2px 10px rgba(201, 169, 110, 0.25)' : 'none')};
   transition: all 0.2s ease;
   cursor: pointer;
   outline: none;
@@ -153,17 +157,17 @@ const ShapeBtn = styled.button<{ $selected: boolean }>`
     letter-spacing: 0.05em;
     text-transform: uppercase;
     margin-top: 6px;
-    color: ${({ $selected, theme }) => ($selected ? theme.colors.gold : theme.colors.textPrimary)};
+    color: ${({ $selected }) => ($selected ? '#C9A96E' : '#F5F1E8')};
     transition: color 0.2s ease;
   }
 
   &:hover, &:focus-visible {
-    border-color: ${({ theme }) => theme.colors.gold};
-    background-color: ${({ theme }) => theme.colors.white};
-    box-shadow: 0 4px 12px rgba(201, 164, 92, 0.2);
+    border-color: #C9A96E;
+    background-color: #1E1E1E;
+    box-shadow: 0 4px 12px rgba(201, 169, 110, 0.2);
 
     span {
-      color: ${({ theme }) => theme.colors.gold};
+      color: #C9A96E;
     }
 
     ${ShapeSvgImg} {
@@ -174,13 +178,17 @@ const ShapeBtn = styled.button<{ $selected: boolean }>`
 `;
 
 const FiltersPanel = styled.div`
-  background-color: ${({ theme }) => theme.colors.white};
-  border: 1px solid ${({ theme }) => theme.colors.border};
+  background-color: #151515;
+  border: 1px solid rgba(140, 116, 75, 0.25);
+  border-radius: 6px;
   padding: 24px;
-  margin-bottom: 24px;
+  margin-bottom: 28px;
   display: flex;
   flex-direction: column;
   gap: 24px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+  position: relative;
+  z-index: 10;
 
   @media (max-width: ${({ theme }) => theme.breakpoints.mobile}) {
     padding: 16px;
@@ -189,13 +197,9 @@ const FiltersPanel = styled.div`
 
 const MainFiltersGrid = styled.div`
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
+  grid-template-columns: repeat(3, 1fr);
   gap: 20px 24px;
   align-items: flex-end;
-
-  @media (max-width: 1200px) {
-    grid-template-columns: repeat(3, 1fr);
-  }
 
   @media (max-width: ${({ theme }) => theme.breakpoints.tablet}) {
     grid-template-columns: repeat(2, 1fr);
@@ -217,25 +221,35 @@ const FilterGroup = styled.div`
     font-weight: 600;
     letter-spacing: 0.1em;
     text-transform: uppercase;
-    color: ${({ theme }) => theme.colors.textPrimary};
+    color: #F5F1E8;
   }
 
   .input-row {
     display: flex;
     gap: 8px;
     align-items: center;
+    color: #A8A8A8;
   }
 
   input {
     width: 100%;
-    padding: 8px 12px;
+    height: 40px;
+    padding: 0 12px;
     font-size: 0.85rem;
-    border: 1px solid ${({ theme }) => theme.colors.border};
-    background-color: ${({ theme }) => theme.colors.background};
+    border: 1px solid rgba(140, 116, 75, 0.25);
+    background-color: #111111;
+    color: #F5F1E8;
+    border-radius: 4px;
     outline: none;
+    box-sizing: border-box;
+    transition: border-color 0.2s ease;
 
     &:focus {
-      border-color: ${({ theme }) => theme.colors.gold};
+      border-color: #C9A96E;
+    }
+
+    &::placeholder {
+      color: #777777;
     }
   }
 `;
@@ -250,14 +264,15 @@ const Chip = styled.button<{ $active: boolean }>`
   padding: 6px 10px;
   font-size: 0.75rem;
   font-weight: 600;
-  border: 1px solid ${({ $active, theme }) => ($active ? theme.colors.gold : theme.colors.border)};
-  background-color: ${({ $active, theme }) => ($active ? theme.colors.lightGold : 'transparent')};
-  color: ${({ $active, theme }) => ($active ? theme.colors.deepGold : theme.colors.textPrimary)};
+  border: 1px solid ${({ $active }) => ($active ? '#C9A96E' : 'rgba(140, 116, 75, 0.25)')};
+  background-color: ${({ $active }) => ($active ? '#C9A96E' : '#111111')};
+  color: ${({ $active }) => ($active ? '#0B0B0B' : '#F5F1E8')};
+  border-radius: 4px;
   transition: all 0.2s ease;
   cursor: pointer;
 
   &:hover {
-    border-color: ${({ theme }) => theme.colors.gold};
+    border-color: #C9A96E;
   }
 `;
 
@@ -268,14 +283,15 @@ const ActiveFilterSummaryRow = styled.div`
   gap: 8px;
   margin-bottom: 24px;
   padding: 12px 16px;
-  background-color: #faf8f5;
-  border: 1px solid #e8e3d9;
+  background-color: #151515;
+  border: 1px solid rgba(140, 116, 75, 0.25);
+  border-radius: 6px;
 
   .label {
     font-size: 0.75rem;
     font-weight: 700;
     letter-spacing: 0.12em;
-    color: #c9a45c;
+    color: #C9A96E;
     margin-right: 4px;
   }
 `;
@@ -285,17 +301,18 @@ const ActiveFilterTag = styled.button`
   align-items: center;
   gap: 6px;
   padding: 4px 10px;
-  background-color: #ffffff;
-  border: 1px solid #c9a45c;
-  color: #1a1918;
+  background-color: #1F1F1F;
+  border: 1px solid rgba(140, 116, 75, 0.35);
+  color: #F5F1E8;
   font-size: 0.75rem;
   font-weight: 600;
+  border-radius: 4px;
   cursor: pointer;
   transition: all 0.2s ease;
 
   &:hover {
-    background-color: #c9a45c;
-    color: #ffffff;
+    background-color: #C9A96E;
+    color: #0B0B0B;
   }
 `;
 
@@ -305,16 +322,17 @@ const ClearAllTag = styled.button`
   gap: 4px;
   padding: 4px 10px;
   background: transparent;
-  border: 1px dashed #c9a45c;
-  color: #c9a45c;
+  border: 1px dashed #C9A96E;
+  color: #C9A96E;
   font-size: 0.75rem;
   font-weight: 700;
   letter-spacing: 0.05em;
+  border-radius: 4px;
   cursor: pointer;
 
   &:hover {
-    background: #c9a45c;
-    color: #ffffff;
+    background: #C9A96E;
+    color: #0B0B0B;
   }
 `;
 
@@ -323,92 +341,23 @@ const FilterControlBar = styled.div`
   justify-content: space-between;
   align-items: center;
   padding: 16px 24px;
-  background-color: ${({ theme }) => theme.colors.white};
-  border: 1px solid ${({ theme }) => theme.colors.border};
+  background-color: #151515;
+  border: 1px solid rgba(140, 116, 75, 0.25);
+  border-radius: 6px;
   margin-bottom: 32px;
   font-size: 0.85rem;
   font-weight: 600;
   letter-spacing: 0.1em;
   text-transform: uppercase;
+  color: #F5F1E8;
+  position: relative;
+  z-index: 1;
 
   @media (max-width: ${({ theme }) => theme.breakpoints.tablet}) {
     padding: 12px 16px;
     flex-direction: column;
     gap: 12px;
     align-items: flex-start;
-  }
-`;
-
-// CUSTOM LUXURY SORT DROPDOWN STYLES
-const CustomSortContainer = styled.div`
-  position: relative;
-  user-select: none;
-`;
-
-const CustomSortButton = styled.button<{ $open: boolean }>`
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 10px;
-  padding: 8px 14px;
-  background-color: #ffffff;
-  border: 1px solid ${({ $open, theme }) => ($open ? theme.colors.gold : theme.colors.border)};
-  border-radius: 2px;
-  font-size: 0.8rem;
-  font-weight: 600;
-  letter-spacing: 0.08em;
-  color: ${({ theme }) => theme.colors.textPrimary};
-  cursor: pointer;
-  transition: all 0.2s ease;
-
-  &:hover, &:focus-visible {
-    border-color: ${({ theme }) => theme.colors.gold};
-    outline: none;
-  }
-
-  .arrow {
-    transition: transform 0.2s ease;
-    transform: ${({ $open }) => ($open ? 'rotate(180deg)' : 'rotate(0deg)')};
-  }
-`;
-
-const CustomSortMenu = styled.ul`
-  position: absolute;
-  top: calc(100% + 4px);
-  right: 0;
-  width: 230px;
-  background-color: #ffffff;
-  border: 1px solid ${({ theme }) => theme.colors.border};
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
-  border-radius: 2px;
-  list-style: none;
-  padding: 6px 0;
-  margin: 0;
-  z-index: 100;
-
-  @media (max-width: 576px) {
-    left: 0;
-    right: auto;
-    width: 100%;
-  }
-`;
-
-const CustomSortOption = styled.li<{ $selected: boolean }>`
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 10px 16px;
-  font-size: 0.78rem;
-  font-weight: ${({ $selected }) => ($selected ? '700' : '500')};
-  letter-spacing: 0.06em;
-  color: ${({ $selected, theme }) => ($selected ? theme.colors.gold : theme.colors.textPrimary)};
-  background-color: ${({ $selected }) => ($selected ? '#faf8f5' : 'transparent')};
-  cursor: pointer;
-  transition: all 0.15s ease;
-
-  &:hover {
-    background-color: #f7f5f0;
-    color: ${({ theme }) => theme.colors.gold};
   }
 `;
 
@@ -438,12 +387,21 @@ const PaginationRow = styled.div`
   align-items: center;
   gap: 12px;
   margin-top: 48px;
+  color: #F5F1E8;
 
   button {
     padding: 8px 16px;
-    border: 1px solid ${({ theme }) => theme.colors.border};
-    background-color: ${({ theme }) => theme.colors.white};
+    border: 1px solid rgba(140, 116, 75, 0.25);
+    background-color: #151515;
+    color: #F5F1E8;
+    border-radius: 4px;
     font-size: 0.85rem;
+    cursor: pointer;
+
+    &:hover:not(:disabled) {
+      border-color: #C9A96E;
+      color: #C9A96E;
+    }
 
     &:disabled {
       opacity: 0.5;
@@ -699,7 +657,7 @@ export const DiamondVaultPage: React.FC = () => {
 
       {/* Classification Tabs (WHITE vs FANCY) */}
       <RevealContainer yOffset={20}>
-        <div style={{ display: 'flex', gap: 16, marginBottom: 24, borderBottom: '1px solid #d9d3c7', paddingBottom: 12 }}>
+        <div style={{ display: 'flex', gap: 16, marginBottom: 24, borderBottom: '1px solid rgba(140, 116, 75, 0.25)', paddingBottom: 12 }}>
           <button
             onClick={() => {
               setClassification('WHITE');
@@ -713,8 +671,8 @@ export const DiamondVaultPage: React.FC = () => {
               fontWeight: classification === 'WHITE' ? 700 : 500,
               letterSpacing: '0.1em',
               textTransform: 'uppercase',
-              color: classification === 'WHITE' ? '#c9a45c' : '#1f1f1f',
-              borderBottom: classification === 'WHITE' ? '2px solid #c9a45c' : '2px solid transparent',
+              color: classification === 'WHITE' ? '#C9A96E' : '#A8A8A8',
+              borderBottom: classification === 'WHITE' ? '2px solid #C9A96E' : '2px solid transparent',
               paddingBottom: 6,
               cursor: 'pointer',
             }}
@@ -734,8 +692,8 @@ export const DiamondVaultPage: React.FC = () => {
               fontWeight: classification === 'FANCY' ? 700 : 500,
               letterSpacing: '0.1em',
               textTransform: 'uppercase',
-              color: classification === 'FANCY' ? '#c9a45c' : '#1f1f1f',
-              borderBottom: classification === 'FANCY' ? '2px solid #c9a45c' : '2px solid transparent',
+              color: classification === 'FANCY' ? '#C9A96E' : '#A8A8A8',
+              borderBottom: classification === 'FANCY' ? '2px solid #C9A96E' : '2px solid transparent',
               paddingBottom: 6,
               cursor: 'pointer',
             }}
@@ -777,9 +735,10 @@ export const DiamondVaultPage: React.FC = () => {
       </RevealContainer>
 
       {/* Main Filter Inputs */}
-      <RevealContainer yOffset={25}>
+      <RevealContainer yOffset={25} style={{ position: 'relative', zIndex: 100 }}>
         <FiltersPanel>
         <MainFiltersGrid>
+          {/* COLUMN 1, ROW 1: CARAT WEIGHT */}
           <FilterGroup>
             <label>Carat Weight</label>
             <div className="input-row">
@@ -791,41 +750,106 @@ export const DiamondVaultPage: React.FC = () => {
 
           {/* WHITE CLASSIFICATION FILTERS */}
           {classification === 'WHITE' && (
-            <FilterGroup>
-              <LuxuryDropdown
-                label="Color Grade"
-                options={[
-                  { label: 'All White Colors', value: '' },
-                  ...(filterConfig?.colors || ALL_DIAMOND_COLORS).map((c: string) => ({ label: `Color ${c}`, value: c }))
-                ]}
-                value={selectedColors[0] || ''}
-                onChange={(val) => {
-                  setSelectedColors(val ? [val] : []);
-                  setPage(1);
-                }}
-                fullWidth
-              />
-            </FilterGroup>
-          )}
+            <>
+              {/* COLUMN 2, ROW 1: COLOR GRADE */}
+              <FilterGroup>
+                <LuxuryDropdown
+                  label="Color Grade"
+                  options={[
+                    { label: 'All White Colors', value: '' },
+                    ...(filterConfig?.colors || ALL_DIAMOND_COLORS).map((c: string) => ({ label: `Color ${c}`, value: c }))
+                  ]}
+                  value={selectedColors[0] || ''}
+                  onChange={(val) => {
+                    setSelectedColors(val ? [val] : []);
+                    setPage(1);
+                  }}
+                  fullWidth
+                />
+              </FilterGroup>
 
-          {/* GROWTH METHOD FILTER (HPHT vs CVD) - AVAILABLE FOR ALL & LAB-GROWN */}
-          {type !== 'NATURAL' && (
-            <FilterGroup>
-              <LuxuryDropdown
-                label="Growth Method"
-                options={[
-                  { label: 'All Growth Methods', value: '' },
-                  { label: 'HPHT (High Pressure High Temp)', value: 'HPHT' },
-                  { label: 'CVD (Chemical Vapor Deposition)', value: 'CVD' }
-                ]}
-                value={growthType}
-                onChange={(val) => {
-                  setGrowthType(val);
-                  setPage(1);
-                }}
-                fullWidth
-              />
-            </FilterGroup>
+              {/* COLUMN 3, ROW 1: GROWTH METHOD */}
+              {type !== 'NATURAL' ? (
+                <FilterGroup>
+                  <LuxuryDropdown
+                    label="Growth Method"
+                    options={[
+                      { label: 'All Growth Methods', value: '' },
+                      { label: 'HPHT (High Pressure High Temp)', value: 'HPHT' },
+                      { label: 'CVD (Chemical Vapor Deposition)', value: 'CVD' }
+                    ]}
+                    value={growthType}
+                    onChange={(val) => {
+                      setGrowthType(val);
+                      setPage(1);
+                    }}
+                    fullWidth
+                  />
+                </FilterGroup>
+              ) : (
+                <FilterGroup>
+                  <LuxuryDropdown
+                    label="Lab Certification"
+                    options={[
+                      { label: 'All Certifications', value: '' },
+                      ...(filterConfig?.certifications || CERTIFICATION_LABS).map((lab: string) => ({ label: lab, value: lab }))
+                    ]}
+                    value={selectedLabs[0] || ''}
+                    onChange={(val) => {
+                      setSelectedLabs(val ? [val] : []);
+                      setPage(1);
+                    }}
+                    fullWidth
+                  />
+                </FilterGroup>
+              )}
+
+              {/* COLUMN 1, ROW 2: PRICE RANGE */}
+              <FilterGroup>
+                <label>Price Range ($)</label>
+                <div className="input-row">
+                  <input type="number" step="10" min="0" placeholder="Min $" value={minPrice} onChange={(e) => { setMinPrice(e.target.value); setPage(1); }} />
+                  <span>-</span>
+                  <input type="number" step="10" min="0" placeholder="Max $" value={maxPrice} onChange={(e) => { setMaxPrice(e.target.value); setPage(1); }} />
+                </div>
+              </FilterGroup>
+
+              {/* COLUMN 2, ROW 2: CLARITY GRADE */}
+              <FilterGroup>
+                <LuxuryDropdown
+                  label="Clarity Grade"
+                  options={[
+                    { label: 'All Clarities', value: '' },
+                    ...(filterConfig?.clarities || ALL_DIAMOND_CLARITIES).map((cla: string) => ({ label: cla, value: cla }))
+                  ]}
+                  value={selectedClarities[0] || ''}
+                  onChange={(val) => {
+                    setSelectedClarities(val ? [val] : []);
+                    setPage(1);
+                  }}
+                  fullWidth
+                />
+              </FilterGroup>
+
+              {/* COLUMN 3, ROW 2: LAB CERTIFICATION */}
+              {type !== 'NATURAL' && (
+                <FilterGroup>
+                  <LuxuryDropdown
+                    label="Lab Certification"
+                    options={[
+                      { label: 'All Certifications', value: '' },
+                      ...(filterConfig?.certifications || CERTIFICATION_LABS).map((lab: string) => ({ label: lab, value: lab }))
+                    ]}
+                    value={selectedLabs[0] || ''}
+                    onChange={(val) => {
+                      setSelectedLabs(val ? [val] : []);
+                      setPage(1);
+                    }}
+                    fullWidth
+                  />
+                </FilterGroup>
+              )}
+            </>
           )}
 
           {/* FANCY CLASSIFICATION FILTERS */}
@@ -873,6 +897,15 @@ export const DiamondVaultPage: React.FC = () => {
               </FilterGroup>
 
               <FilterGroup>
+                <label>Price Range ($)</label>
+                <div className="input-row">
+                  <input type="number" step="10" min="0" placeholder="Min $" value={minPrice} onChange={(e) => { setMinPrice(e.target.value); setPage(1); }} />
+                  <span>-</span>
+                  <input type="number" step="10" min="0" placeholder="Max $" value={maxPrice} onChange={(e) => { setMaxPrice(e.target.value); setPage(1); }} />
+                </div>
+              </FilterGroup>
+
+              <FilterGroup>
                 <LuxuryDropdown
                   label="Intensity"
                   options={[
@@ -889,49 +922,59 @@ export const DiamondVaultPage: React.FC = () => {
                   fullWidth
                 />
               </FilterGroup>
+
+              <FilterGroup>
+                <LuxuryDropdown
+                  label="Clarity Grade"
+                  options={[
+                    { label: 'All Clarities', value: '' },
+                    ...(filterConfig?.clarities || ALL_DIAMOND_CLARITIES).map((cla: string) => ({ label: cla, value: cla }))
+                  ]}
+                  value={selectedClarities[0] || ''}
+                  onChange={(val) => {
+                    setSelectedClarities(val ? [val] : []);
+                    setPage(1);
+                  }}
+                  fullWidth
+                />
+              </FilterGroup>
+
+              <FilterGroup>
+                <LuxuryDropdown
+                  label="Lab Certification"
+                  options={[
+                    { label: 'All Certifications', value: '' },
+                    ...(filterConfig?.certifications || CERTIFICATION_LABS).map((lab: string) => ({ label: lab, value: lab }))
+                  ]}
+                  value={selectedLabs[0] || ''}
+                  onChange={(val) => {
+                    setSelectedLabs(val ? [val] : []);
+                    setPage(1);
+                  }}
+                  fullWidth
+                />
+              </FilterGroup>
+
+              {type !== 'NATURAL' && (
+                <FilterGroup>
+                  <LuxuryDropdown
+                    label="Growth Method"
+                    options={[
+                      { label: 'All Growth Methods', value: '' },
+                      { label: 'HPHT (High Pressure High Temp)', value: 'HPHT' },
+                      { label: 'CVD (Chemical Vapor Deposition)', value: 'CVD' }
+                    ]}
+                    value={growthType}
+                    onChange={(val) => {
+                      setGrowthType(val);
+                      setPage(1);
+                    }}
+                    fullWidth
+                  />
+                </FilterGroup>
+              )}
             </>
           )}
-
-          <FilterGroup>
-            <LuxuryDropdown
-              label="Clarity Grade"
-              options={[
-                { label: 'All Clarities', value: '' },
-                ...(filterConfig?.clarities || ALL_DIAMOND_CLARITIES).map((cla: string) => ({ label: cla, value: cla }))
-              ]}
-              value={selectedClarities[0] || ''}
-              onChange={(val) => {
-                setSelectedClarities(val ? [val] : []);
-                setPage(1);
-              }}
-              fullWidth
-            />
-          </FilterGroup>
-
-          <FilterGroup>
-            <LuxuryDropdown
-              label="Lab Certification"
-              options={[
-                { label: 'All Certifications', value: '' },
-                ...(filterConfig?.certifications || CERTIFICATION_LABS).map((lab: string) => ({ label: lab, value: lab }))
-              ]}
-              value={selectedLabs[0] || ''}
-              onChange={(val) => {
-                setSelectedLabs(val ? [val] : []);
-                setPage(1);
-              }}
-              fullWidth
-            />
-          </FilterGroup>
-
-          <FilterGroup>
-            <label>Price Range ($)</label>
-            <div className="input-row">
-              <input type="number" step="10" min="0" placeholder="Min $" value={minPrice} onChange={(e) => { setMinPrice(e.target.value); setPage(1); }} />
-              <span>-</span>
-              <input type="number" step="10" min="0" placeholder="Max $" value={maxPrice} onChange={(e) => { setMaxPrice(e.target.value); setPage(1); }} />
-            </div>
-          </FilterGroup>
         </MainFiltersGrid>
       </FiltersPanel>
     </RevealContainer>
@@ -1007,7 +1050,7 @@ export const DiamondVaultPage: React.FC = () => {
           <span data-testid="diamond-count">{totalCount.toLocaleString()} {totalCount === 1 ? 'DIAMOND FOUND' : 'DIAMONDS FOUND'}</span>
         </div>
         <div style={{ display: 'flex', gap: 16, alignItems: 'center' }}>
-          <button onClick={resetFilters} style={{ fontSize: '0.8rem', display: 'flex', alignItems: 'center', gap: 6, cursor: 'pointer', background: 'none', border: 'none', color: '#55524D' }}>
+          <button onClick={resetFilters} style={{ fontSize: '0.8rem', display: 'flex', alignItems: 'center', gap: 6, cursor: 'pointer', background: 'none', border: 'none', color: '#D8D2C5' }}>
             <RotateCcw size={14} /> RESET FILTERS
           </button>
 

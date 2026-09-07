@@ -3,6 +3,7 @@ import styled from 'styled-components';
 import { Upload, FolderOpen, Image as ImageIcon, Trash2, RefreshCw, Check, AlertCircle } from 'lucide-react';
 import { MediaLibraryModal } from './MediaLibraryModal';
 import { AdminButton } from './AdminUI';
+import { api } from '../../services/api';
 
 const UploadCardContainer = styled.div`
   background: #ffffff;
@@ -12,6 +13,9 @@ const UploadCardContainer = styled.div`
   display: flex;
   flex-direction: column;
   gap: 12px;
+  width: 100%;
+  box-sizing: border-box;
+  min-width: 0;
 `;
 
 const UploadHeader = styled.div`
@@ -39,6 +43,8 @@ const DropZone = styled.div<{ $isDragging?: boolean }>`
   gap: 12px;
   cursor: pointer;
   transition: all 0.2s ease;
+  width: 100%;
+  box-sizing: border-box;
 
   &:hover {
     border-color: #c9a45c;
@@ -71,16 +77,20 @@ const DropZone = styled.div<{ $isDragging?: boolean }>`
 
 const PreviewBox = styled.div`
   display: flex;
-  gap: 16px;
+  gap: 12px;
   align-items: center;
   background: #faf8f5;
   border: 1px solid #e8e3d9;
   border-radius: 6px;
-  padding: 12px 16px;
+  padding: 12px 14px;
+  width: 100%;
+  box-sizing: border-box;
+  min-width: 0;
+  flex-wrap: wrap;
 
   .img-wrapper {
-    width: 72px;
-    height: 72px;
+    width: 64px;
+    height: 64px;
     border-radius: 4px;
     overflow: hidden;
     background: #fff;
@@ -96,6 +106,7 @@ const PreviewBox = styled.div`
 
   .info-col {
     flex: 1;
+    min-width: 120px;
     display: flex;
     flex-direction: column;
     gap: 4px;
@@ -103,7 +114,7 @@ const PreviewBox = styled.div`
 
     .filename {
       font-weight: 700;
-      font-size: 0.85rem;
+      font-size: 0.82rem;
       color: #1f1f1f;
       white-space: nowrap;
       overflow: hidden;
@@ -111,14 +122,16 @@ const PreviewBox = styled.div`
     }
 
     .meta {
-      font-size: 0.75rem;
+      font-size: 0.72rem;
       color: #77736c;
     }
   }
 
   .actions-col {
     display: flex;
-    gap: 8px;
+    gap: 6px;
+    align-items: center;
+    flex-wrap: wrap;
   }
 `;
 
@@ -177,7 +190,7 @@ export const MediaUploader: React.FC<MediaUploaderProps> = ({
     try {
       setUploading(true);
       setErrorToast('');
-      const token = localStorage.getItem('fj_admin_token') || localStorage.getItem('floksy_token');
+      const token = localStorage.getItem('admin_session_token') || localStorage.getItem('app_auth_token');
       const BATCH_SIZE = 10;
       let lastUploadedUrl = '';
 
@@ -207,6 +220,9 @@ export const MediaUploader: React.FC<MediaUploaderProps> = ({
       }
 
       if (lastUploadedUrl) {
+        if (value && value.startsWith('/uploads/') && value !== lastUploadedUrl) {
+          api.deleteUploadedFile(value).catch(console.warn);
+        }
         onChange(lastUploadedUrl);
         if (useDesktop && onToggleDesktop) {
           onToggleDesktop(false);
@@ -300,7 +316,12 @@ export const MediaUploader: React.FC<MediaUploaderProps> = ({
               <AdminButton
                 $variant="danger"
                 $size="sm"
-                onClick={() => onChange('')}
+                onClick={() => {
+                  if (value && value.startsWith('/uploads/')) {
+                    api.deleteUploadedFile(value).catch(console.warn);
+                  }
+                  onChange('');
+                }}
                 icon={<Trash2 size={12} />}
               />
             )}
@@ -347,6 +368,9 @@ export const MediaUploader: React.FC<MediaUploaderProps> = ({
         isOpen={isLibraryOpen}
         onClose={() => setIsLibraryOpen(false)}
         onSelectMedia={(url) => {
+          if (value && value.startsWith('/uploads/') && value !== url) {
+            api.deleteUploadedFile(value).catch(console.warn);
+          }
           onChange(url);
           if (useDesktop && onToggleDesktop) {
             onToggleDesktop(false);

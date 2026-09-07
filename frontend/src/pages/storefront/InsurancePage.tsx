@@ -1,14 +1,14 @@
-import React, { useState, useEffect } from 'react';
+import React, { useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import styled from 'styled-components';
-import { Lock, ShieldCheck, FileText, Mail, ChevronRight, CheckCircle } from 'lucide-react';
-import { api } from '../../services/api';
+import { ShieldCheck, FileText, Mail, ChevronRight } from 'lucide-react';
 import { SafeImage } from '../../components/ui/SafeImage';
-import { WhyFloksyJewelNav } from '../../components/ui/WhyFloksyJewelNav';
+import { WhyAuraDiamondNav } from '../../components/ui/WhyAuraDiamondNav';
+import { RevealContainer } from '../../components/ui/RevealContainer';
 
 const PageWrapper = styled.div`
-  background-color: #f7f6f2;
-  color: #1a1918;
+  background-color: #0B0B0B;
+  color: #F5F1E8;
   min-height: 100vh;
   padding-bottom: 80px;
 `;
@@ -21,21 +21,21 @@ const BreadcrumbsBar = styled.div`
   align-items: center;
   gap: 8px;
   font-size: 0.8rem;
-  color: #77736c;
+  color: #A8A8A8;
 
   a {
-    color: #77736c;
+    color: #A8A8A8;
     text-decoration: none;
     transition: color 0.2s ease;
 
     &:hover {
-      color: #c9a45c;
+      color: #C9A96E;
     }
   }
 
   span.current {
-    color: #1a1918;
-    font-weight: 500;
+    color: #C9A96E;
+    font-weight: 600;
   }
 `;
 
@@ -59,8 +59,8 @@ const HeroSection = styled.section`
       font-size: 0.8rem;
       letter-spacing: 0.18em;
       text-transform: uppercase;
-      color: #c9a45c;
-      font-weight: 600;
+      color: #C9A96E;
+      font-weight: 700;
       margin-bottom: 12px;
       display: block;
     }
@@ -69,9 +69,9 @@ const HeroSection = styled.section`
       font-family: 'Cormorant Garamond', serif;
       font-size: 3.2rem;
       font-weight: 500;
-      color: #1a1918;
+      color: #F5F1E8;
       margin-bottom: 20px;
-      letter-spacing: -0.01em;
+      letter-spacing: 0.04em;
       line-height: 1.1;
 
       @media (max-width: 768px) {
@@ -81,7 +81,7 @@ const HeroSection = styled.section`
 
     p.subtitle {
       font-size: 1.05rem;
-      color: #55524d;
+      color: #D8D2C5;
       line-height: 1.7;
       margin-bottom: 28px;
     }
@@ -91,7 +91,8 @@ const HeroSection = styled.section`
     position: relative;
     border-radius: 4px;
     overflow: hidden;
-    box-shadow: 0 12px 32px rgba(0, 0, 0, 0.06);
+    border: 1px solid rgba(140, 116, 75, 0.25);
+    box-shadow: 0 12px 32px rgba(0, 0, 0, 0.6);
 
     img {
       width: 100%;
@@ -115,24 +116,26 @@ const ContentGrid = styled.main`
 `;
 
 const EditorialBlock = styled.section`
-  background: #fffdf9;
-  border: 1px solid #e8e3d9;
+  background: #151515;
+  border: 1px solid rgba(140, 116, 75, 0.25);
   padding: 36px;
   border-radius: 4px;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
 
   h2 {
     font-family: 'Cormorant Garamond', serif;
     font-size: 1.8rem;
     font-weight: 500;
-    color: #1a1918;
+    color: #F5F1E8;
+    letter-spacing: 0.08em;
     margin-bottom: 16px;
     padding-bottom: 12px;
-    border-bottom: 1px solid #e8e3d9;
+    border-bottom: 1px solid rgba(140, 116, 75, 0.2);
   }
 
   p {
     font-size: 0.95rem;
-    color: #55524d;
+    color: #D8D2C5;
     line-height: 1.7;
     margin-bottom: 14px;
 
@@ -143,7 +146,7 @@ const EditorialBlock = styled.section`
 
   ul {
     margin: 12px 0 16px 20px;
-    color: #55524d;
+    color: #D8D2C5;
     font-size: 0.95rem;
 
     li {
@@ -157,7 +160,7 @@ const AppraisalsGrid = styled.div`
   display: grid;
   grid-template-columns: repeat(2, 1fr);
   gap: 24px;
-  margin-top: 20px;
+  margin-top: 24px;
 
   @media (max-width: 768px) {
     grid-template-columns: 1fr;
@@ -165,15 +168,16 @@ const AppraisalsGrid = styled.div`
 `;
 
 const AppraisalCard = styled.div`
-  background: #f9f7f2;
-  border: 1px solid #e8e3d9;
+  background: #111111;
+  border: 1px solid rgba(140, 116, 75, 0.25);
   padding: 24px;
   border-radius: 4px;
 
   h3 {
     font-family: 'Cormorant Garamond', serif;
     font-size: 1.3rem;
-    color: #1a1918;
+    color: #F5F1E8;
+    letter-spacing: 0.06em;
     margin-bottom: 10px;
     display: flex;
     align-items: center;
@@ -182,7 +186,7 @@ const AppraisalCard = styled.div`
 
   p {
     font-size: 0.9rem;
-    color: #55524d;
+    color: #A8A8A8;
     line-height: 1.6;
   }
 `;
@@ -194,21 +198,24 @@ const CTABanner = styled.section`
 `;
 
 const CTABannerInner = styled.div`
-  background: #1a1918;
-  color: #fffdf9;
+  background: #151515;
+  border: 1px solid rgba(140, 116, 75, 0.3);
+  color: #F5F1E8;
   padding: 40px;
   border-radius: 4px;
   text-align: center;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.6);
 
   h2 {
     font-family: 'Cormorant Garamond', serif;
     font-size: 2rem;
-    color: #fffdf9;
+    letter-spacing: 0.1em;
+    color: #F5F1E8;
     margin-bottom: 12px;
   }
 
   p {
-    color: #d9d3c7;
+    color: #D8D2C5;
     font-size: 0.95rem;
     max-width: 540px;
     margin: 0 auto 24px;
@@ -219,61 +226,27 @@ const CTABannerInner = styled.div`
     display: inline-flex;
     align-items: center;
     gap: 8px;
-    background: #c9a45c;
-    color: #1a1918;
+    background: #C9A96E;
+    color: #0B0B0B;
     padding: 14px 28px;
-    border-radius: 4px;
+    border-radius: 2px;
     font-size: 0.85rem;
-    letter-spacing: 0.1em;
+    letter-spacing: 0.14em;
     text-transform: uppercase;
-    font-weight: 600;
+    font-weight: 700;
     text-decoration: none;
-    transition: all 0.2s ease;
+    transition: all 0.25s ease;
 
     &:hover {
-      background: #fffdf9;
+      background: #DFBA73;
+      box-shadow: 0 4px 18px rgba(201, 169, 110, 0.35);
     }
   }
 `;
 
 export const InsurancePage: React.FC = () => {
   useEffect(() => {
-    // Dynamic SEO Metadata
-    document.title = 'Jewelry Insurance | Floksy Jewel';
-    const metaDesc = document.querySelector('meta[name="description"]');
-    if (metaDesc) {
-      metaDesc.setAttribute('content', 'Protect your investment with Floksy Jewel official valuation documentation, GIA/IGI certificates, and specialized jewellery insurance guidance.');
-    }
-
-    // JSON-LD Structured Data
-    const script = document.createElement('script');
-    script.type = 'application/ld+json';
-    script.innerHTML = JSON.stringify({
-      '@context': 'https://schema.org',
-      '@graph': [
-        {
-          '@type': 'WebPage',
-          '@id': 'https://floksyjewel.com/insurance#webpage',
-          'url': 'https://floksyjewel.com/insurance',
-          'name': 'Jewelry Insurance & Appraisal Valuation | Floksy Jewel',
-          'description': 'Official appraisal documentation, diamond certificates, and guidance for securing comprehensive jewellery insurance.',
-        },
-        {
-          '@type': 'BreadcrumbList',
-          '@id': 'https://floksyjewel.com/insurance#breadcrumb',
-          'itemListElement': [
-            { '@type': 'ListItem', 'position': 1, 'name': 'Home', 'item': 'https://floksyjewel.com' },
-            { '@type': 'ListItem', 'position': 2, 'name': 'Why Floksy Jewel', 'item': 'https://floksyjewel.com/insurance' },
-            { '@type': 'ListItem', 'position': 3, 'name': 'Jewelry Insurance', 'item': 'https://floksyjewel.com/insurance' }
-          ]
-        }
-      ]
-    });
-    document.head.appendChild(script);
-
-    return () => {
-      document.head.removeChild(script);
-    };
+    document.title = 'Jewellery Insurance | AethelCarats Fine Jewellery';
   }, []);
 
   return (
@@ -281,91 +254,103 @@ export const InsurancePage: React.FC = () => {
       <BreadcrumbsBar>
         <Link to="/">Home</Link>
         <ChevronRight size={12} />
-        <span>Why Floksy Jewel</span>
+        <span>Why AethelCarats</span>
         <ChevronRight size={12} />
-        <span className="current">Jewelry Insurance</span>
+        <span className="current">Jewellery Insurance</span>
       </BreadcrumbsBar>
 
-      <HeroSection>
-        <div className="text-side">
-          <span className="eyebrow">PROTECTING YOUR PRECIOUS CREATIONS</span>
-          <h1>Jewelry Insurance</h1>
-          <p className="subtitle">
-            Your fine jewellery represents both sentimental devotion and enduring financial value. We assist you with official appraisal documentation and GIA/IGI certificates to simplify insurance coverage.
-          </p>
-          <Link
-            to="/contact-us"
-            style={{
-              display: 'inline-flex',
-              alignItems: 'center',
-              gap: 8,
-              background: '#1a1918',
-              color: '#fffdf9',
-              padding: '14px 28px',
-              borderRadius: 4,
-              fontSize: '0.85rem',
-              letterSpacing: '0.12em',
-              textTransform: 'uppercase',
-              fontWeight: 600,
-              textDecoration: 'none',
-            }}
-          >
-            REQUEST APPRAISAL DOCUMENTATION
-          </Link>
-        </div>
-        <div className="image-side">
-          <SafeImage src="/assets/why-floksy/insurance-hero.jpg" alt="Fine Diamond Necklace in Vault Display Case" />
-        </div>
-      </HeroSection>
+      <RevealContainer yOffset={35}>
+        <HeroSection>
+          <div className="text-side">
+            <span className="eyebrow">PROTECTING YOUR PRECIOUS CREATIONS</span>
+            <h1>Jewellery Insurance</h1>
+            <p className="subtitle">
+              Your fine jewellery represents both sentimental devotion and enduring financial value. We assist you with official appraisal documentation and GIA/IGI certificates to simplify insurance coverage.
+            </p>
+            <Link
+              to="/contact-us"
+              style={{
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: 8,
+                background: '#C9A96E',
+                color: '#0B0B0B',
+                padding: '14px 28px',
+                borderRadius: 2,
+                fontSize: '0.85rem',
+                letterSpacing: '0.14em',
+                textTransform: 'uppercase',
+                fontWeight: 700,
+                textDecoration: 'none',
+              }}
+            >
+              REQUEST APPRAISAL DOCUMENTATION
+            </Link>
+          </div>
+          <div className="image-side">
+            <SafeImage src="/assets/why-aura/insurance-hero.jpg" alt="Fine Diamond Necklace in Vault Display Case" />
+          </div>
+        </HeroSection>
+      </RevealContainer>
 
       <ContentGrid>
-        <EditorialBlock>
-          <h2>Official Valuation & Appraisal</h2>
-          <p>
-            While Floksy Jewel provides comprehensive transit insurance until your purchase is delivered, personal jewellery insurance protects your piece against loss, theft, or damage throughout your lifetime.
-          </p>
-          <p>
-            To help you secure comprehensive coverage from specialized jewellery insurers (such as Jewelers Mutual or your preferred provider), Floksy Jewel provides complimentary official appraisal documentation for high-value purchases.
-          </p>
+        <RevealContainer yOffset={35}>
+          <EditorialBlock>
+            <h2>Official Valuation & Appraisal</h2>
+            <p>
+              While AethelCarats provides comprehensive transit insurance until your purchase is delivered, personal jewellery insurance protects your piece against loss, theft, or damage throughout your lifetime.
+            </p>
+            <p>
+              To help you secure comprehensive coverage from specialized jewellery insurers, AethelCarats provides complimentary official appraisal documentation for fine jewellery pieces.
+            </p>
 
-          <AppraisalsGrid>
-            <AppraisalCard>
-              <h3><FileText size={18} color="#c9a45c" /> Valuation Documents</h3>
-              <p>Detailed itemized description including metal gram weight, diamond carat weight, cut grade, color, and retail replacement value.</p>
-            </AppraisalCard>
-            <AppraisalCard>
-              <h3><ShieldCheck size={18} color="#c9a45c" /> Independent Certificates</h3>
-              <p>Original GIA or IGI diamond grading reports verifying laser inscriptions and stone micro-details.</p>
-            </AppraisalCard>
-          </AppraisalsGrid>
-        </EditorialBlock>
+            <AppraisalsGrid>
+              <RevealContainer delay={0.0} yOffset={25}>
+                <AppraisalCard>
+                  <h3><FileText size={18} color="#C9A96E" /> Valuation Documents</h3>
+                  <p>Detailed itemized description including metal gram weight, diamond carat weight, cut grade, color, and retail replacement value.</p>
+                </AppraisalCard>
+              </RevealContainer>
+              <RevealContainer delay={0.1} yOffset={25}>
+                <AppraisalCard>
+                  <h3><ShieldCheck size={18} color="#C9A96E" /> Independent Certificates</h3>
+                  <p>Original GIA or IGI diamond grading reports verifying laser inscriptions and stone micro-details.</p>
+                </AppraisalCard>
+              </RevealContainer>
+            </AppraisalsGrid>
+          </EditorialBlock>
+        </RevealContainer>
 
-        <EditorialBlock>
-          <h2>Recommended Insurance Steps</h2>
-          <p>
-            Securing specialized jewellery insurance is quick and straightforward:
-          </p>
-          <ul>
-            <li>Request your Floksy Jewel appraisal valuation document upon order completion.</li>
-            <li>Submit the valuation and diamond certificate to your insurance provider.</li>
-            <li>Ensure coverage includes worldwide protection against loss, theft, damage, and mysterious disappearance.</li>
-          </ul>
-        </EditorialBlock>
+        <RevealContainer yOffset={35}>
+          <EditorialBlock>
+            <h2>Recommended Insurance Steps</h2>
+            <p>
+              Securing specialized jewellery insurance is quick and straightforward:
+            </p>
+            <ul>
+              <li>Request your AethelCarats appraisal valuation document upon order completion.</li>
+              <li>Submit the valuation and diamond certificate to your insurance provider.</li>
+              <li>Ensure coverage includes worldwide protection against loss, theft, damage, and mysterious disappearance.</li>
+            </ul>
+          </EditorialBlock>
+        </RevealContainer>
       </ContentGrid>
 
-      <CTABanner>
-        <CTABannerInner>
-          <h2>Need an Insurance Valuation Report?</h2>
-          <p>
-            Contact our Customer Care team to receive a duplicate copy of your item's appraisal documentation.
-          </p>
-          <Link to="/contact-us" className="primary-btn">
-            <Mail size={16} /> REQUEST APPRAISAL COPY
-          </Link>
-        </CTABannerInner>
-      </CTABanner>
+      <RevealContainer yOffset={35}>
+        <CTABanner>
+          <CTABannerInner>
+            <h2>Need an Insurance Valuation Report?</h2>
+            <p>
+              Contact our Customer Care team to receive a duplicate copy of your item's appraisal documentation.
+            </p>
+            <Link to="/contact-us" className="primary-btn">
+              <Mail size={16} /> REQUEST APPRAISAL COPY
+            </Link>
+          </CTABannerInner>
+        </CTABanner>
+      </RevealContainer>
 
-      <WhyFloksyJewelNav />
+      <WhyAuraDiamondNav />
     </PageWrapper>
   );
 };

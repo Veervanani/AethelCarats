@@ -1,4 +1,4 @@
-import { Request, Response } from 'express';
+﻿import { Request, Response } from 'express';
 import { AuthRequest } from '../middleware/auth';
 import prisma from '../prisma';
 
@@ -19,7 +19,7 @@ export const DEFAULT_PRODUCT_PAGE_CONTENT = {
   accordionsJson: JSON.stringify([
     {
       id: 'acc-1',
-      title: 'YOUR FLOKSY JEWEL EXPERIENCE',
+      title: 'YOUR AURA DIAMOND ATELIER EXPERIENCE',
       content: 'Experience white-glove service with direct access to master jewellers, custom CAD 3D photorealistic renderings, and 40x microscopic quality verification.',
       icon: 'Sparkles',
       sortOrder: 0,
@@ -68,15 +68,15 @@ export const DEFAULT_PRODUCT_PAGE_CONTENT = {
   manufacturingInfo: 'Precision hand-setting under 40x microscopic magnification for optimal gem security.',
   materialsInfo: 'Solid 18K Gold (Yellow, White, Rose) or 950 Platinum, nickel-free and hypoallergenic.',
   certificationInfo: 'Independently graded by GIA or IGI with digital certificate verification.',
-  craftsmanshipImage: '/assets/floksy_rings_cat.png',
+  craftsmanshipImage: '/assets/gem_rings_cat.png',
 
   packagingHeading: "We're committed to making your entire experience a pleasant one, from shopping to shipping.",
-  packagingDescription: 'Every item arrives in signature Floksy Jewel packaging. Engagement rings come in a velvet presentation box with appraisal certificate and GIA/IGI grading report.',
+  packagingDescription: 'Every item arrives in signature Aura Diamond Atelier packaging. Engagement rings come in a velvet presentation box with appraisal certificate and GIA/IGI grading report.',
   packagingItemsJson: JSON.stringify([
     {
       id: 'pkg-1',
       title: 'Discreet Packaging',
-      description: 'Every order is shipped in plain, unbranded outer security boxes. No mention of Floksy Jewel or diamond jewelry on package exterior.',
+      description: 'Every order is shipped in plain, unbranded outer security boxes. No mention of Aura Diamond Atelier or diamond jewelry on package exterior.',
       icon: 'Package',
       sortOrder: 0,
       isActive: true
@@ -98,7 +98,7 @@ export const DEFAULT_PRODUCT_PAGE_CONTENT = {
       isActive: true
     }
   ]),
-  packagingImageUrl: '/assets/floksy_ring_box.png',
+  packagingImageUrl: '/assets/gem_ring_box.png',
 
   reviewsTitle: 'Customer Reviews & Feedback',
   reviewsEnabled: true,

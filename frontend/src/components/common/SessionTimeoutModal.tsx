@@ -5,8 +5,8 @@ import { ShieldAlert, LogOut, RefreshCw } from 'lucide-react';
 const Overlay = styled.div`
   position: fixed;
   inset: 0;
-  background: rgba(18, 17, 16, 0.75);
-  backdrop-filter: blur(6px);
+  background: rgba(11, 11, 11, 0.85);
+  backdrop-filter: blur(8px);
   z-index: 999999;
   display: flex;
   align-items: center;
@@ -21,16 +21,16 @@ const Overlay = styled.div`
 `;
 
 const ModalCard = styled.div`
-  background: #ffffff;
-  border: 1px solid #d9d3c7;
-  border-top: 4px solid #c9a45c;
+  background: #151515;
+  border: 1px solid rgba(140, 116, 75, 0.35);
+  border-top: 4px solid #C9A96E;
   width: 100%;
   max-width: 460px;
   padding: 36px 32px;
-  box-shadow: 0 24px 60px rgba(0, 0, 0, 0.35);
+  box-shadow: 0 24px 60px rgba(0, 0, 0, 0.6);
   text-align: center;
   position: relative;
-  border-radius: 4px;
+  border-radius: 8px;
   box-sizing: border-box;
   animation: scaleUp 0.35s cubic-bezier(0.16, 1, 0.3, 1);
 
@@ -50,13 +50,13 @@ const IconCircle = styled.div`
   width: 56px;
   height: 56px;
   border-radius: 50%;
-  background: #faf5eb;
-  border: 1px solid #c9a45c;
+  background: #111111;
+  border: 1px solid #C9A96E;
   display: flex;
   align-items: center;
   justify-content: center;
   margin: 0 auto 16px auto;
-  color: #c9a45c;
+  color: #C9A96E;
 `;
 
 const Title = styled.h3`
@@ -64,24 +64,28 @@ const Title = styled.h3`
   font-size: 1.8rem;
   letter-spacing: 0.08em;
   text-transform: uppercase;
-  color: #1f1f1f;
+  color: #F5F1E8;
   margin: 0 0 10px 0;
-  font-weight: 500;
+  font-weight: 600;
 `;
 
 const Subtitle = styled.p`
   font-size: 0.88rem;
-  color: #666666;
+  color: #D8D2C5;
   line-height: 1.6;
   margin: 0 0 20px 0;
+
+  strong {
+    color: #C9A96E;
+  }
 `;
 
 const CountdownCircle = styled.div`
   width: 64px;
   height: 64px;
   border-radius: 50%;
-  background: #faf5eb;
-  border: 2px solid #c9a45c;
+  background: #111111;
+  border: 2px solid #C9A96E;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -89,8 +93,8 @@ const CountdownCircle = styled.div`
   font-family: 'Cormorant Garamond', serif;
   font-size: 2.2rem;
   font-weight: 700;
-  color: #1f1f1f;
-  box-shadow: inset 0 2px 6px rgba(201, 164, 92, 0.15);
+  color: #C9A96E;
+  box-shadow: inset 0 2px 6px rgba(201, 169, 110, 0.15);
 `;
 
 const ButtonRow = styled.div`
@@ -106,13 +110,14 @@ const ButtonRow = styled.div`
 const StayBtn = styled.button`
   flex: 1;
   padding: 13px 20px;
-  background: #1f1f1f;
-  color: #ffffff;
+  background: #C9A96E;
+  color: #0B0B0B;
   font-size: 0.78rem;
   font-weight: 700;
   letter-spacing: 0.12em;
   text-transform: uppercase;
-  border: 1px solid #1f1f1f;
+  border: 1px solid #C9A96E;
+  border-radius: 4px;
   cursor: pointer;
   display: inline-flex;
   align-items: center;
@@ -121,21 +126,22 @@ const StayBtn = styled.button`
   transition: all 0.25s ease;
 
   &:hover {
-    background: #c9a45c;
-    border-color: #c9a45c;
-    color: #1f1f1f;
+    background: #DFBA73;
+    border-color: #DFBA73;
+    color: #0B0B0B;
   }
 `;
 
 const LogoutBtn = styled.button`
   padding: 13px 18px;
-  background: #ffffff;
-  color: #666666;
+  background: #151515;
+  color: #F5F1E8;
   font-size: 0.78rem;
   font-weight: 600;
   letter-spacing: 0.1em;
   text-transform: uppercase;
-  border: 1px solid #d9d3c7;
+  border: 1px solid rgba(140, 116, 75, 0.3);
+  border-radius: 4px;
   cursor: pointer;
   display: inline-flex;
   align-items: center;
@@ -146,7 +152,7 @@ const LogoutBtn = styled.button`
   &:hover {
     border-color: #d32f2f;
     color: #d32f2f;
-    background: #fdf2f2;
+    background: rgba(211, 47, 47, 0.1);
   }
 `;
 

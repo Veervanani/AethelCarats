@@ -1,9 +1,9 @@
 {
-  "name": "floksy-jewel",
+  "name": "aethelcarats",
   "version": "1.0.0",
   "private": true,
   "type": "module",
-  "description": "Floksy Jewel Luxury E-Commerce & Diamond Vault Platform",
+  "description": "AethelCarats Luxury Fine Jewellery & Diamond Vault Platform",
   "scripts": {
     "postinstall": "npm run build",
     "dev:backend": "cd backend && npm run dev",

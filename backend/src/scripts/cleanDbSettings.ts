@@ -1,4 +1,4 @@
-import prisma from '../prisma';
+﻿import prisma from '../prisma';
 
 async function cleanSettings() {
   console.log('Cleaning database site settings...');
@@ -13,8 +13,8 @@ async function cleanSettings() {
   // 2. Update storeName scalar
   await prisma.siteSetting.upsert({
     where: { key: 'storeName' },
-    update: { value: 'FLOKSY JEWEL' },
-    create: { key: 'storeName', value: 'FLOKSY JEWEL' },
+    update: { value: 'AURA DIAMOND ATELIER' },
+    create: { key: 'storeName', value: 'AURA DIAMOND ATELIER' },
   });
 
   // 3. Update storeAddress scalar
@@ -28,7 +28,7 @@ async function cleanSettings() {
   const waConfig = {
     inquiryNumber: '+91973785306',
     displayNumber: '+91973785306',
-    defaultMessage: 'Hello Floksy Jewel, I am interested in your fine jewellery collection.',
+    defaultMessage: 'Hello Aura Diamond Atelier, I am interested in your fine jewellery collection.',
   };
   await prisma.siteSetting.upsert({
     where: { key: 'whatsapp_config' },
@@ -46,12 +46,12 @@ async function cleanSettings() {
   }
   const fSettings = {
     ...existingFooter,
-    brandName: 'FLOKSY JEWEL',
-    copyrightText: '© 2026 FLOKSY JEWEL. ALL RIGHTS RESERVED.',
+    brandName: 'AURA DIAMOND ATELIER',
+    copyrightText: '© 2026 AURA DIAMOND ATELIER. ALL RIGHTS RESERVED.',
     tagline: 'Fine Jewelry & Certified Solitaire Diamonds',
     address: 'Surat, India',
     phone: '+91973785306',
-    email: 'contact@floksyjewel.com',
+    email: 'contact@auroradiamonds.com',
   };
   await prisma.siteSetting.upsert({
     where: { key: 'footer_settings' },

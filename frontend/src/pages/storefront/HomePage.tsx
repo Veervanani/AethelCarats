@@ -1,7 +1,19 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Link } from 'react-router-dom';
 import styled from 'styled-components';
-import { ArrowRight, Diamond as DiamondIcon, ShieldCheck, Sparkles, Truck, ChevronLeft, ChevronRight, Star } from 'lucide-react';
+import {
+  ArrowRight,
+  Diamond as DiamondIcon,
+  ShieldCheck,
+  Sparkles,
+  Truck,
+  ChevronLeft,
+  ChevronRight,
+  Star,
+  Award,
+  Heart,
+  Gem,
+} from 'lucide-react';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { Navigation, EffectFade, Pagination, Autoplay } from 'swiper/modules';
 import 'swiper/css';
@@ -17,29 +29,29 @@ import { RevealContainer } from '../../components/ui/RevealContainer';
 const HeroSection = styled.section`
   position: relative;
   width: 100%;
-  min-height: 620px;
-  height: clamp(620px, 78vh, 820px);
+  min-height: 640px;
+  height: clamp(640px, 82vh, 860px);
   margin: 0;
   display: flex;
   align-items: center;
   justify-content: flex-start;
-  color: #1F1F1F;
+  color: #F5F1E8;
   text-align: left;
   padding: 0 7.5%;
   overflow: hidden;
   box-sizing: border-box;
-  background-color: #FAF9F6;
+  background-color: #0B0B0B;
 
   @media (max-width: 1024px) {
     padding: 0 5%;
-    min-height: 540px;
-    height: clamp(540px, 70vh, 720px);
+    min-height: 560px;
+    height: clamp(560px, 72vh, 740px);
   }
 
   @media (max-width: 768px) {
-    height: 82svh;
-    min-height: 560px;
-    max-height: 720px;
+    height: 84svh;
+    min-height: 580px;
+    max-height: 740px;
     padding: 0;
     align-items: flex-start;
   }
@@ -55,12 +67,12 @@ const HeroOverlay = styled.div`
 
   @media (max-width: 768px) {
     align-items: flex-start;
-    padding-top: 36px;
+    padding-top: 40px;
     background: linear-gradient(
       to bottom,
-      rgba(250, 249, 246, 0.95) 0%,
-      rgba(250, 249, 246, 0.65) 45%,
-      rgba(250, 249, 246, 0) 85%
+      rgba(11, 11, 11, 0.95) 0%,
+      rgba(11, 11, 11, 0.75) 45%,
+      rgba(11, 11, 11, 0.2) 85%
     );
   }
 `;
@@ -124,54 +136,53 @@ const HeroTextColumn = styled.div`
 
 const Eyebrow = styled.span`
   font-size: 0.82rem;
-  letter-spacing: 0.26em;
+  letter-spacing: 0.28em;
   font-weight: 700;
-  color: #C9A45C;
+  color: #C9A96E;
   text-transform: uppercase;
-  margin-bottom: 22px;
+  margin-bottom: 20px;
   display: inline-block;
 
   @media (max-width: 768px) {
     font-size: 0.68rem;
     letter-spacing: 0.2em;
-    margin-bottom: 6px;
+    margin-bottom: 8px;
   }
 `;
 
 const HeroTitle = styled.h1`
-  font-family: 'Cormorant Garamond', serif;
-  font-size: clamp(2.4rem, 4.2vw, 3.8rem);
-  font-weight: 400;
-  line-height: 1.1;
-  color: #1F1F1F;
-  margin-bottom: 24px;
-  letter-spacing: -0.01em;
+  font-family: 'Cormorant Garamond', 'Playfair Display', Georgia, serif;
+  font-size: clamp(2.4rem, 4.4vw, 4rem);
+  font-weight: 500;
+  line-height: 1.12;
+  color: #F5F1E8;
+  margin-bottom: 22px;
+  letter-spacing: 0.02em;
   white-space: pre-line;
 
   @media (max-width: 768px) {
-    font-size: 1.45rem;
-    line-height: 1.22;
-    margin-bottom: 8px;
+    font-size: 1.6rem;
+    line-height: 1.2;
+    margin-bottom: 10px;
     white-space: normal;
-    font-weight: 500;
   }
 `;
 
 const HeroSubtitle = styled.p`
   font-size: 1.05rem;
-  color: #555555;
+  color: #A8A8A8;
   margin-bottom: 38px;
   font-weight: 300;
   line-height: 1.65;
   max-width: 480px;
 
   @media (max-width: 768px) {
-    font-size: 0.78rem;
-    line-height: 1.4;
-    margin-bottom: 14px;
+    font-size: 0.82rem;
+    line-height: 1.45;
+    margin-bottom: 18px;
     margin-left: auto;
     margin-right: auto;
-    max-width: 290px;
+    max-width: 300px;
   }
 `;
 
@@ -191,10 +202,10 @@ const ButtonGroup = styled.div`
 `;
 
 const LuxuryButton = styled(Link)<{ $variant?: 'primary' | 'outline' }>`
-  padding: 16px 28px;
+  padding: 16px 32px;
   font-size: 0.78rem;
   font-weight: 700;
-  letter-spacing: 0.16em;
+  letter-spacing: 0.18em;
   text-transform: uppercase;
   border-radius: 2px;
   transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
@@ -207,27 +218,27 @@ const LuxuryButton = styled(Link)<{ $variant?: 'primary' | 'outline' }>`
   box-sizing: border-box;
   flex-shrink: 0;
 
-  background-color: ${({ $variant }) => ($variant === 'outline' ? 'transparent' : '#1F1F1F')};
-  color: ${({ $variant }) => ($variant === 'outline' ? '#1F1F1F' : '#FFFDF9')};
-  border: 1px solid #1F1F1F;
+  background-color: ${({ $variant }) => ($variant === 'outline' ? 'transparent' : '#C9A96E')};
+  color: ${({ $variant }) => ($variant === 'outline' ? '#F5F1E8' : '#0B0B0B')};
+  border: 1px solid ${({ $variant }) => ($variant === 'outline' ? '#8C744B' : '#C9A96E')};
 
   &:hover {
-    background-color: ${({ $variant }) => ($variant === 'outline' ? '#1F1F1F' : '#C9A45C')};
-    border-color: ${({ $variant }) => ($variant === 'outline' ? '#1F1F1F' : '#C9A45C')};
-    color: ${({ $variant }) => ($variant === 'outline' ? '#FFFDF9' : '#1F1F1F')};
+    background-color: ${({ $variant }) => ($variant === 'outline' ? '#C9A96E' : '#DFCA9B')};
+    border-color: #C9A96E;
+    color: #0B0B0B;
     transform: translateY(-2px);
-    box-shadow: 0 8px 22px rgba(31, 31, 31, 0.18);
+    box-shadow: 0 10px 24px rgba(201, 169, 110, 0.3);
   }
 
   @media (max-width: 1024px) {
-    padding: 14px 20px;
+    padding: 14px 22px;
     font-size: 0.74rem;
-    letter-spacing: 0.12em;
+    letter-spacing: 0.14em;
   }
 
   @media (max-width: 768px) {
     width: 100%;
-    padding: 9px 14px;
+    padding: 10px 16px;
     font-size: 0.7rem;
     letter-spacing: 0.12em;
     box-sizing: border-box;
@@ -269,9 +280,9 @@ const FancyIndicatorDash = styled.button<{ $active: boolean }>`
 
 /* 4-COLUMN TRUST / VALUE PROPOSITION SECTION */
 const ValuePropsRow = styled.div`
-  background-color: #FAF9F6;
-  border-top: 1px solid #E8E3D9;
-  border-bottom: 1px solid #E8E3D9;
+  background-color: #111111;
+  border-top: 1px solid rgba(140, 116, 75, 0.25);
+  border-bottom: 1px solid rgba(140, 116, 75, 0.25);
   padding: 54px 24px;
   margin: 0;
   width: 100%;
@@ -302,8 +313,8 @@ const ValuePropsGrid = styled.div`
 `;
 
 const ValuePropCard = styled.div`
-  background: #FFFFFF;
-  border: 1px solid #E8E3D9;
+  background: #151515;
+  border: 1px solid rgba(140, 116, 75, 0.2);
   border-radius: 4px;
   padding: 32px 24px;
   display: flex;
@@ -313,7 +324,7 @@ const ValuePropCard = styled.div`
   gap: 14px;
   height: 100%;
   min-height: 220px;
-  box-shadow: 0 6px 20px rgba(36, 35, 33, 0.02);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.4);
   transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
   position: relative;
   overflow: hidden;
@@ -326,15 +337,15 @@ const ValuePropCard = styled.div`
     left: 0;
     right: 0;
     height: 3px;
-    background: linear-gradient(90deg, #C9A45C 0%, #E6C887 50%, #C9A45C 100%);
+    background: linear-gradient(90deg, #C9A96E 0%, #E6C887 50%, #C9A96E 100%);
     opacity: 0;
     transition: opacity 0.4s ease;
   }
 
   &:hover {
     transform: translateY(-6px);
-    border-color: #D4AF37;
-    box-shadow: 0 16px 32px rgba(201, 164, 92, 0.12);
+    border-color: #C9A96E;
+    box-shadow: 0 16px 32px rgba(0, 0, 0, 0.8), 0 0 20px rgba(201, 169, 110, 0.15);
 
     &::before {
       opacity: 1;
@@ -342,27 +353,28 @@ const ValuePropCard = styled.div`
 
     svg {
       transform: scale(1.12) rotate(4deg);
-      color: #C9A45C;
+      color: #C9A96E;
     }
   }
 
   svg {
     transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), color 0.3s ease;
+    color: #C9A96E;
   }
 
   h4 {
     font-family: 'Cormorant Garamond', serif;
     font-size: 1.15rem;
     font-weight: 600;
-    letter-spacing: 0.08em;
+    letter-spacing: 0.1em;
     text-transform: uppercase;
-    color: #1F1F1F;
+    color: #F5F1E8;
     margin: 0;
   }
 
   p {
     font-size: 0.84rem;
-    color: #666666;
+    color: #A8A8A8;
     line-height: 1.6;
     margin: 0;
   }
@@ -416,10 +428,10 @@ const ValuePropCardMobile = styled.div`
   gap: 10px;
   text-align: center;
   padding: 24px 18px;
-  background: rgba(255, 255, 255, 0.75);
-  border: 1px solid rgba(201, 164, 92, 0.3);
+  background: #151515;
+  border: 1px solid rgba(140, 116, 75, 0.25);
   border-radius: 12px;
-  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.03);
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.5);
   width: 100%;
   min-height: 150px;
   box-sizing: border-box;
@@ -428,15 +440,15 @@ const ValuePropCardMobile = styled.div`
     font-family: 'Cormorant Garamond', 'Playfair Display', serif;
     font-size: 1.05rem;
     font-weight: 600;
-    letter-spacing: 0.08em;
+    letter-spacing: 0.1em;
     text-transform: uppercase;
-    color: #242321;
+    color: #F5F1E8;
     margin: 0;
   }
 
   p {
     font-size: 0.82rem;
-    color: #55524d;
+    color: #A8A8A8;
     line-height: 1.45;
     margin: 0;
     max-width: 280px;
@@ -477,19 +489,26 @@ const CategoryCard = styled(Link)`
   position: relative;
   aspect-ratio: 4 / 5;
   overflow: hidden;
-  background-color: #f3efe6;
-  border: 1px solid #e8e3d9;
+  background-color: #151515;
+  border: 1px solid rgba(140, 116, 75, 0.22);
+  border-radius: 4px;
   text-decoration: none;
+  transition: border-color 0.3s ease, box-shadow 0.3s ease;
 
   img {
     width: 100%;
     height: 100%;
     object-fit: cover;
-    transition: transform 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
   }
 
-  &:hover img {
-    transform: scale(1.025);
+  &:hover {
+    border-color: #C9A96E;
+    box-shadow: 0 12px 30px rgba(0, 0, 0, 0.8), 0 0 18px rgba(201, 169, 110, 0.15);
+
+    img {
+      transform: scale(1.04);
+    }
   }
 `;
 
@@ -499,9 +518,9 @@ const CardOverlay = styled.div`
   left: 0;
   right: 0;
   padding: 14px 16px;
-  background: rgba(250, 249, 246, 0.92);
-  backdrop-filter: blur(4px);
-  border-top: 1px solid rgba(232, 227, 217, 0.8);
+  background: rgba(17, 17, 17, 0.92);
+  backdrop-filter: blur(8px);
+  border-top: 1px solid rgba(140, 116, 75, 0.25);
   display: flex;
   justify-content: center;
   align-items: center;
@@ -510,9 +529,14 @@ const CardOverlay = styled.div`
 const CategoryTitle = styled.span`
   font-size: 12.5px;
   font-weight: 600;
-  letter-spacing: 0.16em;
+  letter-spacing: 0.18em;
   text-transform: uppercase;
-  color: #1F1F1F;
+  color: #F5F1E8;
+  transition: color 0.25s ease;
+
+  ${CategoryCard}:hover & {
+    color: #C9A96E;
+  }
 `;
 
 const NavArrow = styled.button<{ $direction: 'prev' | 'next' }>`
@@ -523,25 +547,26 @@ const NavArrow = styled.button<{ $direction: 'prev' | 'next' }>`
   width: 44px;
   height: 44px;
   border-radius: 50%;
-  background: #ffffff;
-  border: 1px solid #e8e3d9;
-  color: #1a1918;
+  background: #151515;
+  border: 1px solid rgba(140, 116, 75, 0.35);
+  color: #F5F1E8;
   display: flex;
   align-items: center;
   justify-content: center;
   cursor: pointer;
   z-index: 10;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.6);
   transition: all 0.25s ease;
 
   &:hover {
-    background: #1a1918;
-    color: #ffffff;
-    border-color: #1a1918;
+    background: #C9A96E;
+    color: #0B0B0B;
+    border-color: #C9A96E;
+    transform: translateY(-50%) scale(1.06);
   }
 
   &.swiper-button-disabled {
-    opacity: 0.3;
+    opacity: 0.25;
     cursor: default;
     pointer-events: none;
   }
@@ -571,12 +596,12 @@ const EditorialBannerContainer = styled.div<{
   position: relative;
   width: 100%;
   min-height: ${({ $bannerHeightDesktop }) => $bannerHeightDesktop || '540px'};
-  background-color: #FAF9F6;
-  background-image: ${({ $bgImage }) => `url(${$bgImage || '/assets/floksy_editorial_banner_v3.png'})`};
+  background-color: #0B0B0B;
+  background-image: ${({ $bgImage }) => `url(${$bgImage || '/assets/aura_editorial_banner_v3.png'})`};
   background-size: cover;
   background-position: right center;
-  border-top: 1px solid #e8e3d9;
-  border-bottom: none;
+  border-top: 1px solid rgba(140, 116, 75, 0.25);
+  border-bottom: 1px solid rgba(140, 116, 75, 0.25);
   display: flex;
   align-items: center;
   padding: ${({ $paddingTopBottom }) => $paddingTopBottom || '64px'} 80px;
@@ -585,28 +610,28 @@ const EditorialBannerContainer = styled.div<{
     padding: 48px 32px;
     min-height: ${({ $bannerHeightTablet }) => $bannerHeightTablet || '420px'};
     background-position: right center;
-    background-image: ${({ $tabletImage, $bgImage }) => `url(${$tabletImage || $bgImage || '/assets/floksy_editorial_banner_v3.png'})`};
+    background-image: ${({ $tabletImage, $bgImage }) => `url(${$tabletImage || $bgImage || '/assets/aura_editorial_banner_v3.png'})`};
   }
 
   @media (max-width: 768px) {
     padding: 36px 20px;
     min-height: ${({ $bannerHeightMobile }) => $bannerHeightMobile || '380px'};
     background-position: right center;
-    background-image: ${({ $mobileImage, $tabletImage, $bgImage }) => `url(${$mobileImage || $tabletImage || $bgImage || '/assets/floksy_editorial_banner_v3.png'})`};
+    background-image: ${({ $mobileImage, $tabletImage, $bgImage }) => `url(${$mobileImage || $tabletImage || $bgImage || '/assets/aura_editorial_banner_v3.png'})`};
   }
 `;
 
 const EditorialBannerContent = styled.div<{ $textColor?: string }>`
   max-width: 520px;
-  color: ${({ $textColor }) => $textColor || '#fffdf9'};
+  color: ${({ $textColor }) => $textColor || '#F5F1E8'};
 `;
 
 const EditorialBannerTitle = styled.h2<{ $textColor?: string }>`
   font-family: 'Cormorant Garamond', 'Playfair Display', serif;
   font-size: 3rem;
-  font-weight: 400;
+  font-weight: 500;
   line-height: 1.12;
-  color: ${({ $textColor }) => $textColor || '#fffdf9'};
+  color: #F5F1E8;
   margin-bottom: 18px;
 
   @media (max-width: 768px) {
@@ -618,7 +643,7 @@ const EditorialBannerDesc = styled.p<{ $textColor?: string }>`
   font-size: 1.05rem;
   font-weight: 300;
   line-height: 1.65;
-  color: ${({ $textColor }) => ($textColor ? `${$textColor}cc` : '#e0dad0')};
+  color: #A8A8A8;
   margin-bottom: 36px;
 `;
 
@@ -628,18 +653,20 @@ const EditorialBannerButton = styled(Link)<{ $buttonBg?: string; $buttonColor?: 
   justify-content: center;
   padding: 16px 38px;
   font-size: 13px;
-  font-weight: 600;
+  font-weight: 700;
   letter-spacing: 0.18em;
   text-transform: uppercase;
-  color: ${({ $buttonColor }) => $buttonColor || '#fffdf9'};
-  border: 1px solid ${({ $buttonColor }) => $buttonColor || '#fffdf9'};
-  background: ${({ $buttonBg }) => $buttonBg || 'transparent'};
+  color: #0B0B0B;
+  border: 1px solid #C9A96E;
+  background: #C9A96E;
   text-decoration: none;
   transition: all 0.3s ease;
 
   &:hover {
-    background-color: ${({ $buttonColor }) => $buttonColor || '#fffdf9'};
-    color: ${({ $buttonBg }) => ($buttonBg && $buttonBg !== 'transparent' ? '#fffdf9' : '#242321')};
+    background-color: #DFCA9B;
+    border-color: #DFCA9B;
+    color: #0B0B0B;
+    box-shadow: 0 10px 24px rgba(201, 169, 110, 0.3);
   }
 `;
 
@@ -657,7 +684,7 @@ const StaticEditorialContainer = styled.div`
   width: 100%;
   aspect-ratio: 2 / 1;
   border-top: none;
-  border-bottom: 1px solid #e8e3d9;
+  border-bottom: 1px solid rgba(140, 116, 75, 0.25);
   overflow: hidden;
 
   @media (max-width: 768px) {
@@ -674,6 +701,7 @@ const StaticEditorialPanel = styled(Link)`
   overflow: hidden;
   display: block;
   text-decoration: none;
+  background-color: #0B0B0B;
 
   img {
     width: 100%;
@@ -681,23 +709,23 @@ const StaticEditorialPanel = styled(Link)`
     object-fit: cover;
     object-position: center;
     display: block;
-    transition: transform 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
   }
 
   &:hover img {
-    transform: scale(1.025);
+    transform: scale(1.04);
   }
 `;
 
 const StaticEditorialPanelOverlay = styled.div`
   position: absolute;
   inset: 0;
-  background: linear-gradient(to top, rgba(26, 25, 24, 0.75) 0%, rgba(26, 25, 24, 0.15) 60%, transparent 100%);
+  background: linear-gradient(to top, rgba(11, 11, 11, 0.95) 0%, rgba(11, 11, 11, 0.25) 60%, transparent 100%);
   display: flex;
   flex-direction: column;
   justify-content: flex-end;
   padding: 44px 40px;
-  color: #fffdf9;
+  color: #F5F1E8;
 
   @media (max-width: 768px) {
     padding: 28px 24px;
@@ -710,7 +738,7 @@ const EditorialCollectionSection = styled.section`
   margin: 0;
   padding: 0;
   border-top: none;
-  border-bottom: none;
+  border-bottom: 1px solid rgba(140, 116, 75, 0.25);
   touch-action: pan-y;
   user-select: none;
 
@@ -726,7 +754,7 @@ const EditorialCollectionGrid = styled.div`
   gap: 0;
   width: 100%;
   aspect-ratio: 2 / 1;
-  background-color: #f9f7f2;
+  background-color: #111111;
   overflow: hidden;
 
   @media (max-width: 992px) {
@@ -755,8 +783,9 @@ const FixedLeftImgWrap = styled.div`
   max-width: 520px;
   aspect-ratio: 1 / 1;
   overflow: hidden;
-  background-color: #f3efe6;
-  border: 1px solid #e8e3d9;
+  background-color: #151515;
+  border: 1px solid rgba(140, 116, 75, 0.25);
+  border-radius: 4px;
   margin-bottom: 20px;
 
   @media (max-width: 1200px) {
@@ -782,7 +811,7 @@ const EditorialEyebrow = styled.span`
   font-weight: 600;
   letter-spacing: 0.22em;
   text-transform: uppercase;
-  color: #c9a45c;
+  color: #C9A96E;
   margin-bottom: 6px;
   display: block;
 `;
@@ -790,8 +819,8 @@ const EditorialEyebrow = styled.span`
 const EditorialTitle = styled.h3`
   font-family: 'Cormorant Garamond', 'Playfair Display', serif;
   font-size: 2.2rem;
-  font-weight: 400;
-  color: #242321;
+  font-weight: 500;
+  color: #F5F1E8;
   line-height: 1.18;
   margin-bottom: 10px;
 `;
@@ -799,9 +828,9 @@ const EditorialTitle = styled.h3`
 const ShopNowLink = styled(Link)`
   font-size: 12.5px;
   font-weight: 600;
-  letter-spacing: 0.16em;
+  letter-spacing: 0.18em;
   text-transform: uppercase;
-  color: #242321;
+  color: #C9A96E;
   text-decoration: none;
   display: inline-flex;
   align-items: center;
@@ -810,7 +839,7 @@ const ShopNowLink = styled(Link)`
   margin-bottom: 16px;
 
   &:hover {
-    color: #c9a45c;
+    color: #DFCA9B;
   }
 `;
 
@@ -831,7 +860,7 @@ const NavControlsRow = styled.div`
   button {
     background: transparent;
     border: none;
-    color: #242321;
+    color: #F5F1E8;
     cursor: pointer;
     display: flex;
     align-items: center;
@@ -839,7 +868,7 @@ const NavControlsRow = styled.div`
     transition: color 0.2s ease;
 
     &:hover {
-      color: #c9a45c;
+      color: #C9A96E;
     }
   }
 
@@ -847,7 +876,7 @@ const NavControlsRow = styled.div`
     font-size: 13px;
     font-weight: 600;
     letter-spacing: 0.14em;
-    color: #242321;
+    color: #A8A8A8;
   }
 `;
 
@@ -855,7 +884,7 @@ const NavPaginationTrack = styled.div`
   width: 240px;
   max-width: 80%;
   height: 1px;
-  background-color: #e8e3d9;
+  background-color: rgba(140, 116, 75, 0.25);
   margin-top: 10px;
   position: relative;
 `;
@@ -866,7 +895,7 @@ const NavPaginationActiveLine = styled.div<{ $activeIndex: number; $totalSlides:
   left: ${({ $activeIndex, $totalSlides }) => ($totalSlides > 0 ? ($activeIndex / $totalSlides) * 100 : 0)}%;
   width: ${({ $totalSlides }) => ($totalSlides > 0 ? 100 / $totalSlides : 100)}%;
   height: 2px;
-  background-color: #c9a45c;
+  background-color: #C9A96E;
   transition: left 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
 `;
 
@@ -957,10 +986,10 @@ const LeftPromoButton = styled(Link)`
   width: min(290px, 85%);
   height: 58px;
   padding: 0 24px;
-  background: rgba(255, 253, 249, 0.92);
+  background: rgba(17, 17, 17, 0.92);
   backdrop-filter: blur(10px);
-  border: 1.5px solid #C9A45C;
-  color: #1F1F1F;
+  border: 1.5px solid #C9A96E;
+  color: #F5F1E8;
   font-size: 0.82rem;
   font-weight: 700;
   letter-spacing: 0.22em;
@@ -968,14 +997,14 @@ const LeftPromoButton = styled(Link)`
   text-decoration: none;
   border-radius: 2px;
   transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1);
-  box-shadow: 0 8px 24px rgba(36, 35, 33, 0.12);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.6);
 
   &:hover {
-    background: #C9A45C;
-    border-color: #C9A45C;
-    color: #1F1F1F;
+    background: #C9A96E;
+    border-color: #C9A96E;
+    color: #0B0B0B;
     transform: translateX(-50%) translateY(-4px);
-    box-shadow: 0 14px 32px rgba(201, 164, 92, 0.3);
+    box-shadow: 0 14px 32px rgba(201, 169, 110, 0.4);
   }
 
   @media (max-width: 768px) {
@@ -1007,11 +1036,10 @@ const RightPromoTitle = styled.h2`
   font-family: 'Cormorant Garamond', serif;
   font-size: 2.5rem;
   font-weight: 500;
-  color: #1F1F1F;
+  color: #F5F1E8;
   text-transform: uppercase;
   letter-spacing: 0.1em;
   margin-bottom: 24px;
-  text-shadow: 0 2px 10px rgba(255, 255, 255, 0.8), 0 0 20px rgba(250, 249, 246, 0.9);
 
   @media (max-width: 768px) {
     font-size: 1.9rem;
@@ -1026,25 +1054,25 @@ const RightPromoButton = styled(Link)`
   width: min(260px, 85%);
   height: 58px;
   padding: 0 24px;
-  background: rgba(255, 253, 249, 0.92);
+  background: rgba(17, 17, 17, 0.92);
   backdrop-filter: blur(10px);
-  color: #1F1F1F;
+  color: #F5F1E8;
   font-size: 0.82rem;
   font-weight: 700;
   letter-spacing: 0.22em;
   text-transform: uppercase;
   text-decoration: none;
-  border: 1.5px solid #C9A45C;
+  border: 1.5px solid #C9A96E;
   border-radius: 2px;
   transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1);
-  box-shadow: 0 8px 24px rgba(36, 35, 33, 0.12);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.6);
 
   &:hover {
-    background: #C9A45C;
-    border-color: #C9A45C;
-    color: #1F1F1F;
+    background: #C9A96E;
+    border-color: #C9A96E;
+    color: #0B0B0B;
     transform: translateY(-4px);
-    box-shadow: 0 14px 32px rgba(201, 164, 92, 0.3);
+    box-shadow: 0 14px 32px rgba(201, 169, 110, 0.4);
   }
 
   @media (max-width: 768px) {
@@ -1057,9 +1085,9 @@ const DiamondShapesSection = styled.section`
   width: 100%;
   margin: 0;
   padding: 0;
-  border-top: 1px solid #e8e3d9;
-  border-bottom: 1px solid #e8e3d9;
-  background-color: #f9f7f2;
+  border-top: 1px solid rgba(140, 116, 75, 0.25);
+  border-bottom: 1px solid rgba(140, 116, 75, 0.25);
+  background-color: #111111;
 `;
 
 const DiamondShapesContainer = styled.div`
@@ -1077,6 +1105,7 @@ const DiamondShapesLeft = styled.div`
   width: 100%;
   min-height: 540px;
   overflow: hidden;
+  background-color: #0B0B0B;
 
   img {
     width: 100%;
@@ -1106,7 +1135,7 @@ const DiamondShapesEyebrow = styled.span`
   font-weight: 600;
   letter-spacing: 0.22em;
   text-transform: uppercase;
-  color: #c9a45c;
+  color: #C9A96E;
   margin-bottom: 12px;
   display: block;
 `;
@@ -1114,8 +1143,8 @@ const DiamondShapesEyebrow = styled.span`
 const DiamondShapesTitle = styled.h2`
   font-family: 'Cormorant Garamond', 'Playfair Display', serif;
   font-size: 2.8rem;
-  font-weight: 400;
-  color: #242321;
+  font-weight: 500;
+  color: #F5F1E8;
   line-height: 1.15;
   margin-bottom: 16px;
 
@@ -1126,7 +1155,7 @@ const DiamondShapesTitle = styled.h2`
 
 const DiamondShapesSubtitle = styled.p`
   font-size: 0.95rem;
-  color: #77736c;
+  color: #A8A8A8;
   line-height: 1.6;
   margin-bottom: 36px;
 `;
@@ -1157,7 +1186,7 @@ const DiamondShapeSvg = styled.img<{ $desktopSize?: string; $tabletSize?: string
   max-width: 52px;
   height: auto;
   object-fit: contain;
-  filter: brightness(0.18);
+  filter: brightness(0) invert(0.9);
   transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1);
   display: block;
   margin: 0 auto 12px;
@@ -1178,15 +1207,15 @@ const DiamondShapeCard = styled(Link)`
   align-items: center;
   justify-content: center;
   padding: 22px 14px 18px;
-  border: 1px solid #E8E3D9;
-  background-color: #FFFFFF;
+  border: 1px solid rgba(140, 116, 75, 0.25);
+  background-color: #151515;
   border-radius: 4px;
   text-decoration: none;
   transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1);
   box-sizing: border-box;
   position: relative;
   overflow: hidden;
-  box-shadow: 0 4px 14px rgba(36, 35, 33, 0.02);
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.4);
 
   &::before {
     content: '';
@@ -1195,15 +1224,15 @@ const DiamondShapeCard = styled(Link)`
     left: 0;
     right: 0;
     height: 3px;
-    background: linear-gradient(90deg, #C9A45C 0%, #E6C887 50%, #C9A45C 100%);
+    background: linear-gradient(90deg, #C9A96E 0%, #E6C887 50%, #C9A96E 100%);
     opacity: 0;
     transition: opacity 0.35s ease;
   }
 
   &:hover {
-    border-color: #D4AF37;
-    background-color: #FFFFFF;
-    box-shadow: 0 12px 28px rgba(201, 164, 92, 0.15);
+    border-color: #C9A96E;
+    background-color: #1A1A1A;
+    box-shadow: 0 12px 28px rgba(0, 0, 0, 0.8), 0 0 16px rgba(201, 169, 110, 0.15);
     transform: translateY(-6px);
 
     &::before {
@@ -1211,22 +1240,22 @@ const DiamondShapeCard = styled(Link)`
     }
 
     img {
-      filter: brightness(0) saturate(100%) invert(67%) sepia(35%) saturate(704%) hue-rotate(5deg) brightness(91%) contrast(86%);
+      filter: brightness(0) saturate(100%) invert(75%) sepia(30%) saturate(600%) hue-rotate(5deg);
       transform: scale(1.12);
     }
 
     span {
-      color: #C9A45C;
+      color: #C9A96E;
     }
   }
 
   span {
     font-family: 'Cormorant Garamond', serif;
     font-size: 0.95rem;
-    font-weight: 700;
-    letter-spacing: 0.12em;
+    font-weight: 600;
+    letter-spacing: 0.14em;
     text-transform: uppercase;
-    color: #1F1F1F;
+    color: #F5F1E8;
     text-align: center;
     transition: color 0.3s ease;
   }
@@ -1236,13 +1265,13 @@ const DiamondShapeCard = styled(Link)`
   }
 `;
 
-/* "ONLY AT FLOKSY JEWEL" SECTION */
-const OnlyAtFloksySection = styled.section`
+/* "ONLY AT AETHELCARATS" SECTION */
+const OnlyAtAuraSection = styled.section`
   width: 100%;
   margin: 0;
   padding: 80px 32px 88px;
-  background-color: #FAF9F6;
-  border-bottom: 1px solid #E8E3D9;
+  background-color: #0B0B0B;
+  border-bottom: 1px solid rgba(140, 116, 75, 0.25);
   box-sizing: border-box;
   position: relative;
   overflow: hidden;
@@ -1252,13 +1281,13 @@ const OnlyAtFloksySection = styled.section`
   }
 `;
 
-const OnlyAtFloksyTitle = styled.h2`
+const OnlyAtAuraTitle = styled.h2`
   font-family: 'Cormorant Garamond', serif;
   font-size: 2.4rem;
-  font-weight: 400;
+  font-weight: 500;
   letter-spacing: 0.08em;
   text-transform: uppercase;
-  color: #1F1F1F;
+  color: #F5F1E8;
   margin-bottom: 32px;
   text-align: left;
 
@@ -1267,7 +1296,7 @@ const OnlyAtFloksyTitle = styled.h2`
   }
 `;
 
-const OnlyAtFloksyCarouselWrapper = styled.div`
+const OnlyAtAuraCarouselWrapper = styled.div`
   position: relative;
   width: 100%;
   max-width: 1400px;
@@ -1279,16 +1308,16 @@ const OnlyAtFloksyCarouselWrapper = styled.div`
   }
 `;
 
-const OnlyAtFloksyCard = styled(Link)`
+const OnlyAtAuraCard = styled(Link)`
   display: block;
   position: relative;
   aspect-ratio: 16 / 11;
   overflow: hidden;
-  background-color: #F3EFE6;
-  border: 1px solid #E8E3D9;
+  background-color: #151515;
+  border: 1px solid rgba(140, 116, 75, 0.25);
   border-radius: 4px;
   text-decoration: none;
-  box-shadow: 0 8px 24px rgba(36, 35, 33, 0.04);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.5);
   transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
 
   &::before {
@@ -1298,7 +1327,7 @@ const OnlyAtFloksyCard = styled(Link)`
     left: 0;
     right: 0;
     height: 3px;
-    background: linear-gradient(90deg, #C9A45C 0%, #E6C887 50%, #C9A45C 100%);
+    background: linear-gradient(90deg, #C9A96E 0%, #E6C887 50%, #C9A96E 100%);
     opacity: 0;
     transition: opacity 0.4s ease;
     z-index: 5;
@@ -1314,8 +1343,8 @@ const OnlyAtFloksyCard = styled(Link)`
 
   &:hover {
     transform: translateY(-6px);
-    border-color: #D4AF37;
-    box-shadow: 0 20px 40px rgba(36, 35, 33, 0.1);
+    border-color: #C9A96E;
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.8), 0 0 18px rgba(201, 169, 110, 0.15);
 
     &::before {
       opacity: 1;
@@ -1326,42 +1355,42 @@ const OnlyAtFloksyCard = styled(Link)`
     }
 
     h3 {
-      color: #C9A45C;
+      color: #C9A96E;
     }
   }
 `;
 
-const OnlyAtFloksyCardOverlay = styled.div`
+const OnlyAtAuraCardOverlay = styled.div`
   position: absolute;
   inset: 0;
-  background: linear-gradient(to top, rgba(26, 25, 24, 0.88) 0%, rgba(26, 25, 24, 0.3) 60%, transparent 100%);
+  background: linear-gradient(to top, rgba(11, 11, 11, 0.95) 0%, rgba(11, 11, 11, 0.3) 60%, transparent 100%);
   display: flex;
   flex-direction: column;
   justify-content: flex-end;
   padding: 28px 24px;
-  color: #FFFDF9;
+  color: #F5F1E8;
 `;
 
-const OnlyAtFloksyCardEyebrow = styled.span`
+const OnlyAtAuraCardEyebrow = styled.span`
   font-size: 0.72rem;
   font-weight: 700;
   letter-spacing: 0.18em;
   text-transform: uppercase;
-  color: #C9A45C;
+  color: #C9A96E;
   margin-bottom: 8px;
 `;
 
-const OnlyAtFloksyCardTitle = styled.h3`
+const OnlyAtAuraCardTitle = styled.h3`
   font-family: 'Cormorant Garamond', serif;
   font-size: 1.4rem;
   font-weight: 500;
-  color: #FFFDF9;
+  color: #F5F1E8;
   line-height: 1.25;
   margin: 0;
   transition: color 0.3s ease;
 `;
 
-const OnlyAtFloksyNavArrow = styled.button<{ $direction: 'prev' | 'next' }>`
+const OnlyAtAuraNavArrow = styled.button<{ $direction: 'prev' | 'next' }>`
   position: absolute;
   top: 50%;
   ${({ $direction }) => ($direction === 'prev' ? 'left: -20px;' : 'right: -20px;')}
@@ -1369,21 +1398,21 @@ const OnlyAtFloksyNavArrow = styled.button<{ $direction: 'prev' | 'next' }>`
   width: 44px;
   height: 44px;
   border-radius: 50%;
-  background-color: #FFFFFF;
-  border: 1px solid #D9D3C7;
-  color: #1F1F1F;
+  background-color: #151515;
+  border: 1px solid rgba(140, 116, 75, 0.3);
+  color: #F5F1E8;
   display: flex;
   align-items: center;
   justify-content: center;
-  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.6);
   z-index: 10;
   cursor: pointer;
   transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
 
   &:hover {
-    background-color: #1F1F1F;
-    color: #C9A45C;
-    border-color: #1F1F1F;
+    background-color: #C9A96E;
+    color: #0B0B0B;
+    border-color: #C9A96E;
     transform: translateY(-50%) scale(1.08);
   }
 
@@ -1397,9 +1426,9 @@ const ReviewsSection = styled.section`
   width: 100%;
   margin: 0;
   padding: 80px 32px 88px;
-  background-color: #FAF9F6;
-  border-top: 1px solid #E8E3D9;
-  border-bottom: 1px solid #E8E3D9;
+  background-color: #111111;
+  border-top: 1px solid rgba(140, 116, 75, 0.25);
+  border-bottom: 1px solid rgba(140, 116, 75, 0.25);
   box-sizing: border-box;
   overflow: hidden;
 
@@ -1427,16 +1456,16 @@ const ReviewsEyebrow = styled.span`
   font-weight: 700;
   letter-spacing: 0.18em;
   text-transform: uppercase;
-  color: #C9A45C;
+  color: #C9A96E;
 `;
 
 const ReviewsTitle = styled.h2`
   font-family: 'Cormorant Garamond', serif;
   font-size: 2.4rem;
-  font-weight: 400;
+  font-weight: 500;
   letter-spacing: 0.08em;
   text-transform: uppercase;
-  color: #1F1F1F;
+  color: #F5F1E8;
   margin: 0;
 
   @media (max-width: 768px) {
@@ -1454,22 +1483,22 @@ const ReviewsNavArrow = styled.button`
   width: 44px;
   height: 44px;
   border-radius: 50%;
-  background-color: #FFFFFF;
-  border: 1px solid #D9D3C7;
-  color: #1F1F1F;
+  background-color: #151515;
+  border: 1px solid rgba(140, 116, 75, 0.3);
+  color: #F5F1E8;
   display: flex;
   align-items: center;
   justify-content: center;
   cursor: pointer;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
   transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
 
   &:hover {
-    background-color: #1F1F1F;
-    color: #C9A45C;
-    border-color: #1F1F1F;
+    background-color: #C9A96E;
+    color: #0B0B0B;
+    border-color: #C9A96E;
     transform: translateY(-2px);
-    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.12);
+    box-shadow: 0 8px 20px rgba(201, 169, 110, 0.3);
   }
 `;
 
@@ -1484,8 +1513,8 @@ const ReviewsCarouselWrapper = styled.div`
 `;
 
 const ReviewCardItem = styled.div`
-  background: #FFFFFF;
-  border: 1px solid #E8E3D9;
+  background: #151515;
+  border: 1px solid rgba(140, 116, 75, 0.2);
   border-radius: 4px;
   padding: 32px 28px;
   display: flex;
@@ -1493,7 +1522,7 @@ const ReviewCardItem = styled.div`
   height: 100%;
   min-height: 290px;
   position: relative;
-  box-shadow: 0 8px 24px rgba(36, 35, 33, 0.03);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
   transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
   overflow: hidden;
   box-sizing: border-box;
@@ -1505,15 +1534,15 @@ const ReviewCardItem = styled.div`
     left: 0;
     right: 0;
     height: 3px;
-    background: linear-gradient(90deg, #C9A45C 0%, #E6C887 50%, #C9A45C 100%);
+    background: linear-gradient(90deg, #C9A96E 0%, #E6C887 50%, #C9A96E 100%);
     opacity: 0;
     transition: opacity 0.4s ease;
   }
 
   &:hover {
     transform: translateY(-8px);
-    border-color: #D4AF37;
-    box-shadow: 0 20px 40px rgba(36, 35, 33, 0.08);
+    border-color: #C9A96E;
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.8), 0 0 16px rgba(201, 169, 110, 0.15);
 
     &::before {
       opacity: 1;
@@ -1521,7 +1550,7 @@ const ReviewCardItem = styled.div`
 
     .quote-watermark {
       transform: scale(1.1) rotate(-5deg);
-      color: rgba(201, 164, 92, 0.18);
+      color: rgba(201, 169, 110, 0.25);
     }
   }
 `;
@@ -1533,7 +1562,7 @@ const QuoteWatermark = styled.div`
   font-family: 'Cormorant Garamond', serif;
   font-size: 4rem;
   line-height: 1;
-  color: rgba(201, 164, 92, 0.08);
+  color: rgba(201, 169, 110, 0.1);
   pointer-events: none;
   transition: all 0.4s ease;
   user-select: none;
@@ -1542,7 +1571,7 @@ const QuoteWatermark = styled.div`
 const StarsRow = styled.div`
   display: flex;
   gap: 4px;
-  color: #C9A45C;
+  color: #C9A96E;
   margin-bottom: 16px;
 `;
 
@@ -1550,7 +1579,7 @@ const ReviewCardTitle = styled.h4`
   font-family: 'Cormorant Garamond', serif;
   font-size: 1.15rem;
   font-weight: 600;
-  color: #1F1F1F;
+  color: #F5F1E8;
   margin: 0 0 10px 0;
   line-height: 1.35;
   letter-spacing: 0.02em;
@@ -1562,7 +1591,7 @@ const ReviewCardTitle = styled.h4`
 
 const ReviewText = styled.p`
   font-size: 0.88rem;
-  color: #555555;
+  color: #D8D2C5;
   line-height: 1.65;
   font-weight: 400;
   margin-bottom: 20px;
@@ -1575,7 +1604,7 @@ const ReviewText = styled.p`
 
 const ReviewDivider = styled.div`
   height: 1px;
-  background: linear-gradient(90deg, #F2EDE4 0%, #D9D3C7 50%, #F2EDE4 100%);
+  background: linear-gradient(90deg, transparent 0%, rgba(140, 116, 75, 0.35) 50%, transparent 100%);
   margin-bottom: 16px;
 `;
 
@@ -1597,7 +1626,7 @@ const CustomerName = styled.span`
   font-weight: 700;
   letter-spacing: 0.06em;
   text-transform: uppercase;
-  color: #1F1F1F;
+  color: #F5F1E8;
 `;
 
 const VerifiedBadge = styled.span`
@@ -1608,38 +1637,38 @@ const VerifiedBadge = styled.span`
   font-weight: 700;
   letter-spacing: 0.1em;
   text-transform: uppercase;
-  color: #C9A45C;
+  color: #C9A96E;
 `;
 
 const collectionSlides = [
   {
     id: 'slide-1',
-    leftImage: '/assets/floksy_rings_cat_v2.png',
-    rightImage: '/assets/floksy_solitaire_ring_perfect_v2.png',
+    leftImage: '/assets/aura_rings_cat_v2.png',
+    rightImage: '/assets/gem_solitaire_ring_perfect_v2.png',
     eyebrow: 'THE 2026 ANNIVERSARY COLLECTION',
     title: 'The Signature Solitaire Collection',
     link: '/collections/signature-collection',
   },
   {
     id: 'slide-2',
-    leftImage: '/assets/floksy_necklaces_cat_v2.png',
-    rightImage: '/assets/floksy_high_jewellery_v2.png',
+    leftImage: '/assets/aura_necklaces_cat_v2.png',
+    rightImage: '/assets/aura_high_jewellery_v2.png',
     eyebrow: 'RIVIERE & TENNIS DESIGNS',
     title: 'The Haute Joaillerie Necklaces',
     link: '/necklaces',
   },
   {
     id: 'slide-3',
-    leftImage: '/assets/floksy_earrings_cat_v2.png',
-    rightImage: '/assets/floksy_editorial_banner_v2.png',
+    leftImage: '/assets/aura_earrings_cat_v2.png',
+    rightImage: '/assets/aura_editorial_banner_v2.png',
     eyebrow: 'FINE EARRINGS & CHANDELIERS',
     title: 'The Diamond Chandelier Collection',
     link: '/earrings',
   },
   {
     id: 'slide-4',
-    leftImage: '/assets/floksy_bracelets_editorial_left_v2026.png',
-    rightImage: '/assets/floksy_bracelets_editorial_right_new.png',
+    leftImage: '/assets/aura_bracelets_editorial_left_v2026.png',
+    rightImage: '/assets/gem_bracelets_editorial_right_new.png',
     eyebrow: 'EMERALD CUT TENNIS LINE',
     title: 'Bespoke Diamond Line Bracelets',
     link: '/bracelets',
@@ -1651,13 +1680,13 @@ const DEFAULT_HERO_SLIDES: HeroBanner[] = [
     id: 'hero-slide-1',
     productType: 'Engagement Ring',
     imagePath: '/assets/Engagement Ring.png',
-    mobileImagePath: '/assets/floksy_hero_ring_mobile.png',
-    subtitle: 'THE SIGNATURE COLLECTION 2026',
-    title: "Handcrafted\nElegance &\nExceptional\nDiamonds",
-    description: 'Immerse yourself in world-class craftsmanship, exceptional diamonds, and timeless bespoke creations.',
-    primaryCtaText: 'EXPLORE RINGS',
-    primaryCtaLink: '/rings',
-    secondaryCtaText: 'THE DIAMOND VAULT →',
+    mobileImagePath: '/assets/Engagement Ring Mobile.png',
+    subtitle: 'AETHELCARATS HAUTE JOAILLERIE',
+    title: "TIMELESS BEAUTY.\nETERNAL BRILLIANCE.",
+    description: "Discover jewellery crafted to become part of your story.",
+    primaryCtaText: 'EXPLORE COLLECTION',
+    primaryCtaLink: '/shop',
+    secondaryCtaText: 'DISCOVER DIAMONDS',
     secondaryCtaLink: '/diamonds',
     isActive: true,
     displayOrder: 1,
@@ -1666,14 +1695,14 @@ const DEFAULT_HERO_SLIDES: HeroBanner[] = [
     id: 'hero-slide-2',
     productType: 'Necklace',
     imagePath: '/assets/Necklace.png',
-    mobileImagePath: '/assets/floksy_hero_necklace_mobile.png',
-    subtitle: 'THE ART OF HIGH JEWELRY',
-    title: "Timeless\nDiamonds,\nRefined\nForever",
-    description: 'Discover exquisite diamond necklaces crafted with precision, elegance, and an uncompromising eye for detail.',
-    primaryCtaText: 'EXPLORE NECKLACES',
+    mobileImagePath: '/assets/Necklace Mobile.png',
+    subtitle: 'THE ART OF HIGH DIAMOND CRAFT',
+    title: "EXQUISITE RIVIÈRE &\nSOLITAIRE CREATIONS",
+    description: "Handcrafted masterworks set in 18K gold and platinum with certified precision-cut diamonds.",
+    primaryCtaText: 'EXPLORE COLLECTION',
     primaryCtaLink: '/necklaces',
-    secondaryCtaText: 'VIEW COLLECTION →',
-    secondaryCtaLink: '/collections/signature-collection',
+    secondaryCtaText: 'DISCOVER DIAMONDS',
+    secondaryCtaLink: '/diamonds',
     isActive: true,
     displayOrder: 2,
   },
@@ -1681,13 +1710,13 @@ const DEFAULT_HERO_SLIDES: HeroBanner[] = [
     id: 'hero-slide-3',
     productType: 'Earrings',
     imagePath: '/assets/Earrings.png',
-    mobileImagePath: '/assets/floksy_hero_earrings_mobile.png',
-    subtitle: 'THE SIGNATURE COLLECTION',
-    title: "Brilliance\nDesigned to\nBe Remembered",
-    description: 'Exceptional diamond earrings, thoughtfully crafted to bring understated brilliance to every occasion.',
-    primaryCtaText: 'EXPLORE EARRINGS',
+    mobileImagePath: '/assets/Earrings Mobile.png',
+    subtitle: 'BESPOKE ATELIER SPOTLIGHT',
+    title: "UNDERSTATED BRILLIANCE.\nUNCOMPROMISING LUXURY.",
+    description: "Exceptional diamond earrings designed for radiant brilliance across every milestone.",
+    primaryCtaText: 'EXPLORE COLLECTION',
     primaryCtaLink: '/earrings',
-    secondaryCtaText: 'DISCOVER DIAMONDS →',
+    secondaryCtaText: 'DISCOVER DIAMONDS',
     secondaryCtaLink: '/diamonds',
     isActive: true,
     displayOrder: 3,
@@ -1696,14 +1725,14 @@ const DEFAULT_HERO_SLIDES: HeroBanner[] = [
     id: 'hero-slide-4',
     productType: 'Bracelet',
     imagePath: '/assets/Bracelet.png',
-    mobileImagePath: '/assets/floksy_bracelets_mobile.png',
-    subtitle: 'BESPOKE DIAMOND JEWELRY',
-    title: "Exceptional\nCraftsmanship,\nWorn Forever",
-    description: 'Discover refined diamond bracelets created with precision, timeless design, and exceptional craftsmanship.',
-    primaryCtaText: 'EXPLORE BRACELETS',
+    mobileImagePath: '/assets/Bracelet Mobile.png',
+    subtitle: 'ICONIC FOUR-PRONG TENNIS SUITES',
+    title: "FLAWLESS PROPORTIONS.\nETERNAL ELEGANCE.",
+    description: "Continuous rows of certified diamonds crafted with precision movement and seamless clasp engineering.",
+    primaryCtaText: 'EXPLORE COLLECTION',
     primaryCtaLink: '/bracelets',
-    secondaryCtaText: 'CREATE YOUR OWN →',
-    secondaryCtaLink: '/custom-jewellery',
+    secondaryCtaText: 'DISCOVER DIAMONDS',
+    secondaryCtaLink: '/diamonds',
     isActive: true,
     displayOrder: 4,
   },
@@ -1716,21 +1745,40 @@ const getMobileHeroImagePath = (banner: HeroBanner): string => {
   const m = (banner.mobileImagePath || '').toLowerCase();
 
   if (type.includes('ring') || title.includes('ring') || img.includes('ring') || m.includes('ring')) {
-    return '/assets/floksy_hero_ring_mobile.png';
+    return '/assets/aura_hero_ring_mobile.png';
   }
   if (type.includes('necklace') || title.includes('necklace') || img.includes('necklace') || m.includes('necklace')) {
-    return '/assets/floksy_hero_necklace_mobile.png';
+    return '/assets/aura_hero_necklace_mobile.png';
   }
   if (type.includes('earring') || title.includes('earring') || img.includes('earring') || m.includes('earring')) {
-    return '/assets/floksy_hero_earrings_mobile.png';
+    return '/assets/aura_hero_earrings_mobile.png';
   }
   if (type.includes('bracelet') || title.includes('bracelet') || img.includes('bracelet') || m.includes('bracelet')) {
-    return '/assets/floksy_bracelets_mobile.png';
+    return '/assets/aura_bracelets_mobile.png';
   }
   if (banner.mobileImagePath && banner.mobileImagePath.trim() !== '') {
     return banner.mobileImagePath.trim().replace(/ /g, '%20');
   }
   return (banner.imagePath || '').replace(/ /g, '%20');
+};
+
+const DEFAULT_VALUE_PROPS = [
+  { icon: 'Diamond', title: 'Certified Loose Diamonds', description: 'GIA & IGI authenticated natural and lab-grown stones.' },
+  { icon: 'Sparkles', title: 'Bespoke Atelier CAD', description: 'Custom 3D modeling and hand-setting by master jewelers.' },
+  { icon: 'Truck', title: 'Worldwide Insured Transit', description: 'Complimentary white-glove courier shipping.' },
+  { icon: 'ShieldCheck', title: 'Lifetime Warranty', description: 'Guaranteed metal purity and complimentary maintenance.' },
+];
+
+const renderValuePropIcon = (iconName?: string) => {
+  const norm = (iconName || '').toLowerCase();
+  if (norm.includes('sparkle')) return <Sparkles size={32} color="#C9A45C" />;
+  if (norm.includes('truck') || norm.includes('ship')) return <Truck size={32} color="#C9A45C" />;
+  if (norm.includes('shield') || norm.includes('warrant')) return <ShieldCheck size={32} color="#C9A45C" />;
+  if (norm.includes('star')) return <Star size={32} color="#C9A45C" />;
+  if (norm.includes('award')) return <Award size={32} color="#C9A45C" />;
+  if (norm.includes('heart')) return <Heart size={32} color="#C9A45C" />;
+  if (norm.includes('gem')) return <Gem size={32} color="#C9A45C" />;
+  return <DiamondIcon size={32} color="#C9A45C" />;
 };
 
 export const HomePage: React.FC = () => {
@@ -1773,21 +1821,28 @@ export const HomePage: React.FC = () => {
     api.getSiteSettings('homepage_config').then((data) => {
       if (data && data.homepage_config) {
         try {
-          setCmsConfig(JSON.parse(data.homepage_config));
-        } catch (e) {}
+          const parsed = typeof data.homepage_config === 'string' ? JSON.parse(data.homepage_config) : data.homepage_config;
+          setCmsConfig(parsed);
+        } catch (e) {
+          console.error('Failed to parse homepage_config:', e);
+        }
       }
     }).catch(console.error);
   }, []);
 
+  const activeLookbookSlides = cmsConfig?.collectionSlides && cmsConfig.collectionSlides.length > 0
+    ? cmsConfig.collectionSlides
+    : collectionSlides;
+
   const handlePrevSlide = () => {
-    setActiveSlideIndex((prev) => (prev === 0 ? collectionSlides.length - 1 : prev - 1));
+    setActiveSlideIndex((prev) => (prev === 0 ? activeLookbookSlides.length - 1 : prev - 1));
   };
 
   const handleNextSlide = () => {
-    setActiveSlideIndex((prev) => (prev === collectionSlides.length - 1 ? 0 : prev + 1));
+    setActiveSlideIndex((prev) => (prev === activeLookbookSlides.length - 1 ? 0 : prev + 1));
   };
 
-  const currentSlide = collectionSlides[activeSlideIndex];
+  const currentSlide = activeLookbookSlides[activeSlideIndex % activeLookbookSlides.length] || activeLookbookSlides[0];
 
   // Touch & Mouse Swipe Gesture state for Collection Slider
   const touchStartRef = useRef<{ x: number; y: number } | null>(null);
@@ -1856,10 +1911,8 @@ export const HomePage: React.FC = () => {
 
   const prevRef = useRef<HTMLButtonElement>(null);
   const nextRef = useRef<HTMLButtonElement>(null);
-
   const onlyAtPrevRef = useRef<HTMLButtonElement>(null);
   const onlyAtNextRef = useRef<HTMLButtonElement>(null);
-
   const reviewsPrevRef = useRef<HTMLButtonElement>(null);
   const reviewsNextRef = useRef<HTMLButtonElement>(null);
 
@@ -1869,38 +1922,9 @@ export const HomePage: React.FC = () => {
     }).catch(console.error);
   }, []);
 
-  const heroSection = sections.find((s) => s.blockType === 'HERO');
-  let heroContent: any = {
-    enableHero: true,
-    desktopImage: '/assets/floksy-hero-luxury.webp',
-    eyebrow: 'THE SIGNATURE COLLECTION 2026',
-    heading: 'Handcrafted Elegance & Exceptional Diamonds',
-    description: 'Immerse yourself in world-class craftsmanship, ethically sourced diamonds, and timeless bespoke creations.',
-    button1Text: 'EXPLORE RINGS',
-    button1Link: '/rings',
-    button2Text: 'THE DIAMOND VAULT',
-    button2Link: '/diamonds',
-    showButton1: true,
-    showButton2: true,
-  };
-
-  if (heroSection && heroSection.isVisible !== false) {
-    try {
-      const parsed = typeof heroSection.content === 'string' ? JSON.parse(heroSection.content) : heroSection.content;
-      heroContent = {
-        ...heroContent,
-        ...parsed,
-      };
-    } catch (e) {
-      console.error('Error parsing hero content:', e);
-    }
-  }
-
-  // Force the new custom ultra-luxury cinematic hero banner image
-  heroContent.desktopImage = '/assets/floksy-hero-banner.jpg';
-
+  // Section 4: Campaign Banner Content
   const campaignBannerSection = sections.find((s) => s.blockType === 'CAMPAIGN_BANNER');
-  let campaignBannerContent: any = {
+  let campaignBannerContent: any = cmsConfig?.campaignBannerConfig || {
     enableBanner: true,
     desktopImage: '/assets/GOLD-MARQUISE-DIAMOND-JEWELRY-SET.webp',
     heading: 'A NEW EXPRESSION OF FINE JEWELLERY',
@@ -1912,21 +1936,20 @@ export const HomePage: React.FC = () => {
     overlayOpacity: 0.45,
   };
 
-  if (campaignBannerSection && campaignBannerSection.isVisible !== false) {
+  if (campaignBannerSection && campaignBannerSection.isVisible !== false && !cmsConfig?.campaignBannerConfig) {
     try {
       const parsed = typeof campaignBannerSection.content === 'string' ? JSON.parse(campaignBannerSection.content) : campaignBannerSection.content;
       campaignBannerContent = { ...campaignBannerContent, ...parsed };
-    } catch (e) {
-      console.error('Error parsing campaign banner content:', e);
-    }
+    } catch (e) {}
   }
 
+  // Section 8: Diamond Shapes Section Content
   const diamondShapesSection = sections.find((s) => s.blockType === 'DIAMOND_SHAPES' || s.blockType === 'DIAMOND_GRID');
-  let diamondShapesContent: any = {
+  let diamondShapesContent: any = cmsConfig?.diamondShapesConfig || {
     eyebrow: 'AUTHENTICATED LOOSE DIAMONDS',
     heading: 'Discover Exceptional Diamond Shapes',
     description: 'Select your ideal cut from certified GIA & IGI diamonds, ethically sourced and precision-cut for maximum fire and brilliance.',
-    leftImage: '/assets/floksy_diamonds_cat.png',
+    leftImage: '/assets/gem_diamonds_cat.png',
     shapes: [
       { name: 'ROUND', shape: 'round', url: '/diamonds?shape=round', svg: '/assets/diamonds/Round.svg', enabled: true },
       { name: 'OVAL', shape: 'oval', url: '/diamonds?shape=oval', svg: '/assets/diamonds/Oval.svg', enabled: true },
@@ -1939,7 +1962,7 @@ export const HomePage: React.FC = () => {
     ],
   };
 
-  if (diamondShapesSection && diamondShapesSection.isVisible !== false) {
+  if (diamondShapesSection && diamondShapesSection.isVisible !== false && !cmsConfig?.diamondShapesConfig) {
     try {
       const parsed = typeof diamondShapesSection.content === 'string' ? JSON.parse(diamondShapesSection.content) : diamondShapesSection.content;
       diamondShapesContent = {
@@ -1947,87 +1970,105 @@ export const HomePage: React.FC = () => {
         ...parsed,
         shapes: parsed.shapes && parsed.shapes.length > 0 ? parsed.shapes : diamondShapesContent.shapes,
       };
-    } catch (e) {
-      console.error('Error parsing diamond shapes content:', e);
-    }
+    } catch (e) {}
   }
 
-  // 6 Core Category Cards mapping for IMAGE-ONLY Luxury Carousel
-  const collectionCategories = [
-    { title: 'RINGS', url: '/rings', image: '/assets/floksy_rings_cat.png' },
-    { title: 'EARRINGS', url: '/earrings', image: '/assets/floksy_earrings_cat.png' },
-    { title: 'NECKLACES', url: '/necklaces', image: '/assets/floksy_necklaces_cat.png' },
-    { title: 'BRACELETS', url: '/bracelets', image: '/assets/floksy_bracelets_cat.png' },
-    { title: 'PENDANTS', url: '/pendants', image: '/assets/floksy_pendants_cat.png' },
-    { title: 'DIAMONDS', url: '/diamonds', image: '/assets/floksy_diamonds_cat.png' },
-  ];
+  // Section 3: Categories
+  const activeCategories = cmsConfig?.categoriesConfig?.items && cmsConfig.categoriesConfig.items.length > 0
+    ? cmsConfig.categoriesConfig.items
+    : [
+        { title: 'RINGS', url: '/rings', image: '/assets/gem_rings_cat.png' },
+        { title: 'EARRINGS', url: '/earrings', image: '/assets/gem_earrings_cat.png' },
+        { title: 'NECKLACES', url: '/necklaces', image: '/assets/gem_necklaces_cat.png' },
+        { title: 'BRACELETS', url: '/bracelets', image: '/assets/gem_bracelets_cat.png' },
+        { title: 'PENDANTS', url: '/pendants', image: '/assets/aura_pendants_cat.png' },
+        { title: 'DIAMONDS', url: '/diamonds', image: '/assets/gem_diamonds_cat.png' },
+      ];
 
-  // Right Side Manual Slideshow Images
-  const rightSlideshowImages = [
-    '/assets/floksy_rings_cat.png',
-    '/assets/floksy_necklaces_cat.png',
-    '/assets/floksy_earrings_cat.png',
-    '/assets/floksy_bracelets_cat.png',
-  ];
-
-  // 8 Diamond Shapes
-  const diamondShapes = [
-    { name: 'ROUND', shape: 'round', url: '/diamonds?shape=round' },
-    { name: 'OVAL', shape: 'oval', url: '/diamonds?shape=oval' },
-    { name: 'EMERALD', shape: 'emerald', url: '/diamonds?shape=emerald' },
-    { name: 'PRINCESS', shape: 'princess', url: '/diamonds?shape=princess' },
-    { name: 'CUSHION', shape: 'cushion', url: '/diamonds?shape=cushion' },
-    { name: 'PEAR', shape: 'pear', url: '/diamonds?shape=pear' },
-    { name: 'RADIANT', shape: 'radiant', url: '/diamonds?shape=radiant' },
-    { name: 'MARQUISE', shape: 'marquise', url: '/diamonds?shape=marquise' },
-  ];
-
-  // ONLY AT FLOKSY JEWEL Carousel Cards Data
-  const onlyAtFloksyCards = [
+  // Section 5: Two-Panel Featured Cards
+  const activeFeaturedCards = cmsConfig?.featuredCards || [
     {
-      id: 'only-1',
-      eyebrow: 'MASTER ATELIER CRAFTSMANSHIP',
-      title: 'Hand-finished custom CAD & precision diamond setting',
-      image: '/assets/floksy_only_at_1.png',
-      url: '/custom-jewellery',
+      title: 'RIVIÈRE NECKLACES',
+      subtitle: 'Solitaire & Tennis Necklaces',
+      imageUrl: '/assets/gem_necklaces_cat.png',
+      targetUrl: '/necklaces',
+      buttonText: 'SHOP NOW →',
     },
     {
-      id: 'only-2',
-      eyebrow: 'PRIVATE CONCIERGE CONSULTATION',
-      title: 'Bespoke 1-on-1 atelier guidance & CAD preview',
-      image: '/assets/floksy_only_at_2.png',
-      url: '/custom-jewellery',
-    },
-    {
-      id: 'only-3',
-      eyebrow: 'AUTHENTICATED CERTIFIED VAULT',
-      title: '100% GIA & IGI verified natural & lab-grown stones',
-      image: '/assets/floksy_only_at_3.png',
-      url: '/diamonds',
-    },
-    {
-      id: 'only-4',
-      eyebrow: 'SIGNATURE HERITAGE COLLECTIONS',
-      title: 'Timeless solitaire & riviere high jewellery pieces',
-      image: '/assets/floksy_only_at_4.png',
-      url: '/collections/signature-collection',
+      title: 'HIGH JEWELLERY BRACELETS',
+      subtitle: 'Emerald Cut Tennis Bracelets',
+      imageUrl: '/assets/gem_bracelets_cat.png',
+      targetUrl: '/bracelets',
+      buttonText: 'SHOP NOW →',
     },
   ];
 
-  // REVIEWS Carousel Data
-  const customerReviews = [
-    { id: 'rev-1', text: 'Amazing selection at incredible prices!', author: 'Ryan K.' },
-    { id: 'rev-2', text: 'Our wedding bands are perfect. Simple. High quality. Easy. Comfortable.', author: 'Melissa S.' },
-    { id: 'rev-3', text: 'Beautiful and great price', author: 'Carolyn M.' },
-    { id: 'rev-4', text: 'Exactly as depicted. Beautiful ring, Excellent service.', author: 'Scott C.' },
-    { id: 'rev-5', text: 'The custom CAD process was effortless. Exceptional craftsmanship!', author: 'David H.' },
-    { id: 'rev-6', text: 'Superb diamond quality and fast insured delivery.', author: 'Elena P.' },
-  ];
+  // Section 7: Essentials Dual Promo
+  const activeEssentials = cmsConfig?.essentialsConfig || {
+    leftTitle: 'DIAMOND ESSENTIALS',
+    leftImageUrl: '/assets/gem_diamonds_cat.png',
+    leftTargetUrl: '/diamonds',
+    leftButtonText: 'DIAMOND ESSENTIALS',
+    rightTitle: 'GOLDEN HOUR IS HERE',
+    rightImageUrl: '/assets/gem_earrings_cat.png',
+    rightTargetUrl: '/collections/signature-collection',
+    rightButtonText: 'SHOP THE EVENT',
+  };
+
+  // Section 9: Only At Atelier Cards
+  const activeAuraCards = cmsConfig?.auraCards && cmsConfig.auraCards.length > 0
+    ? cmsConfig.auraCards
+    : [
+        {
+          id: 'only-1',
+          eyebrow: 'MASTER ATELIER CRAFTSMANSHIP',
+          title: 'Hand-finished custom CAD & precision diamond setting',
+          image: '/assets/aura_only_at_1.png',
+          url: '/custom-jewellery',
+        },
+        {
+          id: 'only-2',
+          eyebrow: 'PRIVATE CONCIERGE CONSULTATION',
+          title: 'Bespoke 1-on-1 atelier guidance & CAD preview',
+          image: '/assets/aura_only_at_2.png',
+          url: '/custom-jewellery',
+        },
+        {
+          id: 'only-3',
+          eyebrow: 'AUTHENTICATED CERTIFIED VAULT',
+          title: '100% GIA & IGI verified natural & lab-grown stones',
+          image: '/assets/aura_only_at_3.png',
+          url: '/diamonds',
+        },
+        {
+          id: 'only-4',
+          eyebrow: 'SIGNATURE HERITAGE COLLECTIONS',
+          title: 'Timeless solitaire & riviere high jewellery pieces',
+          image: '/assets/aura_only_at_4.png',
+          url: '/collections/signature-collection',
+        },
+      ];
+
+  // Section 10: Reviews
+  const activeReviews = cmsConfig?.customReviews && cmsConfig.customReviews.length > 0
+    ? cmsConfig.customReviews
+    : (dbReviews.length > 0
+      ? dbReviews
+      : [
+          { id: 'rev-1', text: 'Amazing selection at incredible prices!', author: 'Ryan K.', rating: 5 },
+          { id: 'rev-2', text: 'Our wedding bands are perfect. Simple. High quality. Easy. Comfortable.', author: 'Melissa S.', rating: 5 },
+          { id: 'rev-3', text: 'Beautiful and great price', author: 'Carolyn M.', rating: 5 },
+          { id: 'rev-4', text: 'Exactly as depicted. Beautiful ring, Excellent service.', author: 'Scott C.', rating: 5 },
+          { id: 'rev-5', text: 'The custom CAD process was effortless. Exceptional craftsmanship!', author: 'David H.', rating: 5 },
+          { id: 'rev-6', text: 'Superb diamond quality and fast insured delivery.', author: 'Elena P.', rating: 5 },
+        ]);
+
+  const activeValueProps = cmsConfig?.valuePropsConfig || DEFAULT_VALUE_PROPS;
 
   return (
     <>
       {/* 1. DYNAMIC DATABASE-DRIVEN HERO SLIDER / BANNER SYSTEM */}
-      {(() => {
+      {cmsConfig?.sectionVisibility?.hero !== false && (() => {
         const activeHeroSlides = heroBanners && heroBanners.length > 0 ? heroBanners : DEFAULT_HERO_SLIDES;
         return (
           <div style={{ width: '100%', position: 'relative', overflow: 'hidden' }}>
@@ -2047,24 +2088,43 @@ export const HomePage: React.FC = () => {
                     <HeroImageColumn>
                       <picture style={{ width: '100%', height: '100%', display: 'block' }}>
                         <source media="(max-width: 768px)" srcSet={encodeURI(getMobileHeroImagePath(banner))} />
-                        <img src={banner.imagePath} alt={banner.title || 'Floksy Jewel High Jewelry'} />
+                        <img src={banner.imagePath} alt={banner.title || 'AethelCarats High Jewellery'} />
                       </picture>
                     </HeroImageColumn>
 
                     <HeroOverlay>
                       <HeroTextColumn>
-                        {banner.subtitle && <Eyebrow>{banner.subtitle}</Eyebrow>}
-                        {banner.title && <HeroTitle>{banner.title}</HeroTitle>}
-                        {banner.description && <HeroSubtitle>{banner.description}</HeroSubtitle>}
+                        {banner.subtitle && (
+                          <Eyebrow style={{ color: (banner as any).subtitleColor || cmsConfig?.heroColors?.subtitleColor || undefined }}>
+                            {banner.subtitle}
+                          </Eyebrow>
+                        )}
+                        {banner.title && (
+                          <HeroTitle style={{ color: (banner as any).titleColor || cmsConfig?.heroColors?.titleColor || undefined }}>
+                            {banner.title}
+                          </HeroTitle>
+                        )}
+                        {banner.description && (
+                          <HeroSubtitle style={{ color: (banner as any).descriptionColor || cmsConfig?.heroColors?.descriptionColor || undefined }}>
+                            {banner.description}
+                          </HeroSubtitle>
+                        )}
                         {(banner.primaryCtaText || banner.secondaryCtaText) && (
                           <ButtonGroup>
                             {banner.primaryCtaText && (
-                              <LuxuryButton to={banner.primaryCtaLink || '/rings'}>
+                              <LuxuryButton
+                                to={banner.primaryCtaLink || '/rings'}
+                                style={{ color: (banner as any).primaryCtaTextColor || cmsConfig?.heroColors?.primaryCtaTextColor || undefined }}
+                              >
                                 {banner.primaryCtaText}
                               </LuxuryButton>
                             )}
                             {banner.secondaryCtaText && (
-                              <LuxuryButton to={banner.secondaryCtaLink || '/diamonds'} $variant="outline">
+                              <LuxuryButton
+                                to={banner.secondaryCtaLink || '/diamonds'}
+                                $variant="outline"
+                                style={{ color: (banner as any).secondaryCtaTextColor || cmsConfig?.heroColors?.secondaryCtaTextColor || undefined }}
+                              >
                                 {banner.secondaryCtaText}
                               </LuxuryButton>
                             )}
@@ -2091,151 +2151,92 @@ export const HomePage: React.FC = () => {
         );
       })()}
 
-      {/* 2. CERTIFIED LOOSE DIAMONDS 4-COLUMN TRUST / VALUE PROPOSITION SECTION */}
-      <RevealContainer yOffset={35} duration={0.9}>
-        <ValuePropsRow>
-          {/* DESKTOP & TABLET GRID VIEW */}
-          <ValuePropsGrid>
-            <RevealContainer delay={0.0} yOffset={25} style={{ height: '100%' }}>
-              <ValuePropCard>
-                <DiamondIcon size={32} color="#C9A45C" />
-                <h4>Certified Loose Diamonds</h4>
-                <p>GIA & IGI authenticated natural and lab-grown stones.</p>
-              </ValuePropCard>
-            </RevealContainer>
-            <RevealContainer delay={0.1} yOffset={25} style={{ height: '100%' }}>
-              <ValuePropCard>
-                <Sparkles size={32} color="#C9A45C" />
-                <h4>Bespoke Atelier CAD</h4>
-                <p>Custom 3D modeling and hand-setting by master jewelers.</p>
-              </ValuePropCard>
-            </RevealContainer>
-            <RevealContainer delay={0.2} yOffset={25} style={{ height: '100%' }}>
-              <ValuePropCard>
-                <Truck size={32} color="#C9A45C" />
-                <h4>Worldwide Insured Transit</h4>
-                <p>Complimentary white-glove courier shipping.</p>
-              </ValuePropCard>
-            </RevealContainer>
-            <RevealContainer delay={0.3} yOffset={25} style={{ height: '100%' }}>
-              <ValuePropCard>
-                <ShieldCheck size={32} color="#C9A45C" />
-                <h4>Lifetime Warranty</h4>
-                <p>Guaranteed metal purity and complimentary maintenance.</p>
-              </ValuePropCard>
-            </RevealContainer>
-          </ValuePropsGrid>
-
-          {/* MOBILE HAND-GESTURE SLIDER VIEW */}
-          <ValuePropsMobileSliderWrapper>
-            <Swiper
-              modules={[Pagination, Autoplay]}
-              spaceBetween={14}
-              slidesPerView={1.15}
-              centeredSlides={true}
-              loop={false}
-              grabCursor={true}
-              autoplay={{ delay: 3500, disableOnInteraction: false }}
-              pagination={{ clickable: true }}
-            >
-              <SwiperSlide>
-                <ValuePropCardMobile>
-                  <DiamondIcon size={34} color="#C9A45C" />
-                  <h4>Certified Loose Diamonds</h4>
-                  <p>GIA & IGI authenticated natural and lab-grown stones.</p>
-                </ValuePropCardMobile>
-              </SwiperSlide>
-              <SwiperSlide>
-                <ValuePropCardMobile>
-                  <Sparkles size={34} color="#C9A45C" />
-                  <h4>Bespoke Atelier CAD</h4>
-                  <p>Custom 3D modeling and hand-setting by master jewelers.</p>
-                </ValuePropCardMobile>
-              </SwiperSlide>
-              <SwiperSlide>
-                <ValuePropCardMobile>
-                  <Truck size={34} color="#C9A45C" />
-                  <h4>Worldwide Insured Transit</h4>
-                  <p>Complimentary white-glove courier shipping.</p>
-                </ValuePropCardMobile>
-              </SwiperSlide>
-              <SwiperSlide>
-                <ValuePropCardMobile>
-                  <ShieldCheck size={34} color="#C9A45C" />
-                  <h4>Lifetime Warranty</h4>
-                  <p>Guaranteed metal purity and complimentary maintenance.</p>
-                </ValuePropCardMobile>
-              </SwiperSlide>
-            </Swiper>
-          </ValuePropsMobileSliderWrapper>
-        </ValuePropsRow>
-      </RevealContainer>
+      {/* 2. VALUE PROPOSITIONS (TRUST BAR) */}
+      {cmsConfig?.sectionVisibility?.valueProps !== false && (
+        <div style={{ maxWidth: 1380, margin: '0 auto', padding: '36px 20px', borderBottom: '1px solid rgba(201,164,92,0.15)' }}>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: 24, textAlign: 'center' }}>
+            {activeValueProps.map((item: any, idx: number) => (
+              <div key={idx} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 10 }}>
+                {renderValuePropIcon(item.icon)}
+                <h4 style={{ margin: 0, fontSize: '1rem', fontFamily: "'Cormorant Garamond', serif", letterSpacing: '0.05em', color: item.titleColor || '#F5F1E8' }}>
+                  {item.title}
+                </h4>
+                <p style={{ margin: 0, fontSize: '0.82rem', color: item.descriptionColor || 'rgba(245,241,232,0.7)', lineHeight: 1.4, maxWidth: 260 }}>
+                  {item.description}
+                </p>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
 
       {/* 3. LUXURY CATEGORY CAROUSEL */}
-      <ExploreWrapper>
-        <RevealContainer yOffset={25} duration={0.8}>
-          <div style={{ textAlign: 'center', marginBottom: 32 }}>
-            <span style={{ fontSize: '0.75rem', fontWeight: 700, letterSpacing: '0.22em', textTransform: 'uppercase', color: '#C9A45C', display: 'block', marginBottom: 8 }}>
-              THE COLLECTION MAISON
-            </span>
-            <h2 style={{ fontFamily: "'Cormorant Garamond', serif", fontSize: '2.5rem', fontWeight: 400, letterSpacing: '0.06em', textTransform: 'uppercase', color: '#1F1F1F', margin: 0 }}>
-              Shop By Category
-            </h2>
-          </div>
-        </RevealContainer>
+      {cmsConfig?.sectionVisibility?.categories !== false && (
+        <ExploreWrapper>
+          <RevealContainer yOffset={25} duration={0.8}>
+            <div style={{ textAlign: 'center', marginBottom: 32 }}>
+              <span style={{ fontSize: '0.75rem', fontWeight: 700, letterSpacing: '0.22em', textTransform: 'uppercase', color: cmsConfig?.categoriesConfig?.eyebrowColor || '#C9A96E', display: 'block', marginBottom: 8 }}>
+                {cmsConfig?.categoriesConfig?.eyebrow || 'THE COLLECTION MAISON'}
+              </span>
+              <h2 style={{ fontFamily: "'Cormorant Garamond', serif", fontSize: '2.5rem', fontWeight: 400, letterSpacing: '0.06em', textTransform: 'uppercase', color: cmsConfig?.categoriesConfig?.titleColor || '#F5F1E8', margin: 0 }}>
+                {cmsConfig?.categoriesConfig?.title || 'Shop By Category'}
+              </h2>
+            </div>
+          </RevealContainer>
 
-        <CarouselContainer>
-          <NavArrow ref={prevRef} $direction="prev" aria-label="Previous categories">
-            <ChevronLeft size={20} />
-          </NavArrow>
-          <NavArrow ref={nextRef} $direction="next" aria-label="Next categories">
-            <ChevronRight size={20} />
-          </NavArrow>
+          <CarouselContainer>
+            <NavArrow ref={prevRef} $direction="prev" aria-label="Previous categories">
+              <ChevronLeft size={20} />
+            </NavArrow>
+            <NavArrow ref={nextRef} $direction="next" aria-label="Next categories">
+              <ChevronRight size={20} />
+            </NavArrow>
 
-          <Swiper
-            modules={[Navigation]}
-            spaceBetween={20}
-            slidesPerView={1.5}
-            onBeforeInit={(swiper) => {
-              if (swiper.params.navigation && typeof swiper.params.navigation !== 'boolean') {
-                swiper.params.navigation.prevEl = prevRef.current;
-                swiper.params.navigation.nextEl = nextRef.current;
-              }
-            }}
-            breakpoints={{
-              576: { slidesPerView: 2.2, spaceBetween: 20 },
-              768: { slidesPerView: 2.8, spaceBetween: 24 },
-              1024: { slidesPerView: 3.8, spaceBetween: 24 },
-              1280: { slidesPerView: 4, spaceBetween: 24 },
-            }}
-          >
-            {collectionCategories.map((cat, idx) => (
-              <SwiperSlide key={idx}>
-                <RevealContainer delay={(idx % 6) * 0.09} yOffset={35} scaleInitial={0.98}>
-                  <CategoryCard to={cat.url}>
-                    <SafeImage src={cat.image} alt={cat.title} loading="lazy" />
-                    <CardOverlay>
-                      <CategoryTitle>{cat.title}</CategoryTitle>
-                    </CardOverlay>
-                  </CategoryCard>
-                </RevealContainer>
-              </SwiperSlide>
-            ))}
-          </Swiper>
-        </CarouselContainer>
-      </ExploreWrapper>
+            <Swiper
+              modules={[Navigation]}
+              spaceBetween={20}
+              slidesPerView={1.5}
+              onBeforeInit={(swiper) => {
+                if (swiper.params.navigation && typeof swiper.params.navigation !== 'boolean') {
+                  swiper.params.navigation.prevEl = prevRef.current;
+                  swiper.params.navigation.nextEl = nextRef.current;
+                }
+              }}
+              breakpoints={{
+                576: { slidesPerView: 2.2, spaceBetween: 20 },
+                768: { slidesPerView: 2.8, spaceBetween: 24 },
+                1024: { slidesPerView: 3.8, spaceBetween: 24 },
+                1280: { slidesPerView: 4, spaceBetween: 24 },
+              }}
+            >
+              {activeCategories.map((cat: any, idx: number) => (
+                <SwiperSlide key={idx}>
+                  <RevealContainer delay={(idx % 6) * 0.09} yOffset={35} scaleInitial={0.98}>
+                    <CategoryCard to={cat.url}>
+                      <SafeImage src={cat.image} alt={cat.title} loading="lazy" />
+                      <CardOverlay>
+                        <CategoryTitle style={{ color: cat.titleColor || undefined }}>{cat.title}</CategoryTitle>
+                      </CardOverlay>
+                    </CategoryCard>
+                  </RevealContainer>
+                </SwiperSlide>
+              ))}
+            </Swiper>
+          </CarouselContainer>
+        </ExploreWrapper>
+      )}
 
-      {/* 4. EDITORIAL HERO BANNER */}
-      {campaignBannerContent && campaignBannerContent.enableBanner !== false && (
+      {/* 4. EDITORIAL CAMPAIGN BANNER */}
+      {cmsConfig?.sectionVisibility?.campaignBanner !== false && campaignBannerContent && campaignBannerContent.enableBanner !== false && (
         <RevealContainer yOffset={35} duration={0.95} scaleInitial={0.99}>
           <EditorialBannerSection>
             <EditorialBannerContainer
-              $bgImage={campaignBannerContent.desktopImage || '/assets/floksy_editorial_banner_v3.png'}
+              $bgImage={campaignBannerContent.desktopImage || '/assets/aura_editorial_banner_v3.png'}
               $tabletImage={campaignBannerContent.tabletImage}
               $mobileImage={campaignBannerContent.mobileImage}
               $objectPosition={campaignBannerContent.objectPosition || 'center 35%'}
               $showOverlay={campaignBannerContent.showOverlay !== false}
-              $overlayOpacity={campaignBannerContent.overlayOpacity}
+              $overlayOpacity={campaignBannerContent.overlayOpacity ?? 0.45}
               $bannerHeightDesktop={campaignBannerContent.bannerHeightDesktop}
               $bannerHeightTablet={campaignBannerContent.bannerHeightTablet}
               $bannerHeightMobile={campaignBannerContent.bannerHeightMobile}
@@ -2244,14 +2245,14 @@ export const HomePage: React.FC = () => {
               <EditorialBannerContent $textColor={campaignBannerContent.textColor || '#1F1F1F'}>
                 {campaignBannerContent.heading && (
                   <RevealContainer delay={0.0} yOffset={20}>
-                    <EditorialBannerTitle $textColor={campaignBannerContent.textColor || '#1F1F1F'}>
+                    <EditorialBannerTitle $textColor={campaignBannerContent.headingTextColor || campaignBannerContent.textColor || '#1F1F1F'}>
                       {campaignBannerContent.heading}
                     </EditorialBannerTitle>
                   </RevealContainer>
                 )}
                 {(campaignBannerContent.description || campaignBannerContent.subtitle) && (
                   <RevealContainer delay={0.12} yOffset={20}>
-                    <EditorialBannerDesc $textColor={campaignBannerContent.textColor || '#444444'}>
+                    <EditorialBannerDesc $textColor={campaignBannerContent.descTextColor || campaignBannerContent.textColor || '#444444'}>
                       {campaignBannerContent.description || campaignBannerContent.subtitle}
                     </EditorialBannerDesc>
                   </RevealContainer>
@@ -2274,307 +2275,345 @@ export const HomePage: React.FC = () => {
       )}
 
       {/* 5. STATIC TWO-PANEL EDITORIAL SECTION */}
-      <RevealContainer yOffset={35} duration={0.9}>
-        <StaticEditorialSection>
-          <StaticEditorialContainer>
-            <RevealContainer delay={0.0} yOffset={25} scaleInitial={0.985} style={{ height: '100%' }}>
-              <StaticEditorialPanel to="/necklaces">
-                <SafeImage src="/assets/floksy_necklaces_cat.png" alt="Riviere Necklaces" />
-                <StaticEditorialPanelOverlay>
-                  <span style={{ fontSize: '11.5px', fontWeight: 600, letterSpacing: '0.22em', textTransform: 'uppercase', color: '#C9A45C', marginBottom: 8 }}>RIVIERE NECKLACES</span>
-                  <h3 style={{ fontFamily: "'Cormorant Garamond', serif", fontSize: '2.2rem', fontWeight: 400, color: '#FFFDF9', marginBottom: 14 }}>Solitaire & Tennis Necklaces</h3>
-                  <span style={{ fontSize: '12.5px', fontWeight: 600, letterSpacing: '0.16em', textTransform: 'uppercase', color: '#FFFDF9' }}>SHOP NOW &rarr;</span>
-                </StaticEditorialPanelOverlay>
-              </StaticEditorialPanel>
-            </RevealContainer>
+      {cmsConfig?.sectionVisibility?.featured !== false && (
+        <RevealContainer yOffset={35} duration={0.9}>
+          <StaticEditorialSection>
+            <StaticEditorialContainer>
+              <RevealContainer delay={0.0} yOffset={25} scaleInitial={0.985} style={{ height: '100%' }}>
+                <StaticEditorialPanel to={activeFeaturedCards[0]?.targetUrl || '/necklaces'}>
+                  <SafeImage src={activeFeaturedCards[0]?.imageUrl || '/assets/gem_necklaces_cat.png'} alt={activeFeaturedCards[0]?.title || 'Riviere Necklaces'} />
+                  <StaticEditorialPanelOverlay>
+                    <span style={{ fontSize: '11.5px', fontWeight: 600, letterSpacing: '0.22em', textTransform: 'uppercase', color: activeFeaturedCards[0]?.titleColor || '#C9A96E', marginBottom: 8 }}>
+                      {activeFeaturedCards[0]?.title || 'RIVIERE NECKLACES'}
+                    </span>
+                    <h3 style={{ fontFamily: "'Cormorant Garamond', serif", fontSize: '2.2rem', fontWeight: 400, color: activeFeaturedCards[0]?.subtitleColor || '#FFFDF9', marginBottom: 14 }}>
+                      {activeFeaturedCards[0]?.subtitle || 'Solitaire & Tennis Necklaces'}
+                    </h3>
+                    <span style={{ fontSize: '12.5px', fontWeight: 600, letterSpacing: '0.16em', textTransform: 'uppercase', color: activeFeaturedCards[0]?.buttonColor || '#FFFDF9' }}>
+                      {activeFeaturedCards[0]?.buttonText || 'SHOP NOW →'}
+                    </span>
+                  </StaticEditorialPanelOverlay>
+                </StaticEditorialPanel>
+              </RevealContainer>
 
-            <RevealContainer delay={0.15} yOffset={25} scaleInitial={0.985} style={{ height: '100%' }}>
-              <StaticEditorialPanel to="/bracelets">
-                <SafeImage src="/assets/floksy_bracelets_cat.png" alt="High Jewellery Bracelets" />
-                <StaticEditorialPanelOverlay>
-                  <span style={{ fontSize: '11.5px', fontWeight: 600, letterSpacing: '0.22em', textTransform: 'uppercase', color: '#C9A45C', marginBottom: 8 }}>HIGH JEWELLERY BRACELETS</span>
-                  <h3 style={{ fontFamily: "'Cormorant Garamond', serif", fontSize: '2.2rem', fontWeight: 400, color: '#FFFDF9', marginBottom: 14 }}>Emerald Cut Tennis Bracelets</h3>
-                  <span style={{ fontSize: '12.5px', fontWeight: 600, letterSpacing: '0.16em', textTransform: 'uppercase', color: '#FFFDF9' }}>SHOP NOW &rarr;</span>
-                </StaticEditorialPanelOverlay>
-              </StaticEditorialPanel>
-            </RevealContainer>
-          </StaticEditorialContainer>
-        </StaticEditorialSection>
-      </RevealContainer>
+              <RevealContainer delay={0.15} yOffset={25} scaleInitial={0.985} style={{ height: '100%' }}>
+                <StaticEditorialPanel to={activeFeaturedCards[1]?.targetUrl || '/bracelets'}>
+                  <SafeImage src={activeFeaturedCards[1]?.imageUrl || '/assets/gem_bracelets_cat.png'} alt={activeFeaturedCards[1]?.title || 'High Jewellery Bracelets'} />
+                  <StaticEditorialPanelOverlay>
+                    <span style={{ fontSize: '11.5px', fontWeight: 600, letterSpacing: '0.22em', textTransform: 'uppercase', color: activeFeaturedCards[1]?.titleColor || '#C9A96E', marginBottom: 8 }}>
+                      {activeFeaturedCards[1]?.title || 'HIGH JEWELLERY BRACELETS'}
+                    </span>
+                    <h3 style={{ fontFamily: "'Cormorant Garamond', serif", fontSize: '2.2rem', fontWeight: 400, color: activeFeaturedCards[1]?.subtitleColor || '#FFFDF9', marginBottom: 14 }}>
+                      {activeFeaturedCards[1]?.subtitle || 'Emerald Cut Tennis Bracelets'}
+                    </h3>
+                    <span style={{ fontSize: '12.5px', fontWeight: 600, letterSpacing: '0.16em', textTransform: 'uppercase', color: activeFeaturedCards[1]?.buttonColor || '#FFFDF9' }}>
+                      {activeFeaturedCards[1]?.buttonText || 'SHOP NOW →'}
+                    </span>
+                  </StaticEditorialPanelOverlay>
+                </StaticEditorialPanel>
+              </RevealContainer>
+            </StaticEditorialContainer>
+          </StaticEditorialSection>
+        </RevealContainer>
+      )}
 
-      {/* 6. EDITORIAL COLLECTION SECTION */}
-      <RevealContainer yOffset={35} duration={0.9}>
-        <EditorialCollectionSection
-          onTouchStart={handleTouchStart}
-          onTouchMove={handleTouchMove}
-          onTouchEnd={handleTouchEnd}
-          onMouseDown={handleMouseDown}
-          onMouseMove={handleMouseMove}
-          onMouseUp={handleMouseUp}
-          onMouseLeave={handleMouseUp}
-        >
-          <EditorialCollectionGrid>
-            <EditorialCollectionLeft>
-              <RevealContainer delay={0.0} yOffset={25}>
-                <FixedLeftImgWrap key={`left-wrap-${currentSlide.id}`}>
-                  <SafeImage src={currentSlide.leftImage} alt={currentSlide.title} key={currentSlide.leftImage} />
-                </FixedLeftImgWrap>
-              </RevealContainer>
-              <RevealContainer delay={0.08} yOffset={15}>
-                <EditorialEyebrow>{currentSlide.eyebrow}</EditorialEyebrow>
-              </RevealContainer>
-              <RevealContainer delay={0.16} yOffset={20}>
-                <EditorialTitle>{currentSlide.title}</EditorialTitle>
-              </RevealContainer>
-              <RevealContainer delay={0.24} yOffset={15}>
-                <ShopNowLink to={currentSlide.link}>
-                  SHOP NOW &rarr;
-                </ShopNowLink>
-              </RevealContainer>
-              <CenteredNavControlsWrapper>
-                <NavControlsRow>
-                  <button onClick={handlePrevSlide} aria-label="Previous slide">
-                    <ChevronLeft size={18} />
-                  </button>
-                  <span className="slide-counter">
-                    0{activeSlideIndex + 1} / 0{collectionSlides.length}
-                  </span>
-                  <button onClick={handleNextSlide} aria-label="Next slide">
-                    <ChevronRight size={18} />
-                  </button>
-                </NavControlsRow>
-                <NavPaginationTrack>
-                  <NavPaginationActiveLine $activeIndex={activeSlideIndex} $totalSlides={collectionSlides.length} />
-                </NavPaginationTrack>
-              </CenteredNavControlsWrapper>
-            </EditorialCollectionLeft>
+      {/* 6. EDITORIAL LOOKBOOK COLLECTION SECTION */}
+      {cmsConfig?.sectionVisibility?.signature !== false && (
+        <RevealContainer yOffset={35} duration={0.9}>
+          <EditorialCollectionSection
+            onTouchStart={handleTouchStart}
+            onTouchMove={handleTouchMove}
+            onTouchEnd={handleTouchEnd}
+            onMouseDown={handleMouseDown}
+            onMouseMove={handleMouseMove}
+            onMouseUp={handleMouseUp}
+            onMouseLeave={handleMouseUp}
+          >
+            <EditorialCollectionGrid>
+              <EditorialCollectionLeft>
+                <RevealContainer delay={0.0} yOffset={25}>
+                  <FixedLeftImgWrap key={`left-wrap-${currentSlide.id || activeSlideIndex}`}>
+                    <SafeImage src={currentSlide.leftImage} alt={currentSlide.title} key={currentSlide.leftImage} />
+                  </FixedLeftImgWrap>
+                </RevealContainer>
+                <RevealContainer delay={0.08} yOffset={15}>
+                  <EditorialEyebrow style={{ color: currentSlide.eyebrowColor || undefined }}>{currentSlide.eyebrow}</EditorialEyebrow>
+                </RevealContainer>
+                <RevealContainer delay={0.16} yOffset={20}>
+                  <EditorialTitle style={{ color: currentSlide.titleColor || undefined }}>{currentSlide.title}</EditorialTitle>
+                </RevealContainer>
+                <RevealContainer delay={0.24} yOffset={15}>
+                  <ShopNowLink to={currentSlide.link} style={{ color: currentSlide.buttonColor || undefined }}>
+                    SHOP NOW &rarr;
+                  </ShopNowLink>
+                </RevealContainer>
+                <CenteredNavControlsWrapper>
+                  <NavControlsRow>
+                    <button onClick={handlePrevSlide} aria-label="Previous slide">
+                      <ChevronLeft size={18} />
+                    </button>
+                    <span className="slide-counter">
+                      0{activeSlideIndex + 1} / 0{activeLookbookSlides.length}
+                    </span>
+                    <button onClick={handleNextSlide} aria-label="Next slide">
+                      <ChevronRight size={18} />
+                    </button>
+                  </NavControlsRow>
+                  <NavPaginationTrack>
+                    <NavPaginationActiveLine $activeIndex={activeSlideIndex} $totalSlides={activeLookbookSlides.length} />
+                  </NavPaginationTrack>
+                </CenteredNavControlsWrapper>
+              </EditorialCollectionLeft>
 
-            <EditorialCollectionRight key={`right-wrap-${currentSlide.id}`}>
-              <RevealContainer delay={0.15} yOffset={25} scaleInitial={0.985}>
-                <SafeImage
-                  src={currentSlide.rightImage}
-                  alt={`${currentSlide.title} Editorial`}
-                  key={currentSlide.rightImage}
-                />
-              </RevealContainer>
-            </EditorialCollectionRight>
-          </EditorialCollectionGrid>
-        </EditorialCollectionSection>
-      </RevealContainer>
+              <EditorialCollectionRight key={`right-wrap-${currentSlide.id || activeSlideIndex}`}>
+                <RevealContainer delay={0.15} yOffset={25} scaleInitial={0.985}>
+                  <SafeImage
+                    src={currentSlide.rightImage}
+                    alt={`${currentSlide.title} Editorial`}
+                    key={currentSlide.rightImage}
+                  />
+                </RevealContainer>
+              </EditorialCollectionRight>
+            </EditorialCollectionGrid>
+          </EditorialCollectionSection>
+        </RevealContainer>
+      )}
 
       {/* 7. DUAL-PANEL PROMOTIONAL SECTION */}
-      <RevealContainer yOffset={35} duration={0.9}>
-        <PromoSection>
-          <PromoGrid>
-            <RevealContainer delay={0.0} yOffset={25} scaleInitial={0.985} style={{ height: '100%' }}>
-              <PromoPanel>
-                <SafeImage
-                  src="/assets/floksy_diamonds_cat.png"
-                  alt="Diamond Essentials"
-                />
-                <LeftPromoButton to="/diamonds">
-                  DIAMOND ESSENTIALS
-                </LeftPromoButton>
-              </PromoPanel>
-            </RevealContainer>
+      {cmsConfig?.sectionVisibility?.essentials !== false && (
+        <RevealContainer yOffset={35} duration={0.9}>
+          <PromoSection>
+            <PromoGrid>
+              <RevealContainer delay={0.0} yOffset={25} scaleInitial={0.985} style={{ height: '100%' }}>
+                <PromoPanel>
+                  <SafeImage
+                    src={activeEssentials.leftImageUrl || '/assets/gem_diamonds_cat.png'}
+                    alt={activeEssentials.leftTitle || 'Diamond Essentials'}
+                  />
+                  <LeftPromoButton to={activeEssentials.leftTargetUrl || '/diamonds'} style={{ color: activeEssentials.leftButtonColor || undefined }}>
+                    {activeEssentials.leftButtonText || activeEssentials.leftTitle || 'DIAMOND ESSENTIALS'}
+                  </LeftPromoButton>
+                </PromoPanel>
+              </RevealContainer>
 
-            <RevealContainer delay={0.15} yOffset={25} scaleInitial={0.985} style={{ height: '100%' }}>
-              <PromoPanel>
-                <SafeImage
-                  src="/assets/floksy_earrings_cat.png"
-                  alt="Golden Hour Collection"
-                />
-                <RightPromoContent>
-                  <RightPromoTitle>GOLDEN HOUR IS HERE</RightPromoTitle>
-                  <RightPromoButton to="/collections/signature-collection">
-                    SHOP THE EVENT
-                  </RightPromoButton>
-                </RightPromoContent>
-              </PromoPanel>
-            </RevealContainer>
-          </PromoGrid>
-        </PromoSection>
-      </RevealContainer>
+              <RevealContainer delay={0.15} yOffset={25} scaleInitial={0.985} style={{ height: '100%' }}>
+                <PromoPanel>
+                  <SafeImage
+                    src={activeEssentials.rightImageUrl || '/assets/gem_earrings_cat.png'}
+                    alt={activeEssentials.rightTitle || 'Golden Hour Collection'}
+                  />
+                  <RightPromoContent>
+                    <RightPromoTitle style={{ color: activeEssentials.rightTitleColor || undefined }}>
+                      {activeEssentials.rightTitle || 'GOLDEN HOUR IS HERE'}
+                    </RightPromoTitle>
+                    <RightPromoButton to={activeEssentials.rightTargetUrl || '/collections/signature-collection'} style={{ color: activeEssentials.rightButtonColor || undefined }}>
+                      {activeEssentials.rightButtonText || 'SHOP THE EVENT'}
+                    </RightPromoButton>
+                  </RightPromoContent>
+                </PromoPanel>
+              </RevealContainer>
+            </PromoGrid>
+          </PromoSection>
+        </RevealContainer>
+      )}
 
       {/* 8. DIAMOND SHAPES SECTION */}
-      <RevealContainer yOffset={35} duration={0.9}>
-        <DiamondShapesSection>
-          <DiamondShapesContainer>
-            <RevealContainer delay={0.0} yOffset={25} scaleInitial={0.985}>
-              <DiamondShapesLeft>
-                <SafeImage
-                  src={diamondShapesContent.leftImage || diamondShapesContent.desktopImage || '/assets/floksy_diamonds_cat.png'}
-                  alt="Diamond Vault Shapes"
-                />
-              </DiamondShapesLeft>
-            </RevealContainer>
-            <DiamondShapesRight>
-              <RevealContainer delay={0.0} yOffset={15}>
-                <DiamondShapesEyebrow>{diamondShapesContent.eyebrow || 'AUTHENTICATED LOOSE DIAMONDS'}</DiamondShapesEyebrow>
+      {cmsConfig?.sectionVisibility?.shapes !== false && (
+        <RevealContainer yOffset={35} duration={0.9}>
+          <DiamondShapesSection>
+            <DiamondShapesContainer>
+              <RevealContainer delay={0.0} yOffset={25} scaleInitial={0.985}>
+                <DiamondShapesLeft>
+                  <SafeImage
+                    src={diamondShapesContent.leftImage || diamondShapesContent.desktopImage || '/assets/gem_diamonds_cat.png'}
+                    alt="Diamond Vault Shapes"
+                  />
+                </DiamondShapesLeft>
               </RevealContainer>
-              <RevealContainer delay={0.08} yOffset={20}>
-                <DiamondShapesTitle>{diamondShapesContent.heading || 'Discover Exceptional Diamond Shapes'}</DiamondShapesTitle>
-              </RevealContainer>
-              <RevealContainer delay={0.16} yOffset={15}>
-                <DiamondShapesSubtitle>
-                  {diamondShapesContent.description || diamondShapesContent.subtitle || 'Select your ideal cut from certified GIA & IGI diamonds, ethically sourced and precision-cut for maximum fire and brilliance.'}
-                </DiamondShapesSubtitle>
-              </RevealContainer>
-
-              <DiamondShapesGrid>
-                {diamondShapesContent.shapes
-                  .filter((item: any) => item.enabled !== false)
-                  .map((item: any, idx: number) => (
-                    <RevealContainer key={item.shape || idx} delay={0.1 + (idx % 4) * 0.08} yOffset={20}>
-                      <DiamondShapeCard to={item.url || `/diamonds?shape=${item.shape || item.name.toLowerCase()}`}>
-                        <DiamondShapeSvg
-                          src={item.svg || item.image || `/assets/diamonds/${item.name ? item.name.charAt(0).toUpperCase() + item.name.slice(1).toLowerCase() : 'Round'}.svg`}
-                          alt={item.altText || `${item.name} Diamond Cut`}
-                          $desktopSize={item.desktopSize}
-                          $tabletSize={item.tabletSize}
-                          $mobileSize={item.mobileSize}
-                          loading="lazy"
-                        />
-                        <span>{item.name}</span>
-                      </DiamondShapeCard>
-                    </RevealContainer>
-                  ))}
-              </DiamondShapesGrid>
-
-              <div>
-                <RevealContainer delay={0.35} yOffset={15}>
-                  <LuxuryButton to="/diamonds" style={{ backgroundColor: '#242321', color: '#FFFDF9', border: 'none' }}>
-                    FIND YOUR DIAMOND <ArrowRight size={16} />
-                  </LuxuryButton>
+              <DiamondShapesRight>
+                <RevealContainer delay={0.0} yOffset={15}>
+                  <DiamondShapesEyebrow style={{ color: diamondShapesContent.eyebrowColor || undefined }}>
+                    {diamondShapesContent.eyebrow || 'AUTHENTICATED LOOSE DIAMONDS'}
+                  </DiamondShapesEyebrow>
                 </RevealContainer>
-              </div>
-            </DiamondShapesRight>
-          </DiamondShapesContainer>
-        </DiamondShapesSection>
-      </RevealContainer>
+                <RevealContainer delay={0.08} yOffset={20}>
+                  <DiamondShapesTitle style={{ color: diamondShapesContent.headingColor || undefined }}>
+                    {diamondShapesContent.heading || 'Discover Exceptional Diamond Shapes'}
+                  </DiamondShapesTitle>
+                </RevealContainer>
+                <RevealContainer delay={0.16} yOffset={15}>
+                  <DiamondShapesSubtitle style={{ color: diamondShapesContent.descriptionColor || undefined }}>
+                    {diamondShapesContent.description || diamondShapesContent.subtitle || 'Select your ideal cut from certified GIA & IGI diamonds, ethically sourced and precision-cut for maximum fire and brilliance.'}
+                  </DiamondShapesSubtitle>
+                </RevealContainer>
 
-      {/* 9. "ONLY AT FLOKSY JEWEL" SECTION */}
-      <RevealContainer yOffset={35} duration={0.9}>
-        <OnlyAtFloksySection>
-          <OnlyAtFloksyTitle>ONLY AT FLOKSY JEWEL</OnlyAtFloksyTitle>
-          <OnlyAtFloksyCarouselWrapper>
-            <OnlyAtFloksyNavArrow ref={onlyAtPrevRef} $direction="prev" aria-label="Previous cards">
-              <ChevronLeft size={20} />
-            </OnlyAtFloksyNavArrow>
-            <OnlyAtFloksyNavArrow ref={onlyAtNextRef} $direction="next" aria-label="Next cards">
-              <ChevronRight size={20} />
-            </OnlyAtFloksyNavArrow>
+                <DiamondShapesGrid>
+                  {diamondShapesContent.shapes
+                    .filter((item: any) => item.enabled !== false)
+                    .map((item: any, idx: number) => (
+                      <RevealContainer key={item.shape || idx} delay={0.1 + (idx % 4) * 0.08} yOffset={20}>
+                        <DiamondShapeCard to={item.url || `/diamonds?shape=${item.shape || item.name.toLowerCase()}`}>
+                          <DiamondShapeSvg
+                            src={item.svg || item.image || `/assets/diamonds/${item.name ? item.name.charAt(0).toUpperCase() + item.name.slice(1).toLowerCase() : 'Round'}.svg`}
+                            alt={item.altText || `${item.name} Diamond Cut`}
+                            $desktopSize={item.desktopSize}
+                            $tabletSize={item.tabletSize}
+                            $mobileSize={item.mobileSize}
+                            loading="lazy"
+                          />
+                          <span>{item.name}</span>
+                        </DiamondShapeCard>
+                      </RevealContainer>
+                    ))}
+                </DiamondShapesGrid>
 
-            <Swiper
-              modules={[Navigation]}
-              spaceBetween={16}
-              slidesPerView={1}
-              autoplay={false}
-              onBeforeInit={(swiper) => {
-                if (swiper.params.navigation && typeof swiper.params.navigation !== 'boolean') {
-                  swiper.params.navigation.prevEl = onlyAtPrevRef.current;
-                  swiper.params.navigation.nextEl = onlyAtNextRef.current;
-                }
-              }}
-              breakpoints={{
-                576: { slidesPerView: 2, spaceBetween: 16 },
-                992: { slidesPerView: 3, spaceBetween: 16 },
-              }}
-            >
-              {onlyAtFloksyCards.map((card, idx) => (
-                <SwiperSlide key={card.id}>
-                  <RevealContainer delay={(idx % 4) * 0.1} yOffset={25} scaleInitial={0.985}>
-                    <OnlyAtFloksyCard to={card.url}>
-                      <SafeImage src={card.image} alt={card.title} loading="lazy" />
-                      <OnlyAtFloksyCardOverlay>
-                        <OnlyAtFloksyCardEyebrow>{card.eyebrow}</OnlyAtFloksyCardEyebrow>
-                        <OnlyAtFloksyCardTitle>{card.title}</OnlyAtFloksyCardTitle>
-                      </OnlyAtFloksyCardOverlay>
-                    </OnlyAtFloksyCard>
+                <div>
+                  <RevealContainer delay={0.35} yOffset={15}>
+                    <LuxuryButton to={diamondShapesContent.buttonLink || '/diamonds'} style={{ color: diamondShapesContent.buttonColor || undefined }}>
+                      {diamondShapesContent.buttonText || 'FIND YOUR DIAMOND'} <ArrowRight size={16} />
+                    </LuxuryButton>
                   </RevealContainer>
-                </SwiperSlide>
-              ))}
-            </Swiper>
-          </OnlyAtFloksyCarouselWrapper>
-        </OnlyAtFloksySection>
-      </RevealContainer>
+                </div>
+              </DiamondShapesRight>
+            </DiamondShapesContainer>
+          </DiamondShapesSection>
+        </RevealContainer>
+      )}
 
-      {/* 10. ULTRA-LUXURY EDITORIAL REVIEWS SECTION */}
-      <RevealContainer yOffset={35} duration={0.9}>
-        <ReviewsSection id="reviews">
-          <ReviewsHeaderRow>
-            <div className="header-titles">
-              <ReviewsEyebrow>AUTHENTICATED CLIENT TESTIMONIALS</ReviewsEyebrow>
-              <ReviewsTitle>VOICES OF ELEGANCE</ReviewsTitle>
-            </div>
-            <ReviewsNavGroup>
-              <ReviewsNavArrow ref={reviewsPrevRef} aria-label="Previous reviews">
+      {/* 9. "ONLY AT AETHELCARATS" SHOWCASE SECTION */}
+      {cmsConfig?.sectionVisibility?.onlyAura !== false && (
+        <RevealContainer yOffset={35} duration={0.9}>
+          <OnlyAtAuraSection>
+            <OnlyAtAuraTitle style={{ color: cmsConfig?.auraTitleColor || undefined }}>
+              {cmsConfig?.auraTitle || 'ONLY AT AETHELCARATS'}
+            </OnlyAtAuraTitle>
+            <OnlyAtAuraCarouselWrapper>
+              <OnlyAtAuraNavArrow ref={onlyAtPrevRef} $direction="prev" aria-label="Previous cards">
                 <ChevronLeft size={20} />
-              </ReviewsNavArrow>
-              <ReviewsNavArrow ref={reviewsNextRef} aria-label="Next reviews">
+              </OnlyAtAuraNavArrow>
+              <OnlyAtAuraNavArrow ref={onlyAtNextRef} $direction="next" aria-label="Next cards">
                 <ChevronRight size={20} />
-              </ReviewsNavArrow>
-            </ReviewsNavGroup>
-          </ReviewsHeaderRow>
+              </OnlyAtAuraNavArrow>
 
-          <ReviewsCarouselWrapper>
-            <Swiper
-              modules={[Navigation, Autoplay]}
-              spaceBetween={24}
-              slidesPerView={1}
-              autoplay={{ delay: 6000, disableOnInteraction: false, pauseOnMouseEnter: true }}
-              onSwiper={(swiper) => {
-                setTimeout(() => {
-                  if (swiper && swiper.params && swiper.params.navigation && typeof swiper.params.navigation !== 'boolean' && swiper.navigation) {
-                    swiper.params.navigation.prevEl = reviewsPrevRef.current;
-                    swiper.params.navigation.nextEl = reviewsNextRef.current;
-                    swiper.navigation?.init();
-                    swiper.navigation?.update();
+              <Swiper
+                modules={[Navigation]}
+                spaceBetween={16}
+                slidesPerView={1}
+                autoplay={false}
+                onBeforeInit={(swiper) => {
+                  if (swiper.params.navigation && typeof swiper.params.navigation !== 'boolean') {
+                    swiper.params.navigation.prevEl = onlyAtPrevRef.current;
+                    swiper.params.navigation.nextEl = onlyAtNextRef.current;
                   }
-                });
-              }}
-              breakpoints={{
-                576: { slidesPerView: 2, spaceBetween: 20 },
-                992: { slidesPerView: 3, spaceBetween: 24 },
-                1200: { slidesPerView: 4, spaceBetween: 28 },
-              }}
-            >
-              {(dbReviews.length > 0 ? dbReviews : customerReviews).map((rev, idx) => {
-                const fullText = String(rev.text || rev.reviewText || rev.content || rev.comment || 'Exceptional craftsmanship and superb diamond quality.').trim();
-                const rawTitle = rev.title || (fullText.length > 40 ? fullText.split('.')[0] : 'Exceeded Every Expectation!');
-                const titleText = rawTitle.length > 55 ? rawTitle.slice(0, 55) + '...' : rawTitle;
-                const bodyText = rev.title ? fullText : (fullText.length > 40 && fullText.includes('.') ? fullText.split('.').slice(1).join('.').trim() || fullText : fullText);
-
-                return (
-                  <SwiperSlide key={rev.id}>
-                    <RevealContainer delay={(idx % 4) * 0.12} yOffset={25}>
-                      <ReviewCardItem>
-                        <QuoteWatermark className="quote-watermark">“</QuoteWatermark>
-                        <StarsRow>
-                          {[...Array(rev.rating || 5)].map((_, i) => (
-                            <Star key={i} size={15} fill="#C9A45C" color="#C9A45C" />
-                          ))}
-                        </StarsRow>
-                        <ReviewCardTitle>{titleText}</ReviewCardTitle>
-                        <ReviewText>{bodyText}</ReviewText>
-                        <ReviewDivider />
-                        <CustomerFooter>
-                          <CustomerInfo>
-                            <CustomerName>{rev.author || rev.customerName || rev.name || 'Verified Client'}</CustomerName>
-                            <VerifiedBadge>
-                              <ShieldCheck size={12} color="#C9A45C" /> VERIFIED BUYER
-                            </VerifiedBadge>
-                          </CustomerInfo>
-                        </CustomerFooter>
-                      </ReviewCardItem>
+                }}
+                breakpoints={{
+                  576: { slidesPerView: 2, spaceBetween: 16 },
+                  992: { slidesPerView: 3, spaceBetween: 16 },
+                }}
+              >
+                {activeAuraCards.map((card: any, idx: number) => (
+                  <SwiperSlide key={card.id || idx}>
+                    <RevealContainer delay={(idx % 4) * 0.1} yOffset={25} scaleInitial={0.985}>
+                      <OnlyAtAuraCard to={card.url || '/custom-jewellery'}>
+                        <SafeImage src={card.image} alt={card.title} loading="lazy" />
+                        <OnlyAtAuraCardOverlay>
+                          <OnlyAtAuraCardEyebrow style={{ color: card.eyebrowColor || undefined }}>{card.eyebrow}</OnlyAtAuraCardEyebrow>
+                          <OnlyAtAuraCardTitle style={{ color: card.titleColor || undefined }}>{card.title}</OnlyAtAuraCardTitle>
+                        </OnlyAtAuraCardOverlay>
+                      </OnlyAtAuraCard>
                     </RevealContainer>
                   </SwiperSlide>
-                );
-              })}
-            </Swiper>
-          </ReviewsCarouselWrapper>
-        </ReviewsSection>
-      </RevealContainer>
+                ))}
+              </Swiper>
+            </OnlyAtAuraCarouselWrapper>
+          </OnlyAtAuraSection>
+        </RevealContainer>
+      )}
+
+      {/* 10. VOICES OF ELEGANCE / REVIEWS SECTION */}
+      {cmsConfig?.sectionVisibility?.reviews !== false && (
+        <RevealContainer yOffset={35} duration={0.9}>
+          <ReviewsSection id="reviews">
+            <ReviewsHeaderRow>
+              <div className="header-titles">
+                <ReviewsEyebrow style={{ color: cmsConfig?.reviewsConfig?.eyebrowColor || undefined }}>
+                  {cmsConfig?.reviewsConfig?.eyebrow || 'AUTHENTICATED CLIENT TESTIMONIALS'}
+                </ReviewsEyebrow>
+                <ReviewsTitle style={{ color: cmsConfig?.reviewsConfig?.titleColor || undefined }}>
+                  {cmsConfig?.reviewsConfig?.title || 'VOICES OF ELEGANCE'}
+                </ReviewsTitle>
+              </div>
+              <ReviewsNavGroup>
+                <ReviewsNavArrow ref={reviewsPrevRef} aria-label="Previous reviews">
+                  <ChevronLeft size={20} />
+                </ReviewsNavArrow>
+                <ReviewsNavArrow ref={reviewsNextRef} aria-label="Next reviews">
+                  <ChevronRight size={20} />
+                </ReviewsNavArrow>
+              </ReviewsNavGroup>
+            </ReviewsHeaderRow>
+
+            <ReviewsCarouselWrapper>
+              <Swiper
+                modules={[Navigation, Autoplay]}
+                spaceBetween={24}
+                slidesPerView={1}
+                autoplay={{ delay: 6000, disableOnInteraction: false, pauseOnMouseEnter: true }}
+                onSwiper={(swiper) => {
+                  setTimeout(() => {
+                    if (swiper && swiper.params && swiper.params.navigation && typeof swiper.params.navigation !== 'boolean' && swiper.navigation) {
+                      swiper.params.navigation.prevEl = reviewsPrevRef.current;
+                      swiper.params.navigation.nextEl = reviewsNextRef.current;
+                      swiper.navigation?.init();
+                      swiper.navigation?.update();
+                    }
+                  });
+                }}
+                breakpoints={{
+                  576: { slidesPerView: 2, spaceBetween: 20 },
+                  992: { slidesPerView: 3, spaceBetween: 24 },
+                  1200: { slidesPerView: 4, spaceBetween: 28 },
+                }}
+              >
+                {activeReviews.map((rev: any, idx: number) => {
+                  const fullText = String(rev.text || rev.reviewText || rev.content || rev.comment || 'Exceptional craftsmanship and superb diamond quality.').trim();
+                  const rawTitle = rev.title || (fullText.length > 40 ? fullText.split('.')[0] : 'Exceeded Every Expectation!');
+                  const titleText = rawTitle.length > 55 ? rawTitle.slice(0, 55) + '...' : rawTitle;
+                  const bodyText = rev.title ? fullText : (fullText.length > 40 && fullText.includes('.') ? fullText.split('.').slice(1).join('.').trim() || fullText : fullText);
+
+                  return (
+                    <SwiperSlide key={rev.id || idx}>
+                      <RevealContainer delay={(idx % 4) * 0.12} yOffset={25}>
+                        <ReviewCardItem>
+                          <QuoteWatermark className="quote-watermark">“</QuoteWatermark>
+                          <StarsRow>
+                            {[...Array(rev.rating || 5)].map((_, i) => (
+                              <Star key={i} size={15} fill="#C9A96E" color="#C9A45C" />
+                            ))}
+                          </StarsRow>
+                          <ReviewCardTitle style={{ color: rev.titleColor || undefined }}>{titleText}</ReviewCardTitle>
+                          <ReviewText style={{ color: rev.textColor || undefined }}>{bodyText}</ReviewText>
+                          <ReviewDivider />
+                          <CustomerFooter>
+                            <CustomerInfo>
+                              <CustomerName style={{ color: rev.authorColor || undefined }}>
+                                {rev.author || rev.customerName || rev.name || 'Verified Client'}
+                              </CustomerName>
+                              <VerifiedBadge>
+                                <ShieldCheck size={12} color="#C9A45C" /> VERIFIED BUYER
+                              </VerifiedBadge>
+                            </CustomerInfo>
+                          </CustomerFooter>
+                        </ReviewCardItem>
+                      </RevealContainer>
+                    </SwiperSlide>
+                  );
+                })}
+              </Swiper>
+            </ReviewsCarouselWrapper>
+          </ReviewsSection>
+        </RevealContainer>
+      )}
     </>
   );
 };

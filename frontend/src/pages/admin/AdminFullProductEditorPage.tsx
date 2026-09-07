@@ -32,16 +32,23 @@ import {
 
 const StickyTopHeader = styled.div`
   position: sticky;
-  top: 0;
+  top: 64px;
   z-index: 80;
   background: #ffffff;
-  border-bottom: 1px solid #e8e3d9;
+  border: 1px solid #e8e3d9;
+  border-radius: 8px;
   padding: 16px 24px;
   display: flex;
   justify-content: space-between;
   align-items: center;
+  flex-wrap: wrap;
+  gap: 16px;
   margin-bottom: 24px;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03);
+
+  @media (max-width: 900px) {
+    top: 58px;
+  }
 
   .title-area {
     display: flex;
@@ -218,13 +225,264 @@ const TagsOptionGrid = styled.div`
 `;
 
 const APPROVED_METALS = [
+  { label: '9K Yellow Gold', code: '9k', circleColor: '#E8C872', priceAdjustment: -600 },
+  { label: '9K White Gold', code: '9k', circleColor: '#CBD5E1', priceAdjustment: -600 },
+  { label: '9K Rose Gold', code: '9k', circleColor: '#E4A8A5', priceAdjustment: -600 },
+  { label: '10K Yellow Gold', code: '10k', circleColor: '#E8C872', priceAdjustment: -400 },
+  { label: '10K White Gold', code: '10k', circleColor: '#CBD5E1', priceAdjustment: -400 },
+  { label: '10K Rose Gold', code: '10k', circleColor: '#E4A8A5', priceAdjustment: -400 },
   { label: '14K Yellow Gold', code: '14k', circleColor: '#E8C872', priceAdjustment: 0 },
   { label: '14K White Gold', code: '14k', circleColor: '#CBD5E1', priceAdjustment: 0 },
   { label: '14K Rose Gold', code: '14k', circleColor: '#E4A8A5', priceAdjustment: 0 },
   { label: '18K Yellow Gold', code: '18k', circleColor: '#E8C872', priceAdjustment: 250 },
   { label: '18K White Gold', code: '18k', circleColor: '#CBD5E1', priceAdjustment: 350 },
   { label: '18K Rose Gold', code: '18k', circleColor: '#E4A8A5', priceAdjustment: 350 },
+  { label: '925 Sterling Silver', code: 'silver', circleColor: '#D1D5DB', priceAdjustment: -1000 },
+  { label: 'Platinum', code: 'platinum', circleColor: '#E2E8F0', priceAdjustment: 600 },
 ];
+
+export const JEWELRY_TYPE_STYLES: Record<string, string[]> = {
+  Rings: [
+    'Solitaire',
+    'Halo',
+    'Three-Stone',
+    'Eternity',
+    'Vintage & Antique',
+    'Bezel Settings',
+    'Cocktail',
+    'Pavé',
+    'Hidden Halo',
+    'Toi et Moi',
+    'Split Shank',
+    'Bridal Set',
+  ],
+  Earrings: [
+    'Solitaire Studs',
+    'Pear Drops',
+    'Halo Studs',
+    'Hoops',
+    'Huggies',
+    'Dangle & Drop',
+    'Cluster',
+    'Chandeliers',
+  ],
+  Necklaces: [
+    'Graduated Tennis',
+    'Marquise & Pear Cluster',
+    'Pendant Chain',
+    'Choker',
+    'Statement',
+    'Riviere',
+    'Layering Chains',
+    'Solitaire Necklace',
+  ],
+  Bracelets: [
+    'Emerald Cut Tennis',
+    'Round Brilliant Tennis',
+    'Bangles',
+    'Stacking Bangles',
+    'Chain Bracelets',
+    'Cuff',
+    'Line Bracelet',
+  ],
+  Pendants: [
+    'Solitaire Pendants',
+    'Halo Pendants',
+    'Pear Cut Pendants',
+    'Gemstone Pendants',
+    'Cross Pendants',
+    'Heart Pendants',
+    'Initial & Letter',
+    'Medallion',
+  ],
+  Other: [
+    'Classic',
+    'Contemporary',
+    'Vintage',
+    'Art Deco',
+    'Bespoke',
+  ],
+};
+
+export const MEGA_MENU_COLLECTIONS_BY_TYPE: Record<string, { section: string; items: { label: string; slug: string }[] }[]> = {
+  Rings: [
+    {
+      section: 'WEDDING RINGS',
+      items: [
+        { label: "Women's Wedding Rings", slug: 'womens-wedding' },
+        { label: "Men's Wedding Bands", slug: 'mens-wedding' },
+      ],
+    },
+    {
+      section: 'DIAMOND ESSENTIALS',
+      items: [
+        { label: 'Eternity Rings', slug: 'eternity' },
+        { label: 'Anniversary Rings', slug: 'anniversary' },
+      ],
+    },
+    {
+      section: 'ENGAGEMENT RINGS',
+      items: [
+        { label: 'Design Your Own Engagement Ring', slug: 'customise' },
+        { label: 'Ready To Ship Engagement Rings', slug: 'ready-to-ship' },
+      ],
+    },
+    {
+      section: 'SHOP ALL RINGS',
+      items: [
+        { label: 'Best Selling Rings', slug: 'best-selling-rings' },
+        { label: 'Diamond Rings', slug: 'diamond' },
+        { label: 'Gemstone Rings', slug: 'gemstone' },
+        { label: 'Emerald Rings', slug: 'emerald' },
+        { label: 'Sapphire Rings', slug: 'sapphire' },
+        { label: 'Pearl Rings', slug: 'pearl' },
+        { label: 'Stackable Rings', slug: 'stackable' },
+        { label: 'Fashion Rings', slug: 'fashion' },
+        { label: 'Signet Rings', slug: 'signet' },
+        { label: "Men's Rings", slug: 'mens' },
+        { label: 'Infinity Rings', slug: 'infinity' },
+      ],
+    },
+    {
+      section: 'FEATURED & NEW',
+      items: [
+        { label: 'Shop NEW Aura Collection', slug: 'aura-collection' },
+        { label: 'Solitaire Rings', slug: 'solitaire' },
+        { label: 'Wedding Bands', slug: 'wedding-bands' },
+      ],
+    },
+  ],
+
+  Earrings: [
+    {
+      section: 'CATEGORIES',
+      items: [
+        { label: 'All Earrings', slug: 'all-earrings' },
+        { label: 'Stud Earrings', slug: 'studs' },
+        { label: 'Drop & Dangle', slug: 'drop' },
+        { label: 'Hoop Earrings', slug: 'hoops' },
+        { label: 'Diamond Huggies', slug: 'huggies' },
+      ],
+    },
+    {
+      section: 'FEATURED STYLES',
+      items: [
+        { label: 'Solitaire Studs', slug: 'solitaire-studs' },
+        { label: 'Pear Cut Drops', slug: 'pear-drops' },
+        { label: 'Halo Studs', slug: 'halo-studs' },
+        { label: 'Cluster Earrings', slug: 'cluster' },
+      ],
+    },
+    {
+      section: 'PROMOS & COLLECTIONS',
+      items: [
+        { label: 'Diamond Drop Earrings', slug: 'diamond-drop-earrings' },
+      ],
+    },
+  ],
+
+  Necklaces: [
+    {
+      section: 'CATEGORIES',
+      items: [
+        { label: 'All Necklaces', slug: 'all-necklaces' },
+        { label: 'Diamond Necklaces', slug: 'diamond' },
+        { label: 'Tennis Necklaces', slug: 'tennis' },
+        { label: 'Statement Pieces', slug: 'statement' },
+        { label: 'Chokers', slug: 'chokers' },
+      ],
+    },
+    {
+      section: 'FEATURED DESIGNS',
+      items: [
+        { label: 'Graduated Tennis Necklaces', slug: 'graduated' },
+        { label: 'Marquise & Pear Clusters', slug: 'marquise-pear' },
+        { label: 'Layering Chains', slug: 'chains' },
+      ],
+    },
+    {
+      section: 'PROMOS & COLLECTIONS',
+      items: [
+        { label: 'Diamond Tennis Necklace', slug: 'diamond-tennis-necklace' },
+      ],
+    },
+  ],
+
+  Bracelets: [
+    {
+      section: 'CATEGORIES',
+      items: [
+        { label: 'All Bracelets', slug: 'all-bracelets' },
+        { label: 'Tennis Bracelets', slug: 'tennis' },
+        { label: 'Bangles', slug: 'bangles' },
+        { label: 'Chain Bracelets', slug: 'chain' },
+        { label: 'Cuff Bracelets', slug: 'cuff' },
+      ],
+    },
+    {
+      section: 'FEATURED STYLES',
+      items: [
+        { label: 'Emerald Cut Tennis Bracelets', slug: 'emerald-cut' },
+        { label: 'Round Brilliant Tennis', slug: 'round-brilliant' },
+        { label: 'Stacking Bangles', slug: 'stacking' },
+      ],
+    },
+    {
+      section: 'PROMOS & COLLECTIONS',
+      items: [
+        { label: 'Emerald Tennis Bracelet', slug: 'emerald-tennis-bracelet' },
+      ],
+    },
+  ],
+
+  Pendants: [
+    {
+      section: 'CATEGORIES',
+      items: [
+        { label: 'All Pendants', slug: 'all-pendants' },
+        { label: 'Solitaire Pendants', slug: 'solitaire' },
+        { label: 'Halo Pendants', slug: 'halo' },
+        { label: 'Pear Cut Pendants', slug: 'pear-cut' },
+        { label: 'Gemstone Pendants', slug: 'gemstone' },
+      ],
+    },
+    {
+      section: 'FEATURED CUTS',
+      items: [
+        { label: 'Round Brilliant Pendants', slug: 'round' },
+        { label: 'Oval Cut Pendants', slug: 'oval' },
+        { label: 'Emerald Cut Pendants', slug: 'emerald' },
+        { label: 'Marquise Pendants', slug: 'marquise' },
+      ],
+    },
+  ],
+
+  Diamonds: [
+    {
+      section: 'DIAMOND VAULT',
+      items: [
+        { label: 'Natural Certified Diamonds', slug: 'natural' },
+        { label: 'Lab-Grown Diamonds', slug: 'lab-grown' },
+        { label: 'GIA Authenticated Diamonds', slug: 'gia' },
+        { label: 'IGI Authenticated Diamonds', slug: 'igi' },
+        { label: 'Fancy Colored Diamonds', slug: 'fancy-color' },
+        { label: 'Loose Diamond Vault', slug: 'loose-diamonds' },
+      ],
+    },
+  ],
+
+  Other: [
+    {
+      section: 'GENERAL COLLECTIONS',
+      items: [
+        { label: 'Signature Collection', slug: 'signature' },
+        { label: 'High Jewellery', slug: 'high-jewellery' },
+        { label: 'Bridal Set', slug: 'bridal-set' },
+        { label: 'Limited Edition', slug: 'limited-edition' },
+      ],
+    },
+  ],
+};
 
 const ALL_RING_SIZES = [
   'US 4', 'US 4.5', 'US 5', 'US 5.5', 'US 6', 'US 6.5',
@@ -235,7 +493,7 @@ const ALL_RING_SIZES = [
 const DEFAULT_ACCORDIONS = [
   {
     id: 'exp',
-    title: 'YOUR FLOKSY JEWEL EXPERIENCE',
+    title: 'YOUR AURA DIAMOND ATELIER EXPERIENCE',
     content: 'Every creation is handcrafted in our Surat atelier using certified conflict-free materials and 100% recycled precious metals.',
     enabled: true,
     defaultOpen: true,
@@ -285,6 +543,8 @@ export const AdminFullProductEditorPage: React.FC = () => {
     slug: '',
     categoryId: '',
     jewelleryType: 'Rings',
+    style: 'Solitaire',
+    ringStyle: 'Solitaire',
     collectionId: '',
     status: 'ACTIVE',
     isFeatured: false,
@@ -294,7 +554,7 @@ export const AdminFullProductEditorPage: React.FC = () => {
     comparePrice: 3000,
     shortDescription: '',
     fullDescription: '',
-    mainImage: '/assets/floksy_rings_cat.png',
+    mainImage: '/assets/gem_rings_cat.png',
     secondaryImage: '',
     images: [],
     enableMetalSelection: true,
@@ -314,9 +574,12 @@ export const AdminFullProductEditorPage: React.FC = () => {
       measurements: '',
     },
     customOptions: [],
+    masterPrice9k: 1875,
+    masterPrice10k: 2125,
     masterPrice14k: 2500,
     masterPrice18k: 2750,
-    masterPriceSilver: 2000,
+    masterPriceSilver: 1250,
+    masterPricePlatinum: 3250,
     metalsConfig: [...APPROVED_METALS],
     availableRingSizes: [...ALL_RING_SIZES],
     variations: [],
@@ -333,6 +596,7 @@ export const AdminFullProductEditorPage: React.FC = () => {
     },
   });
 
+  const [variationGenMode, setVariationGenMode] = useState<'metalsOnly' | 'matrix'>('metalsOnly');
   const mediaFileInputRef = useRef<HTMLInputElement>(null);
   const socialImageInputRef = useRef<HTMLInputElement>(null);
   const [uploadingMedia, setUploadingMedia] = useState(false);
@@ -426,12 +690,17 @@ export const AdminFullProductEditorPage: React.FC = () => {
       loadProduct(id);
     } else {
       generateVariationsFromMasterPrices(
+        1875,
+        2125,
         2500,
         2750,
+        1250,
+        3250,
         [...APPROVED_METALS],
         [...ALL_RING_SIZES],
         productData.sku || 'FJ-RNG-001',
-        true
+        true,
+        'metalsOnly'
       );
     }
   }, [id, isEditMode]);
@@ -458,7 +727,7 @@ export const AdminFullProductEditorPage: React.FC = () => {
       setNotFound(false);
       let fetched: any = null;
       try {
-        const token = localStorage.getItem('floksy_token') || localStorage.getItem('fj_admin_token');
+        const token = localStorage.getItem('app_auth_token') || localStorage.getItem('admin_session_token');
         const res = await fetch(`/api/v1/products?id=${productId}&includeDrafts=true&status=ALL`, {
           headers: token ? { Authorization: `Bearer ${token}` } : {},
         });
@@ -472,10 +741,7 @@ export const AdminFullProductEditorPage: React.FC = () => {
       if (fetched && (fetched.id || fetched.title || fetched.name || fetched.sku)) {
         let loadedCustomOpts = prevCustomOpts(fetched);
         let loadedAccordions = prevAccordions(fetched);
-        let vars = (fetched.variations && fetched.variations.length > 0 ? fetched.variations : []).filter((v: any) => {
-          const metalStr = String(v.metal || '').toLowerCase();
-          return !metalStr.includes('platinum') && !metalStr.includes('silver') && !metalStr.includes('9k') && !metalStr.includes('10k');
-        });
+        let vars = fetched.variations && fetched.variations.length > 0 ? fetched.variations : [];
 
         let p14k = fetched.masterPrice14k || vars.find((v: any) => v.metal?.startsWith('14K'))?.price || fetched.price || 2500;
         let p18k = fetched.masterPrice18k || vars.find((v: any) => v.metal?.startsWith('18K'))?.price || (p14k + 250);
@@ -503,10 +769,13 @@ export const AdminFullProductEditorPage: React.FC = () => {
           socialImage: fetched.ogImage || fetched.mainImage || '',
           twitterTitle: fetched.metaTitle || fetched.title || fetched.name || '',
           twitterDescription: fetched.metaDescription || fetched.shortDescription || '',
-          canonicalUrl: fetched.slug ? `https://floksyjewel.com/product/${fetched.slug}` : '',
+          canonicalUrl: fetched.slug ? `https://auroradiamonds.com/product/${fetched.slug}` : '',
         };
 
         const canonicalTitle = fetched.title || fetched.name || '';
+        const canonicalType = fetched.jewelleryType || fetched.category?.name || 'Rings';
+        const defaultStyle = (JEWELRY_TYPE_STYLES[canonicalType] || JEWELRY_TYPE_STYLES.Rings)[0] || 'Solitaire';
+        const canonicalStyle = fetched.style || fetched.ringStyle || defaultStyle;
 
         setProductData((prev: any) => ({
           ...prev,
@@ -520,9 +789,11 @@ export const AdminFullProductEditorPage: React.FC = () => {
           comparePrice: fetched.comparePrice !== undefined ? fetched.comparePrice : prev.comparePrice,
           masterPrice14k: p14k,
           masterPrice18k: p18k,
-          masterPriceSilver: 0,
+          masterPriceSilver: fetched.masterPriceSilver || 0,
           categoryId: fetched.categoryId || fetched.category?.id || '',
-          jewelleryType: fetched.jewelleryType || fetched.category?.name || 'Rings',
+          jewelleryType: canonicalType,
+          style: canonicalStyle,
+          ringStyle: canonicalStyle,
           status: fetched.status || 'DRAFT',
           enableMetalSelection: fetched.enableMetalSelection ?? true,
           enableCustomOptions: fetched.enableCustomOptions ?? false,
@@ -531,10 +802,7 @@ export const AdminFullProductEditorPage: React.FC = () => {
           accordionsConfig: loadedAccordions.length > 0 ? loadedAccordions : prev.accordionsConfig,
           internalTags: iTags,
           seoSocial: sSocial,
-          metalsConfig: (fetched.metalsConfig && fetched.metalsConfig.length > 0 ? fetched.metalsConfig : prev.metalsConfig).filter((m: any) => {
-            const lbl = String(m.label || '').toLowerCase();
-            return !lbl.includes('platinum') && !lbl.includes('silver') && !lbl.includes('9k') && !lbl.includes('10k');
-          }),
+          metalsConfig: (fetched.metalsConfig && fetched.metalsConfig.length > 0) ? fetched.metalsConfig : prev.metalsConfig,
           variations: vars,
         }));
       } else {
@@ -600,7 +868,7 @@ export const AdminFullProductEditorPage: React.FC = () => {
           updated.slug = val.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
           updated.sku = `FJ-${val.substring(0, 3).toUpperCase()}-${Math.floor(100 + Math.random() * 900)}`;
           if (updated.seoSocial) {
-            updated.seoSocial.canonicalUrl = `https://floksyjewel.com/product/${updated.slug}`;
+            updated.seoSocial.canonicalUrl = `https://auroradiamonds.com/product/${updated.slug}`;
           }
         }
       }
@@ -623,13 +891,28 @@ export const AdminFullProductEditorPage: React.FC = () => {
   };
 
   const handleNestedFieldChange = (parentField: string, childKey: string, val: any) => {
-    setProductData((prev: any) => ({
-      ...prev,
-      [parentField]: {
-        ...(prev[parentField] || {}),
-        [childKey]: val,
-      },
-    }));
+    setProductData((prev: any) => {
+      const updated = {
+        ...prev,
+        [parentField]: {
+          ...(prev[parentField] || {}),
+          [childKey]: val,
+        },
+      };
+
+      if (parentField === 'diamondDetails') {
+        if (childKey === 'caratWeight') updated.carat = parseFloat(val) || 0;
+        if (childKey === 'color') updated.color = val;
+        if (childKey === 'clarity') updated.clarity = val;
+        if (childKey === 'cut') updated.cut = val;
+        if (childKey === 'certification') updated.certification = val;
+        if (childKey === 'certificateNumber') updated.certificateNo = val;
+        if (childKey === 'shape') updated.shape = val;
+        if (childKey === 'origin') updated.diamondType = val === 'Lab-Grown' ? 'LAB_GROWN' : 'NATURAL';
+      }
+
+      return updated;
+    });
   };
 
   const compressImageFile = (file: File, maxWidth = 1600, quality = 0.82): Promise<File> => {
@@ -691,7 +974,7 @@ export const AdminFullProductEditorPage: React.FC = () => {
 
     try {
       setUploadingMedia(true);
-      const token = localStorage.getItem('fj_admin_token') || localStorage.getItem('floksy_token');
+      const token = localStorage.getItem('admin_session_token') || localStorage.getItem('app_auth_token');
       const BATCH_SIZE = 10;
       const totalFiles = selectedFiles.length;
       let uploadedCount = 0;
@@ -736,8 +1019,8 @@ export const AdminFullProductEditorPage: React.FC = () => {
           setProductData((prev: any) => {
             const rawExisting = (prev.images || [])
               .map((img: any) => (typeof img === 'string' ? img : img.url))
-              .filter((u: string) => u && u !== '/assets/floksy_rings_cat.png');
-            const prevMain = prev.mainImage && prev.mainImage !== '/assets/floksy_rings_cat.png' ? [prev.mainImage] : [];
+              .filter((u: string) => u && u !== '/assets/gem_rings_cat.png');
+            const prevMain = prev.mainImage && prev.mainImage !== '/assets/gem_rings_cat.png' ? [prev.mainImage] : [];
             const combinedUrls = Array.from(new Set([...prevMain, ...rawExisting, ...allNewUrls]));
             const newImgObjs = combinedUrls.map((url: string, position: number) => ({
               url,
@@ -766,49 +1049,120 @@ export const AdminFullProductEditorPage: React.FC = () => {
     }
   };
 
-  // 2 MASTER PRICES REAL-TIME UPDATES LOGIC (14K & 18K)
-  const handleMasterPriceChange = (group: '14k' | '18k', newPrice: number) => {
-    setProductData((prev: any) => {
-      let master14k = group === '14k' ? newPrice : (prev.masterPrice14k ?? 2500);
-      let master18k = group === '18k' ? newPrice : (prev.masterPrice18k ?? 2750);
+  // ⚡ 1-CLICK AUTO-CALCULATE ALL GROUP PRICES FROM BASE PRICE
+  const handleAutoCalculateAllPrices = () => {
+    const base = productData.price || productData.masterPrice14k || 2500;
+    const p9k = Math.round(base * 0.75);
+    const p10k = Math.round(base * 0.85);
+    const p14k = Math.round(base * 1.0);
+    const p18k = Math.round(base * 1.10);
+    const pSilver = Math.round(base * 0.50);
+    const pPlat = Math.round(base * 1.30);
 
+    setProductData((prev: any) => {
       const updatedVars = (prev.variations || []).map((v: any) => {
-        const metalStr = String(v.metal || '');
-        if (metalStr.startsWith('14K')) {
-          return { ...v, price: master14k };
-        } else if (metalStr.startsWith('18K')) {
-          return { ...v, price: master18k };
-        }
-        return v;
+        const metalStr = String(v.metal || '').toLowerCase();
+        let newPrice = v.price;
+        if (metalStr.startsWith('9k')) newPrice = p9k;
+        else if (metalStr.startsWith('10k')) newPrice = p10k;
+        else if (metalStr.startsWith('14k')) newPrice = p14k;
+        else if (metalStr.startsWith('18k')) newPrice = p18k;
+        else if (metalStr.includes('silver') || metalStr.includes('925')) newPrice = pSilver;
+        else if (metalStr.includes('platinum')) newPrice = pPlat;
+        return { ...v, price: newPrice };
       });
 
       return {
         ...prev,
-        masterPrice14k: master14k,
-        masterPrice18k: master18k,
-        price: master14k,
+        masterPrice9k: p9k,
+        masterPrice10k: p10k,
+        masterPrice14k: p14k,
+        masterPrice18k: p18k,
+        masterPriceSilver: pSilver,
+        masterPricePlatinum: pPlat,
+        price: p14k,
         variations: updatedVars,
       };
     });
   };
 
+  // 6 GROUP MASTER PRICES REAL-TIME UPDATES LOGIC
+  const handleMasterPriceChange = (
+    group: '9k' | '10k' | '14k' | '18k' | 'silver' | 'platinum',
+    newPrice: number
+  ) => {
+    setProductData((prev: any) => {
+      const fieldKey =
+        group === '9k'
+          ? 'masterPrice9k'
+          : group === '10k'
+          ? 'masterPrice10k'
+          : group === '14k'
+          ? 'masterPrice14k'
+          : group === '18k'
+          ? 'masterPrice18k'
+          : group === 'silver'
+          ? 'masterPriceSilver'
+          : 'masterPricePlatinum';
+
+      const updatedVars = (prev.variations || []).map((v: any) => {
+        const metalStr = String(v.metal || '').toLowerCase();
+        let matches = false;
+        if (group === '9k' && metalStr.startsWith('9k')) matches = true;
+        else if (group === '10k' && metalStr.startsWith('10k')) matches = true;
+        else if (group === '14k' && metalStr.startsWith('14k')) matches = true;
+        else if (group === '18k' && metalStr.startsWith('18k')) matches = true;
+        else if (group === 'silver' && (metalStr.includes('silver') || metalStr.includes('925'))) matches = true;
+        else if (group === 'platinum' && metalStr.includes('platinum')) matches = true;
+
+        if (matches) {
+          return { ...v, price: newPrice };
+        }
+        return v;
+      });
+
+      const updated = {
+        ...prev,
+        [fieldKey]: newPrice,
+        variations: updatedVars,
+      };
+
+      if (group === '14k') {
+        updated.price = newPrice;
+      }
+
+      return updated;
+    });
+  };
+
   const generateVariationsFromMasterPrices = (
+    p9k: number,
+    p10k: number,
     p14k: number,
     p18k: number,
+    pSilver: number,
+    pPlatinum: number,
     metalsList: any[],
     sizesList: string[],
     baseSku: string,
-    isRing: boolean
+    isRing: boolean,
+    mode: 'metalsOnly' | 'matrix' = 'metalsOnly'
   ) => {
-    const activeMetals = (metalsList || [])
-      .map((m: any) => typeof m === 'string' ? m : m.label)
-      .filter((metal: string) => !metal.toLowerCase().includes('silver') && !metal.toLowerCase().includes('ag'));
-    const sizes = isRing ? (sizesList && sizesList.length > 0 ? sizesList : ALL_RING_SIZES) : [null];
+    const activeMetals = (metalsList || []).map((m: any) =>
+      typeof m === 'string' ? m : m.label
+    );
+    const sizes = isRing && mode === 'matrix' ? (sizesList && sizesList.length > 0 ? sizesList : ALL_RING_SIZES) : [null];
     const generated: any[] = [];
 
     for (const metal of activeMetals) {
+      const metalLower = metal.toLowerCase();
       let groupPrice = p14k;
-      if (metal.startsWith('18K')) groupPrice = p18k;
+      if (metalLower.startsWith('9k')) groupPrice = p9k;
+      else if (metalLower.startsWith('10k')) groupPrice = p10k;
+      else if (metalLower.startsWith('14k')) groupPrice = p14k;
+      else if (metalLower.startsWith('18k')) groupPrice = p18k;
+      else if (metalLower.includes('silver') || metalLower.includes('925')) groupPrice = pSilver;
+      else if (metalLower.includes('platinum')) groupPrice = pPlatinum;
 
       const metalCode = metal.replace(/[^a-zA-Z0-9]/g, '').substring(0, 4).toUpperCase();
 
@@ -830,28 +1184,37 @@ export const AdminFullProductEditorPage: React.FC = () => {
     }));
   };
 
-  const handleGenerateBulkVariations = () => {
-    const p14k = productData.masterPrice14k ?? 2500;
-    const p18k = productData.masterPrice18k ?? 2750;
+  const handleGenerateBulkVariations = (mode?: 'metalsOnly' | 'matrix') => {
+    const selectedMode = mode || variationGenMode;
+    const base = productData.price || productData.masterPrice14k || 2500;
+    const p9k = productData.masterPrice9k ?? Math.round(base * 0.75);
+    const p10k = productData.masterPrice10k ?? Math.round(base * 0.85);
+    const p14k = productData.masterPrice14k ?? base;
+    const p18k = productData.masterPrice18k ?? Math.round(base * 1.10);
+    const pSilver = productData.masterPriceSilver ?? Math.round(base * 0.50);
+    const pPlatinum = productData.masterPricePlatinum ?? Math.round(base * 1.30);
+
     const activeMetals = productData.metalsConfig || APPROVED_METALS;
     const sizes = productData.availableRingSizes || ALL_RING_SIZES;
     const baseSku = productData.sku || 'FJ-JW-001';
 
-    generateVariationsFromMasterPrices(p14k, p18k, activeMetals, sizes, baseSku, isRingProduct);
+    generateVariationsFromMasterPrices(p9k, p10k, p14k, p18k, pSilver, pPlatinum, activeMetals, sizes, baseSku, isRingProduct, selectedMode);
   };
 
   const handleAddSingleVariation = () => {
-    const metals = (productData.metalsConfig || APPROVED_METALS).filter((m: any) => {
-      const lbl = String(m.label || m || '').toLowerCase();
-      return !lbl.includes('silver') && !lbl.includes('ag');
-    });
+    const metals = productData.metalsConfig || APPROVED_METALS;
     const firstMetal = metals[0]?.label || '14K Yellow Gold';
-    const defaultSize = isRingProduct ? ((productData.availableRingSizes || [])[0] || 'US 7') : null;
+    const defaultSize = isRingProduct && variationGenMode === 'matrix' ? ((productData.availableRingSizes || [])[0] || 'US 7') : null;
     const baseSku = productData.sku || 'FJ-JW-001';
     const varCount = (productData.variations || []).length + 1;
 
+    const metalLower = firstMetal.toLowerCase();
     let groupPrice = productData.masterPrice14k || 2500;
-    if (firstMetal.startsWith('18K')) groupPrice = productData.masterPrice18k || 2750;
+    if (metalLower.startsWith('9k')) groupPrice = productData.masterPrice9k || Math.round(groupPrice * 0.75);
+    else if (metalLower.startsWith('10k')) groupPrice = productData.masterPrice10k || Math.round(groupPrice * 0.85);
+    else if (metalLower.startsWith('18k')) groupPrice = productData.masterPrice18k || Math.round(groupPrice * 1.10);
+    else if (metalLower.includes('silver') || metalLower.includes('925')) groupPrice = productData.masterPriceSilver || Math.round(groupPrice * 0.50);
+    else if (metalLower.includes('platinum')) groupPrice = productData.masterPricePlatinum || Math.round(groupPrice * 1.30);
 
     const newVar = {
       metal: firstMetal,
@@ -1099,10 +1462,22 @@ export const AdminFullProductEditorPage: React.FC = () => {
               </AdminFormGroup>
             </AdminFormGrid>
 
-            <AdminFormGrid $columns={2}>
+            <AdminFormGrid $columns={5}>
               <AdminFormGroup>
                 <label>Jewelry Type</label>
-                <AdminSelect value={productData.jewelleryType || 'Rings'} onChange={(e) => handleFieldChange('jewelleryType', e.target.value)}>
+                <AdminSelect
+                  value={productData.jewelleryType || 'Rings'}
+                  onChange={(e) => {
+                    const newType = e.target.value;
+                    const availableStyles = JEWELRY_TYPE_STYLES[newType] || JEWELRY_TYPE_STYLES.Rings;
+                    setProductData((prev: any) => ({
+                      ...prev,
+                      jewelleryType: newType,
+                      style: availableStyles.includes(prev.style) ? prev.style : availableStyles[0],
+                      ringStyle: availableStyles.includes(prev.style) ? prev.style : availableStyles[0],
+                    }));
+                  }}
+                >
                   <option value="Rings">Rings</option>
                   <option value="Earrings">Earrings</option>
                   <option value="Necklaces">Necklaces</option>
@@ -1111,6 +1486,70 @@ export const AdminFullProductEditorPage: React.FC = () => {
                   <option value="Other">Other</option>
                 </AdminSelect>
               </AdminFormGroup>
+
+              <AdminFormGroup>
+                <label>Style ({productData.jewelleryType || 'Rings'} Style)</label>
+                <AdminSelect
+                  value={productData.style || productData.ringStyle || ''}
+                  onChange={(e) => {
+                    const val = e.target.value;
+                    handleFieldChange('style', val);
+                    handleFieldChange('ringStyle', val);
+                  }}
+                >
+                  <option value="">-- Select Style --</option>
+                  {(JEWELRY_TYPE_STYLES[productData.jewelleryType || 'Rings'] || JEWELRY_TYPE_STYLES.Rings).map((st) => (
+                    <option key={st} value={st}>
+                      {st}
+                    </option>
+                  ))}
+                </AdminSelect>
+              </AdminFormGroup>
+
+              <AdminFormGroup>
+                <label>Target Gender</label>
+                <AdminSelect
+                  value={productData.gender || 'Women'}
+                  onChange={(e) => handleFieldChange('gender', e.target.value)}
+                >
+                  <option value="Women">Women</option>
+                  <option value="Men">Men</option>
+                  <option value="Unisex">Unisex</option>
+                </AdminSelect>
+              </AdminFormGroup>
+
+              <AdminFormGroup>
+                <label>Sort By Selection</label>
+                <AdminSelect
+                  value={
+                    productData.isBestseller
+                      ? 'bestsellers'
+                      : productData.isNewArrival
+                      ? 'newest'
+                      : productData.isFeatured
+                      ? 'featured'
+                      : 'standard'
+                  }
+                  onChange={(e) => {
+                    const sortChoice = e.target.value;
+                    if (sortChoice === 'bestsellers') {
+                      setProductData((prev: any) => ({ ...prev, isBestseller: true, isNewArrival: false, isFeatured: false }));
+                    } else if (sortChoice === 'newest') {
+                      setProductData((prev: any) => ({ ...prev, isNewArrival: true, isBestseller: false, isFeatured: false }));
+                    } else if (sortChoice === 'featured') {
+                      setProductData((prev: any) => ({ ...prev, isFeatured: true, isBestseller: false, isNewArrival: false }));
+                    } else {
+                      setProductData((prev: any) => ({ ...prev, isBestseller: false, isNewArrival: false, isFeatured: false }));
+                    }
+                  }}
+                >
+                  <option value="bestsellers">⭐ Best Selling</option>
+                  <option value="newest">✨ Newest Arrivals</option>
+                  <option value="featured">👑 Featured Product</option>
+                  <option value="standard">Standard Catalog</option>
+                </AdminSelect>
+              </AdminFormGroup>
+
               <AdminFormGroup>
                 <label>Catalog Status</label>
                 <AdminSelect value={productData.status || 'ACTIVE'} onChange={(e) => handleFieldChange('status', e.target.value)}>
@@ -1120,6 +1559,102 @@ export const AdminFullProductEditorPage: React.FC = () => {
                 </AdminSelect>
               </AdminFormGroup>
             </AdminFormGrid>
+
+            {/* MEGA MENU COLLECTIONS ACCORDING TO JEWELRY TYPE */}
+            <div style={{ background: '#fdfbf7', border: '1px solid #e8e3d9', borderRadius: 6, padding: '16px', marginTop: 14, marginBottom: 16 }}>
+              <div style={{ marginBottom: 10 }}>
+                <label style={{ fontSize: '0.88rem', fontWeight: 700, color: '#1a1a1a', display: 'block' }}>
+                  🏛️ Mega Menu Collection(s) — ({productData.jewelleryType || 'Rings'})
+                </label>
+                <span style={{ fontSize: '0.75rem', color: '#77736c' }}>
+                  Assign this product to header mega menu collection(s). Selecting collections makes this product appear under that collection's storefront URL and filters.
+                </span>
+              </div>
+
+              {/* PRIMARY MEGA MENU COLLECTION DROPDOWN */}
+              <AdminFormGroup style={{ marginBottom: 12 }}>
+                <label style={{ fontSize: '0.82rem', fontWeight: 600 }}>Primary Mega Menu Category / Section</label>
+                <AdminSelect
+                  value={
+                    (MEGA_MENU_COLLECTIONS_BY_TYPE[productData.jewelleryType || 'Rings'] || MEGA_MENU_COLLECTIONS_BY_TYPE.Rings)
+                      .flatMap((sec) => sec.items)
+                      .find((item) => (productData.internalTags || []).includes(item.label) || (productData.internalTags || []).includes(item.slug))?.slug || ''
+                  }
+                  onChange={(e) => {
+                    const selectedSlug = e.target.value;
+                    const activeTypeSections = MEGA_MENU_COLLECTIONS_BY_TYPE[productData.jewelleryType || 'Rings'] || MEGA_MENU_COLLECTIONS_BY_TYPE.Rings;
+                    const allItems = activeTypeSections.flatMap((s) => s.items);
+                    const matchedItem = allItems.find((it) => it.slug === selectedSlug);
+
+                    if (matchedItem) {
+                      const existingTags = new Set(productData.internalTags || []);
+                      existingTags.add(matchedItem.label);
+                      existingTags.add(matchedItem.slug);
+                      setProductData((prev: any) => ({
+                        ...prev,
+                        internalTags: Array.from(existingTags),
+                      }));
+                    }
+                  }}
+                >
+                  <option value="">-- Choose Primary Mega Menu Collection --</option>
+                  {(MEGA_MENU_COLLECTIONS_BY_TYPE[productData.jewelleryType || 'Rings'] || MEGA_MENU_COLLECTIONS_BY_TYPE.Rings).map((secGroup) => (
+                    <optgroup key={secGroup.section} label={`── ${secGroup.section} ──`}>
+                      {secGroup.items.map((it) => (
+                        <option key={it.slug} value={it.slug}>
+                          {it.label}
+                        </option>
+                      ))}
+                    </optgroup>
+                  ))}
+                </AdminSelect>
+              </AdminFormGroup>
+
+              {/* MULTIPLE MEGA MENU COLLECTIONS CHECKBOXES */}
+              <div style={{ marginTop: 10 }}>
+                <label style={{ fontSize: '0.76rem', fontWeight: 700, color: '#4a4a4a', textTransform: 'uppercase', letterSpacing: '0.05em', display: 'block', marginBottom: 8 }}>
+                  Assign to Multiple Mega Menu Sections:
+                </label>
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(220px, 1fr))', gap: 10 }}>
+                  {(MEGA_MENU_COLLECTIONS_BY_TYPE[productData.jewelleryType || 'Rings'] || MEGA_MENU_COLLECTIONS_BY_TYPE.Rings).map((secGroup) => (
+                    <div key={secGroup.section} style={{ background: '#ffffff', border: '1px solid #e8e3d9', borderRadius: 4, padding: '10px 12px' }}>
+                      <div style={{ fontSize: '0.68rem', fontWeight: 700, color: '#c9a45c', letterSpacing: '0.08em', marginBottom: 8, textTransform: 'uppercase' }}>
+                        {secGroup.section}
+                      </div>
+                      <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
+                        {secGroup.items.map((item) => {
+                          const isSelected = (productData.internalTags || []).includes(item.label) || (productData.internalTags || []).includes(item.slug);
+                          return (
+                            <label key={item.slug} style={{ display: 'flex', alignItems: 'center', gap: 8, fontSize: '0.8rem', cursor: 'pointer', margin: 0, color: '#242321' }}>
+                              <input
+                                type="checkbox"
+                                checked={isSelected}
+                                onChange={(e) => {
+                                  const currentTags = new Set(productData.internalTags || []);
+                                  if (e.target.checked) {
+                                    currentTags.add(item.label);
+                                    currentTags.add(item.slug);
+                                  } else {
+                                    currentTags.delete(item.label);
+                                    currentTags.delete(item.slug);
+                                  }
+                                  setProductData((prev: any) => ({
+                                    ...prev,
+                                    internalTags: Array.from(currentTags),
+                                  }));
+                                }}
+                                style={{ width: 14, height: 14, accentColor: '#c9a45c' }}
+                              />
+                              {item.label}
+                            </label>
+                          );
+                        })}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
 
             <AdminFormGrid $columns={3}>
               <AdminFormGroup>
@@ -1187,17 +1722,17 @@ export const AdminFullProductEditorPage: React.FC = () => {
                     productData.mainImage,
                     productData.secondaryImage,
                     ...rawImgs
-                  ].filter((u: string) => u && u !== '/assets/floksy_rings_cat.png')));
+                  ].filter((u: string) => u && u !== '/assets/gem_rings_cat.png')));
 
-                  const displayList = allUrls.length > 0 ? allUrls : ['/assets/floksy_rings_cat.png'];
+                  const displayList = allUrls.length > 0 ? allUrls : ['/assets/gem_rings_cat.png'];
 
                   return displayList.map((url: any, idx: number) => (
                     <div
                       key={idx}
                       title={idx === 0 ? 'Primary Product Image' : 'Click to set as Primary Image'}
                       onClick={() => {
-                        if (url === '/assets/floksy_rings_cat.png') return;
-                        const reordered = [url, ...displayList.filter((u: string) => u !== url && u !== '/assets/floksy_rings_cat.png')];
+                        if (url === '/assets/gem_rings_cat.png') return;
+                        const reordered = [url, ...displayList.filter((u: string) => u !== url && u !== '/assets/gem_rings_cat.png')];
                         const newImgObjs = reordered.map((u, pos) => ({ url: u, position: pos, imageType: pos === 0 ? 'hero' : 'gallery' }));
                         setProductData((prev: any) => ({
                           ...prev,
@@ -1212,16 +1747,19 @@ export const AdminFullProductEditorPage: React.FC = () => {
                       <span style={{ position: 'absolute', top: 4, left: 4, background: idx === 0 ? '#c9a45c' : idx === 1 ? '#19202a' : 'rgba(0,0,0,0.6)', color: '#fff', padding: '2px 6px', borderRadius: 3, fontSize: '0.65rem', fontWeight: 700 }}>
                         {idx === 0 ? 'PRIMARY' : idx === 1 ? 'HOVER' : `#${idx + 1}`}
                       </span>
-                      {url !== '/assets/floksy_rings_cat.png' && (
+                      {url !== '/assets/gem_rings_cat.png' && (
                         <button
                           type="button"
                           onClick={(e) => {
                             e.stopPropagation();
-                            const remaining = displayList.filter((u: any) => u !== url && u !== '/assets/floksy_rings_cat.png');
+                            if (url && url.startsWith('/uploads/')) {
+                              api.deleteUploadedFile(url).catch(console.warn);
+                            }
+                            const remaining = displayList.filter((u: any) => u !== url && u !== '/assets/gem_rings_cat.png');
                             const newImgObjs = remaining.map((u, pos) => ({ url: u, position: pos, imageType: pos === 0 ? 'hero' : 'gallery' }));
                             setProductData((prev: any) => ({
                               ...prev,
-                              mainImage: remaining[0] || '/assets/floksy_rings_cat.png',
+                              mainImage: remaining[0] || '/assets/gem_rings_cat.png',
                               secondaryImage: remaining[1] || remaining[0] || null,
                               images: newImgObjs,
                             }));
@@ -1290,14 +1828,27 @@ export const AdminFullProductEditorPage: React.FC = () => {
               <AdminFormGroup>
                 <label>Color</label>
                 <AdminSelect value={productData.diamondDetails?.color || 'D'} onChange={(e) => handleNestedFieldChange('diamondDetails', 'color', e.target.value)}>
-                  <option value="D">D (Colorless)</option>
-                  <option value="E">E (Colorless)</option>
-                  <option value="F">F (Colorless)</option>
-                  <option value="G">G (Near Colorless)</option>
-                  <option value="H">H (Near Colorless)</option>
-                  <option value="I">I (Near Colorless)</option>
-                  <option value="J">J (Near Colorless)</option>
-                  <option value="K">K (Faint Yellow)</option>
+                  <optgroup label="── STANDARD COLORLESS / NEAR COLORLESS ──">
+                    <option value="D">D (Colorless)</option>
+                    <option value="E">E (Colorless)</option>
+                    <option value="F">F (Colorless)</option>
+                    <option value="G">G (Near Colorless)</option>
+                    <option value="H">H (Near Colorless)</option>
+                    <option value="I">I (Near Colorless)</option>
+                    <option value="J">J (Near Colorless)</option>
+                    <option value="K">K (Faint Yellow)</option>
+                  </optgroup>
+                  <optgroup label="── FANCY COLORED DIAMONDS ──">
+                    <option value="Fancy Yellow">Fancy Yellow</option>
+                    <option value="Fancy Pink">Fancy Pink</option>
+                    <option value="Fancy Blue">Fancy Blue</option>
+                    <option value="Fancy Green">Fancy Green</option>
+                    <option value="Fancy Orange">Fancy Orange</option>
+                    <option value="Fancy Red">Fancy Red</option>
+                    <option value="Fancy Purple">Fancy Purple</option>
+                    <option value="Fancy Brown">Fancy Brown</option>
+                    <option value="Fancy Black">Fancy Black</option>
+                  </optgroup>
                   <option value="Other">Other</option>
                 </AdminSelect>
               </AdminFormGroup>
@@ -1325,6 +1876,7 @@ export const AdminFullProductEditorPage: React.FC = () => {
               <AdminFormGroup>
                 <label>Cut Grade</label>
                 <AdminSelect value={productData.diamondDetails?.cut || 'Excellent'} onChange={(e) => handleNestedFieldChange('diamondDetails', 'cut', e.target.value)}>
+                  <option value="Ideal">Ideal / Super Ideal</option>
                   <option value="Excellent">Excellent</option>
                   <option value="Very Good">Very Good</option>
                   <option value="Good">Good</option>
@@ -1684,32 +2236,210 @@ export const AdminFullProductEditorPage: React.FC = () => {
           <AdminCard>
             <AdminCardHeader>
               <h3>6. PRODUCT VARIATIONS & PRICING</h3>
-              <div style={{ display: 'flex', gap: 8 }}>
-                <AdminButton $variant="secondary" $size="sm" onClick={handleGenerateBulkVariations} icon={<Sliders size={13} />}>
-                  Auto-Generate Variations
+              <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
+                <div style={{ display: 'flex', background: '#f0ece3', padding: 3, borderRadius: 6, gap: 4 }}>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setVariationGenMode('metalsOnly');
+                      handleGenerateBulkVariations('metalsOnly');
+                    }}
+                    style={{
+                      border: 'none',
+                      background: variationGenMode === 'metalsOnly' ? '#ffffff' : 'transparent',
+                      color: variationGenMode === 'metalsOnly' ? '#1a1a1a' : '#77736c',
+                      fontWeight: 700,
+                      fontSize: '0.74rem',
+                      padding: '4px 10px',
+                      borderRadius: 4,
+                      cursor: 'pointer',
+                      boxShadow: variationGenMode === 'metalsOnly' ? '0 1px 3px rgba(0,0,0,0.1)' : 'none',
+                    }}
+                  >
+                    🔘 Metal Only ({productData.metalsConfig?.length || 14} Rows)
+                  </button>
+                  {isRingProduct && (
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setVariationGenMode('matrix');
+                        handleGenerateBulkVariations('matrix');
+                      }}
+                      style={{
+                        border: 'none',
+                        background: variationGenMode === 'matrix' ? '#ffffff' : 'transparent',
+                        color: variationGenMode === 'matrix' ? '#1a1a1a' : '#77736c',
+                        fontWeight: 700,
+                        fontSize: '0.74rem',
+                        padding: '4px 10px',
+                        borderRadius: 4,
+                        cursor: 'pointer',
+                        boxShadow: variationGenMode === 'matrix' ? '0 1px 3px rgba(0,0,0,0.1)' : 'none',
+                      }}
+                    >
+                      🔘 Full Matrix (Metal × Size)
+                    </button>
+                  )}
+                </div>
+
+                <AdminButton $variant="secondary" $size="sm" onClick={() => handleGenerateBulkVariations()} icon={<Sliders size={13} />}>
+                  Re-Generate Table
                 </AdminButton>
                 <AdminButton $variant="gold" $size="sm" onClick={handleAddSingleVariation} icon={<Plus size={13} />}>
-                  + Add Row
+                  + Add Custom Row
                 </AdminButton>
               </div>
             </AdminCardHeader>
 
-            <div style={{ fontSize: '0.82rem', color: '#77736c', marginBottom: 16 }}>
-              Select available precious metal options and enter the 2 Master Prices (14K, 18K) to control all variations.
+            {/* 6 MASTER PRICES & 1-CLICK AUTO CALCULATE CARD */}
+            <div style={{ background: '#fdfbf7', border: '1px solid #e8e3d9', padding: '18px 20px', borderRadius: 8, marginBottom: 18 }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 14, flexWrap: 'wrap', gap: 10 }}>
+                <div>
+                  <div style={{ fontSize: '0.85rem', fontWeight: 700, letterSpacing: '0.06em', textTransform: 'uppercase', color: '#19202a', display: 'flex', alignItems: 'center', gap: 6 }}>
+                    ⚡ GROUP MASTER PRICES <span style={{ fontSize: '0.72rem', color: '#c9a45c', fontWeight: 600, textTransform: 'none' }}>(Source of truth for metal groups)</span>
+                  </div>
+                  <div style={{ fontSize: '0.76rem', color: '#77736c', marginTop: 2 }}>
+                    Changing any group price automatically updates all matching metal variations in real-time.
+                  </div>
+                </div>
+
+                <AdminButton
+                  $variant="gold"
+                  $size="sm"
+                  type="button"
+                  onClick={handleAutoCalculateAllPrices}
+                  icon={<RefreshCw size={13} />}
+                >
+                  ⚡ Auto-Calculate All from Base Price (${productData.price || productData.masterPrice14k || 2500})
+                </AdminButton>
+              </div>
+
+              <AdminFormGrid $columns={6}>
+                <AdminFormGroup>
+                  <label style={{ fontWeight: 700, fontSize: '0.75rem', color: '#8c7647' }}>9K GOLD (75%)</label>
+                  <AdminInput
+                    type="number"
+                    value={productData.masterPrice9k ?? Math.round((productData.price || 2500) * 0.75)}
+                    onChange={(e) => handleMasterPriceChange('9k', parseFloat(e.target.value) || 0)}
+                    placeholder="1875"
+                  />
+                </AdminFormGroup>
+
+                <AdminFormGroup>
+                  <label style={{ fontWeight: 700, fontSize: '0.75rem', color: '#8c7647' }}>10K GOLD (85%)</label>
+                  <AdminInput
+                    type="number"
+                    value={productData.masterPrice10k ?? Math.round((productData.price || 2500) * 0.85)}
+                    onChange={(e) => handleMasterPriceChange('10k', parseFloat(e.target.value) || 0)}
+                    placeholder="2125"
+                  />
+                </AdminFormGroup>
+
+                <AdminFormGroup>
+                  <label style={{ fontWeight: 700, fontSize: '0.75rem', color: '#c9a45c' }}>⭐ 14K GOLD (BASE)</label>
+                  <AdminInput
+                    type="number"
+                    value={productData.masterPrice14k ?? (productData.price || 2500)}
+                    onChange={(e) => handleMasterPriceChange('14k', parseFloat(e.target.value) || 0)}
+                    placeholder="2500"
+                  />
+                </AdminFormGroup>
+
+                <AdminFormGroup>
+                  <label style={{ fontWeight: 700, fontSize: '0.75rem', color: '#8c7647' }}>18K GOLD (110%)</label>
+                  <AdminInput
+                    type="number"
+                    value={productData.masterPrice18k ?? Math.round((productData.price || 2500) * 1.10)}
+                    onChange={(e) => handleMasterPriceChange('18k', parseFloat(e.target.value) || 0)}
+                    placeholder="2750"
+                  />
+                </AdminFormGroup>
+
+                <AdminFormGroup>
+                  <label style={{ fontWeight: 700, fontSize: '0.75rem', color: '#666666' }}>925 SILVER (50%)</label>
+                  <AdminInput
+                    type="number"
+                    value={productData.masterPriceSilver ?? Math.round((productData.price || 2500) * 0.50)}
+                    onChange={(e) => handleMasterPriceChange('silver', parseFloat(e.target.value) || 0)}
+                    placeholder="1250"
+                  />
+                </AdminFormGroup>
+
+                <AdminFormGroup>
+                  <label style={{ fontWeight: 700, fontSize: '0.75rem', color: '#475569' }}>PLATINUM (130%)</label>
+                  <AdminInput
+                    type="number"
+                    value={productData.masterPricePlatinum ?? Math.round((productData.price || 2500) * 1.30)}
+                    onChange={(e) => handleMasterPriceChange('platinum', parseFloat(e.target.value) || 0)}
+                    placeholder="3250"
+                  />
+                </AdminFormGroup>
+              </AdminFormGrid>
             </div>
 
-            {/* METALS SELECTION CHECKBOXES */}
-            <div style={{ background: '#faf8f5', border: '1px solid #e8e3d9', padding: 16, borderRadius: 6, marginBottom: 16 }}>
-              <div style={{ fontSize: '0.78rem', fontWeight: 700, letterSpacing: '0.08em', textTransform: 'uppercase', color: '#19202a', marginBottom: 12 }}>
-                Active Metal Options
+            {/* METALS SELECTION CHECKBOXES & QUICK PRESETS */}
+            <div style={{ background: '#faf8f5', border: '1px solid #e8e3d9', padding: 18, borderRadius: 8, marginBottom: 18 }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 12, flexWrap: 'wrap', gap: 8 }}>
+                <div style={{ fontSize: '0.78rem', fontWeight: 700, letterSpacing: '0.08em', textTransform: 'uppercase', color: '#19202a' }}>
+                  Active Metal Options ({productData.metalsConfig?.length || 0} / {APPROVED_METALS.length} Selected)
+                </div>
+
+                {/* QUICK PRESET BUTTONS */}
+                <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap' }}>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      const gold14and18 = APPROVED_METALS.filter((m) => m.label.startsWith('14K') || m.label.startsWith('18K'));
+                      handleFieldChange('metalsConfig', gold14and18);
+                    }}
+                    style={{ fontSize: '0.72rem', color: '#8c7647', background: '#fff', border: '1px solid #e8e3d9', padding: '3px 8px', borderRadius: 4, cursor: 'pointer', fontWeight: 600 }}
+                  >
+                    ✨ 14K & 18K Only
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      const allGold = APPROVED_METALS.filter((m) => !m.label.toLowerCase().includes('silver') && !m.label.toLowerCase().includes('platinum'));
+                      handleFieldChange('metalsConfig', allGold);
+                    }}
+                    style={{ fontSize: '0.72rem', color: '#8c7647', background: '#fff', border: '1px solid #e8e3d9', padding: '3px 8px', borderRadius: 4, cursor: 'pointer', fontWeight: 600 }}
+                  >
+                    👑 All Gold (9K–18K)
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      const popular = APPROVED_METALS.filter((m) => m.label.startsWith('14K') || m.label.startsWith('18K') || m.label.toLowerCase().includes('platinum'));
+                      handleFieldChange('metalsConfig', popular);
+                    }}
+                    style={{ fontSize: '0.72rem', color: '#8c7647', background: '#fff', border: '1px solid #e8e3d9', padding: '3px 8px', borderRadius: 4, cursor: 'pointer', fontWeight: 600 }}
+                  >
+                    🌟 Popular (14K, 18K, Plat)
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => handleFieldChange('metalsConfig', [...APPROVED_METALS])}
+                    style={{ fontSize: '0.72rem', color: '#c9a45c', background: '#fff', border: '1px solid #c9a45c', padding: '3px 8px', borderRadius: 4, cursor: 'pointer', fontWeight: 700 }}
+                  >
+                    💎 All 14 Metals
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => handleFieldChange('metalsConfig', [])}
+                    style={{ fontSize: '0.72rem', color: '#777', background: '#fff', border: '1px solid #e8e3d9', padding: '3px 8px', borderRadius: 4, cursor: 'pointer', fontWeight: 600 }}
+                  >
+                    Clear All
+                  </button>
+                </div>
               </div>
+
               <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 10 }}>
                 {APPROVED_METALS.map((mObj) => {
                   const currentMetals = productData.metalsConfig || [];
                   const isChecked = currentMetals.some((m: any) => (typeof m === 'string' ? m : m.label)?.toLowerCase() === mObj.label.toLowerCase());
 
                   return (
-                    <label key={mObj.label} style={{ display: 'flex', alignItems: 'center', gap: 8, fontSize: '0.82rem', cursor: 'pointer', background: '#fff', padding: '8px 12px', border: isChecked ? '1px solid #c9a45c' : '1px solid #e8e3d9', borderRadius: 6, fontWeight: isChecked ? 600 : 400 }}>
+                    <label key={mObj.label} style={{ display: 'flex', alignItems: 'center', gap: 8, fontSize: '0.82rem', cursor: 'pointer', background: '#fff', padding: '9px 12px', border: isChecked ? '1px solid #c9a45c' : '1px solid #e8e3d9', borderRadius: 6, fontWeight: isChecked ? 600 : 400, transition: 'border-color 0.2s' }}>
                       <input
                         type="checkbox"
                         checked={isChecked}
@@ -1724,42 +2454,13 @@ export const AdminFullProductEditorPage: React.FC = () => {
                           }
                           handleFieldChange('metalsConfig', updated);
                         }}
-                        style={{ accentColor: '#c9a45c' }}
+                        style={{ accentColor: '#c9a45c', width: 16, height: 16 }}
                       />
-                      {mObj.label}
+                      <span style={{ width: 12, height: 12, borderRadius: '50%', background: mObj.circleColor, border: '1px solid rgba(0,0,0,0.15)', display: 'inline-block', flexShrink: 0 }} />
+                      <span>{mObj.label}</span>
                     </label>
                   );
                 })}
-              </div>
-            </div>
-
-            {/* 2 MASTER PRICES INPUTS */}
-            <div style={{ background: '#faf8f5', border: '1px solid #e8e3d9', padding: 18, borderRadius: 6, marginBottom: 20 }}>
-              <div style={{ fontSize: '0.82rem', fontWeight: 700, letterSpacing: '0.08em', textTransform: 'uppercase', color: '#19202a', marginBottom: 12 }}>
-                MASTER PRICES (Source of Truth for Metal Groups)
-              </div>
-              <AdminFormGrid $columns={2}>
-                <AdminFormGroup>
-                  <label style={{ fontWeight: 700, color: '#c9a45c' }}>14K PRICE ($)</label>
-                  <AdminInput
-                    type="number"
-                    value={productData.masterPrice14k ?? 2500}
-                    onChange={(e) => handleMasterPriceChange('14k', parseFloat(e.target.value) || 0)}
-                    placeholder="2500"
-                  />
-                </AdminFormGroup>
-                <AdminFormGroup>
-                  <label style={{ fontWeight: 700, color: '#c9a45c' }}>18K PRICE ($)</label>
-                  <AdminInput
-                    type="number"
-                    value={productData.masterPrice18k ?? 2750}
-                    onChange={(e) => handleMasterPriceChange('18k', parseFloat(e.target.value) || 0)}
-                    placeholder="2750"
-                  />
-                </AdminFormGroup>
-              </AdminFormGrid>
-              <div style={{ fontSize: '0.78rem', color: '#77736c', marginTop: 8 }}>
-                Editing a master price automatically updates all corresponding metal colors {isRingProduct ? 'and ring sizes' : ''} in the variation table below.
               </div>
             </div>
 
@@ -2209,9 +2910,9 @@ export const AdminFullProductEditorPage: React.FC = () => {
                 <label>Canonical URL</label>
                 <AdminInput
                   type="text"
-                  value={productData.seoSocial?.canonicalUrl || `https://floksyjewel.com/product/${productData.slug}`}
+                  value={productData.seoSocial?.canonicalUrl || `https://auroradiamonds.com/product/${productData.slug}`}
                   onChange={(e) => handleNestedFieldChange('seoSocial', 'canonicalUrl', e.target.value)}
-                  placeholder="https://floksyjewel.com/product/..."
+                  placeholder="https://auroradiamonds.com/product/..."
                 />
               </AdminFormGroup>
             </AdminFormGrid>
@@ -2239,8 +2940,43 @@ export const AdminFullProductEditorPage: React.FC = () => {
                 <input type="checkbox" checked={productData.isBestseller || false} onChange={(e) => handleFieldChange('isBestseller', e.target.checked)} />
               </ToggleRow>
 
-              <AdminFormGroup style={{ marginTop: 12 }}>
-                <label>Status</label>
+              <AdminFormGroup style={{ marginTop: 8 }}>
+                <label>Sort By Priority / Placement</label>
+                <AdminSelect
+                  value={
+                    productData.isBestseller
+                      ? 'bestsellers'
+                      : productData.isNewArrival
+                      ? 'newest'
+                      : productData.isFeatured
+                      ? 'featured'
+                      : 'standard'
+                  }
+                  onChange={(e) => {
+                    const sortChoice = e.target.value;
+                    if (sortChoice === 'bestsellers') {
+                      setProductData((prev: any) => ({ ...prev, isBestseller: true, isNewArrival: false, isFeatured: false }));
+                    } else if (sortChoice === 'newest') {
+                      setProductData((prev: any) => ({ ...prev, isNewArrival: true, isBestseller: false, isFeatured: false }));
+                    } else if (sortChoice === 'featured') {
+                      setProductData((prev: any) => ({ ...prev, isFeatured: true, isBestseller: false, isNewArrival: false }));
+                    } else {
+                      setProductData((prev: any) => ({ ...prev, isBestseller: false, isNewArrival: false, isFeatured: false }));
+                    }
+                  }}
+                >
+                  <option value="bestsellers">⭐ Best Selling</option>
+                  <option value="newest">✨ Newest Arrivals</option>
+                  <option value="featured">👑 Featured Product</option>
+                  <option value="standard">Standard Catalog</option>
+                </AdminSelect>
+                <div style={{ fontSize: '0.72rem', color: '#77736c', marginTop: 4 }}>
+                  Places this product at top ranking when customer sorts by this option.
+                </div>
+              </AdminFormGroup>
+
+              <AdminFormGroup style={{ marginTop: 6 }}>
+                <label>Catalog Status</label>
                 <AdminSelect value={productData.status || 'ACTIVE'} onChange={(e) => handleFieldChange('status', e.target.value)}>
                   <option value="ACTIVE">Active / Published</option>
                   <option value="DRAFT">Draft</option>

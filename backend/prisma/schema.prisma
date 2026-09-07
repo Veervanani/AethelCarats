@@ -75,11 +75,12 @@ model Product {
   slug                   String                  @unique
   categoryId             String?
   collectionId           String?
-  shortDescription       String?
-  fullDescription        String?
-  specifications         String?
-  careInstructions       String?
+  shortDescription       String?                 @db.LongText
+  fullDescription        String?                 @db.LongText
+  specifications         String?                 @db.LongText
+  careInstructions       String?                 @db.LongText
   jewelleryType          String?
+  style                  String?
   ringStyle              String?
   ringSize               String?
   ringWidth              String?
@@ -112,8 +113,8 @@ model Product {
   onSale                 Boolean                 @default(false)
   engravable             Boolean                 @default(false)
   metaTitle              String?
-  metaDescription        String?
-  metaKeywords           String?
+  metaDescription        String?                 @db.LongText
+  metaKeywords           String?                 @db.LongText
   price                  Float
   comparePrice           Float?
   salePrice              Float?
@@ -131,35 +132,35 @@ model Product {
   enableDiamondSelection Boolean                 @default(true)
   enableDiamondShape     Boolean                 @default(true)
   enableCustomOptions    Boolean                 @default(false)
-  variationsJson         String?
-  customOptionsJson      String?
-  shippingInfoJson       String?
+  variationsJson         String?                 @db.LongText
+  customOptionsJson      String?                 @db.LongText
+  shippingInfoJson       String?                 @db.LongText
   enableRingSize         Boolean                 @default(false)
   ringSizeMode           String                  @default("CUSTOMER_SELECTABLE")
   fixedRingSize          String?                 @default("7")
-  availableRingSizes     String?
+  availableRingSizes     String?                 @db.LongText
   isRingSizeRequired     Boolean                 @default(true)
-  metalsConfig           String?
-  diamondsConfig         String?
-  benefitsConfig         String?
-  accordionsConfig       String?
-  pricingMatrix          String?
-  draftData              String?
+  metalsConfig           String?                 @db.LongText
+  diamondsConfig         String?                 @db.LongText
+  benefitsConfig         String?                 @db.LongText
+  accordionsConfig       String?                 @db.LongText
+  pricingMatrix          String?                 @db.LongText
+  draftData              String?                 @db.LongText
   ogImage                String?
-  schemaInformation      String?
+  schemaInformation      String?                 @db.LongText
   title                  String?
   masterPrice14k         Float?
   masterPrice18k         Float?
   masterPriceSilver      Float?
-  diamondDetailsJson     String?
-  internalTagsJson       String?
-  seoSocialJson          String?
+  diamondDetailsJson     String?                 @db.LongText
+  internalTagsJson       String?                 @db.LongText
+  seoSocialJson          String?                 @db.LongText
   processingTimeDays     Int?                    @default(3)
   craftsmanshipHeading   String?
-  craftsmanshipStory     String?
+  craftsmanshipStory     String?                 @db.LongText
   editorialImage         String?
-  recommendedProductIds  String?
-  completeLookProductIds String?
+  recommendedProductIds  String?                 @db.LongText
+  completeLookProductIds String?                 @db.LongText
   createdAt              DateTime                @default(now())
   updatedAt              DateTime                @updatedAt
   cartItems              CartItem[]
@@ -367,7 +368,7 @@ model RingSizeGuide {
   slug               String   @default("find-your-ring-size")
   status             String   @default("PUBLISHED")
   heroTitle          String?  @default("FIND YOUR PERFECT RING SIZE")
-  heroSubtitle       String?  @default("Comprehensive Floksy Jewel Sizing Guide")
+  heroSubtitle       String?  @default("Comprehensive AethelCarats Sizing Guide")
   heroImage          String?
   heroImagePosition  String?  @default("center")
   heroBg             String?  @default("#19202A")
@@ -382,7 +383,7 @@ model RingSizeGuide {
   chartTitle         String?  @default("Ring Size Measurement Chart")
   chartDescription   String?  @default("Print at 100% scale to match your existing rings directly.")
   conversionsJson    String?
-  sizerHeading       String?  @default("COMPLIMENTARY FLOKSY RING SIZER")
+  sizerHeading       String?  @default("COMPLIMENTARY AETHELCARATS RING SIZER")
   sizerDescription   String?  @default("Receive our reusable precision ring sizer delivered directly to your door.")
   sizerImage         String?
   sizerButtonText    String?  @default("REQUEST FREE SIZER")
@@ -395,10 +396,10 @@ model RingSizeGuide {
   ctaButtonText      String?  @default("BOOK ATELIER CONSULTATION")
   ctaButtonUrl       String?  @default("/contact-us")
   ctaBg              String?  @default("#19202A")
-  seoTitle           String?  @default("Ring Size Guide | Floksy Jewel")
-  metaDescription    String?  @default("Find your perfect ring size with Floksy Jewel's comprehensive international ring size conversion chart and complimentary sizer.")
+  seoTitle           String?  @default("Ring Size Guide | AethelCarats")
+  metaDescription    String?  @default("Find your perfect ring size with AethelCarats' comprehensive international ring size conversion chart and complimentary sizer.")
   keywords           String?  @default("ring size guide, ring sizer, international ring sizes, measure ring size")
-  canonicalUrl       String?  @default("https://floksyjewel.com/education/rings/find-your-ring-size")
+  canonicalUrl       String?  @default("https://aethelcarats.com/education/rings/find-your-ring-size")
   ogTitle            String?
   ogDescription      String?
   ogImage            String?
@@ -626,8 +627,8 @@ model Page {
   id              String         @id @default(uuid())
   title           String
   slug            String         @unique
-  content         String?
-  draftContent    String?
+  content         String?        @db.LongText
+  draftContent    String?        @db.LongText
   status          String         @default("PUBLISHED")
   lastPublishedAt DateTime?
   publishedBy     String?
@@ -645,7 +646,7 @@ model PageSection {
   pageId    String
   blockType String
   position  Int     @default(0)
-  content   String
+  content   String  @db.LongText
   isVisible Boolean @default(true)
   page      Page    @relation(fields: [pageId], references: [id], onDelete: Cascade)
 }
@@ -656,7 +657,7 @@ model PageRevision {
   version   Int
   action    String   @default("UPDATE")
   adminUser String   @default("Admin")
-  content   String
+  content   String   @db.LongText
   createdAt DateTime @default(now())
   page      Page     @relation(fields: [pageId], references: [id], onDelete: Cascade)
 }
@@ -678,7 +679,7 @@ model BlogPost {
   id              String   @id @default(uuid())
   title           String
   slug            String   @unique
-  author          String   @default("Floksy Concierge")
+  author          String   @default("AethelCarats Concierge")
   publishDate     DateTime @default(now())
   featuredImage   String?
   excerpt         String?
@@ -837,7 +838,7 @@ model Inquiry {
 model SiteSetting {
   id        String   @id @default(uuid())
   key       String   @unique
-  value     String
+  value     String   @db.LongText
   updatedAt DateTime @updatedAt
 }
 

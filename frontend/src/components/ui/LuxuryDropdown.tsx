@@ -32,59 +32,64 @@ const fadeInDown = keyframes`
   }
 `;
 
-const DropdownWrapper = styled.div<{ $fullWidth?: boolean }>`
+const DropdownWrapper = styled.div<{ $fullWidth?: boolean; $isOpen?: boolean }>`
   position: relative;
   display: inline-block;
   width: ${({ $fullWidth }) => ($fullWidth ? '100%' : 'auto')};
   user-select: none;
+  z-index: ${({ $isOpen }) => ($isOpen ? 9999 : 1)};
 `;
 
 const Label = styled.label`
   display: block;
-  font-size: 0.68rem;
-  font-weight: 700;
+  font-size: 0.75rem;
+  font-weight: 600;
   letter-spacing: 0.1em;
   text-transform: uppercase;
-  color: #6b6b6b;
-  margin-bottom: 4px;
+  color: #F5F1E8;
+  margin-bottom: 8px;
 `;
 
 const TriggerButton = styled.button<{ $open: boolean; $disabled?: boolean }>`
   width: 100%;
+  height: 40px;
   display: flex;
   align-items: center;
   justify-content: space-between;
   gap: 10px;
-  padding: 8px 12px;
-  background-color: #ffffff;
-  border: 1px solid ${({ $open }) => ($open ? '#c9a45c' : '#d9d3c7')};
-  border-radius: 2px;
-  font-size: 0.78rem;
-  font-weight: 600;
-  color: #1f1f1f;
+  padding: 0 14px;
+  background-color: #111111;
+  border: 1px solid ${({ $open }) => ($open ? '#C9A96E' : 'rgba(140, 116, 75, 0.25)')};
+  border-radius: 4px;
+  font-size: 0.85rem;
+  font-weight: 500;
+  color: #F5F1E8;
   cursor: ${({ $disabled }) => ($disabled ? 'not-allowed' : 'pointer')};
   opacity: ${({ $disabled }) => ($disabled ? 0.6 : 1)};
   transition: all 0.2s ease;
+  box-sizing: border-box;
 
   &:hover {
-    border-color: ${({ $disabled }) => ($disabled ? '#d9d3c7' : '#c9a45c')};
+    border-color: #C9A96E;
   }
 
   &:focus-visible {
-    outline: 2px solid #c9a45c;
-    outline-offset: 1px;
+    outline: none;
+    border-color: #C9A96E;
+    box-shadow: 0 0 0 2px rgba(201, 169, 110, 0.2);
   }
 
   .trigger-text {
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
+    font-size: 0.85rem;
   }
 
   .chevron {
-    transition: transform 0.2s ease;
+    transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1);
     transform: ${({ $open }) => ($open ? 'rotate(180deg)' : 'rotate(0deg)')};
-    color: #6b6b6b;
+    color: #C9A96E;
     flex-shrink: 0;
   }
 `;
@@ -93,26 +98,37 @@ const MenuList = styled.ul`
   position: absolute;
   top: calc(100% + 4px);
   left: 0;
-  right: 0;
-  min-width: 140px;
-  max-height: 240px;
+  width: 100%;
+  min-width: 100%;
+  box-sizing: border-box;
+  max-height: 180px;
   overflow-y: auto;
-  background-color: #ffffff;
-  border: 1px solid #d9d3c7;
-  border-radius: 2px;
-  box-shadow: 0 8px 24px rgba(31, 31, 31, 0.08);
+  background-color: #151515;
+  border: 1px solid rgba(140, 116, 75, 0.35);
+  border-radius: 4px;
+  box-shadow: 0 16px 36px rgba(0, 0, 0, 0.95), 0 0 0 1px rgba(201, 169, 110, 0.15);
   list-style: none;
   padding: 4px 0;
   margin: 0;
-  z-index: 1000;
-  animation: ${fadeInDown} 200ms ease-out forwards;
+  z-index: 99999;
+  animation: ${fadeInDown} 160ms cubic-bezier(0.16, 1, 0.3, 1) forwards;
+
+  scrollbar-width: thin;
+  scrollbar-color: #C9A96E #111111;
 
   &::-webkit-scrollbar {
-    width: 4px;
+    width: 5px;
+  }
+  &::-webkit-scrollbar-track {
+    background: #111111;
+    border-radius: 0 4px 4px 0;
   }
   &::-webkit-scrollbar-thumb {
-    background: #d9d3c7;
-    border-radius: 2px;
+    background: #C9A96E;
+    border-radius: 3px;
+  }
+  &::-webkit-scrollbar-thumb:hover {
+    background: #DFBA73;
   }
 `;
 
@@ -120,18 +136,20 @@ const MenuItem = styled.li<{ $selected: boolean; $active?: boolean }>`
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 8px 12px;
-  font-size: 0.78rem;
-  font-weight: ${({ $selected }) => ($selected ? '700' : '500')};
-  color: ${({ $selected }) => ($selected ? '#c9a45c' : '#1f1f1f')};
+  gap: 10px;
+  padding: 9px 14px;
+  font-size: 0.82rem;
+  font-weight: ${({ $selected }) => ($selected ? '600' : '400')};
+  color: ${({ $selected }) => ($selected ? '#C9A96E' : '#F5F1E8')};
   background-color: ${({ $selected, $active }) =>
-    $selected ? '#faf5eb' : $active ? '#faf8f5' : 'transparent'};
+    $selected ? '#1F1B14' : $active ? '#1E1E1E' : 'transparent'};
   cursor: pointer;
   transition: background-color 0.15s ease, color 0.15s ease;
+  white-space: nowrap;
 
   &:hover {
-    background-color: #faf5eb;
-    color: #c9a45c;
+    background-color: #1E1E1E;
+    color: #C9A96E;
   }
 `;
 
@@ -149,9 +167,18 @@ export const LuxuryDropdown: React.FC<LuxuryDropdownProps> = ({
   const [isOpen, setIsOpen] = useState(false);
   const [highlightedIndex, setHighlightedIndex] = useState(-1);
   const containerRef = useRef<HTMLDivElement>(null);
+  const menuListRef = useRef<HTMLUListElement>(null);
 
-  const selectedOption = options.find((opt) => opt.value === value);
-  const displayLabel = selectedOption ? selectedOption.label : placeholder;
+  const selectedOption = options.find((opt) => opt.value === value || (opt.value && value && opt.value.toLowerCase() === value.toLowerCase()))
+    || (value === 'All' || value === 'Any' ? options.find((opt) => opt.value === 'All' || opt.value === 'Any') : null);
+
+  const displayLabel = selectedOption ? selectedOption.label : (placeholder || (options[0]?.label ?? 'Select...'));
+
+  useEffect(() => {
+    if (isOpen && menuListRef.current) {
+      menuListRef.current.scrollTop = 0;
+    }
+  }, [isOpen]);
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
@@ -209,7 +236,7 @@ export const LuxuryDropdown: React.FC<LuxuryDropdownProps> = ({
   };
 
   return (
-    <DropdownWrapper ref={containerRef} $fullWidth={fullWidth} style={style} className={className}>
+    <DropdownWrapper ref={containerRef} $fullWidth={fullWidth} $isOpen={isOpen} style={style} className={className}>
       {label && <Label>{label}</Label>}
       <TriggerButton
         type="button"
@@ -225,7 +252,7 @@ export const LuxuryDropdown: React.FC<LuxuryDropdownProps> = ({
       </TriggerButton>
 
       {isOpen && (
-        <MenuList role="listbox">
+        <MenuList ref={menuListRef} role="listbox">
           {options.map((opt, idx) => {
             if (opt.isHeader) {
               return (
@@ -236,11 +263,11 @@ export const LuxuryDropdown: React.FC<LuxuryDropdownProps> = ({
                     fontSize: '0.65rem',
                     fontWeight: 700,
                     letterSpacing: '0.12em',
-                    color: '#c9a45c',
+                    color: '#C9A96E',
                     textTransform: 'uppercase',
-                    background: '#faf8f5',
-                    borderTop: '1px solid #f0ecf6',
-                    borderBottom: '1px solid #f0ecf6',
+                    background: '#111111',
+                    borderTop: '1px solid rgba(140, 116, 75, 0.2)',
+                    borderBottom: '1px solid rgba(140, 116, 75, 0.2)',
                     margin: '4px 0 2px 0',
                   }}
                 >

@@ -141,6 +141,6 @@ function serveSPA(distDir, res, method) {
 }
 
 server.listen(PORT, HOST, () => {
-  console.log(`✨ Floksy Jewel Production Server listening on http://${HOST}:${PORT}`);
+  console.log(`✨ AethelCarats Production Server listening on http://${HOST}:${PORT}`);
   console.log(`📁 Serving static assets & SPA routes from: ${resolveDistDir()}`);
 });

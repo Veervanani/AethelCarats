@@ -141,9 +141,18 @@ export const AdminImageUploadField: React.FC<AdminImageUploadFieldProps> = ({
         headers: { 'Content-Type': 'multipart/form-data' },
       });
 
-      if (res.data && res.data.urls && res.data.urls.length > 0) {
-        onChange(res.data.urls[0]);
-        showToast('Image uploaded successfully!', 'success');
+      const uploadedUrl =
+        res.data?.url ||
+        res.data?.urls?.[0] ||
+        (Array.isArray(res.data?.media) ? res.data.media[0]?.url : res.data?.media?.url);
+
+      if (uploadedUrl) {
+        // Safely delete previous uploaded file from disk if replaced
+        if (value && value.startsWith('/uploads/') && value !== uploadedUrl) {
+          api.deleteUploadedFile(value).catch(console.warn);
+        }
+        onChange(uploadedUrl);
+        showToast('Image uploaded and stored successfully!', 'success');
       } else {
         // Fallback to FileReader if server upload returns raw response
         const reader = new FileReader();
@@ -155,19 +164,20 @@ export const AdminImageUploadField: React.FC<AdminImageUploadFieldProps> = ({
         };
         reader.readAsDataURL(file);
       }
-    } catch (err) {
-      // Fallback read as Data URL on network error
-      const reader = new FileReader();
-      reader.onload = (event) => {
-        if (event.target?.result) {
-          onChange(event.target.result as string);
-          showToast('Image uploaded locally!', 'success');
-        }
-      };
-      reader.readAsDataURL(file);
+    } catch (err: any) {
+      showToast(err.message || 'Image upload failed.', 'error');
     } finally {
       setUploading(false);
+      e.target.value = '';
     }
+  };
+
+  const handleRemove = () => {
+    if (value && value.startsWith('/uploads/')) {
+      api.deleteUploadedFile(value).catch(console.warn);
+    }
+    onChange('');
+    showToast('Image removed.', 'info');
   };
 
   return (
@@ -207,7 +217,7 @@ export const AdminImageUploadField: React.FC<AdminImageUploadFieldProps> = ({
               <ActionBtn
                 type="button"
                 $variant="danger"
-                onClick={() => onChange('')}
+                onClick={handleRemove}
               >
                 <Trash2 size={14} /> Remove Image
               </ActionBtn>

@@ -1,4 +1,4 @@
-import fs from 'fs';
+﻿import fs from 'fs';
 import path from 'path';
 
 /**
@@ -10,7 +10,7 @@ const SOURCE_BACKUP_PATH = path.join(__dirname, '../../../Cloud_SQL_Export_2026-
 const OUTPUT_MYSQL_SQL_PATH = path.join(__dirname, '../../../hostinger-mysql-migration.sql');
 
 const ALL_57_TABLE_DDLS = `-- ==========================================================================
--- FLOKSY JEWEL — COMPLETE HOSTINGER MYSQL / MARIADB FULL DATABASE MIGRATION
+-- AURA DIAMOND ATELIER — COMPLETE HOSTINGER MYSQL / MARIADB FULL DATABASE MIGRATION
 -- Generated from Google Cloud SQL PostgreSQL 18 Backup
 -- Engine Target: Hostinger MySQL 8 / MariaDB (All 57 Tables)
 -- ==========================================================================
@@ -661,7 +661,7 @@ CREATE TABLE IF NOT EXISTS \`BlogPost\` (
   \`id\` VARCHAR(191) NOT NULL,
   \`title\` VARCHAR(191) NOT NULL,
   \`slug\` VARCHAR(191) NOT NULL,
-  \`author\` VARCHAR(191) NOT NULL DEFAULT 'Floksy Concierge',
+  \`author\` VARCHAR(191) NOT NULL DEFAULT 'Aura Concierge',
   \`publishDate\` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
   \`featuredImage\` LONGTEXT NULL,
   \`excerpt\` LONGTEXT NULL,

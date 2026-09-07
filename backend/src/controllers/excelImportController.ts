@@ -66,7 +66,7 @@ export const downloadExcelTemplate = (req: AuthRequest, res: Response) => {
       'https://www.gia.edu',
       4200,
       'USD',
-      '/assets/floksy_diamonds_cat.png',
+      '/assets/gem_diamonds_cat.png',
       '',
       '',
       'AVAILABLE',
@@ -79,7 +79,7 @@ export const downloadExcelTemplate = (req: AuthRequest, res: Response) => {
     const buffer = XLSX.write(wb, { type: 'buffer', bookType: 'xlsx' });
 
     res.setHeader('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
-    res.setHeader('Content-Disposition', 'attachment; filename="Floksy_Jewel_Diamond_Import_Template.xlsx"');
+    res.setHeader('Content-Disposition', 'attachment; filename="Aura_Diamond_Import_Template.xlsx"');
     res.send(buffer);
   } catch (error) {
     console.error('Template download error:', error);
@@ -353,7 +353,7 @@ export const extractAndMatchZipImages = async (req: AuthRequest, res: Response) 
         const existing = await prisma.diamond.findUnique({ where: { diamondId } });
 
         if (existing) {
-          const simulatedUrl = `/assets/floksy_diamonds_cat.png&matched=${diamondId}`;
+          const simulatedUrl = `/assets/gem_diamonds_cat.png&matched=${diamondId}`;
           await prisma.diamond.update({
             where: { diamondId },
             data: { imageUrl: simulatedUrl },

@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
-import { motion, AnimatePresence } from 'framer-motion';
 import { Search as SearchIcon, X, ArrowRight, Heart, ChevronLeft, ChevronRight } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { api } from '../../services/api';
@@ -13,7 +12,7 @@ interface SearchModalProps {
   onOpenLogin?: () => void;
 }
 
-const Overlay = styled(motion.div)`
+const Overlay = styled.div`
   position: fixed;
   top: 0;
   left: 0;
@@ -34,9 +33,9 @@ const Overlay = styled(motion.div)`
   }
 `;
 
-const ModalCard = styled(motion.div)`
-  background-color: #ffffff;
-  border: 1px solid #d9d3c7;
+const ModalCard = styled.div`
+  background-color: #111111;
+  border: 1px solid rgba(140, 116, 75, 0.25);
   width: 100%;
   max-width: 1020px;
   border-radius: 8px;
@@ -59,13 +58,13 @@ const ModalHeader = styled.div`
   justify-content: space-between;
   align-items: center;
   padding: 18px 28px;
-  border-bottom: 1px solid #f0eae1;
+  border-bottom: 1px solid rgba(140, 116, 75, 0.25);
 
   .header-left {
     h3 {
       font-family: 'Cormorant Garamond', 'Playfair Display', serif;
       font-size: 1.8rem;
-      color: #1f1f1f;
+      color: #F5F1E8;
       margin: 0;
       font-weight: 600;
     }
@@ -74,7 +73,7 @@ const ModalHeader = styled.div`
   .close-btn {
     background: none;
     border: none;
-    color: #1f1f1f;
+    color: #F5F1E8;
     cursor: pointer;
     padding: 6px;
     display: flex;
@@ -83,7 +82,7 @@ const ModalHeader = styled.div`
     transition: color 0.2s ease, transform 0.2s ease;
 
     &:hover {
-      color: #c9a45c;
+      color: #C9A96E;
       transform: scale(1.1);
     }
   }
@@ -91,21 +90,21 @@ const ModalHeader = styled.div`
 
 const InputSection = styled.div`
   padding: 16px 28px 20px;
-  background-color: #ffffff;
+  background-color: #111111;
 
   .input-bar {
     position: relative;
     display: flex;
     align-items: center;
-    background-color: #f7f4ee;
-    border: 1px solid #e5dfd5;
+    background-color: #0B0B0B;
+    border: 1px solid rgba(140, 116, 75, 0.3);
     border-radius: 30px;
     padding: 0 18px;
     transition: all 0.25s cubic-bezier(0.22, 1, 0.36, 1);
 
     &:focus-within {
-      border-color: #c9a45c;
-      background-color: #ffffff;
+      border-color: #C9A96E;
+      background-color: #111111;
       box-shadow: 0 0 0 4px rgba(201, 164, 92, 0.14);
     }
 
@@ -120,7 +119,7 @@ const InputSection = styled.div`
       border: none;
       background: transparent;
       font-size: 0.95rem;
-      color: #1f1f1f;
+      color: #F5F1E8;
       outline: none;
       font-family: 'Inter', sans-serif;
     }
@@ -133,7 +132,7 @@ const InputSection = styled.div`
       padding: 4px;
 
       &:hover {
-        color: #1f1f1f;
+        color: #F5F1E8;
       }
     }
   }
@@ -158,13 +157,13 @@ const LeftSidebar = styled.div`
   display: flex;
   flex-direction: column;
   gap: 24px;
-  border-right: 1px solid #f0eae1;
+  border-right: 1px solid rgba(140, 116, 75, 0.2);
   padding-right: 24px;
 
   @media (max-width: 860px) {
     border-right: none;
     padding-right: 0;
-    border-bottom: 1px solid #f0eae1;
+    border-bottom: 1px solid rgba(140, 116, 75, 0.25);
     padding-bottom: 20px;
   }
 `;
@@ -179,18 +178,18 @@ const PopularList = styled.div`
     justify-content: space-between;
     align-items: center;
     font-size: 0.88rem;
-    color: #1f1f1f;
+    color: #F5F1E8;
     cursor: pointer;
     padding: 6px 0;
     transition: color 0.2s ease;
 
     &.active {
-      color: #c9a45c;
+      color: #C9A96E;
       font-weight: 600;
     }
 
     &:hover {
-      color: #c9a45c;
+      color: #C9A96E;
     }
 
     svg {
@@ -202,7 +201,7 @@ const PopularList = styled.div`
 
     &:hover svg {
       transform: translateX(3px);
-      color: #c9a45c;
+      color: #C9A96E;
     }
   }
 `;
@@ -212,7 +211,7 @@ const SectionLabel = styled.div`
   font-weight: 700;
   letter-spacing: 0.12em;
   text-transform: uppercase;
-  color: #6b6b6b;
+  color: #A8A8A8;
   margin-bottom: 12px;
 `;
 
@@ -223,19 +222,19 @@ const SuggestionsGrid = styled.div`
 `;
 
 const SuggestionChip = styled.button`
-  background-color: #f7f4ee;
-  border: 1px solid #e8e3d9;
+  background-color: #0B0B0B;
+  border: 1px solid rgba(140, 116, 75, 0.25);
   border-radius: 16px;
   padding: 6px 14px;
   font-size: 0.78rem;
-  color: #1f1f1f;
+  color: #F5F1E8;
   cursor: pointer;
   transition: all 0.2s ease;
 
   &:hover {
-    background-color: #ffffff;
-    border-color: #c9a45c;
-    color: #c9a45c;
+    background-color: #111111;
+    border-color: #C9A96E;
+    color: #C9A96E;
     transform: translateY(-1px);
   }
 `;
@@ -256,7 +255,7 @@ const RightArea = styled.div`
       font-weight: 700;
       letter-spacing: 0.12em;
       text-transform: uppercase;
-      color: #1f1f1f;
+      color: #F5F1E8;
     }
 
     .header-actions {
@@ -267,7 +266,7 @@ const RightArea = styled.div`
 
     .view-all {
       font-size: 0.82rem;
-      color: #1f1f1f;
+      color: #F5F1E8;
       font-weight: 600;
       cursor: pointer;
       text-decoration: none;
@@ -277,7 +276,7 @@ const RightArea = styled.div`
       transition: color 0.2s ease;
 
       &:hover {
-        color: #c9a45c;
+        color: #C9A96E;
       }
     }
   }
@@ -292,18 +291,18 @@ const CarouselNavRow = styled.div`
     width: 28px;
     height: 28px;
     border-radius: 50%;
-    border: 1px solid #d9d3c7;
-    background: #ffffff;
+    border: 1px solid rgba(140, 116, 75, 0.25);
+    background: #151515;
     display: flex;
     align-items: center;
     justify-content: center;
     cursor: pointer;
-    color: #1f1f1f;
+    color: #F5F1E8;
     transition: all 0.2s ease;
 
     &:hover {
-      border-color: #c9a45c;
-      color: #c9a45c;
+      border-color: #C9A96E;
+      color: #C9A96E;
     }
 
     &:disabled {
@@ -334,8 +333,8 @@ const ProductCardsGrid = styled.div`
 `;
 
 const ProductCardItem = styled.div`
-  background-color: #ffffff;
-  border: 1px solid #f0eae1;
+  background-color: #111111;
+  border: 1px solid rgba(140, 116, 75, 0.2);
   padding: 12px;
   display: flex;
   flex-direction: column;
@@ -345,7 +344,7 @@ const ProductCardItem = styled.div`
   border-radius: 4px;
 
   &:hover {
-    border-color: #c9a45c;
+    border-color: #C9A96E;
     box-shadow: 0 8px 20px rgba(201, 164, 92, 0.12);
     transform: translateY(-2px);
   }
@@ -355,21 +354,22 @@ const ProductCardItem = styled.div`
     top: 18px;
     right: 18px;
     z-index: 2;
-    background: rgba(255, 255, 255, 0.85);
-    border: none;
+    background: #151515;
+    border: 1px solid rgba(140, 116, 75, 0.25);
     width: 28px;
     height: 28px;
     border-radius: 50%;
     display: flex;
     align-items: center;
     justify-content: center;
-    color: #6b6b6b;
+    color: #F5F1E8;
     cursor: pointer;
     transition: all 0.2s ease;
 
     &:hover {
-      color: #c9a45c;
-      background: #ffffff;
+      color: #C9A96E;
+      background: #1f1f1f;
+      border-color: #C9A96E;
     }
 
     &.in-wishlist {
@@ -381,7 +381,7 @@ const ProductCardItem = styled.div`
   .img-box {
     width: 100%;
     aspect-ratio: 1;
-    background-color: #faf8f5;
+    background-color: #0B0B0B;
     margin-bottom: 12px;
     display: flex;
     align-items: center;
@@ -404,7 +404,7 @@ const ProductCardItem = styled.div`
   .name {
     font-size: 0.8rem;
     font-weight: 600;
-    color: #1f1f1f;
+    color: #F5F1E8;
     margin-bottom: 6px;
     line-height: 1.35;
     display: -webkit-box;
@@ -416,7 +416,8 @@ const ProductCardItem = styled.div`
   .price {
     font-size: 0.88rem;
     font-weight: 700;
-    color: #1f1f1f;
+    color: #C9A96E;
+    font-family: 'Inter', sans-serif;
     margin-top: auto;
   }
 `;
@@ -424,20 +425,20 @@ const ProductCardItem = styled.div`
 const EmptyState = styled.div`
   text-align: center;
   padding: 40px 20px;
-  background-color: #faf5eb;
-  border: 1px dashed #d9d3c7;
+  background-color: #151515;
+  border: 1px dashed rgba(140, 116, 75, 0.3);
   border-radius: 4px;
 
   h4 {
     font-family: 'Cormorant Garamond', serif;
     font-size: 1.6rem;
-    color: #1f1f1f;
+    color: #F5F1E8;
     margin-bottom: 8px;
   }
 
   p {
     font-size: 0.88rem;
-    color: #6b6b6b;
+    color: #A8A8A8;
     margin-bottom: 20px;
   }
 
@@ -449,27 +450,29 @@ const EmptyState = styled.div`
     button {
       padding: 10px 20px;
       font-size: 0.78rem;
-      font-weight: 600;
+      font-weight: 700;
       letter-spacing: 0.1em;
       text-transform: uppercase;
-      border: 1px solid #1f1f1f;
-      background: #1f1f1f;
-      color: #ffffff;
+      border: 1px solid #C9A96E;
+      background: #C9A96E;
+      color: #0B0B0B;
+      border-radius: 4px;
       cursor: pointer;
       transition: all 0.2s ease;
 
       &:hover {
-        background: #b8944d;
-        border-color: #b8944d;
+        background: #DFCA9B;
+        border-color: #DFCA9B;
       }
 
       &.secondary {
         background: transparent;
-        color: #1f1f1f;
+        color: #F5F1E8;
+        border: 1px solid rgba(140, 116, 75, 0.4);
 
         &:hover {
-          background: #faf5eb;
-          border-color: #c9a45c;
+          background: rgba(201, 169, 110, 0.1);
+          border-color: #C9A96E;
         }
       }
     }
@@ -581,7 +584,7 @@ export const SearchModal: React.FC<SearchModalProps> = ({ isOpen, onClose, onOpe
 
   const handleWishlistToggle = (e: React.MouseEvent, product: Product) => {
     e.stopPropagation();
-    const token = localStorage.getItem('floksy_token') || localStorage.getItem('fj_admin_token');
+    const token = localStorage.getItem('app_auth_token') || localStorage.getItem('admin_session_token');
     if (!token) {
       onClose();
       if (onOpenLogin) onOpenLogin();
@@ -592,23 +595,11 @@ export const SearchModal: React.FC<SearchModalProps> = ({ isOpen, onClose, onOpe
 
   const visibleProducts = products.slice(carouselIndex, carouselIndex + 4);
 
+  if (!isOpen) return null;
+
   return (
-    <AnimatePresence>
-      {isOpen && (
-        <Overlay
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          exit={{ opacity: 0 }}
-          transition={{ duration: 0.3, ease: 'easeOut' }}
-          onClick={onClose}
-        >
-          <ModalCard
-            initial={{ opacity: 0, y: -20, scale: 0.97 }}
-            animate={{ opacity: 1, y: 0, scale: 1 }}
-            exit={{ opacity: 0, y: -15, scale: 0.97 }}
-            transition={{ duration: 0.35, ease: [0.22, 1, 0.36, 1] }}
-            onClick={(e) => e.stopPropagation()}
-          >
+    <Overlay onClick={onClose}>
+      <ModalCard onClick={(e) => e.stopPropagation()}>
             <ModalHeader>
               <div className="header-left">
                 <h3>Search</h3>
@@ -624,7 +615,7 @@ export const SearchModal: React.FC<SearchModalProps> = ({ isOpen, onClose, onOpe
                 <SearchIcon size={20} className="search-icn" />
                 <input
                   type="text"
-                  placeholder="Search FLOKSY JEWEL..."
+                  placeholder="Search AETHELCARATS..."
                   value={query}
                   onChange={(e) => setQuery(e.target.value)}
                   autoFocus
@@ -640,11 +631,7 @@ export const SearchModal: React.FC<SearchModalProps> = ({ isOpen, onClose, onOpe
             <ContentBody $hasQuery={!!query.trim()}>
               {/* LEFT SIDEBAR: POPULAR SEARCHES & SUGGESTIONS */}
               {!query.trim() && (
-                <motion.div
-                  initial={{ opacity: 0, x: -10 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  transition={{ duration: 0.35, delay: 0.1, ease: [0.22, 1, 0.36, 1] }}
-                >
+                <div>
                   <LeftSidebar>
                     <div>
                       <PopularList>
@@ -672,7 +659,7 @@ export const SearchModal: React.FC<SearchModalProps> = ({ isOpen, onClose, onOpe
                       </SuggestionsGrid>
                     </div>
                   </LeftSidebar>
-                </motion.div>
+                </div>
               )}
 
               {/* RIGHT AREA: FEATURED PRODUCT CAROUSEL OR STAGGERED SEARCH RESULTS */}
@@ -718,20 +705,15 @@ export const SearchModal: React.FC<SearchModalProps> = ({ isOpen, onClose, onOpe
 
                 {isLoading ? (
                   <div style={{ textAlign: 'center', padding: '60px', color: '#777', fontSize: '0.9rem' }}>
-                    Searching FLOKSY JEWEL inventory...
+                    Searching AETHELCARATS inventory...
                   </div>
                 ) : (!query && products.length > 0) ? (
                   /* STATE 1: INITIAL FEATURED PRODUCT CAROUSEL */
                   <ProductCardsGrid>
-                    {visibleProducts.map((p, idx) => {
+                    {visibleProducts.map((p) => {
                       const inWish = isInWishlist(p.id);
                       return (
-                        <motion.div
-                          key={p.id}
-                          initial={{ opacity: 0, y: 15, scale: 0.97 }}
-                          animate={{ opacity: 1, y: 0, scale: 1 }}
-                          transition={{ duration: 0.35, delay: idx * 0.06, ease: [0.22, 1, 0.36, 1] }}
-                        >
+                        <div key={p.id}>
                           <ProductCardItem onClick={() => handleProductClick(p.slug)}>
                             <button
                               className={`wishlist-btn ${inWish ? 'in-wishlist' : ''}`}
@@ -743,30 +725,25 @@ export const SearchModal: React.FC<SearchModalProps> = ({ isOpen, onClose, onOpe
 
                             <div className="img-box">
                               <img
-                                src={p.primaryImage || '/assets/floksy_rings_cat.png'}
+                                src={p.primaryImage || '/assets/gem_rings_cat.png'}
                                 alt={p.name}
-                                onError={(e: any) => { e.target.src = '/assets/floksy_rings_cat.png'; }}
+                                onError={(e: any) => { e.target.src = '/assets/gem_rings_cat.png'; }}
                               />
                             </div>
                             <div className="name">{p.name}</div>
                             <div className="price">${p.price?.toLocaleString()}</div>
                           </ProductCardItem>
-                        </motion.div>
+                        </div>
                       );
                     })}
                   </ProductCardsGrid>
                 ) : (query && (products.length > 0 || diamonds.length > 0)) ? (
-                  /* STATE 3: SEARCH RESULTS FOUND WITH STAGGERED REVEAL */
+                  /* STATE 3: SEARCH RESULTS FOUND */
                   <ProductCardsGrid>
-                    {products.map((p, idx) => {
+                    {products.map((p) => {
                       const inWish = isInWishlist(p.id);
                       return (
-                        <motion.div
-                          key={p.id}
-                          initial={{ opacity: 0, y: 18, scale: 0.96 }}
-                          animate={{ opacity: 1, y: 0, scale: 1 }}
-                          transition={{ duration: 0.35, delay: idx * 0.05, ease: [0.22, 1, 0.36, 1] }}
-                        >
+                        <div key={p.id}>
                           <ProductCardItem onClick={() => handleProductClick(p.slug)}>
                             <button
                               className={`wishlist-btn ${inWish ? 'in-wishlist' : ''}`}
@@ -778,24 +755,19 @@ export const SearchModal: React.FC<SearchModalProps> = ({ isOpen, onClose, onOpe
 
                             <div className="img-box">
                               <img
-                                src={p.primaryImage || '/assets/floksy_rings_cat.png'}
+                                src={p.primaryImage || '/assets/gem_rings_cat.png'}
                                 alt={p.name}
-                                onError={(e: any) => { e.target.src = '/assets/floksy_rings_cat.png'; }}
+                                onError={(e: any) => { e.target.src = '/assets/gem_rings_cat.png'; }}
                               />
                             </div>
                             <div className="name">{p.name}</div>
                             <div className="price">${p.price?.toLocaleString()}</div>
                           </ProductCardItem>
-                        </motion.div>
+                        </div>
                       );
                     })}
-                    {diamonds.map((d, idx) => (
-                      <motion.div
-                        key={d.id}
-                        initial={{ opacity: 0, y: 18, scale: 0.96 }}
-                        animate={{ opacity: 1, y: 0, scale: 1 }}
-                        transition={{ duration: 0.35, delay: (products.length + idx) * 0.05, ease: [0.22, 1, 0.36, 1] }}
-                      >
+                    {diamonds.map((d) => (
+                      <div key={d.id}>
                         <ProductCardItem onClick={() => { onClose(); navigate('/diamonds'); }}>
                           <div className="img-box">
                             <img
@@ -807,16 +779,12 @@ export const SearchModal: React.FC<SearchModalProps> = ({ isOpen, onClose, onOpe
                           <div className="name">{d.carat}ct {d.shape} Diamond ({d.color}/{d.clarity})</div>
                           <div className="price">${d.price?.toLocaleString()}</div>
                         </ProductCardItem>
-                      </motion.div>
+                      </div>
                     ))}
                   </ProductCardsGrid>
                 ) : (query && products.length === 0 && diamonds.length === 0) ? (
                   /* STATE 4: ZERO RESULTS */
-                  <motion.div
-                    initial={{ opacity: 0, y: 10 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ duration: 0.3 }}
-                  >
+                  <div>
                     <EmptyState>
                       <h4>WE COULDN'T FIND AN EXACT MATCH</h4>
                       <p>Try searching for specific diamond shapes, ring styles, or explore our curated collections.</p>
@@ -827,13 +795,11 @@ export const SearchModal: React.FC<SearchModalProps> = ({ isOpen, onClose, onOpe
                         </button>
                       </div>
                     </EmptyState>
-                  </motion.div>
+                  </div>
                 ) : null}
               </RightArea>
             </ContentBody>
           </ModalCard>
         </Overlay>
-      )}
-    </AnimatePresence>
   );
 };

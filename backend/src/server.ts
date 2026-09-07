@@ -51,6 +51,13 @@ import {
   uploadMediaFromPc,
 } from './controllers/productBulkUploadController';
 import {
+  getAllMedia,
+  uploadMedia,
+  uploadMediaFiles,
+  deleteMedia,
+  deleteUploadedMediaFile,
+} from './controllers/mediaController';
+import {
   getDiamonds,
   getDiamondById,
   getWhatsAppInquiryMessage,
@@ -125,11 +132,7 @@ import {
   getSiteSettings,
   updateSiteSetting,
 } from './controllers/siteSettingController';
-import {
-  getAllMedia,
-  uploadMedia,
-  deleteMedia,
-} from './controllers/mediaController';
+
 import {
   getPublicHeroBanners,
   getAdminHeroBanners,
@@ -384,7 +387,15 @@ app.post(
 );
 app.post('/api/v1/admin/products/bulk-upload/error-report', authenticateToken, requireRole(['PRODUCT_MANAGER', 'ADMIN', 'SUPER_ADMIN']), downloadBulkImportErrorReport);
 app.post('/api/v1/admin/products/reset-database-single-product', authenticateToken, resetDatabaseToSingleDemoProduct);
-app.post('/api/v1/admin/media/upload', authenticateToken, requireRole(['PRODUCT_MANAGER', 'ADMIN', 'CONTENT_MANAGER', 'SUPER_ADMIN']), upload.array('files'), uploadMediaFromPc);
+
+// Central Media Management, Persistent Local Uploads, and File Deletion
+app.get('/api/v1/media', getAllMedia);
+app.get('/api/v1/admin/media', authenticateToken, requireRole(['PRODUCT_MANAGER', 'CONTENT_MANAGER', 'ADMIN', 'SUPER_ADMIN']), getAllMedia);
+app.post('/api/v1/admin/media', authenticateToken, requireRole(['PRODUCT_MANAGER', 'CONTENT_MANAGER', 'ADMIN', 'SUPER_ADMIN']), uploadMedia);
+app.delete('/api/v1/admin/media/:id', authenticateToken, requireRole(['PRODUCT_MANAGER', 'CONTENT_MANAGER', 'ADMIN', 'SUPER_ADMIN']), deleteMedia);
+app.post('/api/v1/admin/media/upload', authenticateToken, requireRole(['PRODUCT_MANAGER', 'ADMIN', 'CONTENT_MANAGER', 'SUPER_ADMIN']), upload.array('files'), uploadMediaFiles);
+app.post('/api/v1/admin/media/delete-file', authenticateToken, requireRole(['PRODUCT_MANAGER', 'ADMIN', 'CONTENT_MANAGER', 'SUPER_ADMIN']), deleteUploadedMediaFile);
+app.delete('/api/v1/admin/media/file', authenticateToken, requireRole(['PRODUCT_MANAGER', 'ADMIN', 'CONTENT_MANAGER', 'SUPER_ADMIN']), deleteUploadedMediaFile);
 
 // Enforce default admin users and single demo product state on startup
 ensureDefaultAdminUsersExist().catch(console.error);
@@ -419,7 +430,8 @@ app.post('/api/v1/admin/diamonds/zip-upload', authenticateToken, requireRole(['P
 app.get('/api/v1/admin/diamonds/import-history', authenticateToken, getImportHistory);
 app.patch('/api/v1/admin/diamonds/:id', authenticateToken, requireRole(['PRODUCT_MANAGER', 'ADMIN']), updateDiamondStatus);
 
-// Admin CMS & Page Builder
+// Public & Admin CMS & Page Builder
+app.get('/api/v1/pages/:slug', getPageBySlug);
 app.post('/api/v1/admin/cms/pages-create', authenticateToken, requireRole(['CONTENT_MANAGER', 'ADMIN', 'SUPER_ADMIN']), createPage);
 app.get('/api/v1/admin/cms/pages/:slug', authenticateToken, requireRole(['CONTENT_MANAGER', 'ADMIN', 'SUPER_ADMIN']), getPageBySlug);
 app.delete('/api/v1/admin/cms/pages/:slug', authenticateToken, requireRole(['CONTENT_MANAGER', 'ADMIN', 'SUPER_ADMIN']), deletePage);
@@ -488,7 +500,10 @@ import { getHolidayModeStatus, updateHolidayModeStatus } from './controllers/set
 app.get('/api/v1/settings/holiday-mode', getHolidayModeStatus);
 app.put('/api/v1/admin/settings/holiday-mode', authenticateToken, requireRole(['SUPER_ADMIN', 'ADMIN', 'CONTENT_MANAGER']), updateHolidayModeStatus);
 app.get('/api/v1/site-settings', getSiteSettings);
+app.get('/api/v1/site-settings/:key', getSiteSettings);
 app.post('/api/v1/admin/site-settings', authenticateToken, requireRole(['CONTENT_MANAGER', 'ADMIN']), updateSiteSetting);
+app.put('/api/v1/admin/site-settings', authenticateToken, requireRole(['CONTENT_MANAGER', 'ADMIN']), updateSiteSetting);
+app.put('/api/v1/admin/site-settings/:key', authenticateToken, requireRole(['CONTENT_MANAGER', 'ADMIN']), updateSiteSetting);
 
 // Public & Admin Media Library Routes
 app.get('/api/v1/media', getAllMedia);
@@ -630,7 +645,7 @@ app.get('/api/v1/health', async (req, res) => {
       database: 'connected',
       engine: 'MySQL / MariaDB',
       host: process.env.DB_HOST || 'localhost',
-      dbName: process.env.DB_NAME || 'u657751653_floksyjewel_db',
+      dbName: process.env.DB_NAME || 'u657751653_aurajewel_db',
       userCount,
       diamondCount,
       productCount,
@@ -648,9 +663,9 @@ app.get('/api/v1/health', async (req, res) => {
 
 export { app };
 
-const isDirectRun = process.argv[1] && (process.argv[1].endsWith('server.js') || process.argv[1].endsWith('server.ts'));
-if (process.env.NODE_ENV !== 'production' && isDirectRun) {
+const isDirectRun = !process.env.IS_TEST;
+if (isDirectRun) {
   app.listen(PORT, () => {
-    console.log(`✨ Floksy Jewel REST API running on port ${PORT}`);
+    console.log(`✨ Aura Diamond Atelier REST API running on port ${PORT}`);
   });
 }

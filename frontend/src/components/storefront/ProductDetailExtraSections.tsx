@@ -6,14 +6,14 @@ import { api } from '../../services/api';
 import { RevealContainer } from '../ui/RevealContainer';
 
 const THEME = {
-  bg: '#F9F7F2',
-  white: '#FFFFFF',
-  primaryText: '#1C1C1C',
-  secondaryText: '#6B665E',
-  gold: '#C9A24A',
-  darkGold: '#B38A32',
-  lightGold: '#E6D3A0',
-  border: '#E3DED4',
+  bg: '#0B0B0B',
+  white: '#151515',
+  primaryText: '#F5F1E8',
+  secondaryText: '#A8A8A8',
+  gold: '#C9A96E',
+  darkGold: '#8C744B',
+  lightGold: '#DFCA9B',
+  border: 'rgba(140, 116, 75, 0.25)',
 };
 
 // ----------------------------------------------------
@@ -22,7 +22,7 @@ const THEME = {
 const BannerWrapper = styled.section`
   width: 100%;
   max-width: 100%;
-  background-color: #F9F7F2;
+  background-color: #0B0B0B;
   border-top: 1px solid ${THEME.border};
   border-bottom: 1px solid ${THEME.border};
   padding: 64px 48px;
@@ -145,7 +145,7 @@ export const AtelierExperienceBanner: React.FC<{ content?: any }> = ({ content }
   let accordions = [
     {
       title: 'Discreet Packaging',
-      content: 'Every order is shipped in plain, unbranded outer security boxes. There is no mention of Floksy Jewel or diamond jewelry on the package exterior for 100% privacy and security.',
+      content: 'Every order is shipped in plain, unbranded outer security boxes. There is no mention of AethelCarats or diamond jewelry on the package exterior for 100% privacy and security.',
     },
     {
       title: 'Secure and Convenient Pickup Option',
@@ -172,15 +172,15 @@ export const AtelierExperienceBanner: React.FC<{ content?: any }> = ({ content }
   }
 
   const heading = content?.packagingHeading || "We're committed to making your entire experience a pleasant one, from shopping to shipping.";
-  const mainDesc = content?.packagingDescription || "Every item we send comes in our signature Floksy Jewel packaging. Engagement rings arrive in a deluxe velvet ring box within an elegant presentation box ready for your proposal. The presentation box also secures your appraisal certificate and GIA/IGI diamond grading report. Loose diamonds are presented in a velvet lined diamond case that securely holds the stone.";
-  const bgImg = "/assets/floksy_ring_box.png";
+  const mainDesc = content?.packagingDescription || "Every item we send comes in our signature AethelCarats packaging. Engagement rings arrive in a deluxe velvet ring box within an elegant presentation box ready for your proposal. The presentation box also secures your appraisal certificate and GIA/IGI diamond grading report. Loose diamonds are presented in a velvet lined diamond case that securely holds the stone.";
+  const bgImg = "/assets/gem_ring_box.png";
 
   return (
     <RevealContainer yOffset={35}>
       <BannerWrapper>
         <BannerContainer>
           <PackagingImageCard>
-            <img src={bgImg} alt="Floksy Jewel Signature Packaging" />
+            <img src={bgImg} alt="AethelCarats Signature Packaging" />
           </PackagingImageCard>
 
           <BannerContent>
@@ -282,20 +282,20 @@ const ScoreLeft = styled.div`
 
 const WriteReviewBtn = styled.button`
   padding: 14px 28px;
-  background-color: ${THEME.primaryText};
-  color: ${THEME.white};
-  border: 1px solid ${THEME.primaryText};
+  background-color: ${THEME.gold};
+  color: #0B0B0B;
+  border: 1px solid ${THEME.gold};
   border-radius: 24px;
   font-size: 0.85rem;
-  font-weight: 600;
-  letter-spacing: 0.05em;
+  font-weight: 700;
+  letter-spacing: 0.08em;
   cursor: pointer;
   transition: all 0.2s ease;
 
   &:hover {
-    background-color: ${THEME.gold};
-    border-color: ${THEME.gold};
-    color: ${THEME.primaryText};
+    background-color: ${THEME.lightGold};
+    border-color: ${THEME.lightGold};
+    color: #0B0B0B;
   }
 `;
 
@@ -361,8 +361,9 @@ const UserAvatarCol = styled.div`
     width: 48px;
     height: 48px;
     border-radius: 50%;
-    background-color: ${THEME.lightGold};
-    color: ${THEME.darkGold};
+    background-color: #1F1F1F;
+    color: ${THEME.gold};
+    border: 1px solid ${THEME.border};
     display: flex;
     align-items: center;
     justify-content: center;
@@ -493,7 +494,7 @@ const ReviewModalCard = styled.div`
 `;
 
 export const ItemReviewsSection: React.FC<{ productName?: string; content?: any; productId?: string; reviews?: any[] }> = ({
-  productName = 'Floksy Jewel Creation',
+  productName = 'AethelCarats Creation',
   content,
   productId,
   reviews: initialReviews,
@@ -583,7 +584,7 @@ export const ItemReviewsSection: React.FC<{ productName?: string; content?: any;
       date: new Date().toLocaleDateString('en-US'),
       text: reviewBody,
       productReviewed: productName,
-      response: 'Thank you for sharing your experience with Floksy Jewel Atelier!',
+      response: 'Thank you for sharing your experience with AethelCarats!',
     };
 
     setReviewsList([newRev, ...reviewsList]);
@@ -685,7 +686,7 @@ export const ItemReviewsSection: React.FC<{ productName?: string; content?: any;
 
               {rev.response && (
                 <div className="atelier-response">
-                  <div className="resp-title">Floksy Jewel Team</div>
+                  <div className="resp-title">AethelCarats Atelier Team</div>
                   <div className="resp-body">{rev.response}</div>
                 </div>
               )}
@@ -728,7 +729,7 @@ export const ItemReviewsSection: React.FC<{ productName?: string; content?: any;
                   value={reviewerName}
                   onChange={(e) => setReviewerName(e.target.value)}
                   placeholder="e.g. Patty G."
-                  style={{ width: '100%', padding: '10px 14px', border: `1px solid ${THEME.border}`, borderRadius: 4, outline: 'none', fontSize: '0.88rem' }}
+                  style={{ width: '100%', padding: '10px 14px', border: `1px solid ${THEME.border}`, borderRadius: 4, outline: 'none', fontSize: '0.88rem', background: '#0B0B0B', color: '#F5F1E8' }}
                 />
               </div>
 
@@ -740,7 +741,7 @@ export const ItemReviewsSection: React.FC<{ productName?: string; content?: any;
                   value={reviewTitle}
                   onChange={(e) => setReviewTitle(e.target.value)}
                   placeholder="e.g. Perfect description & exquisite craftsmanship"
-                  style={{ width: '100%', padding: '10px 14px', border: `1px solid ${THEME.border}`, borderRadius: 4, outline: 'none', fontSize: '0.88rem' }}
+                  style={{ width: '100%', padding: '10px 14px', border: `1px solid ${THEME.border}`, borderRadius: 4, outline: 'none', fontSize: '0.88rem', background: '#0B0B0B', color: '#F5F1E8' }}
                 />
               </div>
 
@@ -752,13 +753,13 @@ export const ItemReviewsSection: React.FC<{ productName?: string; content?: any;
                   value={reviewBody}
                   onChange={(e) => setReviewBody(e.target.value)}
                   placeholder="Write your review here..."
-                  style={{ width: '100%', padding: '10px 14px', border: `1px solid ${THEME.border}`, borderRadius: 4, outline: 'none', fontSize: '0.88rem', fontFamily: 'inherit' }}
+                  style={{ width: '100%', padding: '10px 14px', border: `1px solid ${THEME.border}`, borderRadius: 4, outline: 'none', fontSize: '0.88rem', fontFamily: 'inherit', background: '#0B0B0B', color: '#F5F1E8' }}
                 />
               </div>
 
               <button
                 type="submit"
-                style={{ width: '100%', padding: 14, backgroundColor: THEME.primaryText, color: THEME.white, border: 'none', borderRadius: 4, fontWeight: 700, fontSize: '0.85rem', cursor: 'pointer', letterSpacing: '0.08em', textTransform: 'uppercase' }}
+                style={{ width: '100%', padding: 14, backgroundColor: THEME.gold, color: '#0B0B0B', border: 'none', borderRadius: 4, fontWeight: 700, fontSize: '0.85rem', cursor: 'pointer', letterSpacing: '0.08em', textTransform: 'uppercase' }}
               >
                 Submit Verified Review
               </button>
@@ -769,7 +770,6 @@ export const ItemReviewsSection: React.FC<{ productName?: string; content?: any;
     </ReviewsWrapper>
   );
 };
-
 
 // ----------------------------------------------------
 // SECTION 3: SIMILAR ITEMS SECTION (Matching Screenshot 2)
@@ -825,7 +825,7 @@ const CarouselNavButton = styled.button<{ $direction: 'left' | 'right' }>`
   width: 44px;
   height: 44px;
   border-radius: 50%;
-  background: #ffffff;
+  background: #151515;
   border: 1px solid ${THEME.border};
   box-shadow: 0 6px 18px rgba(0, 0, 0, 0.12);
   display: flex;
@@ -879,9 +879,9 @@ const DEMO_FALLBACK_PRODUCTS = [
     id: 'demo_sim_1',
     name: 'Classic Four Prong Solitaire Engagement Ring in 14K Yellow Gold',
     title: 'Classic Four Prong Solitaire Engagement Ring in 14K Yellow Gold',
-    slug: 'floksy-jewel-signature-solitaire-ring',
-    mainImage: '/assets/floksy_rings_cat.png',
-    secondaryImage: '/assets/floksy_rings_cat_2.png',
+    slug: 'aura-signature-solitaire-ring',
+    mainImage: '/assets/gem_rings_cat.png',
+    secondaryImage: '/assets/gem_rings_cat_2.png',
     price: 870,
     basePrice: 870,
     metal: '14K Yellow Gold',
@@ -891,9 +891,9 @@ const DEMO_FALLBACK_PRODUCTS = [
     id: 'demo_sim_2',
     name: 'Petite Micropavé Hidden Halo Engagement Ring in 14K White Gold',
     title: 'Petite Micropavé Hidden Halo Engagement Ring in 14K White Gold',
-    slug: 'floksy-jewel-signature-solitaire-ring',
-    mainImage: '/assets/floksy_rings_cat_2.png',
-    secondaryImage: '/assets/floksy_rings_cat.png',
+    slug: 'aura-signature-solitaire-ring',
+    mainImage: '/assets/gem_rings_cat_2.png',
+    secondaryImage: '/assets/gem_rings_cat.png',
     price: 1645,
     basePrice: 1645,
     metal: '14K White Gold',
@@ -903,9 +903,9 @@ const DEMO_FALLBACK_PRODUCTS = [
     id: 'demo_sim_3',
     name: 'Chain-Set Initial N Necklace With Lab-Grown Diamonds In 14K White Gold',
     title: 'Chain-Set Initial N Necklace With Lab-Grown Diamonds In 14K White Gold',
-    slug: 'floksy-jewel-signature-solitaire-ring',
-    mainImage: '/assets/floksy_rings_cat.png',
-    secondaryImage: '/assets/floksy_rings_cat_2.png',
+    slug: 'aura-signature-solitaire-ring',
+    mainImage: '/assets/gem_rings_cat.png',
+    secondaryImage: '/assets/gem_rings_cat_2.png',
     price: 1140,
     basePrice: 1140,
     metal: '14K White Gold',
@@ -915,9 +915,9 @@ const DEMO_FALLBACK_PRODUCTS = [
     id: 'demo_sim_4',
     name: '7" Four Prong Diamond Tennis Bracelet In 14K White Gold',
     title: '7" Four Prong Diamond Tennis Bracelet In 14K White Gold',
-    slug: 'floksy-jewel-signature-solitaire-ring',
-    mainImage: '/assets/floksy_rings_cat_2.png',
-    secondaryImage: '/assets/floksy_rings_cat.png',
+    slug: 'aura-signature-solitaire-ring',
+    mainImage: '/assets/gem_rings_cat_2.png',
+    secondaryImage: '/assets/gem_rings_cat.png',
     price: 3730,
     basePrice: 3730,
     metal: '14K White Gold',
@@ -1048,7 +1048,7 @@ export const RecentlyViewedSection: React.FC<{ currentProductId?: string; conten
   useEffect(() => {
     let stored: any[] = [];
     try {
-      const raw = localStorage.getItem('fj_recently_viewed');
+      const raw = localStorage.getItem('app_recently_viewed');
       if (raw) stored = JSON.parse(raw);
     } catch (e) {}
 

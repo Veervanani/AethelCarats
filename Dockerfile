@@ -1,4 +1,4 @@
-# Multi-stage production Dockerfile for Floksy Jewel Platform (Cloud Run)
+# Multi-stage production Dockerfile for Aura Diamond Atelier
 FROM node:20-alpine AS builder
 
 RUN apk add --no-cache openssl

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+﻿import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import styled from 'styled-components';
 import { Search, Download, CreditCard, Filter, Eye, Edit, Trash2 } from 'lucide-react';
@@ -247,7 +247,7 @@ export const AdminPaymentsPage: React.FC = () => {
         <div>
           <h1>Payments Ledger</h1>
           <p style={{ color: '#666', fontSize: '0.85rem' }}>
-            Comprehensive transaction ledger of all payments recorded across Floksy Jewel Atelier.
+            Comprehensive transaction ledger of all payments recorded across Aura Diamond Atelier.
           </p>
         </div>
         <button

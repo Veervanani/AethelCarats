@@ -11,8 +11,8 @@ interface ShapeSelectorProps {
 }
 
 const ShapeSelectorContainer = styled.div`
-  background-color: #ffffff;
-  border: 1px solid #e8e3d9;
+  background-color: #151515;
+  border: 1px solid rgba(140, 116, 75, 0.25);
   border-radius: 4px;
   padding: 12px;
   display: flex;
@@ -37,8 +37,8 @@ const ShapesSubgrid = styled.div`
 
 const ShapeCard = styled.button<{ $selected: boolean }>`
   position: relative;
-  background-color: ${({ $selected }) => ($selected ? '#faf5eb' : '#ffffff')};
-  border: 1px solid ${({ $selected }) => ($selected ? '#c9a45c' : '#e8e3d9')};
+  background-color: ${({ $selected }) => ($selected ? '#242018' : '#0B0B0B')};
+  border: 1px solid ${({ $selected }) => ($selected ? '#C9A96E' : 'rgba(140, 116, 75, 0.25)')};
   border-radius: 4px;
   padding: 10px 6px 8px;
   display: flex;
@@ -47,15 +47,15 @@ const ShapeCard = styled.button<{ $selected: boolean }>`
   justify-content: center;
   cursor: pointer;
   box-shadow: ${({ $selected }) =>
-    $selected ? '0 2px 10px rgba(201, 164, 92, 0.2)' : 'none'};
+    $selected ? '0 2px 10px rgba(201, 169, 110, 0.25)' : 'none'};
   transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
   outline: none;
 
   &:hover, &:focus-visible {
-    border-color: #c9a45c;
-    background-color: #faf5eb;
+    border-color: #C9A96E;
+    background-color: #242018;
     transform: translateY(-1px);
-    box-shadow: 0 4px 12px rgba(201, 164, 92, 0.15);
+    box-shadow: 0 4px 12px rgba(201, 169, 110, 0.25);
   }
 
   .svg-wrapper {
@@ -72,8 +72,8 @@ const ShapeCard = styled.button<{ $selected: boolean }>`
       object-fit: contain;
       filter: ${({ $selected }) =>
         $selected
-          ? 'brightness(0) saturate(100%) invert(69%) sepia(26%) saturate(1048%) hue-rotate(5deg) brightness(92%) contrast(87%)'
-          : 'brightness(0.2)'};
+          ? 'brightness(0) saturate(100%) invert(75%) sepia(35%) saturate(800%) hue-rotate(5deg) brightness(95%) contrast(90%)'
+          : 'brightness(0) invert(1) opacity(0.85)'};
       transition: filter 0.2s ease, transform 0.2s ease;
     }
   }
@@ -83,7 +83,7 @@ const ShapeCard = styled.button<{ $selected: boolean }>`
     font-weight: 600;
     letter-spacing: 0.04em;
     text-transform: uppercase;
-    color: ${({ $selected }) => ($selected ? '#c9a45c' : '#1f1f1f')};
+    color: ${({ $selected }) => ($selected ? '#C9A96E' : '#F5F1E8')};
     transition: color 0.2s ease;
   }
 
@@ -102,7 +102,7 @@ const ToggleExpandButton = styled.button<{ $expanded: boolean }>`
   font-size: 0.72rem;
   font-weight: 600;
   letter-spacing: 0.06em;
-  color: #6b6b6b;
+  color: #A8A8A8;
   cursor: pointer;
   display: flex;
   align-items: center;
@@ -112,7 +112,7 @@ const ToggleExpandButton = styled.button<{ $expanded: boolean }>`
   transition: color 0.2s ease;
 
   &:hover {
-    color: #c9a45c;
+    color: #C9A96E;
   }
 
   svg {
@@ -148,7 +148,7 @@ export const ShapeSelector: React.FC<ShapeSelectorProps> = ({
               data-testid={`shape-card-${shape.value.toLowerCase()}`}
             >
               <div className="check-icon">
-                <Check size={10} color="#C9A45C" />
+                <Check size={10} color="#C9A96E" />
               </div>
               <div className="svg-wrapper">
                 <img

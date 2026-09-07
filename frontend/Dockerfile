@@ -1,4 +1,4 @@
-# Multi-stage production Dockerfile for Floksy Jewel Frontend (Cloud Run)
+# Multi-stage production Dockerfile for AethelCarats Frontend (Cloud Run)
 FROM node:20-alpine AS builder
 
 WORKDIR /app

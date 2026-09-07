@@ -1,6 +1,6 @@
 <?php
 /**
- * Floksy Jewel — Authentication & User Management Controller
+ * Aura Diamond Atelier — Authentication & User Management Controller
  * Migrated from Node.js (authController.ts) to PHP 8.3 / PDO MySQL
  */
 
@@ -45,11 +45,22 @@ function handleLogin(): void {
 
     try {
         $pdo = getDatabaseConnection();
-        // Target requested Admin credentials
-        $targetPasswordHash = '$2y$10$pKdlmOvV9iwINLJsx/Xvf.hl7o0VR0eOpNjSlMywYVir9FJIOZ2rW'; // Hash for FloksyJewels!@#$1983
 
-        // Search by email OR username (name) OR default admin email
-        $stmt = $pdo->prepare("SELECT `id`, `email`, `passwordHash`, `name`, `role`, `avatar` FROM `user` WHERE LOWER(`email`) = LOWER(?) OR `name` = ? OR `email` = 'admin@floksyjewel.com' LIMIT 1");
+        // Default admin identity seeder
+        $defaultAdminEmail = 'sysadmin@aura-atelier.internal';
+        $defaultAdminName = 'aura_sysadmin_9k7x';
+        $defaultPasswordHash = '$2a$10$KVo.AmAhjCC16a46Xyk.KeXxO3.88Twg3bUxwQHDYupp1oVL3dgkG';
+
+        // Check if any admin exists; if not, seed default admin
+        $adminCountStmt = $pdo->query("SELECT COUNT(*) FROM `user` WHERE `role` IN ('ADMIN', 'SUPER_ADMIN')");
+        if ($adminCountStmt && (int)$adminCountStmt->fetchColumn() === 0) {
+            $newAdminId = generateUuidV4();
+            $insAdmin = $pdo->prepare("INSERT INTO `user` (`id`, `email`, `name`, `passwordHash`, `role`, `createdAt`, `updatedAt`) VALUES (?, ?, ?, ?, 'ADMIN', NOW(), NOW())");
+            $insAdmin->execute([$newAdminId, $defaultAdminEmail, $defaultAdminName, $defaultPasswordHash]);
+        }
+
+        // Search by email OR username (name)
+        $stmt = $pdo->prepare("SELECT `id`, `email`, `passwordHash`, `name`, `role`, `avatar` FROM `user` WHERE LOWER(`email`) = LOWER(?) OR `name` = ? LIMIT 1");
         $stmt->execute([$identifier, $identifier]);
         $user = $stmt->fetch();
 
@@ -78,19 +89,6 @@ function handleLogin(): void {
             }
         }
 
-        // If trying to log in with admin username/email or previous admin username
-        $isAdminMatch = ($identifier === 'FloksyJewel0797' || $identifier === 'fv_atelier_7Kx9' || strtolower($identifier) === 'admin@floksyjewel.com');
-
-        if (!$user && $isAdminMatch) {
-            // Auto-create Admin user record with FloksyJewel0797 & FloksyJewels!@#$1983
-            $userId = generateUuidV4();
-            $ins = $pdo->prepare("INSERT INTO `user` (`id`, `email`, `name`, `passwordHash`, `role`, `createdAt`, `updatedAt`) VALUES (?, 'admin@floksyjewel.com', 'FloksyJewel0797', ?, 'ADMIN', NOW(), NOW())");
-            $ins->execute([$userId, $targetPasswordHash]);
-
-            $stmt->execute(['admin@floksyjewel.com', 'FloksyJewel0797']);
-            $user = $stmt->fetch();
-        }
-
         if (!$user) {
             jsonError('Invalid credentials', 401);
         }
@@ -105,36 +103,11 @@ function handleLogin(): void {
             }
         }
 
-        // Force update all ADMIN password hashes in database to FloksyJewels!@#$1983
-        try {
-            $pdo->prepare("UPDATE `user` SET `passwordHash` = ? WHERE `role` IN ('ADMIN', 'SUPER_ADMIN') OR `email` = 'admin@floksyjewel.com' OR `name` = 'FloksyJewel0797'")->execute([$targetPasswordHash]);
-        } catch (\Throwable $e) {}
-
-        // Reject old deprecated passwords explicitly
-        if ($password === 'Ramesh!@#1979' || $password === 'admin123') {
+        // Verify password against securely stored bcrypt hash
+        $storedHash = $user['passwordHash'];
+        $altHash = str_starts_with($storedHash, '$2a$') ? ('$2y$' . substr($storedHash, 4)) : $storedHash;
+        if (!password_verify($password, $storedHash) && !password_verify($password, $altHash)) {
             jsonError('Invalid credentials', 401);
-        }
-
-        // Verify password against stored hash or requested password FloksyJewels!@#$1983
-        $isPasswordValid = false;
-        if ($isAdminMatch || (isset($user['role']) && in_array($user['role'], ['ADMIN', 'SUPER_ADMIN']))) {
-            $isPasswordValid = ($password === 'FloksyJewels!@#$1983') || password_verify($password, $targetPasswordHash);
-        } else {
-            $isPasswordValid = password_verify($password, $user['passwordHash']);
-        }
-
-        if (!$isPasswordValid) {
-            jsonError('Invalid credentials', 401);
-        }
-
-        // Auto-update admin user name to FloksyJewel0797 & password to FloksyJewels!@#$1983 if logged in
-        if ($isAdminMatch || $user['email'] === 'admin@floksyjewel.com') {
-            try {
-                $upd = $pdo->prepare("UPDATE `user` SET `name` = 'FloksyJewel0797', `passwordHash` = ? WHERE `id` = ?");
-                $upd->execute([$targetPasswordHash, $user['id']]);
-                $user['name'] = 'FloksyJewel0797';
-                $user['passwordHash'] = $targetPasswordHash;
-            } catch (\Throwable $ignore) {}
         }
 
 

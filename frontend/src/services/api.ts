@@ -2,16 +2,10 @@ import axios from 'axios';
 import { Product, Diamond, Category, PageSection, MenuItem, CustomRequest, User, HeroBanner } from '../types';
 
 const getBaseURL = () => {
-  if ((import.meta as any).env?.VITE_API_URL) {
+  if ((import.meta as any).env?.VITE_API_URL && !(import.meta as any).env?.VITE_API_URL.includes('.php')) {
     return (import.meta as any).env.VITE_API_URL;
   }
-  if (typeof window !== 'undefined' && (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1')) {
-    return 'http://localhost/floksyjewel/api/index.php/v1';
-  }
-  if (typeof window !== 'undefined') {
-    return `${window.location.origin}/api/index.php/v1`;
-  }
-  return '/api/index.php/v1';
+  return '/api/v1';
 };
 
 const API = axios.create({
@@ -22,7 +16,7 @@ const API = axios.create({
 });
 
 API.interceptors.request.use((config) => {
-  const token = localStorage.getItem('fj_admin_token') || localStorage.getItem('floksy_token');
+  const token = localStorage.getItem('admin_session_token') || localStorage.getItem('app_auth_token');
   if (token) {
     config.headers.Authorization = `Bearer ${token}`;
   }
@@ -60,10 +54,10 @@ API.interceptors.response.use(
     }
 
     if (error.response && error.response.status === 401) {
-      if (window.location.pathname.includes('/atelier-vault-7Kx9Qm4R2Lp8Nw6T') && !window.location.pathname.includes('/login')) {
-        localStorage.removeItem('fj_admin_token');
-        localStorage.removeItem('fj_admin_user');
-        window.location.href = '/atelier-vault-7Kx9Qm4R2Lp8Nw6T/login';
+      if (window.location.pathname.includes('/vault-mgmt-k8m3x9q2v7') && !window.location.pathname.includes('/login')) {
+        localStorage.removeItem('admin_session_token');
+        localStorage.removeItem('admin_profile');
+        window.location.href = '/vault-mgmt-k8m3x9q2v7/login';
       }
     }
     return Promise.reject(error);
@@ -615,6 +609,19 @@ export const api = {
   deleteMedia: async (id: string) => {
     const res = await API.delete(`/admin/media/${id}`);
     return res.data;
+  },
+
+  deleteUploadedFile: async (url: string) => {
+    if (!url || typeof url !== 'string' || !url.startsWith('/uploads/')) {
+      return { deleted: false };
+    }
+    try {
+      const res = await API.post('/admin/media/delete-file', { url });
+      return res.data;
+    } catch (e) {
+      console.warn('Notice: deleteUploadedFile error:', e);
+      return { deleted: false };
+    }
   },
 
   // Centralized Global Product Filter APIs

@@ -1,4 +1,4 @@
-import * as XLSX from 'xlsx';
+﻿import * as XLSX from 'xlsx';
 import { Product } from '../types';
 
 export interface ExportEbayOptions {
@@ -173,7 +173,7 @@ function cleanDescription(product: Product): string {
   if (product.specifications) parts.push('Specifications: ' + product.specifications.trim());
   if (product.careInstructions) parts.push('Care Instructions: ' + product.careInstructions.trim());
 
-  const combined = parts.join('\n\n') || product.name || 'Fine luxury jewellery item crafted by Floksy Jewel.';
+  const combined = parts.join('\n\n') || product.name || 'Fine luxury jewellery item crafted by Aura Diamond Atelier.';
   return combined.replace(/<[^>]*>?/gm, ' ').replace(/\s\s+/g, ' ').trim();
 }
 
@@ -183,8 +183,8 @@ function formatEbayTitle(title: string): string {
 }
 
 function buildProductRows(products: Product[], options: ExportEbayOptions = {}): any[][] {
-  const siteUrl = options.siteUrl || (typeof window !== 'undefined' ? window.location.origin : 'https://floksyjewel.com');
-  const brand = options.defaultBrand || 'Floksy Jewel';
+  const siteUrl = options.siteUrl || (typeof window !== 'undefined' ? window.location.origin : 'https://auroradiamonds.com');
+  const brand = options.defaultBrand || 'Aura Diamond Atelier';
   const shippingProfile = options.defaultShippingProfile || 'shipping1 - (ID: 276534078018)';
   const returnProfile = options.defaultReturnProfile || 'free 30 days money back - International free 3 (258806232018) - (ID: 258806232018)';
   const paymentProfile = options.defaultPaymentProfile || 'eBay Managed Payments (258806234018) - (ID: 258806234018)';
@@ -214,7 +214,7 @@ function buildProductRows(products: Product[], options: ExportEbayOptions = {}):
       sku,
       cat.id,
       cat.name,
-      formatEbayTitle(p.name || p.title || 'Floksy Jewel Fine Jewellery'),
+      formatEbayTitle(p.name || p.title || 'Aura Diamond Atelier Fine Jewellery'),
       '',
       '',
       '',
@@ -283,7 +283,7 @@ function buildProductRows(products: Product[], options: ExportEbayOptions = {}):
       '',
       '',
       '',
-      'Floksy Jewel Atelier',
+      'Aura Diamond Atelier',
       'Suite 404, Diamond Quarter',
       'Hatton Garden',
       'London',
@@ -291,9 +291,9 @@ function buildProductRows(products: Product[], options: ExportEbayOptions = {}):
       'EC1N 8LE',
       'Greater London',
       '+44 7900 123456',
-      'concierge@floksyjewel.com',
+      'concierge@auroradiamonds.com',
       siteUrl,
-      'Floksy Jewel Compliance',
+      'Aura Diamond Atelier Compliance',
       'EUResponsiblePerson',
       'Suite 404, Diamond Quarter',
       'Hatton Garden',
@@ -302,7 +302,7 @@ function buildProductRows(products: Product[], options: ExportEbayOptions = {}):
       'EC1N 8LE',
       'Greater London',
       '+44 7900 123456',
-      'compliance@floksyjewel.com',
+      'compliance@auroradiamonds.com',
       siteUrl,
     ];
   });
@@ -311,7 +311,7 @@ function buildProductRows(products: Product[], options: ExportEbayOptions = {}):
 export async function exportProductsToEbayExcel(products: Product[], options: ExportEbayOptions = {}) {
   const rows = buildProductRows(products, options);
   const dateStr = new Date().toISOString().split('T')[0];
-  const outFileName = options.fileName || ('Floksy_Jewel_eBay_Listings_' + dateStr + '.xlsx');
+  const outFileName = options.fileName || ('Aura_Jewel_eBay_Listings_' + dateStr + '.xlsx');
 
   try {
     const response = await fetch('/ebay-template.xlsx');
@@ -347,7 +347,7 @@ export async function exportProductsToEbayExcel(products: Product[], options: Ex
 export function exportProductsToEbayCsv(products: Product[], options: ExportEbayOptions = {}) {
   const rows = buildProductRows(products, options);
   const dateStr = new Date().toISOString().split('T')[0];
-  const outFileName = options.fileName || ('Floksy_Jewel_eBay_Listings_' + dateStr + '.csv');
+  const outFileName = options.fileName || ('Aura_Jewel_eBay_Listings_' + dateStr + '.csv');
 
   const listingsData: any[][] = [
     ['#INFO', 'Created=' + Date.now(), '', '', '', '', ' Indicates missing required fields', '', '', '', '', ' Indicates missing field that will be required soon'],
