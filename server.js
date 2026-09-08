@@ -33,7 +33,7 @@ process.on('unhandledRejection', (reason, promise) => {
 
 // Construct DATABASE_URL if Hostinger provides discrete variables
 if (!process.env.DATABASE_URL) {
-  const host = process.env.DB_HOST || '127.0.0.1';
+  const host = process.env.DB_HOST || 'localhost';
   const port = process.env.DB_PORT || '3306';
   const name = process.env.DB_NAME || 'u707945653_aethelcarats';
   const user = process.env.DB_USER || 'u707945653_admin';
@@ -45,7 +45,7 @@ if (!process.env.DATABASE_URL) {
       .replace(/\(/g, '%28')
       .replace(/\)/g, '%29')
       .replace(/\*/g, '%2A');
-    process.env.DATABASE_URL = `mysql://${user}:${encodedPassword}@${host}:${port}/${name}?connect_timeout=30`;
+    process.env.DATABASE_URL = `mysql://${user}:${encodedPassword}@${host}:${port}/${name}?connect_timeout=5`;
   }
 }
 
