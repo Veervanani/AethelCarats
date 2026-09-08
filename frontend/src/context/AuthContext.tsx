@@ -18,7 +18,6 @@ interface AuthContextType {
   closeAuthModal: () => void;
   login: (credentials: { email: string; password: string }, rememberMe?: boolean) => Promise<void>;
   register: (data: { name: string; email: string; password: string; phone?: string }) => Promise<void>;
-  googleAuth: (payload: { accessToken?: string; credential?: string; token?: string; userInfo?: any }) => Promise<void>;
   logout: (reason?: string) => void;
   resetInactivityTimer: () => void;
 }
@@ -167,23 +166,6 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     }
   };
 
-  const googleAuth = async (payload: { accessToken?: string; credential?: string; token?: string; userInfo?: any }) => {
-    setIsLoading(true);
-    try {
-      const res = await api.googleAuth(payload);
-      if (res.token) {
-        handleAuthSuccess(res.token, res.user, true);
-      } else {
-        throw new Error('Google sign-in failed.');
-      }
-    } catch (err: any) {
-      const message = err.response?.data?.message || 'Google sign-in failed.';
-      throw new Error(message);
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
   const logout = (reason?: string) => {
     setToken(null);
     setUser(null);
@@ -286,7 +268,6 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
         closeAuthModal,
         login,
         register,
-        googleAuth,
         logout,
         resetInactivityTimer,
       }}

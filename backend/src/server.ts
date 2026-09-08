@@ -11,7 +11,7 @@ import fs from 'fs';
 
 import { authenticateToken, requireRole } from './middleware/auth';
 
-import { loginAdmin, googleAuth, registerUser, getCurrentUser, getActivityLogs, getAdminUsers, updateUserRole, ensureDefaultAdminUsersExist } from './controllers/authController';
+import { loginAdmin, registerUser, getCurrentUser, getActivityLogs, getAdminUsers, updateUserRole, ensureDefaultAdminUsersExist } from './controllers/authController';
 import {
   getProducts,
   getProductBySlug,
@@ -340,8 +340,6 @@ app.get('/sitemap.xml', generateSitemapXml);
 app.get('/robots.txt', generateRobotsTxt);
 
 // Auth Routes
-app.post('/api/v1/auth/google', googleAuth);
-app.post('/api/v1/admin/auth/google', googleAuth);
 app.post('/api/v1/auth/login', loginAdmin);
 app.post('/api/v1/auth/register', registerUser);
 app.post('/api/v1/admin/auth/login', loginAdmin);

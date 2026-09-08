@@ -102,11 +102,6 @@ export const api = {
     return res.data;
   },
 
-  googleAuth: async (payload: { credential?: string; token?: string; accessToken?: string; userInfo?: any }) => {
-    const res = await API.post<{ token: string; user?: User }>('/auth/google', payload);
-    return res.data;
-  },
-
   login: async (credentials: { email: string; password: string }) => {
     const res = await API.post<{ token: string; user?: User }>('/auth/login', credentials);
     return res.data;
