@@ -10,7 +10,7 @@ const promise_1 = __importDefault(require("mysql2/promise"));
 const node_crypto_1 = __importDefault(require("node:crypto"));
 const dotenv_1 = __importDefault(require("dotenv"));
 dotenv_1.default.config();
-const dbHost = process.env.DB_HOST || (process.platform === 'linux' ? '127.0.0.1' : 'srv844.hstgr.io');
+const dbHost = process.env.DB_HOST || 'srv844.hstgr.io';
 const dbPort = Number(process.env.DB_PORT) || 3306;
 const dbName = process.env.DB_NAME || 'u707945653_aethelcarats';
 const dbUser = process.env.DB_USER || 'u707945653_admin';

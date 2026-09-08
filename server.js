@@ -35,7 +35,7 @@ process.on('unhandledRejection', (reason, promise) => {
 // Sanitize and construct DATABASE_URL ensuring valid mysql:// protocol
 let rawDbUrl = (process.env.DATABASE_URL || '').trim().replace(/^["'“”‘’\s]+|["'“”‘’\s]+$/g, '').trim();
 if (!rawDbUrl || !rawDbUrl.startsWith('mysql://')) {
-  const host = process.env.DB_HOST || (process.platform === 'linux' ? '127.0.0.1' : 'srv844.hstgr.io');
+  const host = process.env.DB_HOST || 'srv844.hstgr.io';
   const port = process.env.DB_PORT || '3306';
   const name = process.env.DB_NAME || 'u707945653_aethelcarats';
   const user = process.env.DB_USER || 'u707945653_admin';
@@ -196,8 +196,8 @@ if (typeof globalThis.PhusionPassenger !== 'undefined' || typeof PhusionPassenge
   });
 } else {
   const numericPort = Number(PORT) || 3000;
-  server = app.listen(numericPort, () => {
-    console.log(`🚀 SERVER LISTEN CALLBACK (PORT: ${numericPort})`);
+  server = app.listen(numericPort, '0.0.0.0', () => {
+    console.log(`🚀 SERVER LISTEN CALLBACK (PORT: ${numericPort}, HOST: 0.0.0.0)`);
     console.log(`PID: ${process.pid}`);
     console.log(`server.listening: ${server.listening}`);
     console.log(`server.address:`, server.address());

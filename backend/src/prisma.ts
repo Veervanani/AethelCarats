@@ -5,7 +5,7 @@ import type { PrismaClient } from '@prisma/client';
 
 dotenv.config();
 
-const dbHost = process.env.DB_HOST || (process.platform === 'linux' ? '127.0.0.1' : 'srv844.hstgr.io');
+const dbHost = process.env.DB_HOST || 'srv844.hstgr.io';
 const dbPort = Number(process.env.DB_PORT) || 3306;
 const dbName = process.env.DB_NAME || 'u707945653_aethelcarats';
 const dbUser = process.env.DB_USER || 'u707945653_admin';
