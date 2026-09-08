@@ -634,26 +634,71 @@ app.get('/api/v1/business/audit-logs', authenticateToken, requireBusinessAdmin, 
 
 // Real-Time Database Connection Diagnostic Endpoint
 app.get('/api/v1/health', async (req, res) => {
+  const rawDbUrl = (process.env.DATABASE_URL || '').trim();
+  const maskedDbUrl = rawDbUrl.replace(/:([^:@]+)@/, ':****@');
+  const envHost = process.env.DB_HOST || 'localhost';
+  const envName = process.env.DB_NAME || 'u707945653_aethelcarats';
+  const envUser = process.env.DB_USER || 'u707945653_admin';
+
   try {
     const userCount = await prisma.user.count();
     const diamondCount = await prisma.diamond.count();
     const productCount = await prisma.product.count();
+    const categoryCount = await prisma.category.count().catch(() => null);
+    const orderCount = await prisma.order.count().catch(() => null);
+
     res.json({
       status: 'ok',
       database: 'connected',
-      engine: 'MySQL / MariaDB',
-      host: process.env.DB_HOST || 'localhost',
-      dbName: process.env.DB_NAME || 'u707945653_aethelcarats',
-      userCount,
-      diamondCount,
-      productCount,
+      engine: 'Node.js Express + Prisma ORM / MySQL',
+      nodeVersion: process.version,
+      connection: {
+        host: envHost,
+        databaseName: envName,
+        user: envUser,
+        activeUrl: maskedDbUrl,
+      },
+      catalogSummary: {
+        userCount,
+        diamondCount,
+        productCount,
+        categoryCount,
+        orderCount,
+      },
+      message: 'Database connection is verified and healthy!',
       timestamp: new Date().toISOString(),
     });
   } catch (err: any) {
+    console.error('Database Health Check Failed:', err);
+
+    let suggestion = 'Check your MySQL server status and credentials.';
+    const errMsg = err.message || String(err);
+    if (errMsg.includes('Access denied') || errMsg.includes('Authentication failed')) {
+      suggestion = `Database username or password is incorrect. Verify user "${envUser}" and password in Hostinger MySQL management.`;
+    } else if (errMsg.includes('ECONNREFUSED') || errMsg.includes('No connection could be made') || errMsg.includes('refused')) {
+      suggestion = `Connection refused at "${envHost}". If on Hostinger, change DB_HOST to "localhost" instead of "127.0.0.1".`;
+    } else if (errMsg.includes('protocol') || errMsg.includes('mysql://')) {
+      suggestion = 'DATABASE_URL format error. Ensure the URL starts with mysql:// without quotation marks.';
+    } else if (errMsg.includes('Unknown database') || errMsg.includes('database server')) {
+      suggestion = `Database "${envName}" does not exist. Verify the database name in Hostinger MySQL management.`;
+    }
+
     res.status(500).json({
       status: 'error',
       database: 'disconnected',
-      error: err.message || String(err),
+      error: errMsg,
+      errorCode: err.code || err.name || 'UNKNOWN_ERROR',
+      diagnostics: {
+        attemptedHost: envHost,
+        attemptedDatabase: envName,
+        attemptedUser: envUser,
+        maskedUrl: maskedDbUrl,
+        nodeVersion: process.version,
+        envVarsConfigured: Object.keys(process.env).filter((k) =>
+          ['DATABASE_URL', 'DB_HOST', 'DB_NAME', 'DB_USER', 'DB_PORT', 'PORT'].includes(k)
+        ),
+      },
+      troubleshootingTip: suggestion,
       timestamp: new Date().toISOString(),
     });
   }
