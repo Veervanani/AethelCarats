@@ -643,7 +643,7 @@ app.get('/api/v1/health', async (req, res) => {
       database: 'connected',
       engine: 'MySQL / MariaDB',
       host: process.env.DB_HOST || 'localhost',
-      dbName: process.env.DB_NAME || 'u657751653_aurajewel_db',
+      dbName: process.env.DB_NAME || 'u707945653_aethelcarats',
       userCount,
       diamondCount,
       productCount,
