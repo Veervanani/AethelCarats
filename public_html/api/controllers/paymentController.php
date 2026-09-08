@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 /**
  * Aura Diamond Atelier — Payment, PayPal, Receipt, Invoice & Financial Management Controller
  * Migrated from Node.js (paymentController.ts, paypalController.ts, refundController.ts, statementController.ts) to PHP 8.3 / PDO MySQL

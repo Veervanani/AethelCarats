@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 /**
  * Aura Diamond Atelier — Proxy Entry Point for /api/v1 LiteSpeed compatibility
  */

@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 /**
  * Aura Diamond Atelier — Cart & Checkout Preparation Controller
  * Migrated from Node.js (holidayMode.ts, cart models) to PHP 8.3 / PDO MySQL

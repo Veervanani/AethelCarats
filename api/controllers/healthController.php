@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 /**
  * Aura Diamond Atelier — Health Controller
  * Real-Time Database Connection & Health Diagnostic Endpoint

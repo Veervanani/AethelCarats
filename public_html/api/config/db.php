@@ -27,6 +27,9 @@ function getDatabaseConnection(): PDO {
     $connectionProfiles = [
         ['dsn' => "mysql:host=localhost;port={$port};dbname={$db};charset=utf8mb4", 'user' => $user, 'pass' => $pass],
         ['dsn' => "mysql:host=127.0.0.1;port={$port};dbname={$db};charset=utf8mb4", 'user' => $user, 'pass' => $pass],
+        ['dsn' => "mysql:host=auth-db844.hstgr.io;port={$port};dbname={$db};charset=utf8mb4", 'user' => $user, 'pass' => $pass],
+        ['dsn' => "mysql:unix_socket=/var/run/mysqld/mysqld.sock;dbname={$db};charset=utf8mb4", 'user' => $user, 'pass' => $pass],
+        ['dsn' => "mysql:unix_socket=/tmp/mysql.sock;dbname={$db};charset=utf8mb4", 'user' => $user, 'pass' => $pass],
         ['dsn' => "mysql:host={$host};port={$port};dbname={$db};charset=utf8mb4", 'user' => $user, 'pass' => $pass],
     ];
 

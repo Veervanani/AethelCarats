@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 /**
  * Aura Diamond Atelier — Order & Order Management Controller
  * Migrated from Node.js (orderController.ts) to PHP 8.3 / PDO MySQL

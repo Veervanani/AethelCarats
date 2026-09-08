@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 /**
  * Aura Diamond Atelier — Hostinger Email / SMTP Dispatcher
  */

@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 /**
  * Aura Diamond Atelier — CMS, Page Builder, Menus, FAQs, Blog & Content Controller
  * Migrated from Node.js (cmsController.ts, blogController.ts, faqController.ts, reviewController.ts, etc.) to PHP 8.3 / PDO MySQL

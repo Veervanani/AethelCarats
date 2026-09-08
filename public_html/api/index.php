@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 /**
  * Aura Diamond Atelier — Central PHP Front Controller & Router
  * Step 10 Custom Requests, Media, Files, SEO & Remaining API Entrypoint

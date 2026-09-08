@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 /**
  * Aura Diamond Atelier — Enterprise Operations Hub Controller (PHP / MySQL PDO)
  * Handles Dashboard, Employees, Attendance, 46-column Sales Tracker, Commissions,

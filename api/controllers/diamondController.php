@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 /**
  * Aura Diamond Atelier — Diamonds & Diamond Vault Controller
  * Migrated from Node.js (diamondController.ts, diamondFilterController.ts) to PHP 8.3 / PDO MySQL

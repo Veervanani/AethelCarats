@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 /**
  * Aura Diamond Atelier — Custom Requests, Custom CAD & File Attachments Controller
  * Migrated from Node.js (customRequestController.ts) to PHP 8.3 / PDO MySQL

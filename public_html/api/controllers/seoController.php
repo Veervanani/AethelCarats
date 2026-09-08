@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 /**
  * Aura Diamond Atelier — SEO Metadata, Redirects, Sitemap & Robots.txt Controller
  * Migrated from Node.js (seoController.ts) to PHP 8.3 / PDO MySQL

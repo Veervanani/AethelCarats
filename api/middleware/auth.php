@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 /**
  * Aura Diamond Atelier — Authentication & Authorization Middleware
  * Verifies JWT tokens and enforces role-based access control.

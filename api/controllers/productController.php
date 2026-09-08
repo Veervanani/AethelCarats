@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 /**
  * Aura Diamond Atelier — Products & Catalog Controller
  * Migrated from Node.js (productController.ts, filterController.ts) to PHP 8.3 / PDO MySQL
