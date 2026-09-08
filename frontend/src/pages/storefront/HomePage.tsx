@@ -17,7 +17,7 @@ import 'swiper/css/pagination';
 
 import { api } from '../../services/api';
 import { PageSection, HeroBanner } from '../../types';
-import { SafeImage } from '../../components/ui/SafeImage';
+import { SafeImage, normalizeImageUrl } from '../../components/ui/SafeImage';
 import { RevealContainer } from '../../components/ui/RevealContainer';
 
 const HeroSection = styled.section`
@@ -1558,27 +1558,29 @@ const DEFAULT_HERO_SLIDES: HeroBanner[] = [
 ];
 
 const getMobileHeroImagePath = (banner: HeroBanner): string => {
+  if (banner.mobileImagePath && banner.mobileImagePath.trim() !== '') {
+    return normalizeImageUrl(banner.mobileImagePath.trim());
+  }
+  if (banner.imagePath && (banner.imagePath.startsWith('/uploads/') || banner.imagePath.startsWith('http') || banner.imagePath.includes('img_'))) {
+    return normalizeImageUrl(banner.imagePath.trim());
+  }
   const type = (banner.productType || '').toLowerCase();
   const title = (banner.title || '').toLowerCase();
   const img = (banner.imagePath || '').toLowerCase();
-  const m = (banner.mobileImagePath || '').toLowerCase();
 
-  if (type.includes('ring') || title.includes('ring') || img.includes('ring') || m.includes('ring')) {
-    return '/assets/aura_hero_ring_mobile.png';
-  }
-  if (type.includes('necklace') || title.includes('necklace') || img.includes('necklace') || m.includes('necklace')) {
+  if (type.includes('necklace') || title.includes('necklace') || img.includes('necklace')) {
     return '/assets/aura_hero_necklace_mobile.png';
   }
-  if (type.includes('earring') || title.includes('earring') || img.includes('earring') || m.includes('earring')) {
+  if (type.includes('earring') || title.includes('earring') || img.includes('earring')) {
     return '/assets/aura_hero_earrings_mobile.png';
   }
-  if (type.includes('bracelet') || title.includes('bracelet') || img.includes('bracelet') || m.includes('bracelet')) {
+  if (type.includes('bracelet') || title.includes('bracelet') || img.includes('bracelet')) {
     return '/assets/aura_bracelets_mobile.png';
   }
-  if (banner.mobileImagePath && banner.mobileImagePath.trim() !== '') {
-    return banner.mobileImagePath.trim().replace(/ /g, '%20');
+  if (type.includes('ring') || title.includes('ring') || img.includes('ring')) {
+    return '/assets/aura_hero_ring_mobile.png';
   }
-  return (banner.imagePath || '').replace(/ /g, '%20');
+  return normalizeImageUrl(banner.imagePath || '');
 };
 
 
@@ -1723,9 +1725,49 @@ export const HomePage: React.FC = () => {
     }).catch(console.error);
   }, []);
 
+  // Section 1: Hero Section from CMS
+  const cmsHeroSection = sections.find((s) => s.blockType === 'HERO' || String(s.id).toLowerCase().includes('hero'));
+  let cmsHeroContent: any = null;
+  if (cmsHeroSection && cmsHeroSection.content) {
+    try {
+      cmsHeroContent = typeof cmsHeroSection.content === 'string' ? JSON.parse(cmsHeroSection.content) : cmsHeroSection.content;
+    } catch (e) {}
+  }
+
+  const cmsHeroSlide: HeroBanner | null = cmsHeroContent
+    ? {
+        id: cmsHeroSection?.id || 'cms_hero',
+        title: cmsHeroContent.title || 'Handcrafted Fine Jewelry',
+        subtitle: cmsHeroContent.eyebrow || cmsHeroContent.subtitle || 'AURA DIAMOND ATELIER',
+        description: cmsHeroContent.description !== undefined ? cmsHeroContent.description : 'Discover certified solitaire rings and bespoke diamond creations crafted in Surat, India.',
+        imagePath: normalizeImageUrl(cmsHeroContent.desktopImage || cmsHeroContent.image) || (heroBanners[0]?.imagePath || DEFAULT_HERO_SLIDES[0].imagePath),
+        mobileImagePath: normalizeImageUrl(cmsHeroContent.mobileImage || cmsHeroContent.tabletImage || cmsHeroContent.desktopImage || cmsHeroContent.image) || (heroBanners[0]?.mobileImagePath || DEFAULT_HERO_SLIDES[0].mobileImagePath),
+        primaryCtaText: cmsHeroContent.primaryBtnText || cmsHeroContent.primaryCtaText || 'Explore Collection',
+        primaryCtaLink: cmsHeroContent.primaryBtnLink || cmsHeroContent.primaryCtaLink || '/rings',
+        secondaryCtaText: cmsHeroContent.secondaryBtnText !== undefined ? cmsHeroContent.secondaryBtnText : 'Discover Diamonds',
+        secondaryCtaLink: cmsHeroContent.secondaryBtnLink !== undefined ? cmsHeroContent.secondaryBtnLink : '/diamonds',
+        isActive: cmsHeroSection?.isVisible !== false,
+        displayOrder: 1,
+        ...(cmsHeroContent.titleColor ? { titleColor: cmsHeroContent.titleColor } : {}),
+        ...(cmsHeroContent.eyebrowColor ? { subtitleColor: cmsHeroContent.eyebrowColor } : {}),
+        ...(cmsHeroContent.descriptionColor ? { descriptionColor: cmsHeroContent.descriptionColor } : {}),
+        ...(cmsHeroContent.primaryBtnTextColor ? { primaryCtaTextColor: cmsHeroContent.primaryBtnTextColor } : {}),
+        ...(cmsHeroContent.secondaryBtnTextColor ? { secondaryCtaTextColor: cmsHeroContent.secondaryBtnTextColor } : {}),
+      } as any
+    : null;
+
+  // Section 2: Featured Collections Section Content
+  const collectionsSection = sections.find((s) => s.blockType === 'FEATURED_COLLECTIONS' || String(s.id).toLowerCase().includes('collection'));
+  let collectionsContent: any = null;
+  if (collectionsSection && collectionsSection.content) {
+    try {
+      collectionsContent = typeof collectionsSection.content === 'string' ? JSON.parse(collectionsSection.content) : collectionsSection.content;
+    } catch (e) {}
+  }
+
   // Section 4: Campaign Banner Content
-  const campaignBannerSection = sections.find((s) => s.blockType === 'CAMPAIGN_BANNER');
-  let campaignBannerContent: any = cmsConfig?.campaignBannerConfig || {
+  const campaignBannerSection = sections.find((s) => s.blockType === 'CAMPAIGN_BANNER' || String(s.id).toLowerCase().includes('campaign'));
+  let campaignBannerContent: any = {
     enableBanner: true,
     desktopImage: '/assets/GOLD-MARQUISE-DIAMOND-JEWELRY-SET.webp',
     heading: 'A NEW EXPRESSION OF FINE JEWELLERY',
@@ -1735,22 +1777,43 @@ export const HomePage: React.FC = () => {
     objectPosition: 'center 35%',
     showOverlay: true,
     overlayOpacity: 0.45,
+    textColor: '#1F1F1F',
   };
 
-  if (campaignBannerSection && campaignBannerSection.isVisible !== false && !cmsConfig?.campaignBannerConfig) {
+  if (cmsConfig?.campaignBannerConfig) {
+    campaignBannerContent = { ...campaignBannerContent, ...cmsConfig.campaignBannerConfig };
+  }
+
+  if (campaignBannerSection && campaignBannerSection.content) {
     try {
       const parsed = typeof campaignBannerSection.content === 'string' ? JSON.parse(campaignBannerSection.content) : campaignBannerSection.content;
-      campaignBannerContent = { ...campaignBannerContent, ...parsed };
+      campaignBannerContent = {
+        ...campaignBannerContent,
+        enableBanner: campaignBannerSection.isVisible !== false,
+        heading: parsed.title || parsed.heading || campaignBannerContent.heading,
+        description: parsed.description !== undefined ? parsed.description : campaignBannerContent.description,
+        buttonText: parsed.primaryBtnText || parsed.buttonText || campaignBannerContent.buttonText,
+        buttonLink: parsed.primaryBtnLink || parsed.buttonLink || campaignBannerContent.buttonLink,
+        desktopImage: normalizeImageUrl(parsed.desktopImage || parsed.image) || campaignBannerContent.desktopImage,
+        tabletImage: normalizeImageUrl(parsed.tabletImage || parsed.desktopImage || parsed.image),
+        mobileImage: normalizeImageUrl(parsed.mobileImage || parsed.desktopImage || parsed.image),
+        headingTextColor: parsed.titleColor || parsed.headingTextColor,
+        descTextColor: parsed.descriptionColor || parsed.descTextColor,
+        buttonColor: parsed.primaryBtnTextColor || parsed.buttonColor,
+        textColor: parsed.textColor || campaignBannerContent.textColor,
+      };
     } catch (e) {}
   }
 
   // Section 8: Diamond Shapes Section Content
-  const diamondShapesSection = sections.find((s) => s.blockType === 'DIAMOND_SHAPES' || s.blockType === 'DIAMOND_GRID');
-  let diamondShapesContent: any = cmsConfig?.diamondShapesConfig || {
+  const diamondShapesSection = sections.find((s) => s.blockType === 'DIAMOND_SHAPES' || s.blockType === 'DIAMOND_GRID' || String(s.id).toLowerCase().includes('diamond'));
+  let diamondShapesContent: any = {
     eyebrow: 'AUTHENTICATED LOOSE DIAMONDS',
     heading: 'Discover Exceptional Diamond Shapes',
     description: 'Select your ideal cut from certified GIA & IGI diamonds, ethically sourced and precision-cut for maximum fire and brilliance.',
     leftImage: '/assets/gem_diamonds_cat.png',
+    buttonText: 'FIND YOUR DIAMOND',
+    buttonLink: '/diamonds',
     shapes: [
       { name: 'ROUND', shape: 'round', url: '/diamonds?shape=round', svg: '/assets/diamonds/Round.svg', enabled: true },
       { name: 'OVAL', shape: 'oval', url: '/diamonds?shape=oval', svg: '/assets/diamonds/Oval.svg', enabled: true },
@@ -1763,14 +1826,45 @@ export const HomePage: React.FC = () => {
     ],
   };
 
-  if (diamondShapesSection && diamondShapesSection.isVisible !== false && !cmsConfig?.diamondShapesConfig) {
+  if (cmsConfig?.diamondShapesConfig) {
+    diamondShapesContent = { ...diamondShapesContent, ...cmsConfig.diamondShapesConfig };
+  }
+
+  if (diamondShapesSection && diamondShapesSection.content) {
     try {
       const parsed = typeof diamondShapesSection.content === 'string' ? JSON.parse(diamondShapesSection.content) : diamondShapesSection.content;
       diamondShapesContent = {
         ...diamondShapesContent,
-        ...parsed,
+        eyebrow: parsed.eyebrow || diamondShapesContent.eyebrow,
+        heading: parsed.title || parsed.heading || diamondShapesContent.heading,
+        description: parsed.description !== undefined ? parsed.description : diamondShapesContent.description,
+        buttonText: parsed.primaryBtnText || parsed.buttonText || diamondShapesContent.buttonText,
+        buttonLink: parsed.primaryBtnLink || parsed.buttonLink || diamondShapesContent.buttonLink,
+        eyebrowColor: parsed.eyebrowColor || diamondShapesContent.eyebrowColor,
+        headingColor: parsed.titleColor || parsed.headingColor,
+        descriptionColor: parsed.descriptionColor || diamondShapesContent.descriptionColor,
+        buttonColor: parsed.primaryBtnTextColor || diamondShapesContent.buttonColor,
+        leftImage: normalizeImageUrl(parsed.desktopImage || parsed.image || diamondShapesContent.leftImage),
         shapes: parsed.shapes && parsed.shapes.length > 0 ? parsed.shapes : diamondShapesContent.shapes,
       };
+    } catch (e) {}
+  }
+
+  // Section 5: Atelier Craftsmanship Content
+  const craftsmanshipSection = sections.find((s) => s.blockType === 'CRAFTSMANSHIP' || String(s.id).toLowerCase().includes('craft'));
+  let craftsmanshipContent: any = null;
+  if (craftsmanshipSection && craftsmanshipSection.content) {
+    try {
+      craftsmanshipContent = typeof craftsmanshipSection.content === 'string' ? JSON.parse(craftsmanshipSection.content) : craftsmanshipSection.content;
+    } catch (e) {}
+  }
+
+  // Section 6: Testimonials Content
+  const testimonialsSection = sections.find((s) => s.blockType === 'TESTIMONIALS' || String(s.id).toLowerCase().includes('testimonial'));
+  let testimonialsContent: any = null;
+  if (testimonialsSection && testimonialsSection.content) {
+    try {
+      testimonialsContent = typeof testimonialsSection.content === 'string' ? JSON.parse(testimonialsSection.content) : testimonialsSection.content;
     } catch (e) {}
   }
 
@@ -1822,10 +1916,12 @@ export const HomePage: React.FC = () => {
     : [
         {
           id: 'only-1',
-          eyebrow: 'MASTER ATELIER CRAFTSMANSHIP',
-          title: 'Hand-finished custom CAD & precision diamond setting',
-          image: '/assets/aura_only_at_1.png',
-          url: '/custom-jewellery',
+          eyebrow: craftsmanshipContent?.eyebrow || 'MASTER ATELIER CRAFTSMANSHIP',
+          eyebrowColor: craftsmanshipContent?.eyebrowColor,
+          title: craftsmanshipContent?.title || 'Hand-finished custom CAD & precision diamond setting',
+          titleColor: craftsmanshipContent?.titleColor,
+          image: normalizeImageUrl(craftsmanshipContent?.image || craftsmanshipContent?.desktopImage) || '/assets/aura_only_at_1.png',
+          url: craftsmanshipContent?.primaryBtnLink || '/custom-jewellery',
         },
         {
           id: 'only-2',
@@ -1866,8 +1962,12 @@ export const HomePage: React.FC = () => {
   return (
     <>
       {/* 1. DYNAMIC DATABASE-DRIVEN HERO SLIDER / BANNER SYSTEM */}
-      {cmsConfig?.sectionVisibility?.hero !== false && (() => {
-        const activeHeroSlides = heroBanners && heroBanners.length > 0 ? heroBanners : DEFAULT_HERO_SLIDES;
+      {cmsConfig?.sectionVisibility?.hero !== false && cmsHeroSection?.isVisible !== false && (() => {
+        let activeHeroSlides: HeroBanner[] = heroBanners && heroBanners.length > 0 ? heroBanners : DEFAULT_HERO_SLIDES;
+        if (cmsHeroSlide) {
+          activeHeroSlides = heroBanners && heroBanners.length > 1 ? [cmsHeroSlide, ...heroBanners.slice(1)] : [cmsHeroSlide];
+        }
+
         return (
           <div style={{ width: '100%', position: 'relative', overflow: 'hidden' }}>
             <Swiper
@@ -1880,59 +1980,67 @@ export const HomePage: React.FC = () => {
               onSlideChange={(swiper) => setActiveHeroIndex(swiper.realIndex)}
               style={{ width: '100%' }}
             >
-              {activeHeroSlides.map((banner, idx) => (
-                <SwiperSlide key={banner.id || idx}>
-                  <HeroSection>
-                    <HeroImageColumn>
-                      <picture style={{ width: '100%', height: '100%', display: 'block' }}>
-                        <source media="(max-width: 768px)" srcSet={encodeURI(getMobileHeroImagePath(banner))} />
-                        <img src={banner.imagePath} alt={banner.title || 'AethelCarats High Jewellery'} />
-                      </picture>
-                    </HeroImageColumn>
+              {activeHeroSlides.map((banner, idx) => {
+                const bannerDesktopImg = normalizeImageUrl(banner.imagePath);
+                const bannerMobileImg = normalizeImageUrl(getMobileHeroImagePath(banner));
+                return (
+                  <SwiperSlide key={banner.id || idx}>
+                    <HeroSection>
+                      <HeroImageColumn>
+                        <picture style={{ width: '100%', height: '100%', display: 'block' }}>
+                          <source media="(max-width: 768px)" srcSet={encodeURI(bannerMobileImg)} />
+                          <SafeImage
+                            src={bannerDesktopImg}
+                            alt={banner.title || 'AethelCarats High Jewellery'}
+                            style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+                          />
+                        </picture>
+                      </HeroImageColumn>
 
-                    <HeroOverlay>
-                      <HeroTextColumn>
-                        {banner.subtitle && (
-                          <Eyebrow style={{ color: (banner as any).subtitleColor || cmsConfig?.heroColors?.subtitleColor || undefined }}>
-                            {banner.subtitle}
-                          </Eyebrow>
-                        )}
-                        {banner.title && (
-                          <HeroTitle style={{ color: (banner as any).titleColor || cmsConfig?.heroColors?.titleColor || undefined }}>
-                            {banner.title}
-                          </HeroTitle>
-                        )}
-                        {banner.description && (
-                          <HeroSubtitle style={{ color: (banner as any).descriptionColor || cmsConfig?.heroColors?.descriptionColor || undefined }}>
-                            {banner.description}
-                          </HeroSubtitle>
-                        )}
-                        {(banner.primaryCtaText || banner.secondaryCtaText) && (
-                          <ButtonGroup>
-                            {banner.primaryCtaText && (
-                              <LuxuryButton
-                                to={banner.primaryCtaLink || '/rings'}
-                                style={{ color: (banner as any).primaryCtaTextColor || cmsConfig?.heroColors?.primaryCtaTextColor || undefined }}
-                              >
-                                {banner.primaryCtaText}
-                              </LuxuryButton>
-                            )}
-                            {banner.secondaryCtaText && (
-                              <LuxuryButton
-                                to={banner.secondaryCtaLink || '/diamonds'}
-                                $variant="outline"
-                                style={{ color: (banner as any).secondaryCtaTextColor || cmsConfig?.heroColors?.secondaryCtaTextColor || undefined }}
-                              >
-                                {banner.secondaryCtaText}
-                              </LuxuryButton>
-                            )}
-                          </ButtonGroup>
-                        )}
-                      </HeroTextColumn>
-                    </HeroOverlay>
-                  </HeroSection>
-                </SwiperSlide>
-              ))}
+                      <HeroOverlay>
+                        <HeroTextColumn>
+                          {banner.subtitle && (
+                            <Eyebrow style={{ color: (banner as any).subtitleColor || cmsConfig?.heroColors?.subtitleColor || undefined }}>
+                              {banner.subtitle}
+                            </Eyebrow>
+                          )}
+                          {banner.title && (
+                            <HeroTitle style={{ color: (banner as any).titleColor || cmsConfig?.heroColors?.titleColor || undefined }}>
+                              {banner.title}
+                            </HeroTitle>
+                          )}
+                          {banner.description && (
+                            <HeroSubtitle style={{ color: (banner as any).descriptionColor || cmsConfig?.heroColors?.descriptionColor || undefined }}>
+                              {banner.description}
+                            </HeroSubtitle>
+                          )}
+                          {(banner.primaryCtaText || banner.secondaryCtaText) && (
+                            <ButtonGroup>
+                              {banner.primaryCtaText && (
+                                <LuxuryButton
+                                  to={banner.primaryCtaLink || '/rings'}
+                                  style={{ color: (banner as any).primaryCtaTextColor || cmsConfig?.heroColors?.primaryCtaTextColor || undefined }}
+                                >
+                                  {banner.primaryCtaText}
+                                </LuxuryButton>
+                              )}
+                              {banner.secondaryCtaText && (
+                                <LuxuryButton
+                                  to={banner.secondaryCtaLink || '/diamonds'}
+                                  $variant="outline"
+                                  style={{ color: (banner as any).secondaryCtaTextColor || cmsConfig?.heroColors?.secondaryCtaTextColor || undefined }}
+                                >
+                                  {banner.secondaryCtaText}
+                                </LuxuryButton>
+                              )}
+                            </ButtonGroup>
+                          )}
+                        </HeroTextColumn>
+                      </HeroOverlay>
+                    </HeroSection>
+                  </SwiperSlide>
+                );
+              })}
             </Swiper>
 
             <FancyIndicatorWrapper>
@@ -1950,15 +2058,15 @@ export const HomePage: React.FC = () => {
       })()}
 
       {/* 3. LUXURY CATEGORY CAROUSEL */}
-      {cmsConfig?.sectionVisibility?.categories !== false && (
+      {cmsConfig?.sectionVisibility?.categories !== false && collectionsSection?.isVisible !== false && (
         <ExploreWrapper>
           <RevealContainer yOffset={25} duration={0.8}>
             <div style={{ textAlign: 'center', marginBottom: 32 }}>
-              <span style={{ fontSize: '0.75rem', fontWeight: 700, letterSpacing: '0.22em', textTransform: 'uppercase', color: cmsConfig?.categoriesConfig?.eyebrowColor || '#C9A96E', display: 'block', marginBottom: 8 }}>
-                {cmsConfig?.categoriesConfig?.eyebrow || 'THE COLLECTION MAISON'}
+              <span style={{ fontSize: '0.75rem', fontWeight: 700, letterSpacing: '0.22em', textTransform: 'uppercase', color: collectionsContent?.eyebrowColor || cmsConfig?.categoriesConfig?.eyebrowColor || '#C9A96E', display: 'block', marginBottom: 8 }}>
+                {collectionsContent?.eyebrow || cmsConfig?.categoriesConfig?.eyebrow || 'THE COLLECTION MAISON'}
               </span>
-              <h2 style={{ fontFamily: "'Cormorant Garamond', serif", fontSize: '2.5rem', fontWeight: 400, letterSpacing: '0.06em', textTransform: 'uppercase', color: cmsConfig?.categoriesConfig?.titleColor || '#F5F1E8', margin: 0 }}>
-                {cmsConfig?.categoriesConfig?.title || 'Shop By Category'}
+              <h2 style={{ fontFamily: "'Cormorant Garamond', serif", fontSize: '2.5rem', fontWeight: 400, letterSpacing: '0.06em', textTransform: 'uppercase', color: collectionsContent?.titleColor || cmsConfig?.categoriesConfig?.titleColor || '#F5F1E8', margin: 0 }}>
+                {collectionsContent?.title || cmsConfig?.categoriesConfig?.title || 'Shop By Category'}
               </h2>
             </div>
           </RevealContainer>
@@ -2006,7 +2114,7 @@ export const HomePage: React.FC = () => {
       )}
 
       {/* 4. EDITORIAL CAMPAIGN BANNER */}
-      {cmsConfig?.sectionVisibility?.campaignBanner !== false && campaignBannerContent && campaignBannerContent.enableBanner !== false && (
+      {cmsConfig?.sectionVisibility?.campaignBanner !== false && campaignBannerSection?.isVisible !== false && campaignBannerContent && campaignBannerContent.enableBanner !== false && (
         <RevealContainer yOffset={35} duration={0.95} scaleInitial={0.99}>
           <EditorialBannerSection>
             <EditorialBannerContainer
@@ -2197,7 +2305,7 @@ export const HomePage: React.FC = () => {
       )}
 
       {/* 8. DIAMOND SHAPES SECTION */}
-      {cmsConfig?.sectionVisibility?.shapes !== false && (
+      {cmsConfig?.sectionVisibility?.shapes !== false && diamondShapesSection?.isVisible !== false && (
         <RevealContainer yOffset={35} duration={0.9}>
           <DiamondShapesSection>
             <DiamondShapesContainer>
@@ -2260,7 +2368,7 @@ export const HomePage: React.FC = () => {
       )}
 
       {/* 9. "ONLY AT AETHELCARATS" SHOWCASE SECTION */}
-      {cmsConfig?.sectionVisibility?.onlyAura !== false && (
+      {cmsConfig?.sectionVisibility?.onlyAura !== false && craftsmanshipSection?.isVisible !== false && (
         <RevealContainer yOffset={35} duration={0.9}>
           <OnlyAtAuraSection>
             <OnlyAtAuraTitle style={{ color: cmsConfig?.auraTitleColor || undefined }}>
@@ -2310,16 +2418,16 @@ export const HomePage: React.FC = () => {
       )}
 
       {/* 10. VOICES OF ELEGANCE / REVIEWS SECTION */}
-      {cmsConfig?.sectionVisibility?.reviews !== false && (
+      {cmsConfig?.sectionVisibility?.reviews !== false && testimonialsSection?.isVisible !== false && (
         <RevealContainer yOffset={35} duration={0.9}>
           <ReviewsSection id="reviews">
             <ReviewsHeaderRow>
               <div className="header-titles">
-                <ReviewsEyebrow style={{ color: cmsConfig?.reviewsConfig?.eyebrowColor || undefined }}>
-                  {cmsConfig?.reviewsConfig?.eyebrow || 'AUTHENTICATED CLIENT TESTIMONIALS'}
+                <ReviewsEyebrow style={{ color: testimonialsContent?.eyebrowColor || cmsConfig?.reviewsConfig?.eyebrowColor || undefined }}>
+                  {testimonialsContent?.eyebrow || cmsConfig?.reviewsConfig?.eyebrow || 'AUTHENTICATED CLIENT TESTIMONIALS'}
                 </ReviewsEyebrow>
-                <ReviewsTitle style={{ color: cmsConfig?.reviewsConfig?.titleColor || undefined }}>
-                  {cmsConfig?.reviewsConfig?.title || 'VOICES OF ELEGANCE'}
+                <ReviewsTitle style={{ color: testimonialsContent?.titleColor || cmsConfig?.reviewsConfig?.titleColor || undefined }}>
+                  {testimonialsContent?.title || cmsConfig?.reviewsConfig?.title || 'VOICES OF ELEGANCE'}
                 </ReviewsTitle>
               </div>
               <ReviewsNavGroup>

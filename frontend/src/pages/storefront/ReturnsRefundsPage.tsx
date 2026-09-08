@@ -280,9 +280,29 @@ const CTABannerInner = styled.div`
 
 export const ReturnsRefundsPage: React.FC = () => {
   const [contactEmail, setContactEmail] = useState('concierge@aethelcarats.com');
+  const [cmsPage, setCmsPage] = useState<any>(null);
 
   useEffect(() => {
-    document.title = 'Returns & Refunds | AethelCarats Fine Jewellery';
+    window.scrollTo(0, 0);
+    api.getPageBySlug('returns-refunds').then((data) => {
+      if (data) {
+        const raw = data.content || data.draftContent;
+        let parsed: any = {};
+        if (raw) {
+          try {
+            parsed = typeof raw === 'string' ? JSON.parse(raw) : raw;
+          } catch (e) {
+            parsed = { content: raw };
+          }
+        }
+        setCmsPage({ ...data, parsedContent: parsed });
+        if (data.seoMetadata?.seoTitle) {
+          document.title = data.seoMetadata.seoTitle;
+        } else if (data.title) {
+          document.title = `${data.title} | AethelCarats Fine Jewellery`;
+        }
+      }
+    }).catch(console.warn);
 
     api.getSiteSettings().then((settings) => {
       if (settings && settings.contactEmail) {
@@ -291,6 +311,9 @@ export const ReturnsRefundsPage: React.FC = () => {
     }).catch(console.error);
   }, []);
 
+  const c = cmsPage?.parsedContent || {};
+  const heroImage = c.desktopImage || c.pageImages?.desktopImage || '/assets/why-aura/returns-refunds-hero.jpg';
+
   return (
     <PageWrapper>
       <BreadcrumbsBar>
@@ -298,16 +321,20 @@ export const ReturnsRefundsPage: React.FC = () => {
         <ChevronRight size={12} />
         <span>Customer Care</span>
         <ChevronRight size={12} />
-        <span className="current">Returns & Refunds</span>
+        <span className="current">{c.heading || cmsPage?.title || 'Returns & Refunds'}</span>
       </BreadcrumbsBar>
 
       <RevealContainer yOffset={35}>
         <HeroSection>
           <div className="text-side">
-            <span className="eyebrow">OUR COMMITMENT TO CLIENT ASSURANCE</span>
-            <h1>Returns & Refunds</h1>
-            <p className="subtitle">
-              Clear and transparent guidance for your AethelCarats purchase. We ensure total peace of mind with our complimentary 30-day return policy and gemmological inspection.
+            <span className="eyebrow" style={{ color: c.eyebrowColor || undefined }}>
+              {c.eyebrow || 'OUR COMMITMENT TO CLIENT ASSURANCE'}
+            </span>
+            <h1 style={{ color: c.headingColor || undefined }}>
+              {c.heading || cmsPage?.title || 'Returns & Refunds'}
+            </h1>
+            <p className="subtitle" style={{ color: c.introductionColor || undefined }}>
+              {c.introduction || 'Clear and transparent guidance for your AethelCarats purchase. We ensure total peace of mind with our complimentary 30-day return policy and gemmological inspection.'}
             </p>
             <Link
               to="/contact-us"
@@ -330,7 +357,7 @@ export const ReturnsRefundsPage: React.FC = () => {
             </Link>
           </div>
           <div className="image-side">
-            <SafeImage src="/assets/why-aura/returns-refunds-hero.jpg" alt="AethelCarats Presentation Box and Solitaire Ring" />
+            <SafeImage src={heroImage} alt={c.heading || 'AethelCarats Presentation Box and Solitaire Ring'} />
           </div>
         </HeroSection>
       </RevealContainer>

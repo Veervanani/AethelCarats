@@ -1,10 +1,11 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import styled from 'styled-components';
 import { ShieldCheck, Leaf, Globe, ChevronRight, Mail } from 'lucide-react';
 import { SafeImage } from '../../components/ui/SafeImage';
 import { WhyAuraDiamondNav } from '../../components/ui/WhyAuraDiamondNav';
 import { RevealContainer } from '../../components/ui/RevealContainer';
+import { api } from '../../services/api';
 
 const PageWrapper = styled.div`
   background-color: #0B0B0B;
@@ -244,9 +245,33 @@ const CTABannerInner = styled.div`
 `;
 
 export const SustainabilityPage: React.FC = () => {
+  const [cmsPage, setCmsPage] = useState<any>(null);
+
   useEffect(() => {
-    document.title = 'Conflict Free Diamonds | AethelCarats Fine Jewellery';
+    window.scrollTo(0, 0);
+    api.getPageBySlug('sustainability').then((data) => {
+      if (data) {
+        const raw = data.content || data.draftContent;
+        let parsed: any = {};
+        if (raw) {
+          try {
+            parsed = typeof raw === 'string' ? JSON.parse(raw) : raw;
+          } catch (e) {
+            parsed = { content: raw };
+          }
+        }
+        setCmsPage({ ...data, parsedContent: parsed });
+        if (data.seoMetadata?.seoTitle) {
+          document.title = data.seoMetadata.seoTitle;
+        } else if (data.title) {
+          document.title = `${data.title} | AethelCarats Fine Jewellery`;
+        }
+      }
+    }).catch(console.warn);
   }, []);
+
+  const c = cmsPage?.parsedContent || {};
+  const heroImage = c.desktopImage || c.pageImages?.desktopImage || '/assets/why-aura/sustainability-hero.jpg';
 
   return (
     <PageWrapper>
@@ -255,16 +280,20 @@ export const SustainabilityPage: React.FC = () => {
         <ChevronRight size={12} />
         <span>Why AethelCarats</span>
         <ChevronRight size={12} />
-        <span className="current">Conflict Free Diamonds</span>
+        <span className="current">{c.heading || cmsPage?.title || 'Conflict Free Diamonds'}</span>
       </BreadcrumbsBar>
 
       <RevealContainer yOffset={35}>
         <HeroSection>
           <div className="text-side">
-            <span className="eyebrow">ETHICAL RESPONSIBILITY & COMMITMENT</span>
-            <h1>Conflict Free Diamonds</h1>
-            <p className="subtitle">
-              At AethelCarats, integrity is woven into every diamond we curate. We strictly enforce ethical sourcing standards, guarantee 100% Kimberley Process compliance, and pioneer sustainable lab-grown diamond creations.
+            <span className="eyebrow" style={{ color: c.eyebrowColor || undefined }}>
+              {c.eyebrow || 'ETHICAL RESPONSIBILITY & COMMITMENT'}
+            </span>
+            <h1 style={{ color: c.headingColor || undefined }}>
+              {c.heading || cmsPage?.title || 'Conflict Free Diamonds'}
+            </h1>
+            <p className="subtitle" style={{ color: c.introductionColor || undefined }}>
+              {c.introduction || 'At AethelCarats, integrity is woven into every diamond we curate. We strictly enforce ethical sourcing standards, guarantee 100% Kimberley Process compliance, and pioneer sustainable lab-grown diamond creations.'}
             </p>
             <Link
               to="/diamonds"
@@ -287,7 +316,7 @@ export const SustainabilityPage: React.FC = () => {
             </Link>
           </div>
           <div className="image-side">
-            <SafeImage src="/assets/why-aura/sustainability-hero.jpg" alt="Master Jeweller Inspecting Diamond under Loupe" />
+            <SafeImage src={heroImage} alt={c.heading || 'Master Jeweller Inspecting Diamond under Loupe'} />
           </div>
         </HeroSection>
       </RevealContainer>
@@ -296,11 +325,11 @@ export const SustainabilityPage: React.FC = () => {
         <RevealContainer yOffset={35}>
           <EditorialBlock>
             <h2>Our Ethical Sourcing Philosophy</h2>
-            <p>
-              Fine jewellery should symbolize beauty, devotion, and lasting value—never environmental harm or human exploitation. AethelCarats is committed to working exclusively with diamond sightholders and master cutters who adhere to the strict guidance of the Kimberley Process and international human rights frameworks.
+            <p style={{ color: c.conflictFreePolicyColor || undefined }}>
+              {c.conflictFreePolicy || 'Fine jewellery should symbolize beauty, devotion, and lasting value—never environmental harm or human exploitation. AethelCarats is committed to working exclusively with diamond sightholders and master cutters who adhere to the strict guidance of the Kimberley Process and international human rights frameworks.'}
             </p>
-            <p>
-              Whether selecting a rare natural solitaire or a precision-engineered lab-grown diamond, every gem in our collection is fully traceable to legitimate, conflict-free sources.
+            <p style={{ color: c.naturalDiamondsColor || undefined }}>
+              {c.naturalDiamonds || 'Whether selecting a rare natural solitaire or a precision-engineered lab-grown diamond, every gem in our collection is fully traceable to legitimate, conflict-free sources.'}
             </p>
 
             <PillarsGrid>
@@ -320,7 +349,9 @@ export const SustainabilityPage: React.FC = () => {
                     <Leaf size={20} />
                   </div>
                   <h3>Sustainable Lab-Grown</h3>
-                  <p>Pure carbon diamonds grown with renewable energy, zero mining impact, and full transparency.</p>
+                  <p style={{ color: c.labGrownDiamondsColor || undefined }}>
+                    {c.labGrownDiamonds || 'Pure carbon diamonds grown with renewable energy, zero mining impact, and full transparency.'}
+                  </p>
                 </PillarCard>
               </RevealContainer>
 
@@ -330,7 +361,9 @@ export const SustainabilityPage: React.FC = () => {
                     <Globe size={20} />
                   </div>
                   <h3>Recycled Precious Metals</h3>
-                  <p>Crafted using refined 100% recycled 14K & 18K solid gold.</p>
+                  <p style={{ color: c.responsibleManufacturingColor || undefined }}>
+                    {c.responsibleManufacturing || 'Crafted using refined 100% recycled 14K & 18K solid gold.'}
+                  </p>
                 </PillarCard>
               </RevealContainer>
             </PillarsGrid>

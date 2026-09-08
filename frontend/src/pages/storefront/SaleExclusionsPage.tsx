@@ -1,10 +1,11 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import styled from 'styled-components';
 import { Mail, ChevronRight } from 'lucide-react';
 import { SafeImage } from '../../components/ui/SafeImage';
 import { WhyAuraDiamondNav } from '../../components/ui/WhyAuraDiamondNav';
 import { RevealContainer } from '../../components/ui/RevealContainer';
+import { api } from '../../services/api';
 
 const PageWrapper = styled.div`
   background-color: #0B0B0B;
@@ -210,29 +211,59 @@ const CTABannerInner = styled.div`
 `;
 
 export const SaleExclusionsPage: React.FC = () => {
+  const [cmsPage, setCmsPage] = useState<any>(null);
+
   useEffect(() => {
-    document.title = 'Sale Exclusions | AethelCarats Fine Jewellery';
+    window.scrollTo(0, 0);
+    api.getPageBySlug('sale-exclusions').then((data) => {
+      if (data) {
+        const raw = data.content || data.draftContent;
+        let parsed: any = {};
+        if (raw) {
+          try {
+            parsed = typeof raw === 'string' ? JSON.parse(raw) : raw;
+          } catch (e) {
+            parsed = { content: raw };
+          }
+        }
+        setCmsPage({ ...data, parsedContent: parsed });
+        if (data.seoMetadata?.seoTitle) {
+          document.title = data.seoMetadata.seoTitle;
+        } else if (data.title) {
+          document.title = `${data.title} | AethelCarats Fine Jewellery`;
+        }
+      }
+    }).catch(console.warn);
   }, []);
+
+  const c = cmsPage?.parsedContent || {};
+  const heroImage = c.desktopImage || c.pageImages?.desktopImage || '/assets/why-aura/sale-exclusions-hero.jpg';
 
   return (
     <PageWrapper>
       <BreadcrumbsBar>
         <Link to="/">Home</Link>
         <ChevronRight size={12} />
-        <span className="current">Sale Exclusions</span>
+        <span>Why AethelCarats</span>
+        <ChevronRight size={12} />
+        <span className="current">{c.heading || cmsPage?.title || 'Sale Exclusions'}</span>
       </BreadcrumbsBar>
 
       <RevealContainer yOffset={35}>
         <HeroSection>
           <div className="text-side">
-            <span className="eyebrow">PROMOTIONAL GUIDELINES & TERMS</span>
-            <h1>Sale Exclusions</h1>
-            <p className="subtitle">
-              Official guidelines and policy terms regarding promotional discount codes, special seasonal offers, loose certified diamonds, and bespoke custom jewellery.
+            <span className="eyebrow" style={{ color: c.eyebrowColor || undefined }}>
+              {c.eyebrow || 'PROMOTIONAL GUIDELINES & TERMS'}
+            </span>
+            <h1 style={{ color: c.headingColor || undefined }}>
+              {c.heading || cmsPage?.title || 'Sale Exclusions'}
+            </h1>
+            <p className="subtitle" style={{ color: c.introductionColor || undefined }}>
+              {c.introduction || 'Official guidelines and policy terms regarding promotional discount codes, special seasonal offers, loose certified diamonds, and bespoke custom jewellery.'}
             </p>
           </div>
           <div className="image-side">
-            <SafeImage src="/assets/why-aura/sale-exclusions-hero.jpg" alt="AethelCarats Ring on Pedestal" />
+            <SafeImage src={heroImage} alt={c.heading || 'AethelCarats Ring on Pedestal'} />
           </div>
         </HeroSection>
       </RevealContainer>
@@ -241,28 +272,53 @@ export const SaleExclusionsPage: React.FC = () => {
         <RevealContainer yOffset={35}>
           <EditorialBlock>
             <h2>Promotional Discount Guidelines</h2>
-            <p>
-              Promotional codes, seasonal offers, and storewide discounts offered by AethelCarats apply to eligible ready-to-ship fine jewellery items unless explicitly stated otherwise.
-            </p>
-            <p>
-              Promotional offers cannot be combined with existing sale prices, trade-in allowances, or price-matched diamond orders. Limit one promotional code per transaction.
-            </p>
+            {c.exclusionRules ? (
+              <p style={{ color: c.exclusionRulesColor || undefined, whiteSpace: 'pre-line' }}>{c.exclusionRules}</p>
+            ) : (
+              <>
+                <p>
+                  Promotional codes, seasonal offers, and storewide discounts offered by AethelCarats apply to eligible ready-to-ship fine jewellery items unless explicitly stated otherwise.
+                </p>
+                <p>
+                  Promotional offers cannot be combined with existing sale prices, trade-in allowances, or price-matched diamond orders. Limit one promotional code per transaction.
+                </p>
+              </>
+            )}
           </EditorialBlock>
         </RevealContainer>
 
         <RevealContainer yOffset={35}>
           <EditorialBlock>
             <h2>Standard Exclusions</h2>
-            <p>
-              Unless explicitly specified in a promotional campaign announcement, the following categories are excluded from discount promotional codes:
-            </p>
-            <ul>
-              <li>Loose Natural and Lab-Grown Diamonds.</li>
-              <li>Custom 3D CAD Bespoke Jewellery Creations.</li>
-              <li>Special order gemstones and rare fancy-colored diamonds.</li>
-              <li>Gift Cards and e-Vouchers.</li>
-              <li>Shipping, insurance, and duties charges.</li>
-            </ul>
+            {c.excludedProducts || c.excludedCategories ? (
+              <>
+                {c.excludedProducts && (
+                  <div style={{ marginBottom: 16 }}>
+                    <h3 style={{ fontSize: '1.1rem', color: '#C9A96E', marginBottom: 8 }}>Excluded Products</h3>
+                    <p style={{ color: c.excludedProductsColor || undefined, whiteSpace: 'pre-line' }}>{c.excludedProducts}</p>
+                  </div>
+                )}
+                {c.excludedCategories && (
+                  <div>
+                    <h3 style={{ fontSize: '1.1rem', color: '#C9A96E', marginBottom: 8 }}>Excluded Categories</h3>
+                    <p style={{ color: c.excludedCategoriesColor || undefined, whiteSpace: 'pre-line' }}>{c.excludedCategories}</p>
+                  </div>
+                )}
+              </>
+            ) : (
+              <>
+                <p>
+                  Unless explicitly specified in a promotional campaign announcement, the following categories are excluded from discount promotional codes:
+                </p>
+                <ul>
+                  <li>Loose Natural and Lab-Grown Diamonds.</li>
+                  <li>Custom 3D CAD Bespoke Jewellery Creations.</li>
+                  <li>Special order gemstones and rare fancy-colored diamonds.</li>
+                  <li>Gift Cards and e-Vouchers.</li>
+                  <li>Shipping, insurance, and duties charges.</li>
+                </ul>
+              </>
+            )}
           </EditorialBlock>
         </RevealContainer>
       </ContentGrid>

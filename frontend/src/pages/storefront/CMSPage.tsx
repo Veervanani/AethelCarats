@@ -3,6 +3,7 @@ import { useLocation, Link } from 'react-router-dom';
 import styled from 'styled-components';
 import { ChevronRight } from 'lucide-react';
 import { api } from '../../services/api';
+import { SafeImage } from '../../components/ui/SafeImage';
 import { WhyAuraDiamondNav } from '../../components/ui/WhyAuraDiamondNav';
 import { RevealContainer } from '../../components/ui/RevealContainer';
 
@@ -236,7 +237,7 @@ export const CMSPage: React.FC = () => {
 
           {(c.desktopImage || c.pageImages?.desktopImage) && (
             <div style={{ marginBottom: 32, borderRadius: 6, overflow: 'hidden', border: '1px solid rgba(140, 116, 75, 0.25)', maxHeight: 440 }}>
-              <img
+              <SafeImage
                 src={c.desktopImage || c.pageImages?.desktopImage}
                 alt={c.altText || c.pageImages?.altText || page.title}
                 style={{ width: '100%', height: '100%', maxHeight: 440, objectFit: 'cover', display: 'block' }}

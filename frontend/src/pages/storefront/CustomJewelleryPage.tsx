@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import styled from 'styled-components';
 import { Sparkles, CheckCircle2, Upload, ArrowRight, ShieldCheck, Gem, Compass, PenTool, CheckSquare } from 'lucide-react';
 import { api } from '../../services/api';
@@ -357,8 +357,34 @@ export const CustomJewelleryPage: React.FC = () => {
   const [fileName, setFileName] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [successRef, setSuccessRef] = useState<string | null>(null);
+  const [cmsPage, setCmsPage] = useState<any>(null);
 
   const fileInputRef = useRef<HTMLInputElement>(null);
+
+  useEffect(() => {
+    window.scrollTo(0, 0);
+    api.getPageBySlug('custom-jewellery').then((data) => {
+      if (data) {
+        const raw = data.content || data.draftContent;
+        let parsed: any = {};
+        if (raw) {
+          try {
+            parsed = typeof raw === 'string' ? JSON.parse(raw) : raw;
+          } catch (e) {
+            parsed = { content: raw };
+          }
+        }
+        setCmsPage({ ...data, parsedContent: parsed });
+        if (data.seoMetadata?.seoTitle) {
+          document.title = data.seoMetadata.seoTitle;
+        } else if (data.title) {
+          document.title = `${data.title} | AethelCarats Fine Jewellery`;
+        }
+      }
+    }).catch(console.warn);
+  }, []);
+
+  const c = cmsPage?.parsedContent || {};
 
   const validate = () => {
     const errs: Record<string, string> = {};
@@ -414,10 +440,14 @@ export const CustomJewelleryPage: React.FC = () => {
       {/* HERO SECTION */}
       <RevealContainer yOffset={35}>
         <HeroSection>
-          <div className="subtitle">BESPOKE FINE JEWELLERY ATELIER</div>
-          <h1>CUSTOM JEWELLERY & BESPOKE COMMISSIONS</h1>
-          <p>
-            Collaborate directly with AethelCarats master gemologists and goldsmiths to craft one-of-a-kind engagement rings, wedding bands, and high jewellery tailored exclusively to your personal vision.
+          <div className="subtitle" style={{ color: c.subheadingColor || undefined }}>
+            {c.subheading || 'BESPOKE FINE JEWELLERY ATELIER'}
+          </div>
+          <h1 style={{ color: c.headingColor || undefined }}>
+            {c.heading || cmsPage?.title || 'CUSTOM JEWELLERY & BESPOKE COMMISSIONS'}
+          </h1>
+          <p style={{ color: c.introductionColor || undefined }}>
+            {c.introduction || 'Collaborate directly with AethelCarats master gemologists and goldsmiths to craft one-of-a-kind engagement rings, wedding bands, and high jewellery tailored exclusively to your personal vision.'}
           </p>
           <a href="#commission-form" className="cta-btn">
             START YOUR CUSTOM DESIGN <ArrowRight size={16} />
@@ -431,10 +461,10 @@ export const CustomJewelleryPage: React.FC = () => {
           <div className="section-title">THE AETHELCARATS BESPOKE CREATION PROCESS</div>
           <ProcessGrid>
             {[
-              { num: '01', title: 'CONSULTATION', desc: 'Discuss your vision, metal preference, and stone specifications with our gemologists.' },
-              { num: '02', title: 'BESPOKE 3D CAD', desc: 'Our atelier renders photorealistic 3D CAD models of your design from every angle.' },
-              { num: '03', title: 'CAD APPROVAL', desc: 'Refine specifications and approve 3D proportions before physical crafting starts.' },
-              { num: '04', title: 'MASTER CRAFTING', desc: 'Hand-set by goldsmiths with GIA/IGI certified loose diamonds or gemstones.' },
+              { num: '01', title: c.step1Heading || 'CONSULTATION', desc: c.step1Description || 'Discuss your vision, metal preference, and stone specifications with our gemologists.' },
+              { num: '02', title: c.step2Heading || 'BESPOKE 3D CAD', desc: c.step2Description || 'Our atelier renders photorealistic 3D CAD models of your design from every angle.' },
+              { num: '03', title: c.step3Heading || 'CAD APPROVAL', desc: c.step3Description || 'Refine specifications and approve 3D proportions before physical crafting starts.' },
+              { num: '04', title: c.step4Heading || 'MASTER CRAFTING', desc: c.step4Description || 'Hand-set by goldsmiths with GIA/IGI certified loose diamonds or gemstones.' },
               { num: '05', title: 'WHITE-GLOVE DELIVERY', desc: 'Complimentary insured transit in AethelCarats signature presentation cases.' },
             ].map((step, idx) => (
               <RevealContainer key={idx} staggerIndex={idx} yOffset={25}>

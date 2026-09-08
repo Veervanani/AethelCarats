@@ -1,10 +1,11 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import styled from 'styled-components';
 import { ShieldCheck, FileText, Mail, ChevronRight } from 'lucide-react';
 import { SafeImage } from '../../components/ui/SafeImage';
 import { WhyAuraDiamondNav } from '../../components/ui/WhyAuraDiamondNav';
 import { RevealContainer } from '../../components/ui/RevealContainer';
+import { api } from '../../services/api';
 
 const PageWrapper = styled.div`
   background-color: #0B0B0B;
@@ -245,9 +246,33 @@ const CTABannerInner = styled.div`
 `;
 
 export const InsurancePage: React.FC = () => {
+  const [cmsPage, setCmsPage] = useState<any>(null);
+
   useEffect(() => {
-    document.title = 'Jewellery Insurance | AethelCarats Fine Jewellery';
+    window.scrollTo(0, 0);
+    api.getPageBySlug('insurance').then((data) => {
+      if (data) {
+        const raw = data.content || data.draftContent;
+        let parsed: any = {};
+        if (raw) {
+          try {
+            parsed = typeof raw === 'string' ? JSON.parse(raw) : raw;
+          } catch (e) {
+            parsed = { content: raw };
+          }
+        }
+        setCmsPage({ ...data, parsedContent: parsed });
+        if (data.seoMetadata?.seoTitle) {
+          document.title = data.seoMetadata.seoTitle;
+        } else if (data.title) {
+          document.title = `${data.title} | AethelCarats Fine Jewellery`;
+        }
+      }
+    }).catch(console.warn);
   }, []);
+
+  const c = cmsPage?.parsedContent || {};
+  const heroImage = c.desktopImage || c.pageImages?.desktopImage || '/assets/why-aura/insurance-hero.jpg';
 
   return (
     <PageWrapper>
@@ -256,16 +281,20 @@ export const InsurancePage: React.FC = () => {
         <ChevronRight size={12} />
         <span>Why AethelCarats</span>
         <ChevronRight size={12} />
-        <span className="current">Jewellery Insurance</span>
+        <span className="current">{c.heading || cmsPage?.title || 'Jewellery Insurance'}</span>
       </BreadcrumbsBar>
 
       <RevealContainer yOffset={35}>
         <HeroSection>
           <div className="text-side">
-            <span className="eyebrow">PROTECTING YOUR PRECIOUS CREATIONS</span>
-            <h1>Jewellery Insurance</h1>
-            <p className="subtitle">
-              Your fine jewellery represents both sentimental devotion and enduring financial value. We assist you with official appraisal documentation and GIA/IGI certificates to simplify insurance coverage.
+            <span className="eyebrow" style={{ color: c.eyebrowColor || undefined }}>
+              {c.eyebrow || 'PROTECTING YOUR PRECIOUS CREATIONS'}
+            </span>
+            <h1 style={{ color: c.headingColor || undefined }}>
+              {c.heading || cmsPage?.title || 'Jewellery Insurance'}
+            </h1>
+            <p className="subtitle" style={{ color: c.introductionColor || undefined }}>
+              {c.introduction || 'Your fine jewellery represents both sentimental devotion and enduring financial value. We assist you with official appraisal documentation and GIA/IGI certificates to simplify insurance coverage.'}
             </p>
             <Link
               to="/contact-us"
@@ -288,7 +317,7 @@ export const InsurancePage: React.FC = () => {
             </Link>
           </div>
           <div className="image-side">
-            <SafeImage src="/assets/why-aura/insurance-hero.jpg" alt="Fine Diamond Necklace in Vault Display Case" />
+            <SafeImage src={heroImage} alt={c.heading || 'Fine Diamond Necklace in Vault Display Case'} />
           </div>
         </HeroSection>
       </RevealContainer>
@@ -297,11 +326,11 @@ export const InsurancePage: React.FC = () => {
         <RevealContainer yOffset={35}>
           <EditorialBlock>
             <h2>Official Valuation & Appraisal</h2>
-            <p>
-              While AethelCarats provides comprehensive transit insurance until your purchase is delivered, personal jewellery insurance protects your piece against loss, theft, or damage throughout your lifetime.
+            <p style={{ color: c.insuranceInformationColor || undefined }}>
+              {c.insuranceInformation || 'While AethelCarats provides comprehensive transit insurance until your purchase is delivered, personal jewellery insurance protects your piece against loss, theft, or damage throughout your lifetime.'}
             </p>
-            <p>
-              To help you secure comprehensive coverage from specialized jewellery insurers, AethelCarats provides complimentary official appraisal documentation for fine jewellery pieces.
+            <p style={{ color: c.coverageColor || undefined }}>
+              {c.coverage || 'To help you secure comprehensive coverage from specialized jewellery insurers, AethelCarats provides complimentary official appraisal documentation for fine jewellery pieces.'}
             </p>
 
             <AppraisalsGrid>
@@ -324,8 +353,8 @@ export const InsurancePage: React.FC = () => {
         <RevealContainer yOffset={35}>
           <EditorialBlock>
             <h2>Recommended Insurance Steps</h2>
-            <p>
-              Securing specialized jewellery insurance is quick and straightforward:
+            <p style={{ color: c.claimsColor || undefined }}>
+              {c.claims || 'Securing specialized jewellery insurance is quick and straightforward:'}
             </p>
             <ul>
               <li>Request your AethelCarats appraisal valuation document upon order completion.</li>

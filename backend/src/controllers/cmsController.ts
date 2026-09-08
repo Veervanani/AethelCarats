@@ -197,7 +197,17 @@ export const publishPage = async (req: AuthRequest, res: Response) => {
 
     let page = await prisma.page.findUnique({ where: { slug } });
     if (!page) {
-      return res.status(404).json({ message: 'Page not found' });
+      page = await prisma.page.create({
+        data: {
+          title: title || (slug === 'home' ? 'Homepage' : slug.replace(/-/g, ' ')),
+          slug,
+          status: 'PUBLISHED',
+          content: typeof draftContent === 'string' ? draftContent : JSON.stringify(draftContent || {}),
+          draftContent: typeof draftContent === 'string' ? draftContent : JSON.stringify(draftContent || {}),
+          lastPublishedAt: new Date(),
+          publishedBy: adminUser,
+        },
+      });
     }
 
     const finalContentStr = draftContent
@@ -263,6 +273,64 @@ export const publishPage = async (req: AuthRequest, res: Response) => {
             isVisible: s.isVisible ?? true,
           },
         });
+      }
+
+      // Synchronize HeroBanner table if home hero section was edited & published
+      if (slug === 'home') {
+        const heroSec = sections.find((s: any) => s.blockType === 'HERO' || String(s.id).includes('hero'));
+        if (heroSec && heroSec.content) {
+          try {
+            const hContent = typeof heroSec.content === 'string' ? JSON.parse(heroSec.content) : (heroSec.content || {});
+            const formatImg = (img?: string) => {
+              if (!img || typeof img !== 'string') return '';
+              const str = img.trim();
+              if (str.startsWith('http://') || str.startsWith('https://') || str.startsWith('/uploads/') || str.startsWith('/assets/')) return str;
+              if (str.startsWith('img_')) return `/uploads/media/${str}`;
+              if (!str.startsWith('/')) return `/assets/${str}`;
+              return str;
+            };
+
+            const desktopImg = formatImg(hContent.desktopImage || hContent.image);
+            const mobileImg = formatImg(hContent.mobileImage || hContent.tabletImage || hContent.desktopImage || hContent.image);
+
+            const existingHero = await prisma.heroBanner.findFirst({ orderBy: { displayOrder: 'asc' } });
+            if (existingHero) {
+              await prisma.heroBanner.update({
+                where: { id: existingHero.id },
+                data: {
+                  title: hContent.title || existingHero.title,
+                  subtitle: hContent.eyebrow || hContent.subtitle || existingHero.subtitle,
+                  description: hContent.description !== undefined ? hContent.description : existingHero.description,
+                  primaryCtaText: hContent.primaryBtnText || hContent.primaryCtaText || existingHero.primaryCtaText,
+                  primaryCtaLink: hContent.primaryBtnLink || hContent.primaryCtaLink || existingHero.primaryCtaLink,
+                  secondaryCtaText: hContent.secondaryBtnText !== undefined ? hContent.secondaryBtnText : existingHero.secondaryCtaText,
+                  secondaryCtaLink: hContent.secondaryBtnLink !== undefined ? hContent.secondaryBtnLink : existingHero.secondaryCtaLink,
+                  ...(desktopImg ? { imagePath: desktopImg } : {}),
+                  ...(mobileImg ? { mobileImagePath: mobileImg } : {}),
+                  isActive: heroSec.isVisible !== false,
+                },
+              });
+            } else {
+              await prisma.heroBanner.create({
+                data: {
+                  title: hContent.title || 'Handcrafted Fine Jewelry',
+                  subtitle: hContent.eyebrow || hContent.subtitle || 'AURA DIAMOND ATELIER',
+                  description: hContent.description || '',
+                  primaryCtaText: hContent.primaryBtnText || 'Explore Collection',
+                  primaryCtaLink: hContent.primaryBtnLink || '/rings',
+                  secondaryCtaText: hContent.secondaryBtnText || '',
+                  secondaryCtaLink: hContent.secondaryBtnLink || '',
+                  imagePath: desktopImg || '/assets/gem_hero_luxury.png',
+                  mobileImagePath: mobileImg || desktopImg || '/assets/gem_hero_luxury.png',
+                  isActive: heroSec.isVisible !== false,
+                  displayOrder: 1,
+                },
+              });
+            }
+          } catch (syncErr) {
+            console.warn('Hero section sync to HeroBanner notice:', syncErr);
+          }
+        }
       }
     }
 

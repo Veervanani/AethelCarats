@@ -1,10 +1,11 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import styled from 'styled-components';
 import { Award, CheckCircle, Mail, ChevronRight } from 'lucide-react';
 import { SafeImage } from '../../components/ui/SafeImage';
 import { WhyAuraDiamondNav } from '../../components/ui/WhyAuraDiamondNav';
 import { RevealContainer } from '../../components/ui/RevealContainer';
+import { api } from '../../services/api';
 
 const PageWrapper = styled.div`
   background-color: #0B0B0B;
@@ -245,9 +246,33 @@ const CTABannerInner = styled.div`
 `;
 
 export const LifetimeWarrantyPage: React.FC = () => {
+  const [cmsPage, setCmsPage] = useState<any>(null);
+
   useEffect(() => {
-    document.title = 'Lifetime Warranty | AethelCarats Fine Jewellery';
+    window.scrollTo(0, 0);
+    api.getPageBySlug('lifetime-warranty').then((data) => {
+      if (data) {
+        const raw = data.content || data.draftContent;
+        let parsed: any = {};
+        if (raw) {
+          try {
+            parsed = typeof raw === 'string' ? JSON.parse(raw) : raw;
+          } catch (e) {
+            parsed = { content: raw };
+          }
+        }
+        setCmsPage({ ...data, parsedContent: parsed });
+        if (data.seoMetadata?.seoTitle) {
+          document.title = data.seoMetadata.seoTitle;
+        } else if (data.title) {
+          document.title = `${data.title} | AethelCarats Fine Jewellery`;
+        }
+      }
+    }).catch(console.warn);
   }, []);
+
+  const c = cmsPage?.parsedContent || {};
+  const heroImage = c.desktopImage || c.pageImages?.desktopImage || '/assets/why-aura/lifetime-warranty-hero.jpg';
 
   return (
     <PageWrapper>
@@ -256,16 +281,20 @@ export const LifetimeWarrantyPage: React.FC = () => {
         <ChevronRight size={12} />
         <span>Why AethelCarats</span>
         <ChevronRight size={12} />
-        <span className="current">Lifetime Warranty</span>
+        <span className="current">{c.heading || cmsPage?.title || 'Lifetime Warranty'}</span>
       </BreadcrumbsBar>
 
       <RevealContainer yOffset={35}>
         <HeroSection>
           <div className="text-side">
-            <span className="eyebrow">GUARANTEED CRAFTSMANSHIP</span>
-            <h1>Lifetime Warranty</h1>
-            <p className="subtitle">
-              Every piece created by AethelCarats is hand-crafted to exacting standards. We proudly stand behind our master goldsmiths with a complimentary Lifetime Warranty against manufacturing defects.
+            <span className="eyebrow" style={{ color: c.eyebrowColor || undefined }}>
+              {c.eyebrow || 'GUARANTEED CRAFTSMANSHIP'}
+            </span>
+            <h1 style={{ color: c.headingColor || undefined }}>
+              {c.heading || cmsPage?.title || 'Lifetime Warranty'}
+            </h1>
+            <p className="subtitle" style={{ color: c.introductionColor || undefined }}>
+              {c.subheading || c.introduction || 'Every piece created by AethelCarats is hand-crafted to exacting standards. We proudly stand behind our master goldsmiths with a complimentary Lifetime Warranty against manufacturing defects.'}
             </p>
             <Link
               to="/contact-us"
@@ -288,7 +317,7 @@ export const LifetimeWarrantyPage: React.FC = () => {
             </Link>
           </div>
           <div className="image-side">
-            <SafeImage src="/assets/why-aura/lifetime-warranty-hero.jpg" alt="Master Jeweller Polishing Diamond Ring" />
+            <SafeImage src={heroImage} alt={c.heading || 'Master Jeweller Polishing Diamond Ring'} />
           </div>
         </HeroSection>
       </RevealContainer>
@@ -297,18 +326,20 @@ export const LifetimeWarrantyPage: React.FC = () => {
         <RevealContainer yOffset={35}>
           <EditorialBlock>
             <h2>Our Quality Guarantee</h2>
-            <p>
-              When you purchase fine jewellery from AethelCarats, your piece is inspected through multi-point gemmological protocols. We guarantee that your item is free from manufacturing defects in structure, setting, and metal casting at the time of delivery.
+            <p style={{ color: c.coverageColor || undefined }}>
+              {c.coverage || 'When you purchase fine jewellery from AethelCarats, your piece is inspected through multi-point gemmological protocols. We guarantee that your item is free from manufacturing defects in structure, setting, and metal casting at the time of delivery.'}
             </p>
-            <p>
-              If you ever believe your item has a manufacturing defect, send it to our atelier for expert inspection. If a defect is confirmed, we will repair or replace the item free of charge.
+            <p style={{ color: c.claimProcessColor || undefined }}>
+              {c.claimProcess || 'If you ever believe your item has a manufacturing defect, send it to our atelier for expert inspection. If a defect is confirmed, we will repair or replace the item free of charge.'}
             </p>
 
             <CoverageGrid>
               <RevealContainer delay={0.0} yOffset={25}>
                 <CoverageCard>
                   <h3><CheckCircle size={18} color="#C9A96E" /> What Is Covered</h3>
-                  <p>Manufacturing defects in metal casting, prong alignment, channel settings, solder joints, and structural integrity under normal wear.</p>
+                  <p style={{ color: c.whatsIncludedColor || undefined }}>
+                    {c.whatsIncluded || 'Manufacturing defects in metal casting, prong alignment, channel settings, solder joints, and structural integrity under normal wear.'}
+                  </p>
                 </CoverageCard>
               </RevealContainer>
               <RevealContainer delay={0.1} yOffset={25}>
@@ -324,8 +355,8 @@ export const LifetimeWarrantyPage: React.FC = () => {
         <RevealContainer yOffset={35}>
           <EditorialBlock>
             <h2>Care & Maintenance Guidance</h2>
-            <p>
-              Fine jewellery is crafted from precious metals that can naturally experience wear over time. Normal wear and tear, accidental damage, loss of stones due to impact, or repairs performed by third-party jewellers are not covered under warranty.
+            <p style={{ color: c.whatsExcludedColor || undefined }}>
+              {c.whatsExcluded || 'Fine jewellery is crafted from precious metals that can naturally experience wear over time. Normal wear and tear, accidental damage, loss of stones due to impact, or repairs performed by third-party jewellers are not covered under warranty.'}
             </p>
             <p>
               We recommend scheduling an annual inspection with our concierge to ensure prongs remain taut and settings remain secure.

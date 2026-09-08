@@ -1,10 +1,11 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import styled from 'styled-components';
-import { Mail, ChevronRight } from 'lucide-react';
+import { Tag, ShieldCheck, Scale, Check, ChevronRight, Mail } from 'lucide-react';
 import { SafeImage } from '../../components/ui/SafeImage';
 import { WhyAuraDiamondNav } from '../../components/ui/WhyAuraDiamondNav';
 import { RevealContainer } from '../../components/ui/RevealContainer';
+import { api } from '../../services/api';
 
 const PageWrapper = styled.div`
   background-color: #0B0B0B;
@@ -250,9 +251,33 @@ const CTABannerInner = styled.div`
 `;
 
 export const PriceMatchPage: React.FC = () => {
+  const [cmsPage, setCmsPage] = useState<any>(null);
+
   useEffect(() => {
-    document.title = 'Diamond Price Matching | AethelCarats Fine Jewellery';
+    window.scrollTo(0, 0);
+    api.getPageBySlug('price-match').then((data) => {
+      if (data) {
+        const raw = data.content || data.draftContent;
+        let parsed: any = {};
+        if (raw) {
+          try {
+            parsed = typeof raw === 'string' ? JSON.parse(raw) : raw;
+          } catch (e) {
+            parsed = { content: raw };
+          }
+        }
+        setCmsPage({ ...data, parsedContent: parsed });
+        if (data.seoMetadata?.seoTitle) {
+          document.title = data.seoMetadata.seoTitle;
+        } else if (data.title) {
+          document.title = `${data.title} | AethelCarats Fine Jewellery`;
+        }
+      }
+    }).catch(console.warn);
   }, []);
+
+  const c = cmsPage?.parsedContent || {};
+  const heroImage = c.desktopImage || c.pageImages?.desktopImage || '/assets/why-aura/price-match-hero.jpg';
 
   return (
     <PageWrapper>
@@ -261,25 +286,29 @@ export const PriceMatchPage: React.FC = () => {
         <ChevronRight size={12} />
         <span>Why AethelCarats</span>
         <ChevronRight size={12} />
-        <span className="current">Diamond Price Matching</span>
+        <span className="current">{c.heading || cmsPage?.title || 'Diamond Price Matching'}</span>
       </BreadcrumbsBar>
 
       <RevealContainer yOffset={35}>
         <HeroSection>
           <div className="text-side">
-            <span className="eyebrow">UNCOMPROMISING DIAMOND VALUE</span>
-            <h1>Diamond Price Matching</h1>
-            <p className="subtitle">
-              We are dedicated to providing superior diamond quality at fair, competitive prices. If you locate an identical certified diamond offered for less by a recognized retailer, AethelCarats will match the price.
+            <span className="eyebrow" style={{ color: c.eyebrowColor || undefined }}>
+              {c.eyebrow || 'UNCOMPROMISING DIAMOND VALUE'}
+            </span>
+            <h1 style={{ color: c.headingColor || undefined }}>
+              {c.heading || cmsPage?.title || 'Diamond Price Matching'}
+            </h1>
+            <p className="subtitle" style={{ color: c.subheadingColor || undefined }}>
+              {c.subheading || 'We are dedicated to providing superior diamond quality at fair, competitive prices. If you locate an identical certified diamond offered for less by a recognized retailer, AethelCarats will match the price.'}
             </p>
             <Link
-              to="/contact-us"
+              to={c.buttonUrl || '/contact-us'}
               style={{
                 display: 'inline-flex',
                 alignItems: 'center',
                 gap: 8,
                 background: '#C9A96E',
-                color: '#0B0B0B',
+                color: c.buttonTextColor || '#0B0B0B',
                 padding: '14px 28px',
                 borderRadius: 2,
                 fontSize: '0.85rem',
@@ -289,11 +318,11 @@ export const PriceMatchPage: React.FC = () => {
                 textDecoration: 'none',
               }}
             >
-              REQUEST A PRICE MATCH
+              {c.buttonText || 'REQUEST A PRICE MATCH'}
             </Link>
           </div>
           <div className="image-side">
-            <SafeImage src="/assets/why-aura/price-match-hero.jpg" alt="Loose Diamond Appraisal on Velvet Display" />
+            <SafeImage src={heroImage} alt={c.heading || 'Loose Diamond Appraisal on Velvet Display'} />
           </div>
         </HeroSection>
       </RevealContainer>
@@ -302,11 +331,11 @@ export const PriceMatchPage: React.FC = () => {
         <RevealContainer yOffset={35}>
           <EditorialBlock>
             <h2>How Price Matching Works</h2>
-            <p>
-              At AethelCarats, pricing integrity is paramount. Because we work directly with diamond sightholders and maintain direct atelier oversight, we deliver exceptional diamond value without traditional retail markups.
+            <p style={{ color: c.eligibilityColor || undefined }}>
+              {c.eligibility || 'At AethelCarats, pricing integrity is paramount. Because we work directly with diamond sightholders and maintain direct atelier oversight, we deliver exceptional diamond value without traditional retail markups.'}
             </p>
-            <p>
-              To request a price match before completing your purchase, simply submit the diamond specifications or GIA/IGI certificate number to our concierge team.
+            <p style={{ color: c.verificationProcessColor || undefined }}>
+              {c.verificationProcess || 'To request a price match before completing your purchase, simply submit the diamond specifications or GIA/IGI certificate number to our concierge team.'}
             </p>
 
             <StepsRow>
@@ -338,15 +367,19 @@ export const PriceMatchPage: React.FC = () => {
         <RevealContainer yOffset={35}>
           <EditorialBlock>
             <h2>Matching Eligibility Criteria</h2>
-            <p>
-              To ensure genuine equity, price matching applies to loose certified diamonds meeting these like-for-like standards:
+            <p style={{ color: c.requirementsColor || undefined }}>
+              {c.requirements || 'To ensure genuine equity, price matching applies to loose certified diamonds meeting these like-for-like standards:'}
             </p>
-            <ul>
-              <li>Must have identical 4Cs (Carat, Color, Clarity, Cut) and proportions.</li>
-              <li>Must possess an authentic GIA or IGI grading report.</li>
-              <li>Must be currently in stock and available for immediate purchase from an authorized retailer.</li>
-              <li>Applies prior to diamond order placement.</li>
-            </ul>
+            {c.excludedProducts ? (
+              <p style={{ color: c.excludedProductsColor || undefined }}>{c.excludedProducts}</p>
+            ) : (
+              <ul>
+                <li>Must have identical 4Cs (Carat, Color, Clarity, Cut) and proportions.</li>
+                <li>Must possess an authentic GIA or IGI grading report.</li>
+                <li>Must be currently in stock and available for immediate purchase from an authorized retailer.</li>
+                <li>Applies prior to diamond order placement.</li>
+              </ul>
+            )}
           </EditorialBlock>
         </RevealContainer>
       </ContentGrid>
@@ -358,8 +391,8 @@ export const PriceMatchPage: React.FC = () => {
             <p>
               Contact our jewellery concierge with your target diamond details for an instant price evaluation.
             </p>
-            <Link to="/contact-us" className="primary-btn">
-              <Mail size={16} /> SUBMIT PRICE MATCH REQUEST
+            <Link to={c.buttonUrl || '/contact-us'} className="primary-btn">
+              <Mail size={16} /> {c.buttonText ? `SUBMIT: ${c.buttonText}` : 'SUBMIT PRICE MATCH REQUEST'}
             </Link>
           </CTABannerInner>
         </CTABanner>

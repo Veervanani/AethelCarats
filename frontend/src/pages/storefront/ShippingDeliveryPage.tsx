@@ -1,10 +1,11 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import styled from 'styled-components';
 import { Truck, ShieldCheck, Lock, Mail, ChevronRight } from 'lucide-react';
 import { SafeImage } from '../../components/ui/SafeImage';
 import { WhyAuraDiamondNav } from '../../components/ui/WhyAuraDiamondNav';
 import { RevealContainer } from '../../components/ui/RevealContainer';
+import { api } from '../../services/api';
 
 const PageWrapper = styled.div`
   background-color: #0B0B0B;
@@ -255,9 +256,33 @@ const CTABannerInner = styled.div`
 `;
 
 export const ShippingDeliveryPage: React.FC = () => {
+  const [cmsPage, setCmsPage] = useState<any>(null);
+
   useEffect(() => {
-    document.title = 'Free Secure Shipping | AethelCarats Fine Jewellery';
+    window.scrollTo(0, 0);
+    api.getPageBySlug('shipping-delivery').then((data) => {
+      if (data) {
+        const raw = data.content || data.draftContent;
+        let parsed: any = {};
+        if (raw) {
+          try {
+            parsed = typeof raw === 'string' ? JSON.parse(raw) : raw;
+          } catch (e) {
+            parsed = { content: raw };
+          }
+        }
+        setCmsPage({ ...data, parsedContent: parsed });
+        if (data.seoMetadata?.seoTitle) {
+          document.title = data.seoMetadata.seoTitle;
+        } else if (data.title) {
+          document.title = `${data.title} | AethelCarats Fine Jewellery`;
+        }
+      }
+    }).catch(console.warn);
   }, []);
+
+  const c = cmsPage?.parsedContent || {};
+  const heroImage = c.desktopImage || c.pageImages?.desktopImage || '/assets/why-aura/shipping-delivery-hero.jpg';
 
   return (
     <PageWrapper>
@@ -266,16 +291,20 @@ export const ShippingDeliveryPage: React.FC = () => {
         <ChevronRight size={12} />
         <span>Why AethelCarats</span>
         <ChevronRight size={12} />
-        <span className="current">Free Secure Shipping</span>
+        <span className="current">{c.heading || cmsPage?.title || 'Free Secure Shipping'}</span>
       </BreadcrumbsBar>
 
       <RevealContainer yOffset={35}>
         <HeroSection>
           <div className="text-side">
-            <span className="eyebrow">WHITE-GLOVE TRANSIT & PROTECTION</span>
-            <h1>Free Secure Shipping</h1>
-            <p className="subtitle">
-              Every creation leaving our atelier is delivered with complete discretion, 100% transit insurance, and complimentary express courier dispatch worldwide.
+            <span className="eyebrow" style={{ color: c.eyebrowColor || undefined }}>
+              {c.eyebrow || 'WHITE-GLOVE TRANSIT & PROTECTION'}
+            </span>
+            <h1 style={{ color: c.headingColor || undefined }}>
+              {c.heading || cmsPage?.title || 'Free Secure Shipping'}
+            </h1>
+            <p className="subtitle" style={{ color: c.introductionColor || undefined }}>
+              {c.introduction || 'Every creation leaving our atelier is delivered with complete discretion, 100% transit insurance, and complimentary express courier dispatch worldwide.'}
             </p>
             <Link
               to="/contact-us"
@@ -298,7 +327,7 @@ export const ShippingDeliveryPage: React.FC = () => {
             </Link>
           </div>
           <div className="image-side">
-            <SafeImage src="/assets/why-aura/shipping-delivery-hero.jpg" alt="AethelCarats Luxury Packaging Box" />
+            <SafeImage src={heroImage} alt={c.heading || 'AethelCarats Luxury Packaging Box'} />
           </div>
         </HeroSection>
       </RevealContainer>
@@ -307,11 +336,11 @@ export const ShippingDeliveryPage: React.FC = () => {
         <RevealContainer yOffset={35}>
           <EditorialBlock>
             <h2>Discreet & Fully Insured Delivery</h2>
-            <p>
-              We understand that fine jewellery is often purchased as a surprise proposal or special anniversary gift. To preserve secrecy, all parcels are dispatched in unbranded, non-descript outer packaging that gives no indication of the valuable contents inside.
+            <p style={{ color: c.processingTimeColor || undefined }}>
+              {c.processingTime ? `Order Processing: ${c.processingTime}` : 'We understand that fine jewellery is often purchased as a surprise proposal or special anniversary gift. To preserve secrecy, all parcels are dispatched in unbranded, non-descript outer packaging that gives no indication of the valuable contents inside.'}
             </p>
-            <p>
-              Inside the outer box, your item is housed in our signature illuminated leatherette presentation case, complete with diamond certificates and care guides.
+            <p style={{ color: c.deliveryTimeColor || undefined }}>
+              {c.deliveryTime ? `Estimated Delivery Time: ${c.deliveryTime}` : 'Inside the outer box, your item is housed in our signature illuminated leatherette presentation case, complete with diamond certificates and care guides.'}
             </p>
 
             <HighlightsGrid>
@@ -321,7 +350,9 @@ export const ShippingDeliveryPage: React.FC = () => {
                     <Truck size={20} />
                   </div>
                   <h3>Complimentary Express</h3>
-                  <p>Free express courier dispatch on all fine jewellery orders worldwide.</p>
+                  <p style={{ color: c.courierInformationColor || undefined }}>
+                    {c.courierInformation ? `Partners: ${c.courierInformation}` : 'Free express courier dispatch on all fine jewellery orders worldwide.'}
+                  </p>
                 </HighlightTile>
               </RevealContainer>
 
@@ -331,7 +362,9 @@ export const ShippingDeliveryPage: React.FC = () => {
                     <ShieldCheck size={20} />
                   </div>
                   <h3>100% Transit Insured</h3>
-                  <p>Fully covered from our vault until signed for at your address.</p>
+                  <p style={{ color: c.insuranceInformationColor || undefined }}>
+                    {c.insuranceInformation || 'Fully covered from our vault until signed for at your address.'}
+                  </p>
                 </HighlightTile>
               </RevealContainer>
 
@@ -341,7 +374,9 @@ export const ShippingDeliveryPage: React.FC = () => {
                     <Lock size={20} />
                   </div>
                   <h3>Signature Required</h3>
-                  <p>Delivered strictly with direct adult signature verification.</p>
+                  <p style={{ color: c.signatureRequirementColor || undefined }}>
+                    {c.signatureRequirement || 'Delivered strictly with direct adult signature verification.'}
+                  </p>
                 </HighlightTile>
               </RevealContainer>
             </HighlightsGrid>
@@ -351,8 +386,8 @@ export const ShippingDeliveryPage: React.FC = () => {
         <RevealContainer yOffset={35}>
           <EditorialBlock>
             <h2>International Shipping & Customs</h2>
-            <p>
-              We ship to over 50 countries worldwide including the United Kingdom, United States, Canada, Europe, Australia, and the UAE. International shipments are handled by premium global couriers (FedEx, DHL Express, Armored Courier).
+            <p style={{ color: c.customsInformationColor || undefined }}>
+              {c.customsInformation || 'We ship to over 50 countries worldwide including the United Kingdom, United States, Canada, Europe, Australia, and the UAE. International shipments are handled by premium global couriers (FedEx, DHL Express, Armored Courier).'}
             </p>
             <p>
               Detailed tracking numbers are provided immediately upon dispatch so you can trace your parcel in real-time.
@@ -364,12 +399,12 @@ export const ShippingDeliveryPage: React.FC = () => {
       <RevealContainer yOffset={35}>
         <CTABanner>
           <CTABannerInner>
-            <h2>Need Delivery Assistance or Hold For Pick-Up?</h2>
+            <h2>Planning a Proposal Delivery?</h2>
             <p>
-              Our concierge can arrange delivery to a local FedEx/DHL hold facility for secret proposal planning.
+              Speak with our concierge to coordinate hold-for-pickup at secure local courier depots or customized delivery timing.
             </p>
             <Link to="/contact-us" className="primary-btn">
-              <Mail size={16} /> CONTACT DELIVERY CONCIERGE
+              <Mail size={16} /> COORDINATE WITH CONCIERGE
             </Link>
           </CTABannerInner>
         </CTABanner>

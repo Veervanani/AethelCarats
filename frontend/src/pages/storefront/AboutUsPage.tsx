@@ -1,10 +1,11 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import styled from 'styled-components';
 import { Sparkles, ShieldCheck, Award, Heart, Mail, ChevronRight } from 'lucide-react';
 import { SafeImage } from '../../components/ui/SafeImage';
 import { WhyAuraDiamondNav } from '../../components/ui/WhyAuraDiamondNav';
 import { RevealContainer } from '../../components/ui/RevealContainer';
+import { api } from '../../services/api';
 
 const PageWrapper = styled.div`
   background-color: #0B0B0B;
@@ -244,9 +245,33 @@ const CTABannerInner = styled.div`
 `;
 
 export const AboutUsPage: React.FC = () => {
+  const [cmsPage, setCmsPage] = useState<any>(null);
+
   useEffect(() => {
-    document.title = 'Quality & Value | AethelCarats Fine Jewellery';
+    window.scrollTo(0, 0);
+    api.getPageBySlug('about-us').then((data) => {
+      if (data) {
+        const raw = data.content || data.draftContent;
+        let parsed: any = {};
+        if (raw) {
+          try {
+            parsed = typeof raw === 'string' ? JSON.parse(raw) : raw;
+          } catch (e) {
+            parsed = { content: raw };
+          }
+        }
+        setCmsPage({ ...data, parsedContent: parsed });
+        if (data.seoMetadata?.seoTitle) {
+          document.title = data.seoMetadata.seoTitle;
+        } else if (data.title) {
+          document.title = `${data.title} | AethelCarats Fine Jewellery`;
+        }
+      }
+    }).catch(console.warn);
   }, []);
+
+  const c = cmsPage?.parsedContent || {};
+  const heroImage = c.desktopImage || c.pageImages?.desktopImage || '/assets/why-aura/about-us-hero.jpg';
 
   return (
     <PageWrapper>
@@ -255,16 +280,20 @@ export const AboutUsPage: React.FC = () => {
         <ChevronRight size={12} />
         <span>About AethelCarats</span>
         <ChevronRight size={12} />
-        <span className="current">Quality & Value</span>
+        <span className="current">{c.heading || cmsPage?.title || 'Quality & Value'}</span>
       </BreadcrumbsBar>
 
       <RevealContainer yOffset={35}>
         <HeroSection>
           <div className="text-side">
-            <span className="eyebrow">OUR HERITAGE & ATELIER PHILOSOPHY</span>
-            <h1>Quality & Value</h1>
-            <p className="subtitle">
-              Luxury jewellery should feel exceptional in every detail. AethelCarats bridges master artisanal goldsmithing with direct diamond sightholder sourcing to deliver uncompromised quality without traditional retail inflation.
+            <span className="eyebrow" style={{ color: c.eyebrowColor || undefined }}>
+              {c.eyebrow || 'OUR HERITAGE & ATELIER PHILOSOPHY'}
+            </span>
+            <h1 style={{ color: c.headingColor || undefined }}>
+              {c.heading || cmsPage?.title || 'Quality & Value'}
+            </h1>
+            <p className="subtitle" style={{ color: c.subheadingColor || c.introductionColor || undefined }}>
+              {c.subheading || c.introduction || 'Luxury jewellery should feel exceptional in every detail. AethelCarats bridges master artisanal goldsmithing with direct diamond sightholder sourcing to deliver uncompromised quality without traditional retail inflation.'}
             </p>
             <Link
               to="/collections"
@@ -287,7 +316,7 @@ export const AboutUsPage: React.FC = () => {
             </Link>
           </div>
           <div className="image-side">
-            <SafeImage src="/assets/why-aura/about-us-hero.jpg" alt="Master Jeweller Setting Diamond in Atelier" />
+            <SafeImage src={heroImage} alt={c.heading || 'Master Jeweller Setting Diamond in Atelier'} />
           </div>
         </HeroSection>
       </RevealContainer>
@@ -296,11 +325,11 @@ export const AboutUsPage: React.FC = () => {
         <RevealContainer yOffset={35}>
           <EditorialBlock>
             <h2>The AethelCarats Atelier Standard</h2>
-            <p>
-              Founded on the belief that fine jewellery should be timeless, transparent, and personally meaningful, AethelCarats creates solitaire rings, tennis bracelets, high-jewellery necklaces, and bespoke heirlooms.
+            <p style={{ color: c.brandStoryColor || undefined }}>
+              {c.brandStory || 'Founded on the belief that fine jewellery should be timeless, transparent, and personally meaningful, AethelCarats creates solitaire rings, tennis bracelets, high-jewellery necklaces, and bespoke heirlooms.'}
             </p>
-            <p>
-              Every piece is forged in solid 14K Gold, 18K Gold, or Platinum 950, and set with hand-selected certified diamonds verified for superior brilliance, symmetry, and fire.
+            <p style={{ color: c.ourValuesColor || undefined }}>
+              {c.ourValues || 'Every piece is forged in solid 14K Gold, 18K Gold, or Platinum 950, and set with hand-selected certified diamonds verified for superior brilliance, symmetry, and fire.'}
             </p>
 
             <PillarsGrid>
@@ -310,7 +339,9 @@ export const AboutUsPage: React.FC = () => {
                     <Sparkles size={20} />
                   </div>
                   <h3>Master Craftsmanship</h3>
-                  <p>Hand-finished settings, secure prongs, and meticulous CAD modeling by expert jewellers.</p>
+                  <p style={{ color: c.craftsmanshipColor || undefined }}>
+                    {c.craftsmanship || 'Hand-finished settings, secure prongs, and meticulous CAD modeling by expert jewellers.'}
+                  </p>
                 </PillarTile>
               </RevealContainer>
 
@@ -320,7 +351,9 @@ export const AboutUsPage: React.FC = () => {
                     <ShieldCheck size={20} />
                   </div>
                   <h3>GIA & IGI Certified</h3>
-                  <p>Every major diamond carries an independent certificate verifying carat, color, clarity, and cut.</p>
+                  <p style={{ color: c.diamondsColor || undefined }}>
+                    {c.diamonds || 'Every major diamond carries an independent certificate verifying carat, color, clarity, and cut.'}
+                  </p>
                 </PillarTile>
               </RevealContainer>
 
@@ -330,7 +363,9 @@ export const AboutUsPage: React.FC = () => {
                     <Award size={20} />
                   </div>
                   <h3>Direct Sightholder Value</h3>
-                  <p>Ethical direct sourcing eliminates unnecessary middleman markups for honest luxury pricing.</p>
+                  <p style={{ color: c.manufacturingColor || undefined }}>
+                    {c.manufacturing || 'Ethical direct sourcing eliminates unnecessary middleman markups for honest luxury pricing.'}
+                  </p>
                 </PillarTile>
               </RevealContainer>
             </PillarsGrid>
@@ -340,8 +375,8 @@ export const AboutUsPage: React.FC = () => {
         <RevealContainer yOffset={35}>
           <EditorialBlock>
             <h2>Bespoke Personalization & Concierge</h2>
-            <p>
-              Whether searching for the perfect diamond engagement ring or designing a custom heirloom from reference sketches, our dedicated Jewellery Concierge guides you through every decision.
+            <p style={{ color: c.whyAuraDiamondColor || undefined }}>
+              {c.whyAuraDiamond || 'Whether searching for the perfect diamond engagement ring or designing a custom heirloom from reference sketches, our dedicated Jewellery Concierge guides you through every decision.'}
             </p>
             <p>
               We offer complimentary 3D CAD renders, custom diamond sourcing, fully-insured global shipping, and a limited lifetime warranty on every piece.
