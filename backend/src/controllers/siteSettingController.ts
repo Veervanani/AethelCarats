@@ -1,6 +1,7 @@
 import { Request, Response } from 'express';
 import { AuthRequest } from '../middleware/auth';
 import prisma from '../prisma';
+import { withTimeout } from '../utils/asyncTimeout';
 
 const DEFAULT_SETTINGS: Record<string, any> = {
   header_config: JSON.stringify({
@@ -140,7 +141,7 @@ export const getSiteSettings = async (req: Request, res: Response) => {
   });
 
   try {
-    const settings = await prisma.siteSetting.findMany();
+    const settings = await withTimeout(prisma.siteSetting.findMany(), 2000, []);
 
     // Pass 1: Parse and store every setting as parsed JSON or string
     settings.forEach((s) => {

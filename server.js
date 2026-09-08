@@ -45,7 +45,7 @@ if (!rawDbUrl || !rawDbUrl.startsWith('mysql://')) {
     .replace(/\(/g, '%28')
     .replace(/\)/g, '%29')
     .replace(/\*/g, '%2A');
-  rawDbUrl = `mysql://${user}:${encodedPassword}@${host}:${port}/${name}?connect_timeout=5`;
+  rawDbUrl = `mysql://${user}:${encodedPassword}@${host}:${port}/${name}?connect_timeout=3&socket_timeout=3&pool_timeout=3`;
 }
 process.env.DATABASE_URL = rawDbUrl;
 

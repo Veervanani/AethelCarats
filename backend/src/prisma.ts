@@ -35,7 +35,7 @@ export function getDatabaseUrl(): string {
       .replace(/\)/g, '%29')
       .replace(/\*/g, '%2A');
 
-    rawUrl = `mysql://${user}:${encodedPassword}@${host}:${port}/${name}?connect_timeout=5&pool_timeout=5`;
+    rawUrl = `mysql://${user}:${encodedPassword}@${host}:${port}/${name}?connect_timeout=3&socket_timeout=3&pool_timeout=3`;
   } else {
     // Sanitize the password in rawUrl
     rawUrl = rawUrl.replace(/:([^:@]+)@/, (_, pwd) => {
@@ -49,7 +49,7 @@ export function getDatabaseUrl(): string {
       return `:${encoded}@`;
     });
     if (!rawUrl.includes('connect_timeout=')) {
-      rawUrl += (rawUrl.includes('?') ? '&' : '?') + 'connect_timeout=5&pool_timeout=5';
+      rawUrl += (rawUrl.includes('?') ? '&' : '?') + 'connect_timeout=3&socket_timeout=3&pool_timeout=3';
     }
   }
 

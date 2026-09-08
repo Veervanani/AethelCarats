@@ -20,6 +20,7 @@ export interface AuthRequest extends Request {
     email: string;
     role: RoleType;
     employeeId?: string;
+    name?: string;
   };
 }
 

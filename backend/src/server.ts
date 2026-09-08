@@ -1,5 +1,10 @@
 import { cleanupDatabaseSiteSettings } from './cleanupDatabaseSiteSettings';
-cleanupDatabaseSiteSettings().catch(console.error);
+import { withTimeout, checkTcpPort } from './utils/asyncTimeout';
+
+// Safely attempt background cleanup with a strict timeout so it never stalls server bootstrap
+withTimeout(cleanupDatabaseSiteSettings(), 3000).catch((err) => {
+  console.warn('Site settings background cleanup non-blocking notice:', err?.message || err);
+});
 
 import prisma from './prisma';
 import express from 'express';
@@ -641,11 +646,20 @@ app.get('/api/v1/health', async (req, res) => {
   const envUser = process.env.DB_USER || 'u707945653_admin';
 
   try {
-    const userCount = await prisma.user.count();
-    const diamondCount = await prisma.diamond.count();
-    const productCount = await prisma.product.count();
-    const categoryCount = await prisma.category.count().catch(() => null);
-    const orderCount = await prisma.order.count().catch(() => null);
+    // Enforce strict 2500ms timeout on DB queries so Nginx 504 Gateway Timeout NEVER occurs
+    const queryPromise = Promise.all([
+      prisma.user.count(),
+      prisma.diamond.count(),
+      prisma.product.count(),
+      prisma.category.count().catch(() => null),
+      prisma.order.count().catch(() => null),
+    ]);
+
+    const [userCount, diamondCount, productCount, categoryCount, orderCount] = await withTimeout(
+      queryPromise,
+      2500,
+      new Error(`Database query timed out after 2500ms. Could not reach MySQL server at "${envHost}:3306".`)
+    );
 
     res.json({
       status: 'ok',
@@ -671,29 +685,49 @@ app.get('/api/v1/health', async (req, res) => {
   } catch (err: any) {
     console.error('Database Health Check Failed:', err);
 
-    let suggestion = 'Check your MySQL server status and credentials.';
+    // Run parallel fast TCP reachability tests (< 800ms) to detect why connection failed
+    const [activeTcp, loopbackTcp, remoteTcp] = await Promise.all([
+      checkTcpPort(envHost, 3306, 800),
+      checkTcpPort('127.0.0.1', 3306, 800),
+      checkTcpPort('auth-db844.hstgr.io', 3306, 800),
+    ]);
+
     const errMsg = err.message || String(err);
-    if (errMsg.includes('Access denied') || errMsg.includes('Authentication failed')) {
-      suggestion = `Database username or password is incorrect. Verify user "${envUser}" and password in Hostinger MySQL management.`;
-    } else if (errMsg.includes('ECONNREFUSED') || errMsg.includes('No connection could be made') || errMsg.includes('refused')) {
-      suggestion = `Connection refused at "${envHost}". If on Hostinger, change DB_HOST to "localhost" instead of "127.0.0.1".`;
+    let suggestion = 'Check your MySQL server status and credentials.';
+
+    if (errMsg.includes('timed out') || !activeTcp.reachable) {
+      if (remoteTcp.reachable) {
+        suggestion = `TCP to "${envHost}" failed, but Hostinger remote host "auth-db844.hstgr.io" IS reachable! Change DB_HOST to "auth-db844.hstgr.io" and enable Remote MySQL in hPanel (Databases > Remote MySQL > add "%").`;
+      } else {
+        suggestion = `TCP to "${envHost}:3306" is not responding. On Hostinger, ensure Remote MySQL is enabled in hPanel (Databases > Remote MySQL > add "%" for database "${envName}").`;
+      }
+    } else if (errMsg.includes('Access denied') || errMsg.includes('Authentication failed')) {
+      suggestion = `Database authentication failed for user "${envUser}". In Hostinger hPanel > Databases > Remote MySQL, select "${envName}", check "Any Host" (%), and click Create. Also verify password in hPanel.`;
+    } else if (errMsg.includes('ECONNREFUSED') || errMsg.includes('refused')) {
+      suggestion = `Connection refused at "${envHost}". If on Hostinger container, use "auth-db844.hstgr.io" with Remote MySQL enabled.`;
     } else if (errMsg.includes('protocol') || errMsg.includes('mysql://')) {
       suggestion = 'DATABASE_URL format error. Ensure the URL starts with mysql:// without quotation marks.';
-    } else if (errMsg.includes('Unknown database') || errMsg.includes('database server')) {
+    } else if (errMsg.includes('Unknown database')) {
       suggestion = `Database "${envName}" does not exist. Verify the database name in Hostinger MySQL management.`;
     }
 
-    res.status(500).json({
+    // Return HTTP 200 with status: "error" so Nginx NEVER intercepts or returns a 504 page
+    res.status(200).json({
       status: 'error',
       database: 'disconnected',
       error: errMsg,
-      errorCode: err.code || err.name || 'UNKNOWN_ERROR',
+      errorCode: err.code || err.name || (errMsg.includes('timed out') ? 'CONNECTION_TIMEOUT' : 'UNKNOWN_ERROR'),
       diagnostics: {
         attemptedHost: envHost,
         attemptedDatabase: envName,
         attemptedUser: envUser,
         maskedUrl: maskedDbUrl,
         nodeVersion: process.version,
+        tcpProbes: {
+          configuredHost: activeTcp,
+          loopback127: loopbackTcp,
+          hostingerRemoteHost: remoteTcp,
+        },
         envVarsConfigured: Object.keys(process.env).filter((k) =>
           ['DATABASE_URL', 'DB_HOST', 'DB_NAME', 'DB_USER', 'DB_PORT', 'PORT'].includes(k)
         ),
@@ -706,9 +740,9 @@ app.get('/api/v1/health', async (req, res) => {
 
 export { app };
 
-const isDirectRun = !process.env.IS_TEST;
+const isDirectRun = process.env.IS_BACKEND_STANDALONE === 'true' || (process.argv[1] && process.argv[1].endsWith('backend/dist/server.js'));
 if (isDirectRun) {
   app.listen(PORT, () => {
-    console.log(`✨ Aura Diamond Atelier REST API running on port ${PORT}`);
+    console.log(`✨ AethelCarats REST API running on port ${PORT}`);
   });
 }
