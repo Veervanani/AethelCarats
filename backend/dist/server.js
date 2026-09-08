@@ -117,6 +117,7 @@ app.get('/api/v1/hero-banners', heroBannerController_1.getPublicHeroBanners);
 app.get('/api/v1/admin/hero-banners', auth_1.authenticateToken, (0, auth_1.requireRole)(['CONTENT_MANAGER', 'ADMIN', 'SUPER_ADMIN']), heroBannerController_1.getAdminHeroBanners);
 app.post('/api/v1/admin/hero-banners', auth_1.authenticateToken, (0, auth_1.requireRole)(['CONTENT_MANAGER', 'ADMIN', 'SUPER_ADMIN']), upload.any(), heroBannerController_1.createHeroBanner);
 app.put('/api/v1/admin/hero-banners/:id', auth_1.authenticateToken, (0, auth_1.requireRole)(['CONTENT_MANAGER', 'ADMIN', 'SUPER_ADMIN']), upload.any(), heroBannerController_1.updateHeroBanner);
+app.post('/api/v1/admin/hero-banners/:id', auth_1.authenticateToken, (0, auth_1.requireRole)(['CONTENT_MANAGER', 'ADMIN', 'SUPER_ADMIN']), upload.any(), heroBannerController_1.updateHeroBanner);
 app.delete('/api/v1/admin/hero-banners/:id', auth_1.authenticateToken, (0, auth_1.requireRole)(['CONTENT_MANAGER', 'ADMIN', 'SUPER_ADMIN']), heroBannerController_1.deleteHeroBanner);
 app.post('/api/v1/admin/hero-banners/reorder', auth_1.authenticateToken, (0, auth_1.requireRole)(['CONTENT_MANAGER', 'ADMIN', 'SUPER_ADMIN']), heroBannerController_1.reorderHeroBanners);
 app.post('/api/v1/admin/hero-banners/upload-image', auth_1.authenticateToken, (0, auth_1.requireRole)(['CONTENT_MANAGER', 'ADMIN', 'SUPER_ADMIN']), upload.any(), heroBannerController_1.uploadHeroBannerImage);

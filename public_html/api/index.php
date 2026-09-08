@@ -179,14 +179,23 @@ if ($path === '/api/v1/admin/hero-banners/reorder') {
         jsonError('Method Not Allowed', 405);
     }
 }
-if (str_starts_with($path, '/api/v1/admin/hero-banners/')) {
-    $id = substr($path, 27);
-    if ($method === 'PUT' || $method === 'POST') {
-        handleUpdateHeroBanner($id);
-    } else if ($method === 'DELETE') {
-        handleDeleteHeroBanner($id);
+if ($path === '/api/v1/admin/hero-banners/upload-image') {
+    if ($method === 'POST') {
+        handleUploadHeroBannerImage();
     } else {
         jsonError('Method Not Allowed', 405);
+    }
+}
+if (str_starts_with($path, '/api/v1/admin/hero-banners/')) {
+    $id = substr($path, 27);
+    if ($id !== 'reorder' && $id !== 'upload-image') {
+        if ($method === 'PUT' || $method === 'POST') {
+            handleUpdateHeroBanner($id);
+        } else if ($method === 'DELETE') {
+            handleDeleteHeroBanner($id);
+        } else {
+            jsonError('Method Not Allowed', 405);
+        }
     }
 }
 
@@ -311,9 +320,21 @@ if ($path === '/api/v1/product-page-content' || str_starts_with($path, '/api/v1/
         jsonError('Method Not Allowed', 405);
     }
 }
-if ($path === '/api/v1/categories' || $path === '/api/v1/admin/categories') {
-    if ($method === 'GET') {
+if ($path === '/api/v1/categories' || $path === '/api/v1/admin/categories' || str_starts_with($path, '/api/v1/admin/categories/') || str_starts_with($path, '/api/v1/categories/')) {
+    if (preg_match('#^/api/v1/(?:admin/)?categories/([^/]+)$#', $path, $m)) {
+        if ($method === 'PUT' || $method === 'PATCH' || $method === 'POST') {
+            handleUpdateCategory($m[1]);
+        } else if ($method === 'DELETE') {
+            handleDeleteCategory($m[1]);
+        } else if ($method === 'GET') {
+            handleGetCategoryById($m[1]);
+        } else {
+            jsonError('Method Not Allowed', 405);
+        }
+    } else if ($method === 'GET') {
         handleGetCategories();
+    } else if ($method === 'POST') {
+        handleCreateCategory();
     } else {
         jsonError('Method Not Allowed', 405);
     }
@@ -522,7 +543,11 @@ if ($path === '/api/v1/cms/pages' || str_starts_with($path, '/api/v1/cms/pages/'
             jsonError('API Route Not Found', 404);
         }
     } else if ($method === 'POST' || $method === 'PUT' || $method === 'PATCH') {
-        handleSavePage();
+        $slugParam = null;
+        if (preg_match('#^/api/v1/(?:admin/)?(?:cms/)?pages/([^/]+)$#', $path, $m)) {
+            $slugParam = $m[1];
+        }
+        handleSavePage($slugParam);
     } else {
         jsonError('Method Not Allowed', 405);
     }

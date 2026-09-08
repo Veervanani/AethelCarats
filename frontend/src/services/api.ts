@@ -850,7 +850,8 @@ export const api = {
   },
 
   updateHeroBanner: async (id: string, formData: FormData) => {
-    const res = await API.put<HeroBanner>(`/admin/hero-banners/${id}`, formData);
+    formData.append('_method', 'PUT');
+    const res = await API.post<HeroBanner>(`/admin/hero-banners/${id}`, formData);
     return res.data;
   },
 

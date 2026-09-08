@@ -777,39 +777,79 @@ function handleSaveSiteSettings(): void {
  * POST /api/v1/admin/cms/pages
  * PUT /api/v1/admin/cms/pages/:slug
  */
-function handleSavePage(): void {
+function handleSavePage(?string $slugParam = null): void {
     requireRole(['CONTENT_MANAGER', 'ADMIN', 'SUPER_ADMIN']);
 
     try {
         $raw = file_get_contents('php://input');
         $body = json_decode($raw, true) ?? $_POST;
 
-        $slug  = strtolower(trim($body['slug'] ?? 'page-' . time()));
+        $slug = $slugParam ? strtolower(trim($slugParam)) : strtolower(trim($body['slug'] ?? 'page-' . time()));
         $title = trim($body['title'] ?? 'Untitled Page');
-        $html  = $body['contentHtml'] ?? ($body['content'] ?? '');
+        $content = $body['content'] ?? ($body['contentHtml'] ?? ($body['draftContent'] ?? ''));
+        $draftContent = $body['draftContent'] ?? $content;
+        $contentStr = is_string($content) ? $content : json_encode($content);
+        $draftStr = is_string($draftContent) ? $draftContent : json_encode($draftContent);
         $status = strtoupper($body['status'] ?? 'PUBLISHED');
+        $sections = $body['sections'] ?? null;
+        $seoMetadata = $body['seoMetadata'] ?? null;
 
         $pdo = getDatabaseConnection();
-        $chk = $pdo->prepare("SELECT `id` FROM `CmsPage` WHERE `slug` = ? LIMIT 1");
+        $chk = $pdo->prepare("SELECT `id`, `title` FROM `Page` WHERE `slug` = ? LIMIT 1");
         $chk->execute([$slug]);
         $exists = $chk->fetch();
 
         if ($exists) {
-            $u = $pdo->prepare("UPDATE `CmsPage` SET `title` = ?, `contentHtml` = ?, `status` = ?, `updatedAt` = NOW() WHERE `id` = ?");
-            $u->execute([$title, $html, $status, $exists['id']]);
             $pageId = $exists['id'];
+            $titleToUse = !empty($body['title']) ? $title : $exists['title'];
+            $u = $pdo->prepare("UPDATE `Page` SET `title` = ?, `content` = ?, `draftContent` = ?, `status` = ?, `updatedAt` = NOW() WHERE `id` = ?");
+            $u->execute([$titleToUse, $contentStr, $draftStr, $status, $pageId]);
         } else {
-            $id = 'page_' . bin2hex(random_bytes(8));
-            $i = $pdo->prepare("INSERT INTO `CmsPage` (`id`, `slug`, `title`, `contentHtml`, `status`, `createdAt`, `updatedAt`) VALUES (?, ?, ?, ?, ?, NOW(), NOW())");
-            $i->execute([$id, $slug, $title, $html, $status]);
-            $pageId = $id;
+            $pageId = 'page_' . bin2hex(random_bytes(8));
+            $i = $pdo->prepare("INSERT INTO `Page` (`id`, `slug`, `title`, `content`, `draftContent`, `status`, `createdAt`, `updatedAt`) VALUES (?, ?, ?, ?, ?, ?, NOW(), NOW())");
+            $i->execute([$pageId, $slug, $title, $contentStr, $draftStr, $status]);
         }
 
-        jsonResponse(['message' => 'Page saved successfully', 'page' => ['id' => $pageId, 'slug' => $slug, 'title' => $title]], 200);
+        // Sync Sections if provided: delete old sections, insert new sections
+        if (is_array($sections)) {
+            $delSec = $pdo->prepare("DELETE FROM `PageSection` WHERE `pageId` = ?");
+            $delSec->execute([$pageId]);
+
+            $insSec = $pdo->prepare("INSERT INTO `PageSection` (`id`, `pageId`, `blockType`, `position`, `content`, `isVisible`) VALUES (?, ?, ?, ?, ?, ?)");
+            foreach ($sections as $pos => $s) {
+                $secContent = is_string($s['content'] ?? null) ? $s['content'] : json_encode($s['content'] ?? []);
+                $insSec->execute([generateUuidV4Cms(), $pageId, $s['blockType'] ?? 'SECTION', $pos + 1, $secContent, ($s['isVisible'] ?? true) ? 1 : 0]);
+            }
+        }
+
+        // Sync SEO if provided
+        if (is_array($seoMetadata)) {
+            $seoTitle = $seoMetadata['seoTitle'] ?? ($seoMetadata['title'] ?? '');
+            $metaDesc = $seoMetadata['metaDescription'] ?? ($seoMetadata['description'] ?? '');
+            $canonical = $seoMetadata['canonicalUrl'] ?? '';
+            $robots = $seoMetadata['robots'] ?? 'index, follow';
+            $ogTitle = $seoMetadata['ogTitle'] ?? '';
+            $ogDesc = $seoMetadata['ogDescription'] ?? '';
+            $ogImg = $seoMetadata['ogImage'] ?? '';
+
+            $checkSeo = $pdo->prepare("SELECT `id` FROM `SeoMetadata` WHERE `pageId` = ? LIMIT 1");
+            $checkSeo->execute([$pageId]);
+            $existingSeo = $checkSeo->fetch();
+
+            if ($existingSeo) {
+                $updSeo = $pdo->prepare("UPDATE `SeoMetadata` SET `seoTitle` = ?, `metaDescription` = ?, `canonicalUrl` = ?, `robots` = ?, `ogTitle` = ?, `ogDescription` = ?, `ogImage` = ?, `updatedAt` = NOW() WHERE `pageId` = ?");
+                $updSeo->execute([$seoTitle, $metaDesc, $canonical, $robots, $ogTitle, $ogDesc, $ogImg, $pageId]);
+            } else {
+                $insSeo = $pdo->prepare("INSERT INTO `SeoMetadata` (`id`, `pageId`, `seoTitle`, `metaDescription`, `canonicalUrl`, `robots`, `ogTitle`, `ogDescription`, `ogImage`, `updatedAt`) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, NOW())");
+                $insSeo->execute([generateUuidV4Cms(), $pageId, $seoTitle, $metaDesc, $canonical, $robots, $ogTitle, $ogDesc, $ogImg]);
+            }
+        }
+
+        handleGetPageBySlug($slug);
 
     } catch (Throwable $e) {
         error_log("handleSavePage error: " . $e->getMessage());
-        jsonError('Failed to save page', 500);
+        jsonError('Failed to save page: ' . $e->getMessage(), 500);
     }
 }
 

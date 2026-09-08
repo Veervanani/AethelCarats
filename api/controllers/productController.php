@@ -973,6 +973,129 @@ function handleGetCategories(): void {
 }
 
 /**
+ * GET /api/v1/categories/:id
+ */
+function handleGetCategoryById(string $id): void {
+    try {
+        $pdo = getDatabaseConnection();
+        $stmt = $pdo->prepare("SELECT * FROM `Category` WHERE `id` = ? OR `slug` = ? LIMIT 1");
+        $stmt->execute([$id, $id]);
+        $cat = $stmt->fetch();
+        if (!$cat) {
+            jsonError('Category not found', 404);
+        }
+        jsonResponse($cat, 200);
+    } catch (Throwable $e) {
+        error_log("handleGetCategoryById error: " . $e->getMessage());
+        jsonError('Error fetching category', 500);
+    }
+}
+
+/**
+ * POST /api/v1/admin/categories
+ */
+function handleCreateCategory(): void {
+    requireRole(['PRODUCT_MANAGER', 'ADMIN', 'SUPER_ADMIN']);
+    try {
+        $raw = file_get_contents('php://input');
+        $body = json_decode($raw, true) ?? $_POST;
+
+        $name = trim($body['name'] ?? '');
+        if (empty($name)) {
+            jsonError('Category name is required', 400);
+        }
+        $slug = trim($body['slug'] ?? '');
+        if (empty($slug)) {
+            $slug = strtolower(preg_replace('/[^a-z0-9]+/i', '-', $name));
+        }
+        $description = $body['description'] ?? null;
+        $bannerImage = $body['bannerImage'] ?? null;
+        $image = $body['image'] ?? '/assets/gem_rings_cat.png';
+        $link = $body['link'] ?? ('/' . $slug);
+        $sortOrder = isset($body['sortOrder']) ? (int)$body['sortOrder'] : 0;
+        $isActive = isset($body['isActive']) ? (($body['isActive'] === true || $body['isActive'] === 'true' || $body['isActive'] === 1 || $body['isActive'] === '1') ? 1 : 0) : 1;
+
+        $id = 'cat_' . bin2hex(random_bytes(8));
+        $pdo = getDatabaseConnection();
+        $stmt = $pdo->prepare("INSERT INTO `Category` (`id`, `name`, `slug`, `description`, `bannerImage`, `image`, `link`, `sortOrder`, `isActive`, `createdAt`, `updatedAt`) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, NOW(), NOW())");
+        $stmt->execute([$id, $name, $slug, $description, $bannerImage, $image, $link, $sortOrder, $isActive]);
+
+        $fetch = $pdo->prepare("SELECT * FROM `Category` WHERE `id` = ?");
+        $fetch->execute([$id]);
+        jsonResponse($fetch->fetch(), 201);
+    } catch (Throwable $e) {
+        error_log("handleCreateCategory error: " . $e->getMessage());
+        jsonError('Failed to create category: ' . $e->getMessage(), 500);
+    }
+}
+
+/**
+ * PUT/POST /api/v1/admin/categories/:id
+ */
+function handleUpdateCategory(string $id): void {
+    requireRole(['PRODUCT_MANAGER', 'ADMIN', 'SUPER_ADMIN']);
+    try {
+        $raw = file_get_contents('php://input');
+        $body = json_decode($raw, true) ?? $_POST;
+
+        $pdo = getDatabaseConnection();
+        $chk = $pdo->prepare("SELECT * FROM `Category` WHERE `id` = ? OR `slug` = ? LIMIT 1");
+        $chk->execute([$id, $id]);
+        $existing = $chk->fetch();
+        if (!$existing) {
+            jsonError('Category not found', 404);
+        }
+        $actualId = $existing['id'];
+
+        $name = isset($body['name']) ? trim($body['name']) : $existing['name'];
+        $slug = isset($body['slug']) ? trim($body['slug']) : $existing['slug'];
+        $description = array_key_exists('description', $body) ? $body['description'] : $existing['description'];
+        $bannerImage = array_key_exists('bannerImage', $body) ? $body['bannerImage'] : $existing['bannerImage'];
+        $image = array_key_exists('image', $body) ? $body['image'] : $existing['image'];
+        $link = array_key_exists('link', $body) ? $body['link'] : $existing['link'];
+        $sortOrder = isset($body['sortOrder']) ? (int)$body['sortOrder'] : (int)$existing['sortOrder'];
+        $isActive = isset($body['isActive']) ? (($body['isActive'] === true || $body['isActive'] === 'true' || $body['isActive'] === 1 || $body['isActive'] === '1') ? 1 : 0) : (int)$existing['isActive'];
+
+        $upd = $pdo->prepare("UPDATE `Category` SET `name` = ?, `slug` = ?, `description` = ?, `bannerImage` = ?, `image` = ?, `link` = ?, `sortOrder` = ?, `isActive` = ?, `updatedAt` = NOW() WHERE `id` = ?");
+        $upd->execute([$name, $slug, $description, $bannerImage, $image, $link, $sortOrder, $isActive, $actualId]);
+
+        $fetch = $pdo->prepare("SELECT * FROM `Category` WHERE `id` = ?");
+        $fetch->execute([$actualId]);
+        jsonResponse($fetch->fetch(), 200);
+    } catch (Throwable $e) {
+        error_log("handleUpdateCategory error: " . $e->getMessage());
+        jsonError('Failed to update category: ' . $e->getMessage(), 500);
+    }
+}
+
+/**
+ * DELETE /api/v1/admin/categories/:id
+ */
+function handleDeleteCategory(string $id): void {
+    requireRole(['PRODUCT_MANAGER', 'ADMIN', 'SUPER_ADMIN']);
+    try {
+        $pdo = getDatabaseConnection();
+        $chk = $pdo->prepare("SELECT * FROM `Category` WHERE `id` = ? OR `slug` = ? LIMIT 1");
+        $chk->execute([$id, $id]);
+        $existing = $chk->fetch();
+        if (!$existing) {
+            jsonError('Category not found', 404);
+        }
+        $actualId = $existing['id'];
+
+        $pdo->prepare("UPDATE `Product` SET `categoryId` = NULL WHERE `categoryId` = ?")->execute([$actualId]);
+
+        $del = $pdo->prepare("DELETE FROM `Category` WHERE `id` = ?");
+        $del->execute([$actualId]);
+
+        jsonResponse(['message' => 'Category deleted successfully', 'deletedId' => $actualId], 200);
+    } catch (Throwable $e) {
+        error_log("handleDeleteCategory error: " . $e->getMessage());
+        jsonError('Failed to delete category: ' . $e->getMessage(), 500);
+    }
+}
+
+/**
  * GET /api/v1/collections
  */
 function handleGetCollections(): void {

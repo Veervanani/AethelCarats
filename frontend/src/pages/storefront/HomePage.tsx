@@ -1509,8 +1509,8 @@ const DEFAULT_HERO_SLIDES: HeroBanner[] = [
   {
     id: 'hero-slide-1',
     productType: 'Engagement Ring',
-    imagePath: '/assets/Engagement Ring.png',
-    mobileImagePath: '/assets/Engagement Ring Mobile.png',
+    imagePath: '/assets/gem_rings_cat.png',
+    mobileImagePath: '/assets/gem_rings_cat.png',
     subtitle: 'AETHELCARATS HAUTE JOAILLERIE',
     title: "TIMELESS BEAUTY.\nETERNAL BRILLIANCE.",
     description: "Discover jewellery crafted to become part of your story.",
@@ -1524,8 +1524,8 @@ const DEFAULT_HERO_SLIDES: HeroBanner[] = [
   {
     id: 'hero-slide-2',
     productType: 'Necklace',
-    imagePath: '/assets/Necklace.png',
-    mobileImagePath: '/assets/Necklace Mobile.png',
+    imagePath: '/assets/gem_necklaces_cat.png',
+    mobileImagePath: '/assets/gem_necklaces_cat.png',
     subtitle: 'THE ART OF HIGH DIAMOND CRAFT',
     title: "EXQUISITE RIVIÈRE &\nSOLITAIRE CREATIONS",
     description: "Handcrafted masterworks set in 18K gold and platinum with certified precision-cut diamonds.",
@@ -1539,8 +1539,8 @@ const DEFAULT_HERO_SLIDES: HeroBanner[] = [
   {
     id: 'hero-slide-3',
     productType: 'Earrings',
-    imagePath: '/assets/Earrings.png',
-    mobileImagePath: '/assets/Earrings Mobile.png',
+    imagePath: '/assets/gem_earrings_cat.png',
+    mobileImagePath: '/assets/gem_earrings_cat.png',
     subtitle: 'BESPOKE ATELIER SPOTLIGHT',
     title: "UNDERSTATED BRILLIANCE.\nUNCOMPROMISING LUXURY.",
     description: "Exceptional diamond earrings designed for radiant brilliance across every milestone.",
@@ -1554,8 +1554,8 @@ const DEFAULT_HERO_SLIDES: HeroBanner[] = [
   {
     id: 'hero-slide-4',
     productType: 'Bracelet',
-    imagePath: '/assets/Bracelet.png',
-    mobileImagePath: '/assets/Bracelet Mobile.png',
+    imagePath: '/assets/gem_bracelets_cat.png',
+    mobileImagePath: '/assets/gem_bracelets_cat.png',
     subtitle: 'ICONIC FOUR-PRONG TENNIS SUITES',
     title: "FLAWLESS PROPORTIONS.\nETERNAL ELEGANCE.",
     description: "Continuous rows of certified diamonds crafted with precision movement and seamless clasp engineering.",
@@ -1569,47 +1569,8 @@ const DEFAULT_HERO_SLIDES: HeroBanner[] = [
 ];
 
 const getMobileHeroImagePath = (banner: HeroBanner): string => {
-  // If a dedicated mobile image was specifically uploaded, use it
-  if (
-    banner.mobileImagePath &&
-    banner.mobileImagePath.trim() !== '' &&
-    (banner.mobileImagePath.startsWith('/uploads/') ||
-      banner.mobileImagePath.startsWith('http') ||
-      banner.mobileImagePath.includes('img_'))
-  ) {
+  if (banner.mobileImagePath && banner.mobileImagePath.trim() !== '') {
     return normalizeImageUrl(banner.mobileImagePath.trim());
-  }
-
-  // If a custom desktop image was uploaded, use it on mobile as well unless a dedicated mobile upload exists
-  if (
-    banner.imagePath &&
-    (banner.imagePath.startsWith('/uploads/') ||
-      banner.imagePath.startsWith('http') ||
-      banner.imagePath.includes('img_'))
-  ) {
-    return normalizeImageUrl(banner.imagePath.trim());
-  }
-
-  // If a custom valid asset mobile image was defined
-  if (banner.mobileImagePath && banner.mobileImagePath.trim() !== '' && !banner.mobileImagePath.includes('gem_hero_luxury')) {
-    return normalizeImageUrl(banner.mobileImagePath.trim());
-  }
-
-  const type = (banner.productType || '').toLowerCase();
-  const title = (banner.title || '').toLowerCase();
-  const img = (banner.imagePath || '').toLowerCase();
-
-  if (type.includes('necklace') || title.includes('necklace') || img.includes('necklace')) {
-    return '/assets/Necklace Mobile.png';
-  }
-  if (type.includes('earring') || title.includes('earring') || img.includes('earring')) {
-    return '/assets/Earrings Mobile.png';
-  }
-  if (type.includes('bracelet') || title.includes('bracelet') || img.includes('bracelet')) {
-    return '/assets/Bracelet Mobile.png';
-  }
-  if (type.includes('ring') || title.includes('ring') || img.includes('ring')) {
-    return '/assets/Engagement Ring Mobile.png';
   }
   return normalizeImageUrl(banner.imagePath || '');
 };
