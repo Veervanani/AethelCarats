@@ -673,6 +673,22 @@ export const CustomJewelleryPage: React.FC = () => {
           </form>
         </FormSection>
       )}
+
+      {/* Dynamic CMS Sections if configured */}
+      {cmsPage?.sections?.map((sec: any, idx: number) => {
+        if (sec.isVisible === false) return null;
+        let s: any = {};
+        try { s = typeof sec.content === 'string' ? JSON.parse(sec.content) : (sec.content || {}); } catch (e) { s = { text: sec.content }; }
+        return (
+          <RevealContainer key={sec.id || idx} yOffset={35}>
+            <div style={{ maxWidth: 1300, margin: '48px auto 0', padding: '36px 28px', background: '#151515', border: '1px solid rgba(140, 116, 75, 0.25)', borderRadius: 6 }}>
+              <h2 style={{ fontFamily: 'Cormorant Garamond, serif', fontSize: '2rem', color: '#F5F1E8', marginBottom: 12 }}>{sec.title || s.title || s.heading}</h2>
+              {s.subtitle && <h4 style={{ color: '#C9A96E', margin: '0 0 12px', fontSize: '1rem' }}>{s.subtitle}</h4>}
+              <p style={{ color: '#D8D2C5', lineHeight: 1.7, whiteSpace: 'pre-line' }}>{s.description || s.text || s.content || ''}</p>
+            </div>
+          </RevealContainer>
+        );
+      })}
     </PageWrapper>
   );
 };

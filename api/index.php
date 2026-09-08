@@ -308,7 +308,7 @@ if ($path === '/api/v1/ring-size-guide' || $path === '/api/v1/admin/ring-size-gu
     if ($method === 'GET') {
         handleGetRingSizeGuide();
     } else if ($method === 'POST' || $method === 'PUT' || $method === 'PATCH') {
-        jsonResponse(['message' => 'Ring size guide saved successfully'], 200);
+        handleUpdateRingSizeGuide();
     } else {
         jsonError('Method Not Allowed', 405);
     }

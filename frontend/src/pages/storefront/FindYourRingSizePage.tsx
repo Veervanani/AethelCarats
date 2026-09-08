@@ -353,15 +353,20 @@ const ModalBox = styled.div`
   color: #F5F1E8;
 `;
 
+import { api } from '../../services/api';
+
 export const FindYourRingSizePage: React.FC = () => {
   const [showSizerModal, setShowSizerModal] = useState(false);
   const [sizerSubmitted, setSizerSubmitted] = useState(false);
   const [formInput, setFormInput] = useState({ name: '', email: '', address: '', city: '', postalCode: '' });
   const [cmsData, setCmsData] = useState<any>(null);
+  const [cmsPage, setCmsPage] = useState<any>(null);
 
   useEffect(() => {
-    fetch('/api/v1/ring-size-guide')
-      .then((res) => res.json())
+    window.scrollTo(0, 0);
+
+    // Fetch ring size guide specific table data
+    api.getRingSizeGuide()
       .then((data) => {
         if (data) {
           if (typeof data.conversionsJson === 'string') {
@@ -375,9 +380,33 @@ export const FindYourRingSizePage: React.FC = () => {
             } catch {}
           }
           setCmsData(data);
+          if (data.seoTitle) {
+            document.title = data.seoTitle;
+          }
         }
       })
       .catch((err) => console.error('Failed to fetch CMS ring size guide:', err));
+
+    // Also fetch general CMS page data if configured under slug 'ring-size-guide'
+    api.getPageBySlug('ring-size-guide')
+      .then((page) => {
+        if (page) {
+          let parsed: any = {};
+          const raw = page.draftContent || page.content;
+          if (raw) {
+            try {
+              parsed = typeof raw === 'string' ? JSON.parse(raw) : raw;
+            } catch {
+              parsed = { content: raw };
+            }
+          }
+          setCmsPage({ ...page, parsedContent: parsed });
+          if (!cmsData?.seoTitle && page.seoMetadata?.seoTitle) {
+            document.title = page.seoMetadata.seoTitle;
+          }
+        }
+      })
+      .catch(console.warn);
   }, []);
 
   const handlePrintChart = () => {
@@ -389,7 +418,9 @@ export const FindYourRingSizePage: React.FC = () => {
     setSizerSubmitted(true);
   };
 
-  const CONVERSION_DATA = cmsData?.conversions || [
+  const c = cmsPage?.parsedContent || {};
+
+  const CONVERSION_DATA = (cmsData?.conversions && cmsData.conversions.length > 0) ? cmsData.conversions : [
     { us: '3', uk: 'F', eu: '44', diameter: '14.1 mm', circumference: '44.2 mm' },
     { us: '3.5', uk: 'G', eu: '45', diameter: '14.5 mm', circumference: '45.5 mm' },
     { us: '4', uk: 'H 1/2', eu: '47', diameter: '14.9 mm', circumference: '46.8 mm' },
@@ -411,6 +442,37 @@ export const FindYourRingSizePage: React.FC = () => {
     { us: '12', uk: 'Y', eu: '67', diameter: '21.4 mm', circumference: '67.2 mm' },
   ];
 
+  const defaultSteps = [
+    { step: 1, title: 'Measure an Existing Ring', description: 'Place an existing ring that fits the target finger over our printable sizing circles until the inside of the ring aligns exactly with the circle perimeter.' },
+    { step: 2, title: 'Measure Your Finger', description: 'Wrap a flexible measuring tape or strip of paper snugly around the knuckle base. Mark the overlap point and measure length in millimeters to find circumference.' },
+    { step: 3, title: 'Use Our Free Ring Sizer', description: 'Thread the end of our plastic sizer through the buckle. Adjust until it slides comfortably over the knuckle for exact US ring size reading.' },
+  ];
+
+  const measureSteps = (cmsData?.measureSteps && cmsData.measureSteps.length > 0)
+    ? cmsData.measureSteps
+    : defaultSteps;
+
+  const heroTitle = cmsData?.heroTitle || c.heading || 'How To Measure Your Ring Size';
+  const heroSubtitle = cmsData?.heroSubtitle || c.subheading || 'Ring Sizer & Conversion Guide';
+  const heroDesc = cmsData?.introParagraphs || c.introduction || 'Discovering your ideal ring size ensures maximum comfort and security for your bespoke AethelCarats creation. Follow our complimentary guide, printable sizer, and international conversion matrix.';
+  const heroImage = cmsData?.heroImage || c.desktopImage || c.pageImages?.desktopImage || '/assets/gem_solitaire_ring_perfect.png';
+  const introHeading = cmsData?.introHeading || 'Finding Your Ring Size';
+  const introDesc = cmsData?.introContent || cmsData?.introParagraphs || c.introduction || 'Finding the right ring size is one of the most essential steps when choosing an engagement ring or wedding band. AethelCarats provides complimentary resizing within 30 days for all non-custom creation orders.';
+
+  const sizerHeading = cmsData?.sizerHeading || 'Complimentary Plastic Ring Sizer';
+  const sizerDescription = cmsData?.sizerDescription || 'Receive a free AethelCarats belt-style plastic ring sizer delivered directly to your doorstep. It works like a belt around your finger for easy, accurate measurements at home.';
+  const sizerBtnText = cmsData?.sizerButtonText || 'REQUEST FREE RING SIZER';
+  const sizerImage = cmsData?.sizerImage || '/assets/why-aura/craftsmanship-hero.jpg';
+
+  const chartTitle = cmsData?.chartTitle || 'Printable Ring Size Chart';
+  const chartDescription = cmsData?.chartDescription || 'Print our 1:1 scale ring size chart to measure an existing ring or match your finger diameter directly on paper. Ensure page scaling is set to 100% when printing.';
+
+  const measureHeading = cmsData?.measureHeading || 'How To Measure At Home';
+  const ctaHeading = cmsData?.ctaHeading || 'Find Your Perfect AethelCarats Ring';
+  const ctaDescription = cmsData?.ctaDescription || 'Explore our certified GIA natural and lab diamond solitaire engagement rings and eternity bands.';
+  const ctaButtonText = cmsData?.ctaButtonText || 'SHOP RINGS CATALOGUE';
+  const ctaButtonUrl = cmsData?.ctaButtonUrl || '/rings';
+
   return (
     <PageWrapper>
       {/* BREADCRUMB */}
@@ -421,23 +483,19 @@ export const FindYourRingSizePage: React.FC = () => {
       {/* HERO SECTION */}
       <HeroSection>
         <HeroText>
-          <p className="subtitle">Ring Sizer & Conversion Guide</p>
-          <h1>How To Measure Your Ring Size</h1>
-          <p className="desc">
-            Discovering your ideal ring size ensures maximum comfort and security for your bespoke AethelCarats creation. Follow our complimentary guide, printable sizer, and international conversion matrix.
-          </p>
+          <p className="subtitle">{heroSubtitle}</p>
+          <h1>{heroTitle}</h1>
+          <p className="desc">{heroDesc}</p>
         </HeroText>
         <HeroMedia>
-          <SafeImage src="/assets/gem_solitaire_ring_perfect.png" alt="AethelCarats Ring Sizing" />
+          <SafeImage src={heroImage} alt={heroTitle} />
         </HeroMedia>
       </HeroSection>
 
       {/* INTRO SECTION */}
       <IntroSection>
-        <h2>Finding Your Ring Size</h2>
-        <p>
-          Finding the right ring size is one of the most essential steps when choosing an engagement ring or wedding band. AethelCarats provides complimentary resizing within 30 days for all non-custom creation orders.
-        </p>
+        <h2>{introHeading}</h2>
+        <p>{introDesc}</p>
       </IntroSection>
 
       {/* DARK CTA BAND */}
@@ -457,16 +515,14 @@ export const FindYourRingSizePage: React.FC = () => {
       <RevealContainer yOffset={35}>
         <SplitSection>
           <div className="content-side">
-            <h3>Complimentary Plastic Ring Sizer</h3>
-            <p>
-              Receive a free AethelCarats belt-style plastic ring sizer delivered directly to your doorstep. It works like a belt around your finger for easy, accurate measurements at home.
-            </p>
+            <h3>{sizerHeading}</h3>
+            <p>{sizerDescription}</p>
             <button className="action-btn" onClick={() => setShowSizerModal(true)}>
-              REQUEST FREE RING SIZER
+              {sizerBtnText}
             </button>
           </div>
           <div className="media-side">
-            <SafeImage src="/assets/why-aura/craftsmanship-hero.jpg" alt="Free Ring Sizer" style={{ borderRadius: 4 }} />
+            <SafeImage src={sizerImage} alt={sizerHeading} style={{ borderRadius: 4 }} />
           </div>
         </SplitSection>
       </RevealContainer>
@@ -487,10 +543,8 @@ export const FindYourRingSizePage: React.FC = () => {
             </div>
           </div>
           <div className="content-side">
-            <h3>Printable Ring Size Chart</h3>
-            <p>
-              Print our 1:1 scale ring size chart to measure an existing ring or match your finger diameter directly on paper. Ensure page scaling is set to 100% when printing.
-            </p>
+            <h3>{chartTitle}</h3>
+            <p>{chartDescription}</p>
             <button className="action-btn" onClick={handlePrintChart}>
               PRINT RING SIZE CHART
             </button>
@@ -499,25 +553,15 @@ export const FindYourRingSizePage: React.FC = () => {
       </RevealContainer>
 
       {/* HOW TO MEASURE AT HOME */}
-      <h3 style={{ fontFamily: 'Cormorant Garamond, serif', fontSize: '2.2rem', textAlign: 'center', color: '#F5F1E8', marginBottom: 32 }}>How To Measure At Home</h3>
+      <h3 style={{ fontFamily: 'Cormorant Garamond, serif', fontSize: '2.2rem', textAlign: 'center', color: '#F5F1E8', marginBottom: 32 }}>{measureHeading}</h3>
       <MethodsGrid>
-        <MethodCard>
-          <div className="num">01</div>
-          <h4>Measure an Existing Ring</h4>
-          <p>Place an existing ring that fits the target finger over our printable sizing circles until the inside of the ring aligns exactly with the circle perimeter.</p>
-        </MethodCard>
-
-        <MethodCard>
-          <div className="num">02</div>
-          <h4>Measure Your Finger</h4>
-          <p>Wrap a flexible measuring tape or strip of paper snugly around the knuckle base. Mark the overlap point and measure length in millimeters to find circumference.</p>
-        </MethodCard>
-
-        <MethodCard>
-          <div className="num">03</div>
-          <h4>Use Our Free Ring Sizer</h4>
-          <p>Thread the end of our plastic sizer through the buckle. Adjust until it slides comfortably over the knuckle for exact US ring size reading.</p>
-        </MethodCard>
+        {measureSteps.map((st: any, idx: number) => (
+          <MethodCard key={idx}>
+            <div className="num">0{idx + 1}</div>
+            <h4>{st.title}</h4>
+            <p>{st.description}</p>
+          </MethodCard>
+        ))}
       </MethodsGrid>
 
       {/* CONVERSION TABLE */}
@@ -534,8 +578,8 @@ export const FindYourRingSizePage: React.FC = () => {
             </tr>
           </thead>
           <tbody>
-            {CONVERSION_DATA.map((row: any) => (
-              <tr key={row.us}>
+            {CONVERSION_DATA.map((row: any, rIdx: number) => (
+              <tr key={row.us || rIdx}>
                 <td style={{ fontWeight: 700, color: '#C9A96E' }}>US {row.us}</td>
                 <td>{row.uk}</td>
                 <td>{row.eu}</td>
@@ -555,14 +599,30 @@ export const FindYourRingSizePage: React.FC = () => {
         </p>
       </IntroSection>
 
+      {/* Dynamic CMS Sections if configured */}
+      {cmsPage?.sections?.map((sec: any, idx: number) => {
+        if (sec.isVisible === false) return null;
+        let s: any = {};
+        try { s = typeof sec.content === 'string' ? JSON.parse(sec.content) : (sec.content || {}); } catch { s = { text: sec.content }; }
+        return (
+          <RevealContainer key={sec.id || idx} yOffset={35}>
+            <IntroSection style={{ background: '#151515', padding: '36px 28px', borderRadius: 6, border: '1px solid rgba(140, 116, 75, 0.25)', marginTop: 40 }}>
+              <h2 style={{ fontFamily: 'Cormorant Garamond, serif', color: '#F5F1E8' }}>{sec.title || s.title || s.heading}</h2>
+              {s.subtitle && <h4 style={{ color: '#C9A96E', margin: '8px 0 16px' }}>{s.subtitle}</h4>}
+              <p style={{ color: '#D8D2C5', lineHeight: 1.7, whiteSpace: 'pre-line' }}>{s.description || s.text || s.content || ''}</p>
+            </IntroSection>
+          </RevealContainer>
+        );
+      })}
+
       {/* FINAL CTA */}
       <div style={{ textAlign: 'center', marginTop: 80, paddingTop: 48, borderTop: '1px solid rgba(140, 116, 75, 0.25)' }}>
-        <h2 style={{ fontFamily: 'Cormorant Garamond, serif', fontSize: '2.5rem', color: '#F5F1E8', marginBottom: 16 }}>Find Your Perfect AethelCarats Ring</h2>
+        <h2 style={{ fontFamily: 'Cormorant Garamond, serif', fontSize: '2.5rem', color: '#F5F1E8', marginBottom: 16 }}>{ctaHeading}</h2>
         <p style={{ color: '#D8D2C5', fontSize: '1rem', maxWidth: 600, margin: '0 auto 28px' }}>
-          Explore our certified GIA natural and lab diamond solitaire engagement rings and eternity bands.
+          {ctaDescription}
         </p>
-        <Link to="/rings" style={{ padding: '16px 36px', background: '#C9A96E', color: '#0B0B0B', textDecoration: 'none', fontWeight: 700, letterSpacing: '0.1em', borderRadius: 4, display: 'inline-block' }}>
-          SHOP RINGS CATALOGUE
+        <Link to={ctaButtonUrl} style={{ padding: '16px 36px', background: '#C9A96E', color: '#0B0B0B', textDecoration: 'none', fontWeight: 700, letterSpacing: '0.1em', borderRadius: 4, display: 'inline-block' }}>
+          {ctaButtonText}
         </Link>
       </div>
 

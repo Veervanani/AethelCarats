@@ -328,6 +328,22 @@ export const SaleExclusionsPage: React.FC = () => {
             )}
           </EditorialBlock>
         </RevealContainer>
+
+        {/* Dynamic CMS Sections if configured */}
+        {cmsPage?.sections?.map((sec: any, idx: number) => {
+          if (sec.isVisible === false) return null;
+          let s: any = {};
+          try { s = typeof sec.content === 'string' ? JSON.parse(sec.content) : (sec.content || {}); } catch (e) { s = { text: sec.content }; }
+          return (
+            <RevealContainer key={sec.id || idx} yOffset={35}>
+              <EditorialBlock>
+                <h2>{sec.title || s.title || s.heading}</h2>
+                {s.subtitle && <h4 style={{ color: '#C9A96E', margin: '0 0 12px', fontSize: '1rem' }}>{s.subtitle}</h4>}
+                <p style={{ whiteSpace: 'pre-line' }}>{s.description || s.text || s.content || ''}</p>
+              </EditorialBlock>
+            </RevealContainer>
+          );
+        })}
       </ContentGrid>
 
       <RevealContainer yOffset={35}>

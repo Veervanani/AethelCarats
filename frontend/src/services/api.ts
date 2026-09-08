@@ -351,6 +351,16 @@ export const api = {
     return res.data;
   },
 
+  getRingSizeGuide: async () => {
+    const res = await API.get<any>('/ring-size-guide');
+    return res.data;
+  },
+
+  updateRingSizeGuide: async (data: any) => {
+    const res = await API.put<any>('/admin/ring-size-guide', data);
+    return res.data;
+  },
+
   submitCustomRequest: async (data: any) => {
     const res = await API.post<CustomRequest>('/custom-requests', data);
     return res.data;

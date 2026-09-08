@@ -1151,6 +1151,155 @@ function handleGetRingSizeGuide(): void {
 }
 
 /**
+ * POST/PUT /api/v1/ring-size-guide
+ * POST/PUT /api/v1/admin/ring-size-guide
+ */
+function handleUpdateRingSizeGuide(): void {
+    requireRole(['CONTENT_MANAGER', 'ADMIN', 'SUPER_ADMIN']);
+
+    try {
+        $pdo = getDatabaseConnection();
+        $raw = file_get_contents('php://input');
+        $data = json_decode($raw, true);
+        if (!is_array($data) || empty($data)) {
+            $data = $_POST;
+        }
+
+        $stmt = $pdo->query("SELECT id FROM `RingSizeGuide` WHERE `id` = 'main' LIMIT 1");
+        $exists = (bool) ($stmt ? $stmt->fetch() : false);
+
+        $conversionsJson = isset($data['conversions'])
+            ? (is_string($data['conversions']) ? $data['conversions'] : json_encode($data['conversions']))
+            : ($data['conversionsJson'] ?? null);
+        if (is_array($conversionsJson)) {
+            $conversionsJson = json_encode($conversionsJson);
+        }
+
+        $measureStepsJson = isset($data['measureSteps'])
+            ? (is_string($data['measureSteps']) ? $data['measureSteps'] : json_encode($data['measureSteps']))
+            : ($data['measureStepsJson'] ?? null);
+        if (is_array($measureStepsJson)) {
+            $measureStepsJson = json_encode($measureStepsJson);
+        }
+
+        if (!$exists) {
+            $insertSql = "INSERT INTO `RingSizeGuide` (
+                `id`, `title`, `slug`, `status`, `heroTitle`, `heroSubtitle`, `heroImage`, `heroImagePosition`,
+                `heroBg`, `heroCtaText`, `heroCtaUrl`, `introHeading`, `introParagraphs`, `introContent`,
+                `infoHeading`, `infoDescription`, `chartImage`, `chartTitle`, `chartDescription`,
+                `conversionsJson`, `sizerHeading`, `sizerDescription`, `sizerImage`, `sizerButtonText`,
+                `sizerButtonUrl`, `measureHeading`, `measureDescription`, `measureStepsJson`, `ctaHeading`,
+                `ctaDescription`, `ctaButtonText`, `ctaButtonUrl`, `ctaBg`, `seoTitle`, `metaDescription`,
+                `keywords`, `canonicalUrl`, `ogTitle`, `ogDescription`, `ogImage`, `createdAt`, `updatedAt`
+            ) VALUES (
+                'main', :title, :slug, :status, :heroTitle, :heroSubtitle, :heroImage, :heroImagePosition,
+                :heroBg, :heroCtaText, :heroCtaUrl, :introHeading, :introParagraphs, :introContent,
+                :infoHeading, :infoDescription, :chartImage, :chartTitle, :chartDescription,
+                :conversionsJson, :sizerHeading, :sizerDescription, :sizerImage, :sizerButtonText,
+                :sizerButtonUrl, :measureHeading, :measureDescription, :measureStepsJson, :ctaHeading,
+                :ctaDescription, :ctaButtonText, :ctaButtonUrl, :ctaBg, :seoTitle, :metaDescription,
+                :keywords, :canonicalUrl, :ogTitle, :ogDescription, :ogImage, NOW(), NOW()
+            )";
+            $stmt = $pdo->prepare($insertSql);
+        } else {
+            $updateSql = "UPDATE `RingSizeGuide` SET
+                `title` = COALESCE(:title, `title`),
+                `slug` = COALESCE(:slug, `slug`),
+                `status` = COALESCE(:status, `status`),
+                `heroTitle` = COALESCE(:heroTitle, `heroTitle`),
+                `heroSubtitle` = COALESCE(:heroSubtitle, `heroSubtitle`),
+                `heroImage` = COALESCE(:heroImage, `heroImage`),
+                `heroImagePosition` = COALESCE(:heroImagePosition, `heroImagePosition`),
+                `heroBg` = COALESCE(:heroBg, `heroBg`),
+                `heroCtaText` = COALESCE(:heroCtaText, `heroCtaText`),
+                `heroCtaUrl` = COALESCE(:heroCtaUrl, `heroCtaUrl`),
+                `introHeading` = COALESCE(:introHeading, `introHeading`),
+                `introParagraphs` = COALESCE(:introParagraphs, `introParagraphs`),
+                `introContent` = COALESCE(:introContent, `introContent`),
+                `infoHeading` = COALESCE(:infoHeading, `infoHeading`),
+                `infoDescription` = COALESCE(:infoDescription, `infoDescription`),
+                `chartImage` = COALESCE(:chartImage, `chartImage`),
+                `chartTitle` = COALESCE(:chartTitle, `chartTitle`),
+                `chartDescription` = COALESCE(:chartDescription, `chartDescription`),
+                `conversionsJson` = COALESCE(:conversionsJson, `conversionsJson`),
+                `sizerHeading` = COALESCE(:sizerHeading, `sizerHeading`),
+                `sizerDescription` = COALESCE(:sizerDescription, `sizerDescription`),
+                `sizerImage` = COALESCE(:sizerImage, `sizerImage`),
+                `sizerButtonText` = COALESCE(:sizerButtonText, `sizerButtonText`),
+                `sizerButtonUrl` = COALESCE(:sizerButtonUrl, `sizerButtonUrl`),
+                `measureHeading` = COALESCE(:measureHeading, `measureHeading`),
+                `measureDescription` = COALESCE(:measureDescription, `measureDescription`),
+                `measureStepsJson` = COALESCE(:measureStepsJson, `measureStepsJson`),
+                `ctaHeading` = COALESCE(:ctaHeading, `ctaHeading`),
+                `ctaDescription` = COALESCE(:ctaDescription, `ctaDescription`),
+                `ctaButtonText` = COALESCE(:ctaButtonText, `ctaButtonText`),
+                `ctaButtonUrl` = COALESCE(:ctaButtonUrl, `ctaButtonUrl`),
+                `ctaBg` = COALESCE(:ctaBg, `ctaBg`),
+                `seoTitle` = COALESCE(:seoTitle, `seoTitle`),
+                `metaDescription` = COALESCE(:metaDescription, `metaDescription`),
+                `keywords` = COALESCE(:keywords, `keywords`),
+                `canonicalUrl` = COALESCE(:canonicalUrl, `canonicalUrl`),
+                `ogTitle` = COALESCE(:ogTitle, `ogTitle`),
+                `ogDescription` = COALESCE(:ogDescription, `ogDescription`),
+                `ogImage` = COALESCE(:ogImage, `ogImage`),
+                `updatedAt` = NOW()
+            WHERE `id` = 'main'";
+            $stmt = $pdo->prepare($updateSql);
+        }
+
+        $stmt->execute([
+            ':title'              => $data['title'] ?? ($exists ? null : 'Ring Size Guide'),
+            ':slug'               => $data['slug'] ?? ($exists ? null : 'find-your-ring-size'),
+            ':status'             => $data['status'] ?? ($exists ? null : 'PUBLISHED'),
+            ':heroTitle'          => $data['heroTitle'] ?? null,
+            ':heroSubtitle'       => $data['heroSubtitle'] ?? null,
+            ':heroImage'          => $data['heroImage'] ?? null,
+            ':heroImagePosition'  => $data['heroImagePosition'] ?? null,
+            ':heroBg'             => $data['heroBg'] ?? null,
+            ':heroCtaText'        => $data['heroCtaText'] ?? null,
+            ':heroCtaUrl'         => $data['heroCtaUrl'] ?? null,
+            ':introHeading'       => $data['introHeading'] ?? null,
+            ':introParagraphs'    => $data['introParagraphs'] ?? null,
+            ':introContent'       => $data['introContent'] ?? null,
+            ':infoHeading'        => $data['infoHeading'] ?? null,
+            ':infoDescription'    => $data['infoDescription'] ?? null,
+            ':chartImage'         => $data['chartImage'] ?? null,
+            ':chartTitle'         => $data['chartTitle'] ?? null,
+            ':chartDescription'   => $data['chartDescription'] ?? null,
+            ':conversionsJson'    => $conversionsJson,
+            ':sizerHeading'       => $data['sizerHeading'] ?? null,
+            ':sizerDescription'   => $data['sizerDescription'] ?? null,
+            ':sizerImage'         => $data['sizerImage'] ?? null,
+            ':sizerButtonText'    => $data['sizerButtonText'] ?? null,
+            ':sizerButtonUrl'     => $data['sizerButtonUrl'] ?? null,
+            ':measureHeading'     => $data['measureHeading'] ?? null,
+            ':measureDescription' => $data['measureDescription'] ?? null,
+            ':measureStepsJson'   => $measureStepsJson,
+            ':ctaHeading'         => $data['ctaHeading'] ?? null,
+            ':ctaDescription'     => $data['ctaDescription'] ?? null,
+            ':ctaButtonText'      => $data['ctaButtonText'] ?? null,
+            ':ctaButtonUrl'       => $data['ctaButtonUrl'] ?? null,
+            ':ctaBg'              => $data['ctaBg'] ?? null,
+            ':seoTitle'           => $data['seoTitle'] ?? null,
+            ':metaDescription'    => $data['metaDescription'] ?? null,
+            ':keywords'           => $data['keywords'] ?? null,
+            ':canonicalUrl'       => $data['canonicalUrl'] ?? null,
+            ':ogTitle'            => $data['ogTitle'] ?? null,
+            ':ogDescription'      => $data['ogDescription'] ?? null,
+            ':ogImage'            => $data['ogImage'] ?? null,
+        ]);
+
+        $fetchStmt = $pdo->query("SELECT * FROM `RingSizeGuide` WHERE `id` = 'main' LIMIT 1");
+        $updatedGuide = $fetchStmt ? $fetchStmt->fetch() : ['id' => 'main'];
+
+        jsonResponse($updatedGuide ?: ['id' => 'main', 'message' => 'Ring size guide updated successfully'], 200);
+    } catch (Throwable $e) {
+        error_log("handleUpdateRingSizeGuide error: " . $e->getMessage());
+        jsonError('Error updating ring size guide: ' . $e->getMessage(), 500);
+    }
+}
+
+/**
  * GET /api/v1/filters (Public API)
  * GET /api/v1/admin/filters (Admin API)
  */

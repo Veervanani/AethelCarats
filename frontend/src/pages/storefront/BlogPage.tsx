@@ -356,10 +356,34 @@ const ArticleCard = styled.article`
 
 export const BlogPage: React.FC = () => {
   const [posts, setPosts] = useState<BlogPost[]>(ARTICLES);
+  const [cmsPage, setCmsPage] = useState<any>(null);
 
   useEffect(() => {
+    window.scrollTo(0, 0);
+
     // Dynamic SEO Metadata
     document.title = 'AethelCarats Journal | Jewellery & Diamond Insights';
+
+    // Fetch CMS Page for Blog Header & Custom Sections
+    api.getPageBySlug('blog').then((data) => {
+      if (data) {
+        let parsed: any = {};
+        const raw = data.draftContent || data.content;
+        if (raw) {
+          try {
+            parsed = typeof raw === 'string' ? JSON.parse(raw) : raw;
+          } catch {
+            parsed = { content: raw };
+          }
+        }
+        setCmsPage({ ...data, parsedContent: parsed });
+        if (data.seoMetadata?.seoTitle) {
+          document.title = data.seoMetadata.seoTitle;
+        } else if (data.title) {
+          document.title = `${data.title} | AethelCarats Fine Jewellery`;
+        }
+      }
+    }).catch(console.warn);
 
     // Fetch live blog posts from DB API
     api.getBlogPosts().then((data) => {
@@ -409,25 +433,31 @@ export const BlogPage: React.FC = () => {
   const featured = posts.find((p) => p.featured) || posts[0];
   const gridPosts = posts.filter((p) => p.id !== featured.id);
 
+  const c = cmsPage?.parsedContent || {};
+  const heroEyebrow = c.eyebrow || 'EDITORIAL INSIGHTS & EDUCATION';
+  const heroTitle = c.heading || cmsPage?.title || 'The AethelCarats Journal';
+  const heroSubtitle = c.subheading || c.introduction || 'Expert diamond guides, high-jewellery craftsmanship stories, and style inspiration curated by our master gemmologists and designers.';
+  const heroImage = c.desktopImage || c.pageImages?.desktopImage || '/assets/why-aura/blog-hero.jpg';
+
   return (
     <PageWrapper>
       <BreadcrumbsBar>
         <Link to="/">Home</Link>
         <ChevronRight size={12} />
-        <span className="current">Journal</span>
+        <span className="current">{heroTitle}</span>
       </BreadcrumbsBar>
 
       <RevealContainer yOffset={35}>
         <HeroSection>
           <div className="text-side">
-            <span className="eyebrow">EDITORIAL INSIGHTS & EDUCATION</span>
-            <h1>The AethelCarats Journal</h1>
-            <p className="subtitle">
-              Expert diamond guides, high-jewellery craftsmanship stories, and style inspiration curated by our master gemmologists and designers.
+            <span className="eyebrow" style={{ color: c.eyebrowColor || undefined }}>{heroEyebrow}</span>
+            <h1 style={{ color: c.headingColor || undefined }}>{heroTitle}</h1>
+            <p className="subtitle" style={{ color: c.subheadingColor || c.introductionColor || undefined }}>
+              {heroSubtitle}
             </p>
           </div>
           <div className="image-side">
-            <SafeImage src="/assets/why-aura/blog-hero.jpg" alt="AethelCarats Editorial Jewellery Journal" />
+            <SafeImage src={heroImage} alt={heroTitle} />
           </div>
         </HeroSection>
       </RevealContainer>
@@ -477,6 +507,22 @@ export const BlogPage: React.FC = () => {
             </RevealContainer>
           ))}
         </ArticleGrid>
+
+        {/* Dynamic CMS Sections if configured */}
+        {cmsPage?.sections?.map((sec: any, idx: number) => {
+          if (sec.isVisible === false) return null;
+          let s: any = {};
+          try { s = typeof sec.content === 'string' ? JSON.parse(sec.content) : (sec.content || {}); } catch { s = { text: sec.content }; }
+          return (
+            <RevealContainer key={sec.id || idx} yOffset={35}>
+              <div style={{ maxWidth: 1200, margin: '48px auto 0', padding: '36px 28px', background: '#151515', border: '1px solid rgba(140, 116, 75, 0.25)', borderRadius: 6 }}>
+                <h2 style={{ fontFamily: 'Cormorant Garamond, serif', fontSize: '2rem', color: '#F5F1E8', marginBottom: 12 }}>{sec.title || s.title || s.heading}</h2>
+                {s.subtitle && <h4 style={{ color: '#C9A96E', margin: '0 0 12px', fontSize: '1rem' }}>{s.subtitle}</h4>}
+                <p style={{ color: '#D8D2C5', lineHeight: 1.7, whiteSpace: 'pre-line' }}>{s.description || s.text || s.content || ''}</p>
+              </div>
+            </RevealContainer>
+          );
+        })}
       </ContentContainer>
 
       <WhyAuraDiamondNav />

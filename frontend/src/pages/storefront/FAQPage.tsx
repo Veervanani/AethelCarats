@@ -446,9 +446,14 @@ export const FAQPage: React.FC = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('All');
   const [openIds, setOpenIds] = useState<string[]>(['d1', 'j1']);
+  const [cmsPage, setCmsPage] = useState<any>(null);
+  const [contactPhone, setContactPhone] = useState('+91 79902 78892');
+  const [contactEmail, setContactEmail] = useState('concierge@aethelcarats.com');
 
   useEffect(() => {
-    // Dynamic SEO Metadata
+    window.scrollTo(0, 0);
+
+    // Dynamic SEO Metadata default
     document.title = 'AethelCarats FAQ | Diamonds, Jewellery, Orders & Shipping';
     
     // Fetch FAQs from DB API
@@ -462,6 +467,35 @@ export const FAQPage: React.FC = () => {
         })));
       }
     }).catch(console.error);
+
+    // Fetch CMS page for FAQ metadata and sections
+    api.getPageBySlug('faq').then((data) => {
+      if (data) {
+        let parsed: any = {};
+        const raw = data.draftContent || data.content;
+        if (raw) {
+          try {
+            parsed = typeof raw === 'string' ? JSON.parse(raw) : raw;
+          } catch {
+            parsed = { content: raw };
+          }
+        }
+        setCmsPage({ ...data, parsedContent: parsed });
+        if (data.seoMetadata?.seoTitle) {
+          document.title = data.seoMetadata.seoTitle;
+        } else if (data.title) {
+          document.title = `${data.title} | AethelCarats Fine Jewellery`;
+        }
+      }
+    }).catch(console.warn);
+
+    // Fetch Site Settings for Contact Phone/Email
+    api.getSiteSettings().then((settings) => {
+      if (settings) {
+        if (settings.contactPhone) setContactPhone(settings.contactPhone);
+        if (settings.contactEmail) setContactEmail(settings.contactEmail);
+      }
+    }).catch(console.warn);
 
     const metaDesc = document.querySelector('meta[name="description"]');
     if (metaDesc) {
@@ -529,6 +563,12 @@ export const FAQPage: React.FC = () => {
     return matchesCategory && matchesSearch;
   });
 
+  const c = cmsPage?.parsedContent || {};
+  const heroTitle = c.heading || cmsPage?.title || 'Frequently Asked Questions';
+  const heroSubtitle = c.subheading || 'Everything you need to know before choosing your diamond or fine jewellery piece.';
+  const cleanPhone = (c.phone || contactPhone).replace(/[^\d+]/g, '');
+  const displayPhone = c.phone || contactPhone;
+
   return (
     <PageWrapper>
       <BreadcrumbsBar>
@@ -536,14 +576,14 @@ export const FAQPage: React.FC = () => {
         <ChevronRight size={12} />
         <span>Customer Care</span>
         <ChevronRight size={12} />
-        <span className="current">FAQ</span>
+        <span className="current">{heroTitle}</span>
       </BreadcrumbsBar>
 
       <RevealContainer yOffset={35}>
         <HeroSection>
-          <h1>Frequently Asked Questions</h1>
-          <p className="subtitle">
-            Everything you need to know before choosing your diamond or fine jewellery piece.
+          <h1 style={{ color: c.headingColor || undefined }}>{heroTitle}</h1>
+          <p className="subtitle" style={{ color: c.subheadingColor || undefined }}>
+            {heroSubtitle}
           </p>
 
           <SearchContainer>
@@ -603,6 +643,22 @@ export const FAQPage: React.FC = () => {
       )}
     </FAQList>
 
+    {/* Dynamic CMS Sections if configured */}
+    {cmsPage?.sections?.map((sec: any, idx: number) => {
+      if (sec.isVisible === false) return null;
+      let s: any = {};
+      try { s = typeof sec.content === 'string' ? JSON.parse(sec.content) : (sec.content || {}); } catch { s = { text: sec.content }; }
+      return (
+        <RevealContainer key={sec.id || idx} yOffset={35}>
+          <div style={{ maxWidth: 900, margin: '40px auto 0', padding: '32px', background: '#151515', border: '1px solid rgba(140, 116, 75, 0.25)', borderRadius: 6 }}>
+            <h2 style={{ fontFamily: 'Cormorant Garamond, serif', fontSize: '1.8rem', color: '#F5F1E8', marginBottom: 12 }}>{sec.title || s.title || s.heading}</h2>
+            {s.subtitle && <h4 style={{ color: '#C9A96E', margin: '0 0 12px', fontSize: '0.95rem' }}>{s.subtitle}</h4>}
+            <p style={{ color: '#D8D2C5', lineHeight: 1.7, whiteSpace: 'pre-line' }}>{s.description || s.text || s.content || ''}</p>
+          </div>
+        </RevealContainer>
+      );
+    })}
+
     <RevealContainer yOffset={35}>
       <StillHaveQuestions>
         <QuestionsCard>
@@ -614,8 +670,8 @@ export const FAQPage: React.FC = () => {
             <Link to="/contact-us" className="primary-btn">
               <Mail size={16} /> CONTACT CUSTOMER CARE
             </Link>
-            <a href="tel:+917990278892" className="secondary-btn">
-              <Phone size={16} /> CALL +91 79902 78892
+            <a href={`tel:${cleanPhone}`} className="secondary-btn">
+              <Phone size={16} /> CALL {displayPhone}
             </a>
           </div>
         </QuestionsCard>
