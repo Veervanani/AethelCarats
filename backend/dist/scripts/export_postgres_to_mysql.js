@@ -3,7 +3,8 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-const client_1 = require("@prisma/client");
+const prisma_1 = __importDefault(require("../prisma"));
+const prisma = prisma_1.default;
 const fs_1 = __importDefault(require("fs"));
 const path_1 = __importDefault(require("path"));
 /**

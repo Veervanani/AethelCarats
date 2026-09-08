@@ -3,9 +3,9 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-const client_1 = require("@prisma/client");
+const prisma_1 = __importDefault(require("./prisma"));
 const crypto_1 = __importDefault(require("crypto"));
-const prisma = new client_1.PrismaClient();
+const prisma = prisma_1.default;
 const FIRST_NAMES = [
     'Charlotte', 'Sophia', 'Gillian', 'Evelyn', 'Vivienne', 'James', 'Olivia',
     'Amelia', 'Harrison', 'Victoria', 'Isabelle', 'Julian', 'Clara', 'Nathaniel',

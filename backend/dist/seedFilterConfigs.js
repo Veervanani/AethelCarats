@@ -1,8 +1,8 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.seedFilterConfigs = seedFilterConfigs;
-const client_1 = require("@prisma/client");
-const prisma = new client_1.PrismaClient();
+const prisma_1 = require("./prisma");
+const prisma = prisma_1.default || prisma_1.prisma;
 async function seedFilterConfigs() {
     console.log('--- SEEDING GLOBAL PRODUCT FILTER CONFIGURATIONS ---');
     const defaultFilters = [

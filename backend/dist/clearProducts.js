@@ -1,7 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-const client_1 = require("@prisma/client");
-const prisma = new client_1.PrismaClient();
+const prisma_1 = require("./prisma");
+const prisma = prisma_1.default || prisma_1.prisma;
 async function clearAllProducts() {
     console.log('🗑️ Deleting all products and related records from database...');
     await prisma.productImage.deleteMany();
