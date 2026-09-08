@@ -253,6 +253,10 @@ export const AdminFormGroup = styled.div`
     color: #383531;
     display: flex;
     justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 6px;
+    min-width: 0;
 
     span.req {
       color: #c53030;

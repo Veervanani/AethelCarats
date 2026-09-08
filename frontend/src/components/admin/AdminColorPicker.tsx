@@ -23,24 +23,27 @@ const LUXURY_PRESETS = [
 const Container = styled.div<{ $inline?: boolean }>`
   display: inline-flex;
   align-items: center;
-  gap: 6px;
+  gap: 4px;
+  flex-wrap: wrap;
+  max-width: 100%;
+  box-sizing: border-box;
+  min-width: 0;
   ${({ $inline }) =>
     $inline
       ? `
-    font-size: 0.75rem;
+    font-size: 0.72rem;
   `
       : `
     margin-top: 4px;
     margin-bottom: 8px;
     width: 100%;
-    flex-wrap: wrap;
   `}
 `;
 
 const SwatchWrapper = styled.label`
   position: relative;
-  width: 22px;
-  height: 22px;
+  width: 20px;
+  height: 20px;
   border-radius: 4px;
   border: 1px solid #d9d3c7;
   cursor: pointer;
@@ -61,17 +64,18 @@ const SwatchWrapper = styled.label`
 `;
 
 const HexInput = styled.input`
-  width: 76px !important;
-  height: 24px !important;
-  padding: 2px 6px !important;
+  width: 64px !important;
+  height: 22px !important;
+  padding: 1px 5px !important;
   font-family: monospace !important;
-  font-size: 0.72rem !important;
+  font-size: 0.70rem !important;
   text-transform: uppercase !important;
   border: 1px solid #d9d3c7 !important;
   border-radius: 4px !important;
   background: #ffffff !important;
   color: #1f1f1f !important;
   box-sizing: border-box !important;
+  flex-shrink: 0;
 
   &:focus {
     outline: none !important;
@@ -82,18 +86,22 @@ const HexInput = styled.input`
 const PresetsRow = styled.div`
   display: inline-flex;
   align-items: center;
-  gap: 4px;
+  gap: 3px;
+  flex-wrap: wrap;
+  max-width: 100%;
+  min-width: 0;
 `;
 
 const PresetDot = styled.button<{ $color: string; $active: boolean }>`
-  width: 14px;
-  height: 14px;
+  width: 12px;
+  height: 12px;
   border-radius: 50%;
   background-color: ${({ $color }) => $color};
   border: 1px solid ${({ $active }) => ($active ? '#1f1f1f' : 'rgba(0,0,0,0.2)')};
   box-shadow: ${({ $active }) => ($active ? '0 0 0 1px #c9a45c' : 'none')};
   cursor: pointer;
   padding: 0;
+  flex-shrink: 0;
   transition: transform 0.15s ease;
 
   &:hover {
@@ -112,6 +120,7 @@ const ResetButton = styled.button`
   justify-content: center;
   border-radius: 4px;
   font-size: 0.7rem;
+  flex-shrink: 0;
 
   &:hover {
     color: #c53030;
@@ -130,7 +139,7 @@ export const AdminColorPicker: React.FC<AdminColorPickerProps> = ({
 
   return (
     <Container $inline={inline} title={label ? `${label} text color` : 'Customize text color'}>
-      {label && <span style={{ color: '#77736c', fontSize: '0.72rem', fontWeight: 600 }}>{label}:</span>}
+      {label && <span style={{ color: '#77736c', fontSize: '0.70rem', fontWeight: 600, whiteSpace: 'nowrap' }}>{label}:</span>}
       <SwatchWrapper
         style={{ backgroundColor: currentColor }}
         title="Click to open color palette picker"

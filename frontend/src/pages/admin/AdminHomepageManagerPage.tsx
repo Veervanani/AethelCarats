@@ -121,34 +121,51 @@ const SubCard = styled.div`
   padding: 18px 20px;
   margin-bottom: 16px;
   position: relative;
+  min-width: 0;
+  box-sizing: border-box;
 `;
 
 const FormGrid = styled.div`
   display: grid;
-  grid-template-columns: repeat(2, 1fr);
+  grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 16px;
+  width: 100%;
+  box-sizing: border-box;
+  min-width: 0;
 
   .full-width {
     grid-column: span 2;
   }
 
-  @media (max-width: 768px) {
-    grid-template-columns: 1fr;
+  @media (max-width: 860px) {
+    grid-template-columns: minmax(0, 1fr);
     .full-width {
       grid-column: span 1;
     }
+  }
+
+  & > div {
+    min-width: 0;
+    box-sizing: border-box;
   }
 
   label {
     display: flex;
     justify-content: space-between;
     align-items: center;
+    flex-wrap: wrap;
+    gap: 6px;
     font-size: 0.75rem;
     font-weight: 700;
     letter-spacing: 0.08em;
     text-transform: uppercase;
     color: #4a463e;
     margin-bottom: 6px;
+    min-width: 0;
+
+    span {
+      min-width: 0;
+    }
   }
 
   input, select, textarea {
@@ -951,7 +968,7 @@ export const AdminHomepageManagerPage: React.FC = () => {
                   </DangerSmallBtn>
                 </div>
                 <FormGrid>
-                  <div>
+                  <div className="full-width">
                     <label>
                       <span>Category Title</span>
                       <AdminColorPicker
@@ -977,7 +994,7 @@ export const AdminHomepageManagerPage: React.FC = () => {
                       }}
                     />
                   </div>
-                  <div>
+                  <div className="full-width">
                     <label>Target URL / Route</label>
                     <input
                       type="text"
@@ -1137,7 +1154,7 @@ export const AdminHomepageManagerPage: React.FC = () => {
             </div>
           </div>
 
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 20 }}>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(340px, 1fr))', gap: 20 }}>
             {featuredCards.map((card, idx) => (
               <SubCard key={idx}>
                 <h4 style={{ margin: '0 0 14px 0', color: '#19202a' }}>
@@ -1184,7 +1201,7 @@ export const AdminHomepageManagerPage: React.FC = () => {
                       }}
                     />
                   </div>
-                  <div>
+                  <div className="full-width">
                     <label>
                       <span>Button Text</span>
                       <AdminColorPicker
@@ -1204,7 +1221,7 @@ export const AdminHomepageManagerPage: React.FC = () => {
                       }}
                     />
                   </div>
-                  <div>
+                  <div className="full-width">
                     <label>Target URL</label>
                     <input
                       type="text"
@@ -1326,14 +1343,14 @@ export const AdminHomepageManagerPage: React.FC = () => {
                       }}
                     />
                   </div>
-                  <div>
+                  <div className="full-width">
                     <AdminImageUploadField
                       label="Left Focus Image"
                       value={slide.leftImage}
                       onChange={(val) => setCollectionSlides((prev) => prev.map((s, i) => (i === idx ? { ...s, leftImage: val } : s)))}
                     />
                   </div>
-                  <div>
+                  <div className="full-width">
                     <AdminImageUploadField
                       label="Right Editorial Image"
                       value={slide.rightImage}
@@ -1362,7 +1379,7 @@ export const AdminHomepageManagerPage: React.FC = () => {
             </div>
           </div>
 
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 20 }}>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(340px, 1fr))', gap: 20 }}>
             <SubCard>
               <h4 style={{ margin: '0 0 12px 0', color: '#19202a' }}>LEFT PROMO PANEL</h4>
               <FormGrid>
@@ -1381,7 +1398,7 @@ export const AdminHomepageManagerPage: React.FC = () => {
                     onChange={(e) => setEssentialsConfig((prev) => ({ ...prev, leftTitle: e.target.value }))}
                   />
                 </div>
-                <div>
+                <div className="full-width">
                   <label>
                     <span>Button Text</span>
                     <AdminColorPicker
@@ -1396,7 +1413,7 @@ export const AdminHomepageManagerPage: React.FC = () => {
                     onChange={(e) => setEssentialsConfig((prev) => ({ ...prev, leftButtonText: e.target.value }))}
                   />
                 </div>
-                <div>
+                <div className="full-width">
                   <label>Target URL</label>
                   <input
                     type="text"
@@ -1432,7 +1449,7 @@ export const AdminHomepageManagerPage: React.FC = () => {
                     onChange={(e) => setEssentialsConfig((prev) => ({ ...prev, rightTitle: e.target.value }))}
                   />
                 </div>
-                <div>
+                <div className="full-width">
                   <label>
                     <span>Button Text</span>
                     <AdminColorPicker
@@ -1447,7 +1464,7 @@ export const AdminHomepageManagerPage: React.FC = () => {
                     onChange={(e) => setEssentialsConfig((prev) => ({ ...prev, rightButtonText: e.target.value }))}
                   />
                 </div>
-                <div>
+                <div className="full-width">
                   <label>Target URL</label>
                   <input
                     type="text"
@@ -1632,7 +1649,7 @@ export const AdminHomepageManagerPage: React.FC = () => {
             </div>
           </div>
 
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: 16 }}>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))', gap: 16 }}>
             {auraCards.map((card, idx) => (
               <SubCard key={card.id || idx}>
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 10 }}>
@@ -1769,7 +1786,7 @@ export const AdminHomepageManagerPage: React.FC = () => {
           </FormGrid>
 
           <h4 style={{ margin: '14px 0 10px 0', fontSize: '0.95rem', color: '#19202a' }}>Custom Testimonial Quotes</h4>
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: 16 }}>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))', gap: 16 }}>
             {reviewsConfig.customReviews.map((rev, idx) => (
               <SubCard key={rev.id || idx}>
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 10 }}>
@@ -1786,7 +1803,7 @@ export const AdminHomepageManagerPage: React.FC = () => {
                   </DangerSmallBtn>
                 </div>
                 <FormGrid>
-                  <div>
+                  <div className="full-width">
                     <label>
                       <span>Client Name</span>
                       <AdminColorPicker
@@ -1812,7 +1829,7 @@ export const AdminHomepageManagerPage: React.FC = () => {
                       }}
                     />
                   </div>
-                  <div>
+                  <div className="full-width">
                     <label>Rating (1 to 5 Stars)</label>
                     <input
                       type="number"

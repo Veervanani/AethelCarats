@@ -87,6 +87,13 @@ const FormGroup = styled.div<{ $full?: boolean }>`
     display: flex;
     justify-content: space-between;
     align-items: center;
+    flex-wrap: wrap;
+    gap: 6px;
+    min-width: 0;
+
+    span {
+      min-width: 0;
+    }
   }
 
   input,

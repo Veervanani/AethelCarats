@@ -1,8 +1,9 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
 import { Upload, Trash2, Image as ImageIcon, Link as LinkIcon, Check } from 'lucide-react';
 import { api } from '../../services/api';
 import { useToast } from '../../context/ToastContext';
+import { normalizeImageUrl } from '../ui/SafeImage';
 
 const UploadFieldContainer = styled.div`
   display: flex;
@@ -10,20 +11,23 @@ const UploadFieldContainer = styled.div`
   gap: 8px;
   width: 100%;
   box-sizing: border-box;
+  min-width: 0;
 
   label {
-    font-size: 0.86rem;
+    font-size: 0.82rem;
     font-weight: 600;
     color: #12161a;
     letter-spacing: 0.02em;
     display: flex;
     justify-content: space-between;
     align-items: center;
+    flex-wrap: wrap;
+    gap: 4px;
 
     .help-text {
       font-weight: 400;
       color: #77736c;
-      font-size: 0.78rem;
+      font-size: 0.75rem;
     }
   }
 `;
@@ -31,17 +35,19 @@ const UploadFieldContainer = styled.div`
 const UploadCard = styled.div`
   display: flex;
   align-items: center;
-  gap: 16px;
+  gap: 12px;
   border: 1px dashed #c9a45c;
   border-radius: 6px;
-  padding: 14px 18px;
+  padding: 10px 14px;
   background: #fcfaf6;
   width: 100%;
   box-sizing: border-box;
+  min-width: 0;
+  flex-wrap: wrap;
 
   .preview-box {
-    width: 84px;
-    height: 84px;
+    width: 68px;
+    height: 68px;
     border-radius: 4px;
     overflow: hidden;
     background: #ffffff;
@@ -50,25 +56,28 @@ const UploadCard = styled.div`
     align-items: center;
     justify-content: center;
     flex-shrink: 0;
-    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.04);
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.04);
+    position: relative;
 
     img {
       width: 100%;
       height: 100%;
       object-fit: cover;
+      display: block;
     }
   }
 
   .upload-actions {
     display: flex;
     flex-direction: column;
-    gap: 8px;
+    gap: 6px;
     flex: 1;
+    min-width: 0;
 
     .buttons-row {
       display: flex;
       align-items: center;
-      gap: 10px;
+      gap: 6px;
       flex-wrap: wrap;
     }
   }
@@ -77,14 +86,16 @@ const UploadCard = styled.div`
 const ActionBtn = styled.button<{ $variant?: 'primary' | 'outline' | 'danger' }>`
   display: inline-flex;
   align-items: center;
-  gap: 6px;
-  padding: 8px 14px;
-  font-size: 0.8rem;
+  justify-content: center;
+  gap: 5px;
+  padding: 6px 11px;
+  font-size: 0.75rem;
   font-weight: 600;
   border-radius: 4px;
   cursor: pointer;
   transition: all 0.2s ease;
   white-space: nowrap;
+  box-sizing: border-box;
 
   ${({ $variant }) =>
     $variant === 'danger'
@@ -96,7 +107,7 @@ const ActionBtn = styled.button<{ $variant?: 'primary' | 'outline' | 'danger' }>
   `
       : $variant === 'outline'
       ? `
-    background: transparent;
+    background: #ffffff;
     color: #12161a;
     border: 1px solid #d9d3c7;
     &:hover { background: #faf8f5; border-color: #12161a; }
@@ -125,6 +136,11 @@ export const AdminImageUploadField: React.FC<AdminImageUploadFieldProps> = ({
   const { showToast } = useToast();
   const [uploading, setUploading] = useState(false);
   const [showUrlInput, setShowUrlInput] = useState(false);
+  const [imgError, setImgError] = useState(false);
+
+  useEffect(() => {
+    setImgError(false);
+  }, [value]);
 
   const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -190,11 +206,15 @@ export const AdminImageUploadField: React.FC<AdminImageUploadFieldProps> = ({
       )}
 
       <UploadCard>
-        <div className="preview-box">
-          {value ? (
-            <img src={value} alt="Uploaded Preview" />
+        <div className="preview-box" title={value ? `Image: ${value}` : 'No image chosen'}>
+          {value && !imgError ? (
+            <img
+              src={normalizeImageUrl(value)}
+              alt="Preview"
+              onError={() => setImgError(true)}
+            />
           ) : (
-            <ImageIcon size={28} color="#c9a45c" />
+            <ImageIcon size={26} color="#c9a45c" />
           )}
         </div>
 
