@@ -3,12 +3,8 @@ import dotenv from 'dotenv';
 
 dotenv.config();
 
-if (!process.env.PRISMA_CLIENT_ENGINE_TYPE) {
-  process.env.PRISMA_CLIENT_ENGINE_TYPE = 'binary';
-}
-if (!process.env.PRISMA_CLI_QUERY_ENGINE_TYPE) {
-  process.env.PRISMA_CLI_QUERY_ENGINE_TYPE = 'binary';
-}
+process.env.PRISMA_CLIENT_ENGINE_TYPE = 'library';
+delete process.env.PRISMA_CLI_QUERY_ENGINE_TYPE;
 
 /**
  * Dynamically builds MySQL database connection URL if DATABASE_URL is not set directly.
