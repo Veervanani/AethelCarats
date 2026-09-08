@@ -50,13 +50,41 @@ function cleanDir(dir) {
   }
 }
 
+// Helper to prune obsolete JS and CSS chunks while preserving active bundles and static media
+function pruneObsoleteAssets(dir, activeSet) {
+  if (!fs.existsSync(dir)) return;
+  const entries = fs.readdirSync(dir);
+  let pruned = 0;
+  for (const entry of entries) {
+    const isChunk = entry.endsWith('.js') || entry.endsWith('.js.map') || entry.endsWith('.css') || entry.endsWith('.css.map');
+    if (isChunk && !activeSet.has(entry)) {
+      try {
+        fs.unlinkSync(path.join(dir, entry));
+        pruned++;
+      } catch (e) {}
+    }
+  }
+  if (pruned > 0) {
+    console.log(`🧹 Pruned ${pruned} obsolete build chunks from ${dir}`);
+  }
+}
+
 const rootAssetsDir = path.resolve(rootDir, 'assets');
 const rootDistDir = path.resolve(rootDir, 'dist');
 const rootPublicHtmlDir = path.resolve(rootDir, 'public_html');
 const frontendAssetsDir = path.resolve(frontendDist, 'assets');
 
 try {
-  // 1. Copy frontend/dist contents without wiping old asset chunks (prevents breaking cached clients)
+  // Prune obsolete JS/CSS chunks from target directories before copying fresh build
+  const activeAssets = fs.existsSync(frontendAssetsDir)
+    ? new Set(fs.readdirSync(frontendAssetsDir))
+    : new Set();
+
+  pruneObsoleteAssets(rootAssetsDir, activeAssets);
+  pruneObsoleteAssets(path.join(rootDistDir, 'assets'), activeAssets);
+  pruneObsoleteAssets(path.join(rootPublicHtmlDir, 'assets'), activeAssets);
+
+  // 1. Copy frontend/dist contents to dist and public_html
   copyDirRecursive(frontendDist, rootDistDir);
   copyDirRecursive(frontendDist, rootPublicHtmlDir);
 

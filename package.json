@@ -5,7 +5,6 @@
   "type": "module",
   "description": "AethelCarats Luxury Fine Jewellery & Diamond Vault Platform",
   "scripts": {
-    "postinstall": "npm run build",
     "dev:backend": "cd backend && npm run dev",
     "dev:frontend": "cd frontend && npm run dev",
     "dev": "concurrently \"npm run dev:backend\" \"npm run dev:frontend\"",
@@ -20,8 +19,22 @@
     "db:generate": "cd backend && npx prisma generate"
   },
   "dependencies": {
+    "@google-cloud/storage": "^7.21.0",
+    "@paypal/checkout-server-sdk": "^1.0.3",
+    "@prisma/client": "^5.18.0",
+    "axios": "^1.7.2",
+    "bcryptjs": "^2.4.3",
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.5",
     "express": "^4.19.2",
-    "mysql2": "^3.24.3"
+    "jsonwebtoken": "^9.0.2",
+    "jszip": "^3.10.1",
+    "multer": "^1.4.5-lts.1",
+    "mysql2": "^3.24.3",
+    "nodemailer": "^6.9.14",
+    "pdfkit": "^0.19.1",
+    "xlsx": "^0.18.5",
+    "zod": "^3.23.8"
   },
   "devDependencies": {
     "concurrently": "^8.2.2"
