@@ -5,7 +5,7 @@
     "slug": "pendants",
     "description": "Delicate gemstone and solitaire diamond pendants.",
     "bannerImage": "/assets/Necklace.png",
-    "image": null,
+    "image": "/uploads/media/img_1788887964257_sgutp_file_000000008e4482119a66b24519980a3e.png",
     "link": null,
     "sortOrder": 0,
     "isActive": 1,
@@ -16,7 +16,7 @@
     "enableDiamondCert": 1,
     "enableEngraving": 1,
     "createdAt": "2026-08-08T02:09:20.003Z",
-    "updatedAt": "2026-08-09T20:52:35.572Z"
+    "updatedAt": "2026-09-08T17:19:25.592Z"
   },
   {
     "id": "61cf86af-3b13-4425-9726-01cdec7aafb7",
@@ -24,7 +24,7 @@
     "slug": "rings",
     "description": "Explore AETHELCARATS’s signature collection of fine rings. Handcrafted by master goldsmiths using GIA certified diamonds, natural gemstones, and fine 18K yellow, white, and rose gold or 950 platinum. From solitaire engagement rings to diamond-encrusted eternity bands, each piece embodies timeless luxury.",
     "bannerImage": "/assets/Engagement Ring.png",
-    "image": "/assets/Engagement Ring.png",
+    "image": "/uploads/media/img_1788887977537_mp19n_file_0000000009088211863d95f18b6bb0cf.png",
     "link": "/rings",
     "sortOrder": 1,
     "isActive": 1,
@@ -35,7 +35,7 @@
     "enableDiamondCert": 1,
     "enableEngraving": 1,
     "createdAt": "2026-08-08T02:09:19.966Z",
-    "updatedAt": "2026-08-09T20:52:35.978Z"
+    "updatedAt": "2026-09-08T17:19:39.627Z"
   },
   {
     "id": "494dae97-38e6-4302-b4ab-e5f0ae5e2b31",
@@ -43,7 +43,7 @@
     "slug": "earrings",
     "description": "Discover AETHELCARATS solitaire studs, drop earrings, and diamond huggies.",
     "bannerImage": "/assets/Earrings.png",
-    "image": "/assets/Earrings.png",
+    "image": "/uploads/media/img_1788887985554_kxz2i_file_0000000057208211bc947189838809cc.png",
     "link": "/earrings",
     "sortOrder": 2,
     "isActive": 1,
@@ -54,7 +54,7 @@
     "enableDiamondCert": 1,
     "enableEngraving": 1,
     "createdAt": "2026-08-08T02:09:19.974Z",
-    "updatedAt": "2026-08-09T20:52:35.982Z"
+    "updatedAt": "2026-09-08T17:19:48.190Z"
   },
   {
     "id": "efc5a8e7-1c88-4e1b-bcd1-18aad75220ee",
@@ -62,7 +62,7 @@
     "slug": "bracelets",
     "description": "Exquisite diamond tennis bracelets and sculpted gold bangles.",
     "bannerImage": "/assets/Bracelet.png",
-    "image": "/assets/Bracelet.png",
+    "image": "/uploads/media/img_1788888000334_nt2ix_file_0000000066f882118151eccb7b1dfe22.png",
     "link": "/bracelets",
     "sortOrder": 3,
     "isActive": 1,
@@ -73,7 +73,7 @@
     "enableDiamondCert": 1,
     "enableEngraving": 1,
     "createdAt": "2026-08-08T02:09:19.993Z",
-    "updatedAt": "2026-08-09T20:52:35.986Z"
+    "updatedAt": "2026-09-08T17:20:01.600Z"
   },
   {
     "id": "ec3c8835-f308-46c9-9f20-1b6e56d133a1",
@@ -81,7 +81,7 @@
     "slug": "necklaces",
     "description": "Graduated diamond line rivieres and solitaire pendants.",
     "bannerImage": "/assets/aethelcarats_necklaces_cat.png",
-    "image": "/assets/aethelcarats_necklaces_cat.png",
+    "image": "/uploads/media/img_1788888011029_zdqq2_file_00000000f6e4820780de465989e7afd2.png",
     "link": "/necklaces",
     "sortOrder": 4,
     "isActive": 1,
@@ -92,7 +92,7 @@
     "enableDiamondCert": 1,
     "enableEngraving": 1,
     "createdAt": "2026-08-08T02:09:19.983Z",
-    "updatedAt": "2026-08-09T20:52:35.990Z"
+    "updatedAt": "2026-09-08T17:20:12.584Z"
   },
   {
     "id": "ccf3280f-ca65-4d78-9922-cf4cdbfc0222",
@@ -100,7 +100,7 @@
     "slug": "collections",
     "description": "Curated bespoke atelier collections.",
     "bannerImage": null,
-    "image": "/assets/aethelcarats_only_at_1.png",
+    "image": "/uploads/media/img_1788888025480_83cmn_file_00000000a400821198e6f84fe6eabe6b.png",
     "link": "/collections",
     "sortOrder": 5,
     "isActive": 1,
@@ -111,7 +111,7 @@
     "enableDiamondCert": 1,
     "enableEngraving": 1,
     "createdAt": "2026-08-08T20:57:39.676Z",
-    "updatedAt": "2026-08-09T20:52:35.994Z"
+    "updatedAt": "2026-09-08T17:20:26.402Z"
   },
   {
     "id": "eefe6ab2-7d86-456a-8d8a-f440917a2386",
@@ -119,7 +119,7 @@
     "slug": "diamond-essentials",
     "description": "Certified natural and lab-grown loose diamonds.",
     "bannerImage": null,
-    "image": "/assets/aethelcarats_diamonds_cat.png",
+    "image": "/uploads/media/img_1788888036706_pe9yj_IMG_20260908_222324.png",
     "link": "/diamonds",
     "sortOrder": 6,
     "isActive": 1,
@@ -130,6 +130,6 @@
     "enableDiamondCert": 1,
     "enableEngraving": 1,
     "createdAt": "2026-08-08T20:57:39.681Z",
-    "updatedAt": "2026-08-09T20:52:35.997Z"
+    "updatedAt": "2026-09-08T17:20:37.824Z"
   }
 ]

@@ -56,7 +56,7 @@
   "footer_config": {
     "brandName": "AETHELCARATS FINE JEWELLERY ATELIER",
     "tagline": "Fine Jewelry & Certified Solitaire Diamonds",
-    "brandDescription": "AethelCarats Fine Jewellery crafts exquisite lab-grown and natural diamond jewelry with unmatched artistry, ethical sourcing, and timeless elegance.",
+    "brandDescription": "AethelCarats Fine Jewellery Atelier — bespoke master craftsmanship and authenticated diamonds.",
     "logoImage": "",
     "logoUrl": "",
     "logoWidth": "160pxpx",
@@ -159,7 +159,7 @@
         ]
       }
     ],
-    "email": "aethelcarats@gmail.com",
+    "email": "concierge@aethelcarats.com",
     "phone": "+917990278892",
     "whatsapp": "+91 7990278892",
     "address": "Surat, Gujarat, India",
@@ -260,17 +260,26 @@
     "contactEmail": "aethelcarats@gmail.com",
     "contactPhone": "+917990278892",
     "storeName": "AETHELCARATS FINE JEWELLERY ATELIER",
-    "storeAddress": "Surat, Gujarat, India"
+    "storeAddress": "Surat, Gujarat, India",
+    "email": "concierge@aethelcarats.com"
   },
+  "email": "concierge@aethelcarats.com",
   "paypal_client_id": "BAAqaKN73TPUvj2BG5Fh-G16xs8N0Dvcv0KOK7Nvt1M2jdU4izxVBjhFH7O_Ny_huFK8qD3EsbFmRer70c",
   "footer_settings": {
     "brandName": "AETHELCARATS FINE JEWELLERY ATELIER",
     "tagline": "Fine Jewelry & Certified Solitaire Diamonds",
-    "brandDescription": "AethelCarats Fine Jewellery crafts exquisite lab-grown and natural diamond jewelry with unmatched artistry, ethical sourcing, and timeless elegance.",
     "logoImage": "",
+    "copyrightText": "© 2026 AethelCarats Fine Jewellery Atelier. All Rights Reserved.",
+    "email": "concierge@aethelcarats.com",
+    "phone": "+917990278892",
+    "address": "Surat, Gujarat, India",
+    "instagram": "https://www.instagram.com/aethelcarats",
+    "facebook": "https://facebook.com/aethelcarats",
+    "pinterest": "https://pinterest.com/aethelcarats",
+    "trustBadgeImage": "",
+    "brandDescription": "AethelCarats Fine Jewellery crafts exquisite lab-grown and natural diamond jewelry with unmatched artistry, ethical sourcing, and timeless elegance.",
     "logoUrl": "",
     "logoWidth": "160pxpx",
-    "trustBadgeImage": "",
     "newsletterHeading": "JOIN AURA DIAMOND ATELIER",
     "newsletterSubtitle": "Subscribe to receive bespoke invitations and private collection releases.",
     "newsletterPlaceholder": "Email Address",
@@ -369,20 +378,13 @@
         ]
       }
     ],
-    "email": "aethelcarats@gmail.com",
-    "phone": "+917990278892",
     "whatsapp": "+91 7990278892",
-    "address": "Surat, Gujarat, India",
     "workingHours": "Mon – Sat: 10:00 AM – 7:00 PM IST",
     "appointmentUrl": "/contact-us",
-    "instagram": "https://www.instagram.com/aethelcarats",
-    "facebook": "https://facebook.com/aethelcarats",
-    "pinterest": "https://pinterest.com/aethelcarats",
     "youtube": "https://youtube.com",
     "tiktok": "",
     "twitter": "",
     "linkedin": "",
-    "copyrightText": "© 2026 AethelCarats Fine Jewellery Atelier. All Rights Reserved.",
     "legalLinks": [
       {
         "label": "Terms & Conditions",
