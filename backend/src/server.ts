@@ -227,9 +227,15 @@ app.use(express.urlencoded({ extended: true, limit: '100mb' }));
 
 const upload = multer({ storage: multer.memoryStorage() });
 
-// Serve local PC uploads and public assets statically
+// Serve local PC uploads and public assets statically across all working directories
 app.use('/uploads', express.static(path.join(process.cwd(), 'uploads')));
+app.use('/uploads', express.static(path.join(process.cwd(), 'backend', 'uploads')));
+app.use('/uploads', express.static(path.join(process.cwd(), 'frontend', 'public', 'uploads')));
+app.use('/uploads', express.static(path.join(__dirname, '..', 'uploads')));
+app.use('/uploads', express.static(path.join(__dirname, '..', '..', 'uploads')));
 app.use('/assets', express.static(path.join(process.cwd(), 'public/assets')));
+app.use('/assets', express.static(path.join(process.cwd(), 'assets')));
+app.use('/assets', express.static(path.join(process.cwd(), 'frontend/public/assets')));
 
 // Health Check Endpoints for Cloud Run & Load Balancers
 app.get(['/healthz', '/_health', '/ping'], (req, res) => {
@@ -396,7 +402,9 @@ app.get('/api/v1/media', getAllMedia);
 app.get('/api/v1/admin/media', authenticateToken, requireRole(['PRODUCT_MANAGER', 'CONTENT_MANAGER', 'ADMIN', 'SUPER_ADMIN']), getAllMedia);
 app.post('/api/v1/admin/media', authenticateToken, requireRole(['PRODUCT_MANAGER', 'CONTENT_MANAGER', 'ADMIN', 'SUPER_ADMIN']), uploadMedia);
 app.delete('/api/v1/admin/media/:id', authenticateToken, requireRole(['PRODUCT_MANAGER', 'CONTENT_MANAGER', 'ADMIN', 'SUPER_ADMIN']), deleteMedia);
-app.post('/api/v1/admin/media/upload', authenticateToken, requireRole(['PRODUCT_MANAGER', 'ADMIN', 'CONTENT_MANAGER', 'SUPER_ADMIN']), upload.array('files'), uploadMediaFiles);
+app.post('/api/v1/admin/media/upload', authenticateToken, requireRole(['PRODUCT_MANAGER', 'ADMIN', 'CONTENT_MANAGER', 'SUPER_ADMIN']), upload.any(), uploadMediaFiles);
+app.post('/api/v1/admin/upload', authenticateToken, requireRole(['PRODUCT_MANAGER', 'ADMIN', 'CONTENT_MANAGER', 'SUPER_ADMIN']), upload.any(), uploadMediaFiles);
+app.post('/api/v1/upload', authenticateToken, upload.any(), uploadMediaFiles);
 app.post('/api/v1/admin/media/delete-file', authenticateToken, requireRole(['PRODUCT_MANAGER', 'ADMIN', 'CONTENT_MANAGER', 'SUPER_ADMIN']), deleteUploadedMediaFile);
 app.delete('/api/v1/admin/media/file', authenticateToken, requireRole(['PRODUCT_MANAGER', 'ADMIN', 'CONTENT_MANAGER', 'SUPER_ADMIN']), deleteUploadedMediaFile);
 

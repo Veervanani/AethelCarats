@@ -24,6 +24,7 @@ import {
   ShieldCheck,
   CreditCard,
   Eye,
+  Sliders,
 } from 'lucide-react';
 import { api } from '../../services/api';
 import { MediaUploader } from '../../components/admin/MediaUploader';
@@ -140,12 +141,83 @@ const LivePreviewCard = styled.div`
   margin-top: 10px;
 `;
 
+const SizeControlBox = styled.div`
+  background: #faf8f5;
+  border: 1px solid #e8e3d9;
+  border-radius: 8px;
+  padding: 18px 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  margin-top: 14px;
+`;
+
+const SliderRow = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 16px;
+
+  input[type='range'] {
+    flex: 1;
+    accent-color: #c9a45c;
+    height: 6px;
+    cursor: pointer;
+  }
+
+  .px-input {
+    width: 90px;
+    text-align: center;
+    font-weight: 700;
+    font-family: monospace;
+    font-size: 0.95rem;
+  }
+`;
+
+const PresetPills = styled.div`
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  align-items: center;
+
+  span.label {
+    font-size: 0.78rem;
+    font-weight: 600;
+    color: #77736c;
+    margin-right: 4px;
+  }
+
+  button {
+    background: #ffffff;
+    border: 1px solid #d9d3c7;
+    border-radius: 20px;
+    padding: 4px 12px;
+    font-size: 0.78rem;
+    font-weight: 600;
+    color: #4a4741;
+    cursor: pointer;
+    transition: all 0.2s ease;
+
+    &:hover {
+      border-color: #c9a45c;
+      color: #c9a45c;
+    }
+
+    &.active {
+      background: #19202a;
+      color: #fffdfa;
+      border-color: #19202a;
+    }
+  }
+`;
+
 const DEFAULT_FOOTER_STATE = {
-  brandName: 'AURA DIAMOND ATELIER',
+  brandName: 'AETHELCARATS FINE JEWELLERY ATELIER',
   tagline: 'Fine Jewelry & Certified Solitaire Diamonds',
   brandDescription:
-    'Aura Diamond Atelier crafts exquisite lab-grown and natural diamond jewelry with unmatched artistry, ethical sourcing, and timeless elegance.',
-  logoImage: '/assets/gem-brand-logo.png',
+    'AethelCarats Fine Jewellery crafts exquisite lab-grown and natural diamond jewelry with unmatched artistry, ethical sourcing, and timeless elegance.',
+  logoImage: '',
+  logoUrl: '',
+  logoWidth: 160,
   trustBadgeImage: '/assets/trust_badges.png',
 
   // Newsletter Section
@@ -279,6 +351,17 @@ export const AdminFooterManagerPage: React.FC = () => {
           merged.legalLinks = DEFAULT_FOOTER_STATE.legalLinks;
         }
 
+        const logo = merged.logoImage || merged.logoUrl || '';
+        let width = merged.logoWidth;
+        if (typeof width === 'string') {
+          width = parseInt(width.replace(/[^0-9]/g, ''), 10) || 160;
+        } else if (typeof width !== 'number') {
+          width = 160;
+        }
+        merged.logoImage = logo;
+        merged.logoUrl = logo;
+        merged.logoWidth = width;
+
         setFooterSettings(merged);
       }
     } catch (err) {
@@ -312,8 +395,14 @@ export const AdminFooterManagerPage: React.FC = () => {
         })
       }));
 
+      const logo = footerSettings.logoImage || footerSettings.logoUrl || '';
+      const widthVal = `${footerSettings.logoWidth || 160}px`;
+
       const payload = {
         ...footerSettings,
+        logoImage: logo,
+        logoUrl: logo,
+        logoWidth: widthVal,
         columns: updatedColumns,
         instagram: cleanInstagram,
         facebook: cleanFacebook,
@@ -560,16 +649,142 @@ export const AdminFooterManagerPage: React.FC = () => {
               />
             </AdminFormGroup>
 
-            <div style={{ marginTop: 16, display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16 }}>
+            <div style={{ marginTop: 20, background: '#faf8f5', border: '1px solid #e8e3d9', borderRadius: 8, padding: 18 }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 12 }}>
+                <h4 style={{ margin: 0, fontSize: '0.92rem', color: '#1f1f1f', fontWeight: 700 }}>
+                  FOOTER BRAND LOGO & DIMENSIONS
+                </h4>
+                {(footerSettings.logoImage || footerSettings.logoUrl) && (
+                  <AdminButton
+                    $variant="secondary"
+                    $size="sm"
+                    onClick={() => setFooterSettings({ ...footerSettings, logoImage: '', logoUrl: '' })}
+                    icon={<RotateCcw size={12} />}
+                  >
+                    Reset to Text Logo
+                  </AdminButton>
+                )}
+              </div>
+
               <MediaUploader
-                label="Footer Brand Logo Image"
-                value={footerSettings.logoImage || ''}
-                onChange={(url) => setFooterSettings({ ...footerSettings, logoImage: url })}
+                label="Footer Brand Logo File (Upload from PC or select from Library)"
+                value={footerSettings.logoImage || footerSettings.logoUrl || ''}
+                onChange={(url) => setFooterSettings({ ...footerSettings, logoImage: url, logoUrl: url })}
+                helpText="Recommended: SVG, WEBP, or transparent PNG. Light/Gold versions look best against dark footer."
               />
+
+              <SizeControlBox>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                  <label style={{ fontWeight: 700, fontSize: '0.88rem', color: '#1f1f1f', display: 'flex', alignItems: 'center', gap: 6 }}>
+                    <Sliders size={16} color="#c9a45c" />
+                    Footer Logo Display Width: <span style={{ color: '#c9a45c' }}>{footerSettings.logoWidth || 160}px</span>
+                  </label>
+                  <span style={{ fontSize: '0.78rem', color: '#77736c' }}>Scales proportionally (max height 48px)</span>
+                </div>
+
+                <SliderRow>
+                  <span style={{ fontSize: '0.78rem', color: '#77736c', fontWeight: 600 }}>60px</span>
+                  <input
+                    type="range"
+                    min="60"
+                    max="400"
+                    step="2"
+                    value={Number(footerSettings.logoWidth) || 160}
+                    onChange={(e) => setFooterSettings({ ...footerSettings, logoWidth: Number(e.target.value) })}
+                  />
+                  <span style={{ fontSize: '0.78rem', color: '#77736c', fontWeight: 600 }}>400px</span>
+                  <AdminInput
+                    type="number"
+                    min="60"
+                    max="500"
+                    className="px-input"
+                    value={Number(footerSettings.logoWidth) || 160}
+                    onChange={(e) => setFooterSettings({ ...footerSettings, logoWidth: Number(e.target.value) || 160 })}
+                  />
+                </SliderRow>
+
+                <PresetPills>
+                  <span className="label">Quick Presets:</span>
+                  <button
+                    type="button"
+                    className={(footerSettings.logoWidth || 160) === 120 ? 'active' : ''}
+                    onClick={() => setFooterSettings({ ...footerSettings, logoWidth: 120 })}
+                  >
+                    Compact (120px)
+                  </button>
+                  <button
+                    type="button"
+                    className={(footerSettings.logoWidth || 160) === 140 ? 'active' : ''}
+                    onClick={() => setFooterSettings({ ...footerSettings, logoWidth: 140 })}
+                  >
+                    Standard (140px)
+                  </button>
+                  <button
+                    type="button"
+                    className={(footerSettings.logoWidth || 160) === 160 ? 'active' : ''}
+                    onClick={() => setFooterSettings({ ...footerSettings, logoWidth: 160 })}
+                  >
+                    Default (160px)
+                  </button>
+                  <button
+                    type="button"
+                    className={(footerSettings.logoWidth || 160) === 200 ? 'active' : ''}
+                    onClick={() => setFooterSettings({ ...footerSettings, logoWidth: 200 })}
+                  >
+                    Prominent (200px)
+                  </button>
+                  <button
+                    type="button"
+                    className={(footerSettings.logoWidth || 160) === 260 ? 'active' : ''}
+                    onClick={() => setFooterSettings({ ...footerSettings, logoWidth: 260 })}
+                  >
+                    Large (260px)
+                  </button>
+                </PresetPills>
+              </SizeControlBox>
+
+              {/* Live Preview Box for Footer Bottom Bar */}
+              <div style={{ marginTop: 16, background: '#0f141a', border: '1px solid rgba(255,255,255,0.1)', borderRadius: 6, padding: '16px 20px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: 14 }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: 14 }}>
+                  {(footerSettings.logoImage || footerSettings.logoUrl) ? (
+                    <img
+                      src={footerSettings.logoImage || footerSettings.logoUrl}
+                      alt="Footer Logo Preview"
+                      style={{
+                        width: `${Number(footerSettings.logoWidth) || 160}px`,
+                        maxHeight: '44px',
+                        objectFit: 'contain',
+                        display: 'block',
+                      }}
+                    />
+                  ) : (
+                    <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start' }}>
+                      <div style={{ fontFamily: 'Cormorant Garamond, serif', fontSize: '1.25rem', fontWeight: 600, letterSpacing: '0.18em', color: '#F5F1E8', lineHeight: 1 }}>
+                        AETHEL<span style={{ color: '#C9A96E' }}>CARATS</span>
+                      </div>
+                      <div style={{ fontSize: '0.5rem', letterSpacing: '0.28em', color: '#A8A8A8', marginTop: 2 }}>
+                        FINE JEWELLERY ATELIER
+                      </div>
+                    </div>
+                  )}
+                  <span style={{ color: '#77736c', fontSize: '0.75rem' }}>
+                    {footerSettings.copyrightText || '© 2026 AethelCarats Fine Jewellery. All Rights Reserved.'}
+                  </span>
+                </div>
+                <div style={{ display: 'flex', gap: 12, color: '#A8A8A8', fontSize: '0.75rem' }}>
+                  <span>Terms & Conditions</span>
+                  <span>Privacy Policy</span>
+                  <span>Sitemap</span>
+                </div>
+              </div>
+            </div>
+
+            <div style={{ marginTop: 16 }}>
               <MediaUploader
                 label="Trust Badges & Certifications Image"
                 value={footerSettings.trustBadgeImage || ''}
                 onChange={(url) => setFooterSettings({ ...footerSettings, trustBadgeImage: url })}
+                helpText="Optional payment and security logos strip displayed in footer"
               />
             </div>
           </AdminCard>

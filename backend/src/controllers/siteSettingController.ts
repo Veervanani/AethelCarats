@@ -6,6 +6,7 @@ import { withTimeout } from '../utils/asyncTimeout';
 const DEFAULT_SETTINGS: Record<string, any> = {
   header_config: JSON.stringify({
     logoUrl: '/assets/logo.svg',
+    logoImage: '/assets/logo.svg',
     mobileLogoUrl: '/assets/logo-mobile.svg',
     logoLink: '/',
     logoWidth: '180px',
@@ -18,10 +19,28 @@ const DEFAULT_SETTINGS: Record<string, any> = {
     showCart: true,
   }),
 
+  header_settings: JSON.stringify({
+    logoUrl: '/assets/logo.svg',
+    logoImage: '/assets/logo.svg',
+    logoWidth: '180px',
+    announcementText: 'FREE WORLDWIDE SHIPPING ✦',
+    announcementEnabled: true,
+    announcementBg: '#12161a',
+    announcementTextColor: '#fffdf9',
+    headerBg: '#ffffff',
+    stickyHeader: true,
+    showSearch: true,
+    showWishlist: true,
+    showAccount: true,
+    showCart: true,
+  }),
+
   footer_config: JSON.stringify({
     logoUrl: '/assets/logo.svg',
-    brandDescription: 'Aura Diamond Atelier crafts exquisite lab-grown and natural diamond jewelry with unmatched artistry, ethical sourcing, and timeless elegance.',
-    copyrightText: '© 2026 AURA DIAMOND ATELIER. ALL RIGHTS RESERVED.',
+    logoImage: '/assets/logo.svg',
+    logoWidth: '160px',
+    brandDescription: 'AethelCarats crafts exquisite lab-grown and natural diamond jewelry with unmatched artistry, ethical sourcing, and timeless elegance.',
+    copyrightText: '© 2026 AETHELCARATS FINE JEWELLERY ATELIER. ALL RIGHTS RESERVED.',
     contactEmail: 'contact@auroradiamonds.com',
     contactPhone: '+91973785306',
     whatsappNumber: '+91973785306',
@@ -156,6 +175,14 @@ export const getSiteSettings = async (req: Request, res: Response) => {
       if (s.key === 'site_settings' && typeof parsed === 'object' && parsed !== null) {
         Object.assign(result, parsed);
       }
+      if (s.key === 'header_settings' && typeof parsed === 'object' && parsed !== null) {
+        result.header_settings = parsed;
+        result.header_config = { ...(result.header_config || {}), ...parsed };
+      }
+      if (s.key === 'header_config' && typeof parsed === 'object' && parsed !== null) {
+        result.header_config = parsed;
+        result.header_settings = { ...(result.header_settings || {}), ...parsed };
+      }
       if (s.key === 'footer_settings' && typeof parsed === 'object' && parsed !== null) {
         if (parsed.brandName) result.storeName = parsed.brandName;
         if (parsed.email) result.contactEmail = parsed.email;
@@ -203,6 +230,24 @@ export const updateSiteSetting = async (req: AuthRequest, res: Response) => {
       update: { value: stringifiedValue },
       create: { key, value: stringifiedValue },
     });
+
+    // When updating header_settings or header_config, keep both in sync
+    if ((key === 'header_settings' || key === 'header_config') && typeof value === 'object' && value !== null) {
+      const otherKey = key === 'header_settings' ? 'header_config' : 'header_settings';
+      await prisma.siteSetting.upsert({
+        where: { key: otherKey },
+        update: { value: stringifiedValue },
+        create: { key: otherKey, value: stringifiedValue },
+      });
+      const logo = value.logoUrl || value.logoImage;
+      if (logo) {
+        await prisma.siteSetting.upsert({
+          where: { key: 'storeLogo' },
+          update: { value: String(logo) },
+          create: { key: 'storeLogo', value: String(logo) },
+        });
+      }
+    }
 
     // When updating footer_settings, keep footer_config in sync with the exact full payload
     if (key === 'footer_settings' && typeof value === 'object' && value !== null) {

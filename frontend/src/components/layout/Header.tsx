@@ -452,6 +452,15 @@ const LogoLink = styled(Link)`
   }
 `;
 
+const LogoImg = styled.img<{ $width?: string }>`
+  width: ${({ $width }) => $width || '180px'};
+  max-width: 100%;
+  max-height: 52px;
+  object-fit: contain;
+  display: block;
+  transition: width 0.2s ease;
+`;
+
 const LogoBrandText = styled.div`
   display: flex;
   flex-direction: column;
@@ -848,7 +857,9 @@ export const Header: React.FC = () => {
   }, []);
 
   const [headerConfig, setHeaderConfig] = useState<any>({
-    logoUrl: '/assets/gem-brand-logo.png',
+    logoUrl: '',
+    logoImage: '',
+    logoWidth: '180px',
     logoLink: '/',
     showSearch: true,
     showAccount: true,
@@ -863,10 +874,18 @@ export const Header: React.FC = () => {
   }, []);
 
   useEffect(() => {
-    api.getSiteSettings('header_config').then((res) => {
+    api.getSiteSettings('header_config,header_settings,storeLogo').then((res) => {
+      let cfg: any = {};
       if (res.header_config) {
-        setHeaderConfig((prev: any) => ({ ...prev, ...res.header_config }));
+        cfg = { ...cfg, ...(typeof res.header_config === 'string' ? JSON.parse(res.header_config) : res.header_config) };
       }
+      if (res.header_settings) {
+        cfg = { ...cfg, ...(typeof res.header_settings === 'string' ? JSON.parse(res.header_settings) : res.header_settings) };
+      }
+      if (res.storeLogo && !cfg.logoUrl && !cfg.logoImage) {
+        cfg.logoUrl = res.storeLogo;
+      }
+      setHeaderConfig((prev: any) => ({ ...prev, ...cfg }));
     }).catch(console.error);
   }, []);
 
@@ -984,7 +1003,22 @@ export const Header: React.FC = () => {
           </MobileLeft>
 
           <LogoLink to="/" aria-label="AethelCarats Home" onClick={closeAllMenus} onMouseEnter={() => { handleNonNavMouseEnter(); setHoveredNavId(null); }}>
-            <LogoBrandText>
+            {(headerConfig.logoUrl || headerConfig.logoImage) ? (
+              <LogoImg
+                src={headerConfig.logoUrl || headerConfig.logoImage}
+                alt="AethelCarats Fine Jewellery"
+                $width={typeof headerConfig.logoWidth === 'number' ? `${headerConfig.logoWidth}px` : (headerConfig.logoWidth || '180px')}
+                onError={(e) => {
+                  (e.currentTarget as HTMLElement).style.display = 'none';
+                  const fallback = document.getElementById('header-text-logo-fallback');
+                  if (fallback) fallback.style.display = 'flex';
+                }}
+              />
+            ) : null}
+            <LogoBrandText
+              id="header-text-logo-fallback"
+              style={{ display: (headerConfig.logoUrl || headerConfig.logoImage) ? 'none' : 'flex' }}
+            >
               <div className="brand-name">
                 AETHEL<span className="gold-accent">CARATS</span>
               </div>

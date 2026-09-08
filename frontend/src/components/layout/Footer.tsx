@@ -203,6 +203,15 @@ const BottomBar = styled.div`
   }
 `;
 
+const FooterLogoImg = styled.img<{ $width?: string }>`
+  width: ${({ $width }) => $width || '160px'};
+  max-width: 100%;
+  max-height: 48px;
+  object-fit: contain;
+  display: block;
+  transition: width 0.2s ease;
+`;
+
 const FooterBrandText = styled.div`
   display: flex;
   flex-direction: column;
@@ -276,7 +285,9 @@ export const Footer: React.FC = () => {
   const [subscribed, setSubscribed] = useState(false);
   const [footerConfig, setFooterConfig] = useState<any>({
     brandName: 'AETHELCARATS FINE JEWELLERY ATELIER',
-    logoImage: '/assets/gem-brand-logo.png',
+    logoImage: '',
+    logoUrl: '',
+    logoWidth: '160px',
     copyrightText: `© ${new Date().getFullYear()} AethelCarats Fine Jewellery Atelier. All Rights Reserved.`,
     contactEmail: 'concierge@aethelcarats.com',
     contactPhone: '+91973785306',
@@ -547,7 +558,22 @@ export const Footer: React.FC = () => {
       <BottomBar>
         <BrandCopyright>
           <Link to="/" onClick={() => window.scrollTo(0, 0)} aria-label="AethelCarats Homepage" style={{ textDecoration: 'none' }}>
-            <FooterBrandText>
+            {(footerConfig.logoUrl || footerConfig.logoImage) ? (
+              <FooterLogoImg
+                src={footerConfig.logoUrl || footerConfig.logoImage}
+                alt={footerConfig.brandName || 'AethelCarats Fine Jewellery Atelier'}
+                $width={typeof footerConfig.logoWidth === 'number' ? `${footerConfig.logoWidth}px` : (footerConfig.logoWidth || '160px')}
+                onError={(e) => {
+                  (e.currentTarget as HTMLElement).style.display = 'none';
+                  const fallback = document.getElementById('footer-text-logo-fallback');
+                  if (fallback) fallback.style.display = 'flex';
+                }}
+              />
+            ) : null}
+            <FooterBrandText
+              id="footer-text-logo-fallback"
+              style={{ display: (footerConfig.logoUrl || footerConfig.logoImage) ? 'none' : 'flex' }}
+            >
               <div className="brand-name">
                 AETHEL<span className="gold-accent">CARATS</span>
               </div>
