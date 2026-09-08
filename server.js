@@ -2,7 +2,8 @@ import express from 'express';
 import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { app } from './backend/dist/server.js';
+import backendModule from './backend/dist/server.js';
+const app = backendModule.app || (backendModule.default && backendModule.default.app) || backendModule;
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);

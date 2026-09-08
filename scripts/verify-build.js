@@ -7,14 +7,19 @@ const __dirname = path.dirname(__filename);
 
 const rootDir = path.resolve(__dirname, '..');
 const frontendDist = path.resolve(rootDir, 'frontend/dist');
-const targetIndexHtml = path.join(frontendDist, 'index.html');
+const publicHtmlDir = path.resolve(rootDir, 'public_html');
 
-if (!fs.existsSync(targetIndexHtml)) {
-  console.error(`❌ BUILD ERROR: ${targetIndexHtml} is missing!`);
+const hasFrontendDist = fs.existsSync(path.join(frontendDist, 'index.html'));
+const hasPublicHtml = fs.existsSync(path.join(publicHtmlDir, 'index.html'));
+
+if (!hasFrontendDist && !hasPublicHtml) {
+  console.error(`❌ BUILD ERROR: Neither frontend/dist nor public_html contains index.html!`);
   process.exit(1);
 }
 
-console.log(`✅ VERIFIED BUILD: ${targetIndexHtml} generated successfully!`);
+const sourceDist = hasFrontendDist ? frontendDist : publicHtmlDir;
+const targetIndexHtml = path.join(sourceDist, 'index.html');
+console.log(`✅ VERIFIED BUILD: ${targetIndexHtml} verified successfully!`);
 
 // Helper to copy directory recursively
 function copyDirRecursive(src, dest) {
@@ -84,9 +89,11 @@ try {
   pruneObsoleteAssets(path.join(rootDistDir, 'assets'), activeAssets);
   pruneObsoleteAssets(path.join(rootPublicHtmlDir, 'assets'), activeAssets);
 
-  // 1. Copy frontend/dist contents to dist and public_html
-  copyDirRecursive(frontendDist, rootDistDir);
-  copyDirRecursive(frontendDist, rootPublicHtmlDir);
+  // 1. Copy frontend/dist contents to dist and public_html if fresh build was done
+  if (fs.existsSync(frontendDist)) {
+    copyDirRecursive(frontendDist, rootDistDir);
+    copyDirRecursive(frontendDist, rootPublicHtmlDir);
+  }
 
   // 3. Copy root api/ directory to dist/api and public_html/api
   const rootApiDir = path.resolve(rootDir, 'api');

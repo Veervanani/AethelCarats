@@ -6,7 +6,7 @@ echo    AethelCarats — Production Build & GitHub Deploy
 echo ========================================================
 echo.
 echo [1/3] Building frontend and backend locally...
-call npm run build
+call npm run build:local
 if %ERRORLEVEL% NEQ 0 (
     echo.
     echo [ERROR] Local build failed! Push aborted to protect production.
