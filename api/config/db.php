@@ -12,7 +12,7 @@ function getDatabaseConnection(): PDO {
         return $pdo;
     }
 
-    $host = getenv('DB_HOST') ?: ($_ENV['DB_HOST'] ?? 'localhost');
+    $host = getenv('DB_HOST') ?: ($_ENV['DB_HOST'] ?? 'srv844.hstgr.io');
     $port = getenv('DB_PORT') ?: ($_ENV['DB_PORT'] ?? '3306');
     $db   = getenv('DB_NAME') ?: ($_ENV['DB_NAME'] ?? 'u707945653_aethelcarats');
     $user = getenv('DB_USER') ?: ($_ENV['DB_USER'] ?? 'u707945653_admin');

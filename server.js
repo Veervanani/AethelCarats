@@ -34,7 +34,7 @@ process.on('unhandledRejection', (reason, promise) => {
 // Sanitize and construct DATABASE_URL ensuring valid mysql:// protocol
 let rawDbUrl = (process.env.DATABASE_URL || '').trim().replace(/^["'“”‘’\s]+|["'“”‘’\s]+$/g, '').trim();
 if (!rawDbUrl || !rawDbUrl.startsWith('mysql://')) {
-  const host = process.env.DB_HOST || 'localhost';
+  const host = process.env.DB_HOST || 'srv844.hstgr.io';
   const port = process.env.DB_PORT || '3306';
   const name = process.env.DB_NAME || 'u707945653_aethelcarats';
   const user = process.env.DB_USER || 'u707945653_admin';

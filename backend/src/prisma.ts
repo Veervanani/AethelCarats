@@ -22,7 +22,7 @@ export function getDatabaseUrl(): string {
 
   // If rawUrl does not start with mysql:// or is empty, rebuild it from discrete params
   if (!rawUrl || !rawUrl.startsWith('mysql://')) {
-    const host = process.env.DB_HOST || 'localhost';
+    const host = process.env.DB_HOST || 'srv844.hstgr.io';
     const port = process.env.DB_PORT || '3306';
     const name = process.env.DB_NAME || 'u707945653_aethelcarats';
     const user = process.env.DB_USER || 'u707945653_admin';
