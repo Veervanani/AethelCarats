@@ -1,0 +1,221 @@
+import{r as s,j as e,f as t,l as a,ag as l,aN as d,aC as c}from"./react-vendor-DkoiUa74.js";import{g as r}from"./ui-vendor-jqUk2w8-.js";import{R as i,S as p}from"./admin-pages-DH-znLWL.js";import{W as m}from"./WhyAuraDiamondNav-BvkEXmvI.js";import"./swiper-vendor-X0C8N8nm.js";import"./admin-tools-vendor-CKN5doRT.js";const x=r.div`
+  background-color: #0B0B0B;
+  color: #F5F1E8;
+  min-height: 100vh;
+  padding-bottom: 80px;
+`,g=r.div`
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 24px 24px 0;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.8rem;
+  color: #A8A8A8;
+
+  a {
+    color: #A8A8A8;
+    text-decoration: none;
+    transition: color 0.2s ease;
+
+    &:hover {
+      color: #C9A96E;
+    }
+  }
+
+  span.current {
+    color: #C9A96E;
+    font-weight: 600;
+  }
+`,h=r.section`
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 48px 24px;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 48px;
+  align-items: center;
+
+  @media (max-width: 992px) {
+    grid-template-columns: 1fr;
+    gap: 32px;
+    padding: 32px 24px;
+  }
+
+  .text-side {
+    .eyebrow {
+      font-size: 0.8rem;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: #C9A96E;
+      font-weight: 700;
+      margin-bottom: 12px;
+      display: block;
+    }
+
+    h1 {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 3.2rem;
+      font-weight: 500;
+      color: #F5F1E8;
+      margin-bottom: 20px;
+      letter-spacing: 0.04em;
+      line-height: 1.1;
+
+      @media (max-width: 768px) {
+        font-size: 2.3rem;
+      }
+    }
+
+    p.subtitle {
+      font-size: 1.05rem;
+      color: #D8D2C5;
+      line-height: 1.7;
+      margin-bottom: 28px;
+    }
+  }
+
+  .image-side {
+    position: relative;
+    border-radius: 4px;
+    overflow: hidden;
+    border: 1px solid rgba(140, 116, 75, 0.25);
+    box-shadow: 0 12px 32px rgba(0, 0, 0, 0.6);
+
+    img {
+      width: 100%;
+      height: 420px;
+      object-fit: cover;
+
+      @media (max-width: 768px) {
+        height: 280px;
+      }
+    }
+  }
+`,f=r.main`
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 0 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 40px;
+`,n=r.section`
+  background: #151515;
+  border: 1px solid rgba(140, 116, 75, 0.25);
+  padding: 36px;
+  border-radius: 4px;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
+
+  h2 {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.8rem;
+    font-weight: 500;
+    color: #F5F1E8;
+    letter-spacing: 0.08em;
+    margin-bottom: 16px;
+    padding-bottom: 12px;
+    border-bottom: 1px solid rgba(140, 116, 75, 0.2);
+  }
+
+  p {
+    font-size: 0.95rem;
+    color: #D8D2C5;
+    line-height: 1.7;
+    margin-bottom: 14px;
+
+    &:last-child {
+      margin-bottom: 0;
+    }
+  }
+
+  ul {
+    margin: 12px 0 16px 20px;
+    color: #D8D2C5;
+    font-size: 0.95rem;
+
+    li {
+      margin-bottom: 8px;
+      line-height: 1.6;
+    }
+  }
+`,u=r.div`
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 24px;
+  margin-top: 24px;
+
+  @media (max-width: 768px) {
+    grid-template-columns: 1fr;
+  }
+`,o=r.div`
+  background: #111111;
+  border: 1px solid rgba(140, 116, 75, 0.25);
+  padding: 24px;
+  border-radius: 4px;
+
+  h3 {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.3rem;
+    color: #F5F1E8;
+    letter-spacing: 0.06em;
+    margin-bottom: 12px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  p {
+    font-size: 0.9rem;
+    color: #A8A8A8;
+    line-height: 1.6;
+  }
+`,y=r.section`
+  max-width: 900px;
+  margin: 64px auto 0;
+  padding: 0 24px;
+`,b=r.div`
+  background: #151515;
+  border: 1px solid rgba(140, 116, 75, 0.3);
+  color: #F5F1E8;
+  padding: 40px;
+  border-radius: 4px;
+  text-align: center;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.6);
+
+  h2 {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 2rem;
+    letter-spacing: 0.1em;
+    color: #F5F1E8;
+    margin-bottom: 12px;
+  }
+
+  p {
+    color: #D8D2C5;
+    font-size: 0.95rem;
+    max-width: 540px;
+    margin: 0 auto 24px;
+    line-height: 1.6;
+  }
+
+  a.primary-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: #C9A96E;
+    color: #0B0B0B;
+    padding: 14px 28px;
+    border-radius: 2px;
+    font-size: 0.85rem;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    font-weight: 700;
+    text-decoration: none;
+    transition: all 0.25s ease;
+
+    &:hover {
+      background: #DFBA73;
+      box-shadow: 0 4px 18px rgba(201, 169, 110, 0.35);
+    }
+  }
+`,z=()=>(s.useEffect(()=>{document.title="Lifetime Warranty | AethelCarats Fine Jewellery"},[]),e.jsxs(x,{children:[e.jsxs(g,{children:[e.jsx(t,{to:"/",children:"Home"}),e.jsx(a,{size:12}),e.jsx("span",{children:"Why AethelCarats"}),e.jsx(a,{size:12}),e.jsx("span",{className:"current",children:"Lifetime Warranty"})]}),e.jsx(i,{yOffset:35,children:e.jsxs(h,{children:[e.jsxs("div",{className:"text-side",children:[e.jsx("span",{className:"eyebrow",children:"GUARANTEED CRAFTSMANSHIP"}),e.jsx("h1",{children:"Lifetime Warranty"}),e.jsx("p",{className:"subtitle",children:"Every piece created by AethelCarats is hand-crafted to exacting standards. We proudly stand behind our master goldsmiths with a complimentary Lifetime Warranty against manufacturing defects."}),e.jsx(t,{to:"/contact-us",style:{display:"inline-flex",alignItems:"center",gap:8,background:"#C9A96E",color:"#0B0B0B",padding:"14px 28px",borderRadius:2,fontSize:"0.85rem",letterSpacing:"0.14em",textTransform:"uppercase",fontWeight:700,textDecoration:"none"},children:"REQUEST WARRANTY ASSISTANCE"})]}),e.jsx("div",{className:"image-side",children:e.jsx(p,{src:"/assets/why-aura/lifetime-warranty-hero.jpg",alt:"Master Jeweller Polishing Diamond Ring"})})]})}),e.jsxs(f,{children:[e.jsx(i,{yOffset:35,children:e.jsxs(n,{children:[e.jsx("h2",{children:"Our Quality Guarantee"}),e.jsx("p",{children:"When you purchase fine jewellery from AethelCarats, your piece is inspected through multi-point gemmological protocols. We guarantee that your item is free from manufacturing defects in structure, setting, and metal casting at the time of delivery."}),e.jsx("p",{children:"If you ever believe your item has a manufacturing defect, send it to our atelier for expert inspection. If a defect is confirmed, we will repair or replace the item free of charge."}),e.jsxs(u,{children:[e.jsx(i,{delay:0,yOffset:25,children:e.jsxs(o,{children:[e.jsxs("h3",{children:[e.jsx(l,{size:18,color:"#C9A96E"})," What Is Covered"]}),e.jsx("p",{children:"Manufacturing defects in metal casting, prong alignment, channel settings, solder joints, and structural integrity under normal wear."})]})}),e.jsx(i,{delay:.1,yOffset:25,children:e.jsxs(o,{children:[e.jsxs("h3",{children:[e.jsx(d,{size:18,color:"#C9A96E"})," Complimentary Services"]}),e.jsx("p",{children:"Complimentary annual prong tightening, stone inspection, steam cleaning, and rhodium polishing at our atelier."})]})})]})]})}),e.jsx(i,{yOffset:35,children:e.jsxs(n,{children:[e.jsx("h2",{children:"Care & Maintenance Guidance"}),e.jsx("p",{children:"Fine jewellery is crafted from precious metals that can naturally experience wear over time. Normal wear and tear, accidental damage, loss of stones due to impact, or repairs performed by third-party jewellers are not covered under warranty."}),e.jsx("p",{children:"We recommend scheduling an annual inspection with our concierge to ensure prongs remain taut and settings remain secure."})]})})]}),e.jsx(i,{yOffset:35,children:e.jsx(y,{children:e.jsxs(b,{children:[e.jsx("h2",{children:"Need Maintenance or Repair Assistance?"}),e.jsx("p",{children:"Contact our Customer Care team to schedule your complimentary annual jewellery inspection or service."}),e.jsxs(t,{to:"/contact-us",className:"primary-btn",children:[e.jsx(c,{size:16})," CONTACT CUSTOMER CARE"]})]})})}),e.jsx(m,{})]}));export{z as LifetimeWarrantyPage};

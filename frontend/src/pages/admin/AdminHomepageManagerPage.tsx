@@ -338,13 +338,7 @@ export const AdminHomepageManagerPage: React.FC = () => {
   const [desktopPreview, setDesktopPreview] = useState<string>('');
   const [mobilePreview, setMobilePreview] = useState<string>('');
 
-  // 2. VALUE PROPOSITIONS (4 CARDS)
-  const [valuePropsConfig, setValuePropsConfig] = useState([
-    { icon: 'Diamond', title: 'Certified Loose Diamonds', description: 'GIA & IGI authenticated natural and lab-grown stones.' },
-    { icon: 'Sparkles', title: 'Bespoke Atelier CAD', description: 'Custom 3D modeling and hand-setting by master jewelers.' },
-    { icon: 'Truck', title: 'Worldwide Insured Transit', description: 'Complimentary white-glove courier shipping.' },
-    { icon: 'ShieldCheck', title: 'Lifetime Warranty', description: 'Guaranteed metal purity and complimentary maintenance.' },
-  ]);
+
 
   // 3. CATEGORY MAISON CAROUSEL
   const [categoriesConfig, setCategoriesConfig] = useState({
@@ -510,7 +504,6 @@ export const AdminHomepageManagerPage: React.FC = () => {
   // 11. SECTION VISIBILITY MASTER TOGGLE
   const [sectionVisibility, setSectionVisibility] = useState<Record<string, boolean>>({
     hero: true,
-    valueProps: true,
     categories: true,
     campaignBanner: true,
     featured: true,
@@ -546,7 +539,6 @@ export const AdminHomepageManagerPage: React.FC = () => {
         if (data && data.homepage_config) {
           try {
             const parsed = typeof data.homepage_config === 'string' ? JSON.parse(data.homepage_config) : data.homepage_config;
-            if (parsed.valuePropsConfig) setValuePropsConfig(parsed.valuePropsConfig);
             if (parsed.categoriesConfig) setCategoriesConfig(parsed.categoriesConfig);
             if (parsed.campaignBannerConfig) setCampaignBannerConfig(parsed.campaignBannerConfig);
             if (parsed.featuredCards) setFeaturedCards(parsed.featuredCards);
@@ -569,7 +561,6 @@ export const AdminHomepageManagerPage: React.FC = () => {
     setSaveStatus('Saving Homepage CMS settings to database...');
     try {
       const payload = {
-        valuePropsConfig,
         categoriesConfig,
         campaignBannerConfig,
         featuredCards,
@@ -696,32 +687,29 @@ export const AdminHomepageManagerPage: React.FC = () => {
         <TabButton $active={activeTab === 'hero'} onClick={() => setActiveTab('hero')}>
           1. Hero Slider
         </TabButton>
-        <TabButton $active={activeTab === 'valueProps'} onClick={() => setActiveTab('valueProps')}>
-          2. Value Props
-        </TabButton>
         <TabButton $active={activeTab === 'categories'} onClick={() => setActiveTab('categories')}>
-          3. Categories
+          2. Categories
         </TabButton>
         <TabButton $active={activeTab === 'campaign'} onClick={() => setActiveTab('campaign')}>
-          4. Campaign Banner
+          3. Campaign Banner
         </TabButton>
         <TabButton $active={activeTab === 'featured'} onClick={() => setActiveTab('featured')}>
-          5. Editorial Panels
+          4. Editorial Panels
         </TabButton>
         <TabButton $active={activeTab === 'collection'} onClick={() => setActiveTab('collection')}>
-          6. Lookbook Deck
+          5. Lookbook Deck
         </TabButton>
         <TabButton $active={activeTab === 'essentials'} onClick={() => setActiveTab('essentials')}>
-          7. Dual Promos
+          6. Dual Promos
         </TabButton>
         <TabButton $active={activeTab === 'shapes'} onClick={() => setActiveTab('shapes')}>
-          8. Diamond Shapes
+          7. Diamond Shapes
         </TabButton>
         <TabButton $active={activeTab === 'onlyAura'} onClick={() => setActiveTab('onlyAura')}>
-          9. Atelier Cards
+          8. Atelier Cards
         </TabButton>
         <TabButton $active={activeTab === 'reviews'} onClick={() => setActiveTab('reviews')}>
-          10. Voices / Reviews
+          9. Voices / Reviews
         </TabButton>
       </TabsNav>
 
@@ -890,80 +878,12 @@ export const AdminHomepageManagerPage: React.FC = () => {
         </SectionCard>
       )}
 
-      {(activeTab === 'all' || activeTab === 'valueProps') && (
-        <SectionCard $disabled={!sectionVisibility.valueProps}>
-          <div className="section-header">
-            <div className="title-box">
-              <h3>2. Four Value Propositions (Trust Bar)</h3>
-              <span className="badge">4 Cards</span>
-            </div>
-            <div className="header-actions">
-              <SmallBtn onClick={() => handleToggleSection('valueProps')}>
-                {sectionVisibility.valueProps ? <EyeOff size={13} /> : <Eye size={13} />}{' '}
-                {sectionVisibility.valueProps ? 'Hide Section' : 'Show Section'}
-              </SmallBtn>
-            </div>
-          </div>
-
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: 16 }}>
-            {valuePropsConfig.map((prop, idx) => (
-              <SubCard key={idx}>
-                <div style={{ fontWeight: 700, fontSize: '0.85rem', color: '#c9a45c', marginBottom: 12 }}>
-                  CARD {idx + 1}
-                </div>
-                <FormGrid>
-                  <div className="full-width">
-                    <label>
-                      <span>Card Title</span>
-                      <AdminColorPicker
-                        value={(prop as any).titleColor}
-                        defaultValue="#1f1f1f"
-                        onChange={(col) => {
-                          setValuePropsConfig((prev) => prev.map((p, i) => (i === idx ? { ...p, titleColor: col } : p)));
-                        }}
-                      />
-                    </label>
-                    <input
-                      type="text"
-                      value={prop.title}
-                      onChange={(e) => {
-                        const val = e.target.value;
-                        setValuePropsConfig((prev) => prev.map((p, i) => (i === idx ? { ...p, title: val } : p)));
-                      }}
-                    />
-                  </div>
-                  <div className="full-width">
-                    <label>
-                      <span>Description / Subtitle</span>
-                      <AdminColorPicker
-                        value={(prop as any).descriptionColor}
-                        defaultValue="#666666"
-                        onChange={(col) => {
-                          setValuePropsConfig((prev) => prev.map((p, i) => (i === idx ? { ...p, descriptionColor: col } : p)));
-                        }}
-                      />
-                    </label>
-                    <input
-                      type="text"
-                      value={prop.description}
-                      onChange={(e) => {
-                        const val = e.target.value;
-                        setValuePropsConfig((prev) => prev.map((p, i) => (i === idx ? { ...p, description: val } : p)));
-                      }}
-                    />
-                  </div>
-                </FormGrid>
-              </SubCard>
-            ))}
-          </div>
-        </SectionCard>
-      )}
 
       {(activeTab === 'all' || activeTab === 'categories') && (
         <SectionCard $disabled={!sectionVisibility.categories}>
           <div className="section-header">
             <div className="title-box">
-              <h3>3. Category Maison Carousel ("Shop By Category")</h3>
+              <h3>2. Category Maison Carousel ("Shop By Category")</h3>
               <span className="badge">{categoriesConfig.items.length} Categories</span>
             </div>
             <div className="header-actions">
@@ -1094,7 +1014,7 @@ export const AdminHomepageManagerPage: React.FC = () => {
         <SectionCard $disabled={!sectionVisibility.campaignBanner}>
           <div className="section-header">
             <div className="title-box">
-              <h3>4. Editorial Campaign Banner ("A New Expression of Fine Jewellery")</h3>
+              <h3>3. Editorial Campaign Banner ("A New Expression of Fine Jewellery")</h3>
               <span className="badge">Full Width</span>
             </div>
             <div className="header-actions">
@@ -1206,7 +1126,7 @@ export const AdminHomepageManagerPage: React.FC = () => {
         <SectionCard $disabled={!sectionVisibility.featured}>
           <div className="section-header">
             <div className="title-box">
-              <h3>5. Two-Panel Editorial Section (Riviere Necklaces & High Jewellery Bracelets)</h3>
+              <h3>4. Two-Panel Editorial Section (Riviere Necklaces & High Jewellery Bracelets)</h3>
               <span className="badge">Dual Showcase</span>
             </div>
             <div className="header-actions">
@@ -1313,7 +1233,7 @@ export const AdminHomepageManagerPage: React.FC = () => {
         <SectionCard $disabled={!sectionVisibility.signature}>
           <div className="section-header">
             <div className="title-box">
-              <h3>6. Interactive Lookbook Collection Slides</h3>
+              <h3>5. Interactive Lookbook Collection Slides</h3>
               <span className="badge">{collectionSlides.length} Lookbook Slides</span>
             </div>
             <div className="header-actions">
@@ -1431,7 +1351,7 @@ export const AdminHomepageManagerPage: React.FC = () => {
         <SectionCard $disabled={!sectionVisibility.essentials}>
           <div className="section-header">
             <div className="title-box">
-              <h3>7. Dual Promotional Panels (Diamond Essentials & Golden Hour)</h3>
+              <h3>6. Dual Promotional Panels (Diamond Essentials & Golden Hour)</h3>
               <span className="badge">Dual Grid</span>
             </div>
             <div className="header-actions">
@@ -1552,7 +1472,7 @@ export const AdminHomepageManagerPage: React.FC = () => {
         <SectionCard $disabled={!sectionVisibility.shapes}>
           <div className="section-header">
             <div className="title-box">
-              <h3>8. Diamond Shapes Cut Grid & Vault</h3>
+              <h3>7. Diamond Shapes Cut Grid & Vault</h3>
               <span className="badge">8 Cuts</span>
             </div>
             <div className="header-actions">
@@ -1685,7 +1605,7 @@ export const AdminHomepageManagerPage: React.FC = () => {
         <SectionCard $disabled={!sectionVisibility.onlyAura}>
           <div className="section-header">
             <div className="title-box">
-              <h3>9. "Only At Aura Atelier" Showcase Cards</h3>
+              <h3>8. "Only At Aura Atelier" Showcase Cards</h3>
               <span className="badge">{auraCards.length} Cards</span>
             </div>
             <div className="header-actions">
@@ -1791,7 +1711,7 @@ export const AdminHomepageManagerPage: React.FC = () => {
         <SectionCard $disabled={!sectionVisibility.reviews}>
           <div className="section-header">
             <div className="title-box">
-              <h3>10. Voices of Elegance (Customer Testimonials & Reviews)</h3>
+              <h3>9. Voices of Elegance (Customer Testimonials & Reviews)</h3>
               <span className="badge">Reviews</span>
             </div>
             <div className="header-actions">

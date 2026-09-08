@@ -3,16 +3,10 @@ import { Link } from 'react-router-dom';
 import styled from 'styled-components';
 import {
   ArrowRight,
-  Diamond as DiamondIcon,
-  ShieldCheck,
-  Sparkles,
-  Truck,
   ChevronLeft,
   ChevronRight,
   Star,
-  Award,
-  Heart,
-  Gem,
+  ShieldCheck,
 } from 'lucide-react';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { Navigation, EffectFade, Pagination, Autoplay } from 'swiper/modules';
@@ -278,182 +272,7 @@ const FancyIndicatorDash = styled.button<{ $active: boolean }>`
   }
 `;
 
-/* 4-COLUMN TRUST / VALUE PROPOSITION SECTION */
-const ValuePropsRow = styled.div`
-  background-color: #111111;
-  border-top: 1px solid rgba(140, 116, 75, 0.25);
-  border-bottom: 1px solid rgba(140, 116, 75, 0.25);
-  padding: 54px 24px;
-  margin: 0;
-  width: 100%;
-  box-sizing: border-box;
 
-  @media (max-width: 640px) {
-    padding: 32px 16px 24px;
-  }
-`;
-
-const ValuePropsGrid = styled.div`
-  max-width: 1400px;
-  margin: 0 auto;
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 24px;
-  text-align: center;
-  align-items: stretch;
-
-  @media (max-width: 992px) {
-    grid-template-columns: repeat(2, 1fr);
-    gap: 20px;
-  }
-
-  @media (max-width: 640px) {
-    display: none;
-  }
-`;
-
-const ValuePropCard = styled.div`
-  background: #151515;
-  border: 1px solid rgba(140, 116, 75, 0.2);
-  border-radius: 4px;
-  padding: 32px 24px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: flex-start;
-  gap: 14px;
-  height: 100%;
-  min-height: 220px;
-  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.4);
-  transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
-  position: relative;
-  overflow: hidden;
-  box-sizing: border-box;
-
-  &::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    height: 3px;
-    background: linear-gradient(90deg, #C9A96E 0%, #E6C887 50%, #C9A96E 100%);
-    opacity: 0;
-    transition: opacity 0.4s ease;
-  }
-
-  &:hover {
-    transform: translateY(-6px);
-    border-color: #C9A96E;
-    box-shadow: 0 16px 32px rgba(0, 0, 0, 0.8), 0 0 20px rgba(201, 169, 110, 0.15);
-
-    &::before {
-      opacity: 1;
-    }
-
-    svg {
-      transform: scale(1.12) rotate(4deg);
-      color: #C9A96E;
-    }
-  }
-
-  svg {
-    transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), color 0.3s ease;
-    color: #C9A96E;
-  }
-
-  h4 {
-    font-family: 'Cormorant Garamond', serif;
-    font-size: 1.15rem;
-    font-weight: 600;
-    letter-spacing: 0.1em;
-    text-transform: uppercase;
-    color: #F5F1E8;
-    margin: 0;
-  }
-
-  p {
-    font-size: 0.84rem;
-    color: #A8A8A8;
-    line-height: 1.6;
-    margin: 0;
-  }
-`;
-
-const ValuePropsMobileSliderWrapper = styled.div`
-  display: none;
-  width: 100%;
-  margin: 0 auto;
-
-  @media (max-width: 640px) {
-    display: block;
-  }
-
-  .swiper {
-    padding-bottom: 32px;
-    width: 100%;
-  }
-
-  .swiper-slide {
-    height: auto;
-    display: flex;
-  }
-
-  .swiper-pagination {
-    bottom: 0 !important;
-  }
-
-  .swiper-pagination-bullet {
-    background: #c9a45c;
-    opacity: 0.35;
-    width: 7px;
-    height: 7px;
-    margin: 0 4px !important;
-    transition: all 0.3s ease;
-  }
-
-  .swiper-pagination-bullet-active {
-    opacity: 1;
-    width: 22px;
-    border-radius: 4px;
-    background: #c9a45c;
-  }
-`;
-
-const ValuePropCardMobile = styled.div`
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  gap: 10px;
-  text-align: center;
-  padding: 24px 18px;
-  background: #151515;
-  border: 1px solid rgba(140, 116, 75, 0.25);
-  border-radius: 12px;
-  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.5);
-  width: 100%;
-  min-height: 150px;
-  box-sizing: border-box;
-
-  h4 {
-    font-family: 'Cormorant Garamond', 'Playfair Display', serif;
-    font-size: 1.05rem;
-    font-weight: 600;
-    letter-spacing: 0.1em;
-    text-transform: uppercase;
-    color: #F5F1E8;
-    margin: 0;
-  }
-
-  p {
-    font-size: 0.82rem;
-    color: #A8A8A8;
-    line-height: 1.45;
-    margin: 0;
-    max-width: 280px;
-  }
-`;
 
 /* HORIZONTAL LUXURY CATEGORY CAROUSEL SECTION */
 const ExploreWrapper = styled.section`
@@ -1762,24 +1581,6 @@ const getMobileHeroImagePath = (banner: HeroBanner): string => {
   return (banner.imagePath || '').replace(/ /g, '%20');
 };
 
-const DEFAULT_VALUE_PROPS = [
-  { icon: 'Diamond', title: 'Certified Loose Diamonds', description: 'GIA & IGI authenticated natural and lab-grown stones.' },
-  { icon: 'Sparkles', title: 'Bespoke Atelier CAD', description: 'Custom 3D modeling and hand-setting by master jewelers.' },
-  { icon: 'Truck', title: 'Worldwide Insured Transit', description: 'Complimentary white-glove courier shipping.' },
-  { icon: 'ShieldCheck', title: 'Lifetime Warranty', description: 'Guaranteed metal purity and complimentary maintenance.' },
-];
-
-const renderValuePropIcon = (iconName?: string) => {
-  const norm = (iconName || '').toLowerCase();
-  if (norm.includes('sparkle')) return <Sparkles size={32} color="#C9A45C" />;
-  if (norm.includes('truck') || norm.includes('ship')) return <Truck size={32} color="#C9A45C" />;
-  if (norm.includes('shield') || norm.includes('warrant')) return <ShieldCheck size={32} color="#C9A45C" />;
-  if (norm.includes('star')) return <Star size={32} color="#C9A45C" />;
-  if (norm.includes('award')) return <Award size={32} color="#C9A45C" />;
-  if (norm.includes('heart')) return <Heart size={32} color="#C9A45C" />;
-  if (norm.includes('gem')) return <Gem size={32} color="#C9A45C" />;
-  return <DiamondIcon size={32} color="#C9A45C" />;
-};
 
 export const HomePage: React.FC = () => {
   const [sections, setSections] = useState<PageSection[]>([]);
@@ -2062,9 +1863,6 @@ export const HomePage: React.FC = () => {
           { id: 'rev-5', text: 'The custom CAD process was effortless. Exceptional craftsmanship!', author: 'David H.', rating: 5 },
           { id: 'rev-6', text: 'Superb diamond quality and fast insured delivery.', author: 'Elena P.', rating: 5 },
         ]);
-
-  const activeValueProps = cmsConfig?.valuePropsConfig || DEFAULT_VALUE_PROPS;
-
   return (
     <>
       {/* 1. DYNAMIC DATABASE-DRIVEN HERO SLIDER / BANNER SYSTEM */}
@@ -2150,25 +1948,6 @@ export const HomePage: React.FC = () => {
           </div>
         );
       })()}
-
-      {/* 2. VALUE PROPOSITIONS (TRUST BAR) */}
-      {cmsConfig?.sectionVisibility?.valueProps !== false && (
-        <div style={{ maxWidth: 1380, margin: '0 auto', padding: '36px 20px', borderBottom: '1px solid rgba(201,164,92,0.15)' }}>
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: 24, textAlign: 'center' }}>
-            {activeValueProps.map((item: any, idx: number) => (
-              <div key={idx} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 10 }}>
-                {renderValuePropIcon(item.icon)}
-                <h4 style={{ margin: 0, fontSize: '1rem', fontFamily: "'Cormorant Garamond', serif", letterSpacing: '0.05em', color: item.titleColor || '#F5F1E8' }}>
-                  {item.title}
-                </h4>
-                <p style={{ margin: 0, fontSize: '0.82rem', color: item.descriptionColor || 'rgba(245,241,232,0.7)', lineHeight: 1.4, maxWidth: 260 }}>
-                  {item.description}
-                </p>
-              </div>
-            ))}
-          </div>
-        </div>
-      )}
 
       {/* 3. LUXURY CATEGORY CAROUSEL */}
       {cmsConfig?.sectionVisibility?.categories !== false && (
