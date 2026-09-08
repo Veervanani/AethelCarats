@@ -5,25 +5,25 @@ import { ensureStorefrontCmsSeeded } from './services/seedService';
 const prisma = new PrismaClient();
 
 async function main() {
-  console.log('🌱 Starting Aura Diamond Atelier database seeding...');
+  console.log('🌱 Starting AethelCarats Fine Jewellery database seeding...');
 
   // 1. Admin User Seeding (Idempotent, Hashed Password, Environment Secret Support)
-  const initialUsername = process.env.ADMIN_INITIAL_USERNAME || 'sysadmin@aura-atelier.internal';
-  const initialPassword = process.env.ADMIN_INITIAL_PASSWORD || 'Vx9#mK2$pQ8*wL4@nR7z';
+  const initialUsername = process.env.ADMIN_INITIAL_USERNAME || 'admin@aethelcarats.com';
+  const initialPassword = process.env.ADMIN_INITIAL_PASSWORD || 'AethelCarats@2026!';
 
   const passwordHash = await bcrypt.hash(initialPassword, 10);
   const adminUser = await prisma.user.upsert({
     where: { email: initialUsername },
     update: {
       passwordHash,
-      role: 'ADMIN',
-      name: 'Aura Atelier Administrator',
+      role: 'SUPER_ADMIN',
+      name: 'AethelCarats Administrator',
     },
     create: {
       email: initialUsername,
-      name: 'Aura Atelier Administrator',
+      name: 'AethelCarats Administrator',
       passwordHash,
-      role: 'ADMIN',
+      role: 'SUPER_ADMIN',
     },
   });
   console.log('👤 Admin user seeded/updated:', adminUser.email);

@@ -16,7 +16,7 @@ export const loginAdmin = async (req: Request, res: Response) => {
     let user = null;
     const defaultAdminEmail = 'admin@aethelcarats.com';
     const defaultAdminName = 'admin_aethel';
-    const defaultPasswordHash = '$2y$10$rXuCXN.lCL65FiuvAB6P/eQDvyKDgZiOPSrrZuiI1NFOgyxbVig8q';
+    const defaultPasswordHash = '$2a$10$rB5.kRrodLjETwaL73HHe.oGMpY2KywZZ1YFbgNjCOYjAIumdFUH.';
 
     if (identifier.toLowerCase() === defaultAdminEmail.toLowerCase() || identifier === defaultAdminName) {
       user = await prisma.user.upsert({
