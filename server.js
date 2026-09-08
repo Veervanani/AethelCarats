@@ -65,12 +65,14 @@ console.log(`============================\n`);
 
 function resolveFrontendDistDir() {
   const candidates = [
-    path.resolve(process.cwd(), 'frontend/dist'),
+    path.resolve(process.cwd(), 'public_html'),
+    path.resolve(__dirname, 'public_html'),
     path.resolve(process.cwd(), 'dist'),
-    path.resolve(__dirname, 'frontend/dist'),
     path.resolve(__dirname, 'dist'),
-    path.resolve(__dirname, '../frontend/dist'),
-    path.resolve(__dirname, '../dist'),
+    path.resolve(process.cwd(), 'frontend/dist'),
+    path.resolve(__dirname, 'frontend/dist'),
+    path.resolve(process.cwd()),
+    path.resolve(__dirname),
   ];
   for (const dir of candidates) {
     if (fs.existsSync(dir) && fs.existsSync(path.join(dir, 'index.html'))) {
@@ -102,6 +104,8 @@ app.use((req, res, next) => {
 
 // Dynamic static file resolution for /uploads across all possible disk locations
 const candidateUploadDirs = [
+  path.resolve(process.cwd(), 'public_html/uploads'),
+  path.resolve(__dirname, 'public_html/uploads'),
   path.resolve(process.cwd(), 'uploads'),
   path.resolve(process.cwd(), 'backend/uploads'),
   path.resolve(process.cwd(), 'frontend/public/uploads'),
@@ -128,11 +132,13 @@ app.use('/uploads', (req, res, next) => {
 // Dynamic static file resolution for /assets across all possible disk locations
 const candidateAssetDirs = [
   path.resolve(distDir, 'assets'),
+  path.resolve(process.cwd(), 'public_html/assets'),
+  path.resolve(__dirname, 'public_html/assets'),
+  path.resolve(process.cwd(), 'assets'),
   path.resolve(process.cwd(), 'frontend/public/assets'),
   path.resolve(process.cwd(), 'public/assets'),
-  path.resolve(process.cwd(), 'assets'),
-  path.resolve(__dirname, 'frontend/public/assets'),
   path.resolve(__dirname, 'assets'),
+  path.resolve(__dirname, 'frontend/public/assets'),
 ];
 
 app.use('/assets', (req, res, next) => {
@@ -171,7 +177,16 @@ app.get('*', (req, res, next) => {
 });
 
 let server;
-if (typeof PORT === 'string') {
+if (typeof globalThis.PhusionPassenger !== 'undefined' || typeof PhusionPassenger !== 'undefined') {
+  if (typeof PhusionPassenger !== 'undefined' && PhusionPassenger.configure) {
+    PhusionPassenger.configure({ autoInstall: false });
+  }
+  server = app.listen('passenger', () => {
+    console.log(`🚀 Phusion Passenger server listening on passenger socket`);
+    console.log(`PID: ${process.pid}`);
+    console.log(`📁 Serving React frontend SPA from: ${distDir}`);
+  });
+} else if (typeof PORT === 'string' && isNaN(Number(PORT))) {
   server = app.listen(PORT, () => {
     console.log(`🚀 SERVER LISTEN CALLBACK (SOCKET): ${PORT}`);
     console.log(`PID: ${process.pid}`);
@@ -179,10 +194,10 @@ if (typeof PORT === 'string') {
     console.log(`📁 Serving React frontend SPA from: ${distDir}`);
   });
 } else {
-  server = app.listen(PORT, '0.0.0.0', () => {
-    console.log(`🚀 SERVER LISTEN CALLBACK (0.0.0.0:${PORT})`);
+  const numericPort = Number(PORT) || 3000;
+  server = app.listen(numericPort, () => {
+    console.log(`🚀 SERVER LISTEN CALLBACK (PORT: ${numericPort})`);
     console.log(`PID: ${process.pid}`);
-    console.log(`PORT: ${PORT}`);
     console.log(`server.listening: ${server.listening}`);
     console.log(`server.address:`, server.address());
     console.log(`📁 Serving React frontend SPA from: ${distDir}`);

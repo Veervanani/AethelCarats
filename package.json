@@ -3,6 +3,7 @@
   "version": "1.0.1",
   "private": true,
   "type": "module",
+  "main": "server.js",
   "description": "AethelCarats Luxury Fine Jewellery & Diamond Vault Platform",
   "scripts": {
     "dev:backend": "cd backend && npm run dev",
