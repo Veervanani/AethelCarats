@@ -1,4 +1,4 @@
-﻿import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
 import { Save, RefreshCw, Eye, Check, Plus, Trash2 } from 'lucide-react';
 import { api } from '../../services/api';
@@ -205,14 +205,14 @@ export const AdminRingSizeGuidePage: React.FC = () => {
     slug: 'find-your-ring-size',
     status: 'PUBLISHED',
     heroTitle: 'FIND YOUR PERFECT RING SIZE',
-    heroSubtitle: 'Comprehensive Aura Diamond Atelier Sizing Guide',
+    heroSubtitle: 'Comprehensive AethelCarats Sizing Guide',
     heroImage: '/assets/education/ring-sizer-hero.jpg',
     heroImagePosition: 'center',
     heroBg: '#19202A',
     heroCtaText: 'Request Free Ring Sizer',
     heroCtaUrl: '#free-sizer',
     introHeading: "Precision Sizing for Life's Timeless Moments",
-    introParagraphs: "At Aura Diamond Atelier, a ring is a symbol of lifelong devotion crafted to fit comfortably and securely.",
+    introParagraphs: "At AethelCarats, a ring is a symbol of lifelong devotion crafted to fit comfortably and securely.",
     introContent: '',
     infoHeading: 'International Ring Size Conversion',
     infoDescription: 'Measure your finger diameter or convert existing ring sizes using our standardized international chart.',
@@ -231,7 +231,7 @@ export const AdminRingSizeGuidePage: React.FC = () => {
       { us: '11', uk: 'V 1/2', eu: '64', diameter: '20.6', circumference: '64.6' },
       { us: '12', uk: 'X 1/2', eu: '66.5', diameter: '21.4', circumference: '67.2' },
     ],
-    sizerHeading: 'COMPLIMENTARY AURA RING SIZER',
+    sizerHeading: 'COMPLIMENTARY AETHELCARATS RING SIZER',
     sizerDescription: 'Receive our reusable precision ring sizer delivered directly to your door with complimentary shipping.',
     sizerImage: '/assets/education/ring-sizer-tool.jpg',
     sizerButtonText: 'REQUEST FREE SIZER',
@@ -263,11 +263,11 @@ export const AdminRingSizeGuidePage: React.FC = () => {
     ctaButtonText: 'BOOK ATELIER CONSULTATION',
     ctaButtonUrl: '/contact-us',
     ctaBg: '#19202A',
-    seoTitle: 'Ring Size Guide | Aura Diamond Atelier',
-    metaDescription: 'Find your perfect ring size with Aura Diamond Atelier international conversion chart.',
+    seoTitle: 'Ring Size Guide | AethelCarats',
+    metaDescription: 'Find your perfect ring size with AethelCarats international conversion chart.',
     keywords: 'ring size guide, ring sizer, international ring sizes',
-    canonicalUrl: 'https://auroradiamonds.com/education/rings/find-your-ring-size',
-    ogTitle: 'Aura Diamond Atelier Ring Size Guide',
+    canonicalUrl: 'https://aethelcarats.com/education/rings/find-your-ring-size',
+    ogTitle: 'AethelCarats Ring Size Guide',
     ogDescription: 'Find your exact ring size using our international chart and free ring sizer tool.',
     ogImage: '/assets/education/ring-sizer-hero.jpg',
   });
