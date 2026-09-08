@@ -664,7 +664,7 @@ app.get('/api/v1/health', async (req, res) => {
     res.json({
       status: 'ok',
       database: 'connected',
-      engine: 'Node.js Express + Prisma ORM / MySQL',
+      engine: 'Node.js Express + Native Pure JS MySQL2 Pool / MySQL',
       nodeVersion: process.version,
       connection: {
         host: envHost,
