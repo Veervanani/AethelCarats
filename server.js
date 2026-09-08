@@ -100,23 +100,33 @@ app.use((req, res, next) => {
   next();
 });
 
-// Static asset & upload serving across all candidate directories
-const staticUploadDirs = [
+// Dynamic static file resolution for /uploads across all possible disk locations
+const candidateUploadDirs = [
   path.resolve(process.cwd(), 'uploads'),
   path.resolve(process.cwd(), 'backend/uploads'),
   path.resolve(process.cwd(), 'frontend/public/uploads'),
   path.resolve(distDir, 'uploads'),
   path.resolve(__dirname, 'uploads'),
+  path.resolve(__dirname, 'backend/uploads'),
   path.resolve(__dirname, 'frontend/dist/uploads'),
 ];
 
-for (const uploadDir of staticUploadDirs) {
-  if (fs.existsSync(uploadDir)) {
-    app.use('/uploads', express.static(uploadDir));
+app.use('/uploads', (req, res, next) => {
+  const cleanSubpath = decodeURIComponent(req.path.replace(/^\//, ''));
+  for (const dir of candidateUploadDirs) {
+    const filePath = path.join(dir, cleanSubpath);
+    if (fs.existsSync(filePath) && fs.statSync(filePath).isFile()) {
+      res.set('Access-Control-Allow-Origin', '*');
+      res.set('Cross-Origin-Resource-Policy', 'cross-origin');
+      res.set('Cache-Control', 'public, max-age=86400');
+      return res.sendFile(filePath);
+    }
   }
-}
+  return next();
+});
 
-const staticAssetDirs = [
+// Dynamic static file resolution for /assets across all possible disk locations
+const candidateAssetDirs = [
   path.resolve(distDir, 'assets'),
   path.resolve(process.cwd(), 'frontend/public/assets'),
   path.resolve(process.cwd(), 'public/assets'),
@@ -125,11 +135,19 @@ const staticAssetDirs = [
   path.resolve(__dirname, 'assets'),
 ];
 
-for (const assetDir of staticAssetDirs) {
-  if (fs.existsSync(assetDir)) {
-    app.use('/assets', express.static(assetDir));
+app.use('/assets', (req, res, next) => {
+  const cleanSubpath = decodeURIComponent(req.path.replace(/^\//, ''));
+  for (const dir of candidateAssetDirs) {
+    const filePath = path.join(dir, cleanSubpath);
+    if (fs.existsSync(filePath) && fs.statSync(filePath).isFile()) {
+      res.set('Access-Control-Allow-Origin', '*');
+      res.set('Cross-Origin-Resource-Policy', 'cross-origin');
+      res.set('Cache-Control', 'public, max-age=604800');
+      return res.sendFile(filePath);
+    }
   }
-}
+  return next();
+});
 
 // Serve static React build assets (js, css, images)
 app.use(express.static(distDir));

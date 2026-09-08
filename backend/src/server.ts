@@ -241,15 +241,53 @@ app.use(express.urlencoded({ extended: true, limit: '100mb' }));
 
 const upload = multer({ storage: multer.memoryStorage() });
 
-// Serve local PC uploads and public assets statically across all working directories
-app.use('/uploads', express.static(path.join(process.cwd(), 'uploads')));
-app.use('/uploads', express.static(path.join(process.cwd(), 'backend', 'uploads')));
-app.use('/uploads', express.static(path.join(process.cwd(), 'frontend', 'public', 'uploads')));
-app.use('/uploads', express.static(path.join(__dirname, '..', 'uploads')));
-app.use('/uploads', express.static(path.join(__dirname, '..', '..', 'uploads')));
-app.use('/assets', express.static(path.join(process.cwd(), 'public/assets')));
-app.use('/assets', express.static(path.join(process.cwd(), 'assets')));
-app.use('/assets', express.static(path.join(process.cwd(), 'frontend/public/assets')));
+// Dynamic static file resolution for /uploads across all candidate directories
+const candidateUploadDirs = [
+  path.join(process.cwd(), 'uploads'),
+  path.join(process.cwd(), 'backend', 'uploads'),
+  path.join(process.cwd(), 'frontend', 'public', 'uploads'),
+  path.join(process.cwd(), 'frontend', 'dist', 'uploads'),
+  path.join(__dirname, '..', 'uploads'),
+  path.join(__dirname, '..', '..', 'uploads'),
+];
+
+app.use('/uploads', (req, res, next) => {
+  const cleanSubpath = decodeURIComponent(req.path.replace(/^\//, ''));
+  for (const dir of candidateUploadDirs) {
+    const filePath = path.join(dir, cleanSubpath);
+    if (fs.existsSync(filePath) && fs.statSync(filePath).isFile()) {
+      res.set('Access-Control-Allow-Origin', '*');
+      res.set('Cross-Origin-Resource-Policy', 'cross-origin');
+      res.set('Cache-Control', 'public, max-age=86400');
+      return res.sendFile(filePath);
+    }
+  }
+  return next();
+});
+
+// Dynamic static file resolution for /assets across all candidate directories
+const candidateAssetDirs = [
+  path.join(process.cwd(), 'frontend', 'dist', 'assets'),
+  path.join(process.cwd(), 'frontend', 'public', 'assets'),
+  path.join(process.cwd(), 'public', 'assets'),
+  path.join(process.cwd(), 'assets'),
+  path.join(__dirname, '..', 'frontend', 'public', 'assets'),
+  path.join(__dirname, '..', 'assets'),
+];
+
+app.use('/assets', (req, res, next) => {
+  const cleanSubpath = decodeURIComponent(req.path.replace(/^\//, ''));
+  for (const dir of candidateAssetDirs) {
+    const filePath = path.join(dir, cleanSubpath);
+    if (fs.existsSync(filePath) && fs.statSync(filePath).isFile()) {
+      res.set('Access-Control-Allow-Origin', '*');
+      res.set('Cross-Origin-Resource-Policy', 'cross-origin');
+      res.set('Cache-Control', 'public, max-age=604800');
+      return res.sendFile(filePath);
+    }
+  }
+  return next();
+});
 
 // Health Check Endpoints for Cloud Run & Load Balancers
 app.get(['/healthz', '/_health', '/ping'], (req, res) => {
