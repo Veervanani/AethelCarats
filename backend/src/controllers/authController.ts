@@ -6,8 +6,8 @@ import { AuthRequest } from '../middleware/auth';
 import prisma from '../prisma';
 
 const googleClient = new OAuth2Client(
-  process.env.GOOGLE_CLIENT_ID || 'YOUR_GOOGLE_CLIENT_ID',
-  process.env.GOOGLE_CLIENT_SECRET || 'YOUR_GOOGLE_CLIENT_SECRET'
+  process.env.GOOGLE_CLIENT_ID || '',
+  process.env.GOOGLE_CLIENT_SECRET || ''
 );
 
 export const googleAuth = async (req: Request, res: Response) => {
@@ -47,8 +47,6 @@ export const googleAuth = async (req: Request, res: Response) => {
             idToken: tokenToVerify,
             audience: [
               process.env.GOOGLE_CLIENT_ID || '',
-              'YOUR_GOOGLE_CLIENT_ID',
-              'YOUR_GOOGLE_CLIENT_ID',
             ].filter(Boolean),
           });
           payload = ticket.getPayload();
