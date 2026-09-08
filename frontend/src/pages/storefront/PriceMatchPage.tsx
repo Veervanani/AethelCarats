@@ -257,13 +257,20 @@ export const PriceMatchPage: React.FC = () => {
     window.scrollTo(0, 0);
     api.getPageBySlug('price-match').then((data) => {
       if (data) {
-        const raw = data.content || data.draftContent;
+        const raw = data.draftContent || data.content;
         let parsed: any = {};
         if (raw) {
           try {
             parsed = typeof raw === 'string' ? JSON.parse(raw) : raw;
           } catch (e) {
             parsed = { content: raw };
+          }
+        }
+        if ((!parsed || Object.keys(parsed).length === 0) && data.content) {
+          try {
+            parsed = typeof data.content === 'string' ? JSON.parse(data.content) : data.content;
+          } catch (e) {
+            parsed = { content: data.content };
           }
         }
         setCmsPage({ ...data, parsedContent: parsed });

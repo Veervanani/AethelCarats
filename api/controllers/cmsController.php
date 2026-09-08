@@ -136,8 +136,9 @@ function handleSavePageDraft(string $slug): void {
     $body = json_decode($rawInput, true) ?? $_POST;
 
     $title        = $body['title'] ?? null;
-    $draftContent = $body['draftContent'] ?? null;
+    $draftContent = $body['draftContent'] ?? $body['content'] ?? null;
     $sections     = $body['sections'] ?? null;
+    $seoMetadata  = $body['seoMetadata'] ?? null;
     $userToken    = verifyJwt(getBearerToken());
     $adminUser    = $userToken['email'] ?? 'Admin';
 
@@ -167,9 +168,32 @@ function handleSavePageDraft(string $slug): void {
         ");
         $insRev->execute([generateUuidV4Cms(), $page['id'], $revCount + 1, $adminUser, $draftStr]);
 
-        // Update Page draftContent
-        $updPage = $pdo->prepare("UPDATE `Page` SET `draftContent` = ?, `lastModifiedBy` = ?, `updatedAt` = NOW() WHERE `id` = ?");
-        $updPage->execute([$draftStr, $adminUser, $page['id']]);
+        // Update Page content and draftContent so edits show immediately on storefront
+        $updPage = $pdo->prepare("UPDATE `Page` SET `content` = ?, `draftContent` = ?, `lastModifiedBy` = ?, `updatedAt` = NOW() WHERE `id` = ?");
+        $updPage->execute([$draftStr, $draftStr, $adminUser, $page['id']]);
+
+        // Save SEO Metadata if provided
+        if (is_array($seoMetadata)) {
+            $seoTitle = $seoMetadata['seoTitle'] ?? ($title ?: $slug);
+            $metaDesc = $seoMetadata['metaDescription'] ?? '';
+            $canonical = $seoMetadata['canonicalUrl'] ?? '';
+            $robots = $seoMetadata['robots'] ?? 'index, follow';
+            $ogTitle = $seoMetadata['ogTitle'] ?? '';
+            $ogDesc = $seoMetadata['ogDescription'] ?? '';
+            $ogImg = $seoMetadata['ogImage'] ?? '';
+
+            $checkSeo = $pdo->prepare("SELECT `id` FROM `SeoMetadata` WHERE `pageId` = ? LIMIT 1");
+            $checkSeo->execute([$page['id']]);
+            $existingSeo = $checkSeo->fetch();
+
+            if ($existingSeo) {
+                $updSeo = $pdo->prepare("UPDATE `SeoMetadata` SET `seoTitle` = ?, `metaDescription` = ?, `canonicalUrl` = ?, `robots` = ?, `ogTitle` = ?, `ogDescription` = ?, `ogImage` = ?, `updatedAt` = NOW() WHERE `pageId` = ?");
+                $updSeo->execute([$seoTitle, $metaDesc, $canonical, $robots, $ogTitle, $ogDesc, $ogImg, $page['id']]);
+            } else {
+                $insSeo = $pdo->prepare("INSERT INTO `SeoMetadata` (`id`, `pageId`, `seoTitle`, `metaDescription`, `canonicalUrl`, `robots`, `ogTitle`, `ogDescription`, `ogImage`, `updatedAt`) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, NOW())");
+                $insSeo->execute([generateUuidV4Cms(), $page['id'], $seoTitle, $metaDesc, $canonical, $robots, $ogTitle, $ogDesc, $ogImg]);
+            }
+        }
 
         // Sections update if provided
         if (is_array($sections)) {

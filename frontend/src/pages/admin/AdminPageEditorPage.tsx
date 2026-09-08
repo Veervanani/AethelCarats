@@ -461,15 +461,16 @@ export const AdminPageEditorPage: React.FC = () => {
 
       const updated = await api.savePageDraft(targetSlug, {
         title: page?.title || 'Untitled Page',
+        content: draftPayload,
         draftContent: draftPayload,
         sections,
         seoMetadata,
       });
       setPage(updated);
-      setSaveSuccessMsg('Draft Saved Successfully to Database!');
-      setTimeout(() => setSaveSuccessMsg(''), 3000);
+      setSaveSuccessMsg('Page Saved & Updated Live on Storefront!');
+      setTimeout(() => setSaveSuccessMsg(''), 4000);
     } catch (e) {
-      alert('Error saving draft');
+      alert('Error saving page');
     } finally {
       setSaving(false);
     }
@@ -492,6 +493,7 @@ export const AdminPageEditorPage: React.FC = () => {
 
       const updated = await api.publishPage(targetSlug, {
         title: page?.title || 'Untitled Page',
+        content: publishPayload,
         draftContent: publishPayload,
         sections,
         seoMetadata,

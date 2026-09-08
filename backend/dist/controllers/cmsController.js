@@ -114,11 +114,12 @@ const savePageDraft = async (req, res) => {
                 content: draftStr,
             },
         });
-        // Update draft content & modified timestamp
+        // Update live content, draft content & modified timestamp
         await prisma_1.default.page.update({
             where: { id: page.id },
             data: {
                 ...(title ? { title } : {}),
+                content: draftStr,
                 draftContent: draftStr,
                 lastModifiedBy: adminUser,
             },

@@ -488,35 +488,35 @@ if ($path === '/api/v1/admin/payment-settings') {
 }
 
 // 9. CMS & Content Management Routes (Step 9)
-if ($path === '/api/v1/cms/pages' || str_starts_with($path, '/api/v1/cms/pages/') || $path === '/api/v1/admin/cms/pages' || str_starts_with($path, '/api/v1/admin/cms/pages/')) {
-    if (preg_match('#^/api/v1/(?:admin/)?cms/pages/([^/]+)/draft$#', $path, $m)) {
+if ($path === '/api/v1/cms/pages' || str_starts_with($path, '/api/v1/cms/pages/') || $path === '/api/v1/admin/cms/pages' || str_starts_with($path, '/api/v1/admin/cms/pages/') || $path === '/api/v1/pages' || str_starts_with($path, '/api/v1/pages/')) {
+    if (preg_match('#^/api/v1/(?:admin/)?(?:cms/)?pages/([^/]+)/draft$#', $path, $m)) {
         if ($method === 'POST' || $method === 'PUT') {
             handleSavePageDraft($m[1]);
         } else {
             jsonError('Method Not Allowed', 405);
         }
-    } else if (preg_match('#^/api/v1/(?:admin/)?cms/pages/([^/]+)/publish$#', $path, $m)) {
+    } else if (preg_match('#^/api/v1/(?:admin/)?(?:cms/)?pages/([^/]+)/publish$#', $path, $m)) {
         if ($method === 'POST' || $method === 'PUT') {
             handlePublishPage($m[1]);
         } else {
             jsonError('Method Not Allowed', 405);
         }
-    } else if (preg_match('#^/api/v1/(?:admin/)?cms/pages/([^/]+)/revisions$#', $path, $m)) {
+    } else if (preg_match('#^/api/v1/(?:admin/)?(?:cms/)?pages/([^/]+)/revisions$#', $path, $m)) {
         if ($method === 'GET') {
             handleGetPageRevisions($m[1]);
         } else {
             jsonError('Method Not Allowed', 405);
         }
-    } else if (preg_match('#^/api/v1/(?:admin/)?cms/pages/([^/]+)/restore/([^/]+)$#', $path, $m)) {
+    } else if (preg_match('#^/api/v1/(?:admin/)?(?:cms/)?pages/([^/]+)/restore/([^/]+)$#', $path, $m)) {
         if ($method === 'POST' || $method === 'PUT') {
             handleRestorePageRevision($m[1], $m[2]);
         } else {
             jsonError('Method Not Allowed', 405);
         }
     } else if ($method === 'GET') {
-        if ($path === '/api/v1/cms/pages' || $path === '/api/v1/admin/cms/pages') {
+        if ($path === '/api/v1/cms/pages' || $path === '/api/v1/admin/cms/pages' || $path === '/api/v1/pages') {
             handleGetAllPages();
-        } else if (preg_match('#^/api/v1/(?:admin/)?cms/pages/([^/]+)$#', $path, $m)) {
+        } else if (preg_match('#^/api/v1/(?:admin/)?(?:cms/)?pages/([^/]+)$#', $path, $m)) {
             handleGetPageBySlug($m[1]);
         } else {
             jsonError('API Route Not Found', 404);

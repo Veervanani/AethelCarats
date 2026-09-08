@@ -286,13 +286,21 @@ export const ReturnsRefundsPage: React.FC = () => {
     window.scrollTo(0, 0);
     api.getPageBySlug('returns-refunds').then((data) => {
       if (data) {
-        const raw = data.content || data.draftContent;
+        // Prioritize draftContent if available, else content
+        const raw = data.draftContent || data.content;
         let parsed: any = {};
         if (raw) {
           try {
             parsed = typeof raw === 'string' ? JSON.parse(raw) : raw;
           } catch (e) {
             parsed = { content: raw };
+          }
+        }
+        if ((!parsed || Object.keys(parsed).length === 0) && data.content) {
+          try {
+            parsed = typeof data.content === 'string' ? JSON.parse(data.content) : data.content;
+          } catch (e) {
+            parsed = { content: data.content };
           }
         }
         setCmsPage({ ...data, parsedContent: parsed });
@@ -313,6 +321,9 @@ export const ReturnsRefundsPage: React.FC = () => {
 
   const c = cmsPage?.parsedContent || {};
   const heroImage = c.desktopImage || c.pageImages?.desktopImage || '/assets/why-aura/returns-refunds-hero.jpg';
+  const returnWindowStr = c.returnWindow || '15 Days';
+  const returnWindowClean = returnWindowStr.replace(/\s*from\s+date\s+of\s+delivery/i, '').trim();
+  const returnWindowHeading = returnWindowClean.toLowerCase().includes('day') ? `${returnWindowClean} Return Policy` : `${returnWindowClean}-Day Return Policy`;
 
   return (
     <PageWrapper>
@@ -334,7 +345,7 @@ export const ReturnsRefundsPage: React.FC = () => {
               {c.heading || cmsPage?.title || 'Returns & Refunds'}
             </h1>
             <p className="subtitle" style={{ color: c.introductionColor || undefined }}>
-              {c.introduction || 'Clear and transparent guidance for your AethelCarats purchase. We ensure total peace of mind with our complimentary 30-day return policy and gemmological inspection.'}
+              {c.introduction || `Clear and transparent guidance for your AethelCarats purchase. We ensure total peace of mind with our complimentary ${returnWindowClean.toLowerCase()} return policy and gemmological inspection.`}
             </p>
             <Link
               to="/contact-us"
@@ -391,7 +402,9 @@ export const ReturnsRefundsPage: React.FC = () => {
           <ProcessCard>
             <span className="step-number">04</span>
             <h3>Inspection</h3>
-            <p>Gemmological verification by our master jewellers upon arrival.</p>
+            <p style={{ color: c.inspectionProcessColor || undefined }}>
+              {c.inspectionProcess ? c.inspectionProcess.slice(0, 100) + '...' : 'Gemmological verification by our master jewellers upon arrival.'}
+            </p>
           </ProcessCard>
         </RevealContainer>
 
@@ -399,7 +412,9 @@ export const ReturnsRefundsPage: React.FC = () => {
           <ProcessCard>
             <span className="step-number">05</span>
             <h3>Refund</h3>
-            <p>Reimbursement processed to original payment method within 5–7 business days.</p>
+            <p style={{ color: c.refundTimingColor || undefined }}>
+              {c.refundTiming ? `Reimbursement processed within ${c.refundTiming}.` : 'Reimbursement processed to original payment method within 5–7 business days.'}
+            </p>
           </ProcessCard>
         </RevealContainer>
       </ProcessGrid>
@@ -407,9 +422,9 @@ export const ReturnsRefundsPage: React.FC = () => {
       <PolicyContainer>
         <RevealContainer yOffset={35}>
           <PolicySection>
-            <h2>30-Day Return Policy</h2>
-            <p>
-              At AethelCarats, we stand behind the craftsmanship and quality of our fine jewellery. If for any reason you are not completely satisfied with your purchase of a standard, non-customised item, you may return it within 30 days of initial delivery for a full refund or exchange.
+            <h2 style={{ color: c.returnWindowColor || undefined }}>{returnWindowHeading}</h2>
+            <p style={{ color: c.returnEligibilityColor || undefined, whiteSpace: 'pre-line' }}>
+              {c.returnEligibility || `At AethelCarats, we stand behind the craftsmanship and quality of our fine jewellery. If for any reason you are not completely satisfied with your purchase of a standard, non-customised item, you may return it within ${returnWindowStr} for a full refund or exchange.`}
             </p>
             <p>
               To be eligible for a return, the jewellery piece must satisfy all of the following conditions:
@@ -422,11 +437,22 @@ export const ReturnsRefundsPage: React.FC = () => {
           </PolicySection>
         </RevealContainer>
 
+        {c.returnProcess && (
+          <RevealContainer yOffset={35}>
+            <PolicySection>
+              <h2>Return Step-by-Step Process</h2>
+              <p style={{ color: c.returnProcessColor || undefined, whiteSpace: 'pre-line' }}>
+                {c.returnProcess}
+              </p>
+            </PolicySection>
+          </RevealContainer>
+        )}
+
         <RevealContainer yOffset={35}>
           <PolicySection>
             <h2>Custom & Bespoke Creations</h2>
-            <p>
-              Because custom jewellery pieces, special-order diamond cuts, and personalized engraved creations are uniquely hand-crafted to your individual specifications, they are exempt from standard returns and non-refundable.
+            <p style={{ color: c.customJewelleryRulesColor || undefined, whiteSpace: 'pre-line' }}>
+              {c.customJewelleryRules || 'Because custom jewellery pieces, special-order diamond cuts, and personalized engraved creations are uniquely hand-crafted to your individual specifications, they are exempt from standard returns and non-refundable.'}
             </p>
             <p>
               However, we want you to cherish your piece. We offer complimentary ring resizing within 60 days of purchase and complimentary cleaning, inspection, and prong checks.
@@ -434,11 +460,22 @@ export const ReturnsRefundsPage: React.FC = () => {
           </PolicySection>
         </RevealContainer>
 
+        {c.nonReturnableItems && (
+          <RevealContainer yOffset={35}>
+            <PolicySection>
+              <h2>Non-Returnable Items</h2>
+              <p style={{ color: c.nonReturnableItemsColor || undefined, whiteSpace: 'pre-line' }}>
+                {c.nonReturnableItems}
+              </p>
+            </PolicySection>
+          </RevealContainer>
+        )}
+
         <RevealContainer yOffset={35}>
           <PolicySection>
             <h2>Inspection & Quality Controls</h2>
-            <p>
-              All returned jewellery undergoes rigorous gemmological inspection at our master atelier. We verify the diamond laser inscriptions, serial numbers, metal purity hallmarks, and stone settings against original production records.
+            <p style={{ color: c.inspectionProcessColor || undefined, whiteSpace: 'pre-line' }}>
+              {c.inspectionProcess || 'All returned jewellery undergoes rigorous gemmological inspection at our master atelier. We verify the diamond laser inscriptions, serial numbers, metal purity hallmarks, and stone settings against original production records.'}
             </p>
             <p>
               Items showing signs of wear, alteration, resizing by unauthorized third-party jewellers, or missing diamond certificates will not be accepted and will be returned to the sender.
@@ -446,11 +483,24 @@ export const ReturnsRefundsPage: React.FC = () => {
           </PolicySection>
         </RevealContainer>
 
+        {c.diamondRules && (
+          <RevealContainer yOffset={35}>
+            <PolicySection>
+              <h2>Loose Diamond & Certification Rules</h2>
+              <p style={{ color: c.diamondRulesColor || undefined, whiteSpace: 'pre-line' }}>
+                {c.diamondRules}
+              </p>
+            </PolicySection>
+          </RevealContainer>
+        )}
+
         <RevealContainer yOffset={35}>
           <PolicySection>
             <h2>Refund Processing & Timelines</h2>
-            <p>
-              Upon successful inspection (typically within 2 to 3 business days of receipt), your refund will be issued to your original payment method. Depending on your financial institution, funds usually appear on your statement within 5 to 7 business days.
+            <p style={{ color: c.refundTimingColor || undefined, whiteSpace: 'pre-line' }}>
+              {c.refundTiming
+                ? `Reimbursement is processed within ${c.refundTiming} following atelier inspection verification to your original payment method.`
+                : 'Upon successful inspection (typically within 2 to 3 business days of receipt), your refund will be issued to your original payment method. Depending on your financial institution, funds usually appear on your statement within 5 to 7 business days.'}
             </p>
             <p>
               Return shipping fees are complimentary for domestic orders using our prepaid insured shipping labels. International return shipping rates may vary.
@@ -466,6 +516,25 @@ export const ReturnsRefundsPage: React.FC = () => {
             </p>
           </PolicySection>
         </RevealContainer>
+
+        {/* Dynamic CMS Sections if configured */}
+        {cmsPage?.sections?.map((s: any, idx: number) => {
+          if (!s.isVisible) return null;
+          let sContent: any = {};
+          try {
+            sContent = typeof s.content === 'string' ? JSON.parse(s.content) : s.content;
+          } catch (e) {
+            sContent = { text: s.content };
+          }
+          return (
+            <RevealContainer key={s.id || idx} yOffset={35}>
+              <PolicySection>
+                <h2>{s.title || sContent.title || sContent.heading || 'Additional Policy'}</h2>
+                <p style={{ whiteSpace: 'pre-line' }}>{sContent.text || sContent.content || sContent.body || ''}</p>
+              </PolicySection>
+            </RevealContainer>
+          );
+        })}
       </PolicyContainer>
 
       <RevealContainer yOffset={35}>
