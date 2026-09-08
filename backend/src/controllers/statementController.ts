@@ -404,12 +404,13 @@ export const getCustomersWithFinancials = async (req: AuthRequest, res: Response
     });
 
     const enriched = customers.map((c) => {
-      let totalOrdersCount = c.orders.length;
+      const orders = c.orders || [];
+      let totalOrdersCount = orders.length;
       let totalInvoiced = 0;
       let totalPaid = 0;
       let totalRefunds = 0;
 
-      c.orders.forEach((o) => {
+      orders.forEach((o: any) => {
         const fin = computeOrderFinancials(o);
         totalInvoiced += fin.finalOrderTotal;
         totalPaid += fin.paidAmount;

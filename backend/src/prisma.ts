@@ -319,6 +319,124 @@ function createModelHandler(tableName: string) {
       const [res]: any = await mysqlPool.query('DELETE FROM `' + tableName + '` ' + whereSql, params);
       return { count: res.affectedRows || 0 };
     },
+
+    async createMany(args: any = {}) {
+      const items = Array.isArray(args.data) ? args.data : [args.data].filter(Boolean);
+      let count = 0;
+      for (const item of items) {
+        await this.create({ data: item });
+        count++;
+      }
+      return { count };
+    },
+
+    async aggregate(args: any = {}) {
+      const cols = await getTableColumns(tableName);
+      const params: any[] = [];
+      const whereSql = buildWhereClause(args.where, params, cols);
+      const selectExprs: string[] = [];
+      const mapping: { type: string; key: string; alias: string }[] = [];
+
+      if (args._sum && typeof args._sum === 'object') {
+        for (const k of Object.keys(args._sum)) {
+          if (cols.size === 0 || cols.has(k)) {
+            const alias = `_sum_${k}`;
+            selectExprs.push(`COALESCE(SUM(\`${k}\`), 0) AS \`${alias}\``);
+            mapping.push({ type: '_sum', key: k, alias });
+          }
+        }
+      }
+
+      if (args._count && typeof args._count === 'object') {
+        for (const k of Object.keys(args._count)) {
+          const alias = `_count_${k}`;
+          if (k === '_all' || k === 'id') {
+            selectExprs.push(`COUNT(*) AS \`${alias}\``);
+          } else if (cols.size === 0 || cols.has(k)) {
+            selectExprs.push(`COUNT(\`${k}\`) AS \`${alias}\``);
+          }
+          mapping.push({ type: '_count', key: k, alias });
+        }
+      }
+
+      if (args._max && typeof args._max === 'object') {
+        for (const k of Object.keys(args._max)) {
+          if (cols.size === 0 || cols.has(k)) {
+            const alias = `_max_${k}`;
+            selectExprs.push(`MAX(\`${k}\`) AS \`${alias}\``);
+            mapping.push({ type: '_max', key: k, alias });
+          }
+        }
+      }
+
+      if (args._min && typeof args._min === 'object') {
+        for (const k of Object.keys(args._min)) {
+          if (cols.size === 0 || cols.has(k)) {
+            const alias = `_min_${k}`;
+            selectExprs.push(`MIN(\`${k}\`) AS \`${alias}\``);
+            mapping.push({ type: '_min', key: k, alias });
+          }
+        }
+      }
+
+      if (args._avg && typeof args._avg === 'object') {
+        for (const k of Object.keys(args._avg)) {
+          if (cols.size === 0 || cols.has(k)) {
+            const alias = `_avg_${k}`;
+            selectExprs.push(`COALESCE(AVG(\`${k}\`), 0) AS \`${alias}\``);
+            mapping.push({ type: '_avg', key: k, alias });
+          }
+        }
+      }
+
+      if (selectExprs.length === 0) {
+        selectExprs.push('COUNT(*) AS `_count_id`');
+        mapping.push({ type: '_count', key: 'id', alias: '_count_id' });
+      }
+
+      const sql = `SELECT ${selectExprs.join(', ')} FROM \`${tableName}\` ${whereSql}`;
+      const [rows]: any = await mysqlPool.query(sql, params);
+      const row = rows[0] || {};
+
+      const result: any = {
+        _sum: {},
+        _count: {},
+        _max: {},
+        _min: {},
+        _avg: {},
+      };
+
+      for (const m of mapping) {
+        const val = row[m.alias];
+        if (m.type === '_sum' || m.type === '_avg' || m.type === '_count') {
+          result[m.type][m.key] = val !== null && val !== undefined ? Number(val) : 0;
+        } else {
+          result[m.type][m.key] = val !== undefined ? val : null;
+        }
+      }
+
+      return result;
+    },
+
+    async groupBy(args: any = {}) {
+      const cols = await getTableColumns(tableName);
+      const byFields: string[] = Array.isArray(args.by) ? args.by : [args.by].filter(Boolean);
+      const validBy = byFields.filter((f) => cols.size === 0 || cols.has(f));
+      if (validBy.length === 0) return [];
+
+      const params: any[] = [];
+      const whereSql = buildWhereClause(args.where, params, cols);
+      const byList = validBy.map((f) => '`' + f + '`').join(', ');
+      const sql = `SELECT ${byList}, COUNT(*) as _count_id FROM \`${tableName}\` ${whereSql} GROUP BY ${byList}`;
+      const [rows]: any = await mysqlPool.query(sql, params);
+      return rows.map((r: any) => {
+        const item: any = { _count: { id: Number(r._count_id || 0) } };
+        for (const f of validBy) {
+          item[f] = r[f];
+        }
+        return item;
+      });
+    },
   };
 }
 
@@ -407,6 +525,59 @@ async function attachIncludes(parentTable: string, row: any, include: any) {
     if (include.employee && row.employeeId) {
       const [emp]: any = await mysqlPool.query('SELECT * FROM `Employee` WHERE `id` = ? LIMIT 1', [row.employeeId]);
       row.employee = emp[0] || null;
+    }
+  } else if (parentTable === 'Customer') {
+    if (include.orders) {
+      const [orders]: any = await mysqlPool.query('SELECT * FROM `Order` WHERE `customerId` = ?', [row.id]).catch(() => [[]]);
+      row.orders = orders || [];
+      if (include.orders.include) {
+        for (const o of row.orders) {
+          await attachIncludes('Order', o, include.orders.include);
+        }
+      }
+    } else {
+      row.orders = [];
+    }
+    if (include.assignedEmployee && row.assignedEmployeeId) {
+      const [emp]: any = await mysqlPool.query('SELECT * FROM `Employee` WHERE `id` = ? LIMIT 1', [row.assignedEmployeeId]).catch(() => [[]]);
+      row.assignedEmployee = emp[0] || null;
+    }
+    if (include._count) {
+      row._count = row._count || {};
+      if (include._count.select?.internalSales) {
+        const [cnt]: any = await mysqlPool.query('SELECT COUNT(*) as c FROM `InternalSale` WHERE `customerId` = ?', [row.id]).catch(() => [{ c: 0 }]);
+        row._count.internalSales = Number(cnt[0]?.c || 0);
+      }
+      if (include._count.select?.orders) {
+        const [cnt]: any = await mysqlPool.query('SELECT COUNT(*) as c FROM `Order` WHERE `customerId` = ?', [row.id]).catch(() => [{ c: 0 }]);
+        row._count.orders = Number(cnt[0]?.c || 0);
+      }
+    }
+  } else if (parentTable === 'InternalSale') {
+    if (include.employee && row.employeeId) {
+      const [emp]: any = await mysqlPool.query('SELECT * FROM `Employee` WHERE `id` = ? LIMIT 1', [row.employeeId]).catch(() => [[]]);
+      row.employee = emp[0] || null;
+    }
+    if (include.customer && row.customerId) {
+      const [cust]: any = await mysqlPool.query('SELECT * FROM `Customer` WHERE `id` = ? LIMIT 1', [row.customerId]).catch(() => [[]]);
+      row.customer = cust[0] || null;
+    }
+    if (include.supplier && row.supplierId) {
+      const [sup]: any = await mysqlPool.query('SELECT * FROM `Supplier` WHERE `id` = ? LIMIT 1', [row.supplierId]).catch(() => [[]]);
+      row.supplier = sup[0] || null;
+    }
+    if (include.commission) {
+      const [comm]: any = await mysqlPool.query('SELECT * FROM `Commission` WHERE `saleId` = ? LIMIT 1', [row.id]).catch(() => [[]]);
+      row.commission = comm[0] || null;
+    }
+  } else if (parentTable === 'Commission') {
+    if (include.employee && row.employeeId) {
+      const [emp]: any = await mysqlPool.query('SELECT * FROM `Employee` WHERE `id` = ? LIMIT 1', [row.employeeId]).catch(() => [[]]);
+      row.employee = emp[0] || null;
+    }
+    if (include.sale && row.saleId) {
+      const [sale]: any = await mysqlPool.query('SELECT * FROM `InternalSale` WHERE `id` = ? LIMIT 1', [row.saleId]).catch(() => [[]]);
+      row.sale = sale[0] || null;
     }
   }
 }
