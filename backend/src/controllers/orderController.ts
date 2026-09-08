@@ -1,6 +1,5 @@
 import { Response } from 'express';
 import { AuthRequest } from '../middleware/auth';
-import { sendOrderConfirmationEmail, sendOrderDispatchEmail } from '../services/emailService';
 import prisma from '../prisma';
 
 // Utility to calculate financial status for an order
@@ -265,9 +264,6 @@ export const createOrder = async (req: AuthRequest, res: Response) => {
       },
     });
 
-    // Send Order Confirmation Email asynchronously
-    sendOrderConfirmationEmail(order).catch(console.error);
-
     const fin = computeOrderFinancials(order);
 
     return res.status(201).json({
@@ -362,9 +358,6 @@ export const createPublicOrder = async (req: any, res: Response) => {
       },
     });
 
-    // Send Order Confirmation Email asynchronously
-    sendOrderConfirmationEmail(order).catch(console.error);
-
     return res.status(201).json(order);
   } catch (error: any) {
     console.error('createPublicOrder error:', error);
@@ -451,11 +444,6 @@ export const updateOrder = async (req: AuthRequest, res: Response) => {
         reason: reason || 'Order updated',
       },
     });
-
-    // Send Dispatch Email if status changed to DISPATCHED or tracking added
-    if (updated.orderStatus === 'DISPATCHED' || (courierCompany && trackingNumber)) {
-      sendOrderDispatchEmail(updated, courierCompany || 'Insured Express Courier', trackingNumber || 'N/A').catch(console.error);
-    }
 
     const fin = computeOrderFinancials(updated);
 
