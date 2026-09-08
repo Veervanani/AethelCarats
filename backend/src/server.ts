@@ -689,7 +689,7 @@ app.get('/api/v1/health', async (req, res) => {
     const [activeTcp, loopbackTcp, remoteTcp] = await Promise.all([
       checkTcpPort(envHost, 3306, 800),
       checkTcpPort('127.0.0.1', 3306, 800),
-      checkTcpPort('auth-db844.hstgr.io', 3306, 800),
+      checkTcpPort('srv844.hstgr.io', 3306, 800),
     ]);
 
     const errMsg = err.message || String(err);
@@ -697,7 +697,7 @@ app.get('/api/v1/health', async (req, res) => {
 
     if (errMsg.includes('timed out') || !activeTcp.reachable) {
       if (remoteTcp.reachable) {
-        suggestion = `TCP to "${envHost}" failed, but Hostinger remote host "auth-db844.hstgr.io" IS reachable! Change DB_HOST to "auth-db844.hstgr.io" and enable Remote MySQL in hPanel (Databases > Remote MySQL > add "%").`;
+        suggestion = `TCP to "${envHost}" failed, but Hostinger MySQL host "srv844.hstgr.io" IS reachable! Change DB_HOST to "srv844.hstgr.io" and click Create in Remote MySQL.`;
       } else {
         suggestion = `TCP to "${envHost}:3306" is not responding. On Hostinger, ensure Remote MySQL is enabled in hPanel (Databases > Remote MySQL > add "%" for database "${envName}").`;
       }
