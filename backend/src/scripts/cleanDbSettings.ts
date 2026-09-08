@@ -1,4 +1,4 @@
-﻿import prisma from '../prisma';
+import prisma from '../prisma';
 
 async function cleanSettings() {
   console.log('Cleaning database site settings...');
@@ -13,22 +13,22 @@ async function cleanSettings() {
   // 2. Update storeName scalar
   await prisma.siteSetting.upsert({
     where: { key: 'storeName' },
-    update: { value: 'AURA DIAMOND ATELIER' },
-    create: { key: 'storeName', value: 'AURA DIAMOND ATELIER' },
+    update: { value: 'AETHELCARATS FINE JEWELLERY ATELIER' },
+    create: { key: 'storeName', value: 'AETHELCARATS FINE JEWELLERY ATELIER' },
   });
 
   // 3. Update storeAddress scalar
   await prisma.siteSetting.upsert({
     where: { key: 'storeAddress' },
-    update: { value: 'Surat, India' },
-    create: { key: 'storeAddress', value: 'Surat, India' },
+    update: { value: 'Surat, Gujarat, India' },
+    create: { key: 'storeAddress', value: 'Surat, Gujarat, India' },
   });
 
   // 4. Update whatsapp_config
   const waConfig = {
-    inquiryNumber: '+91973785306',
-    displayNumber: '+91973785306',
-    defaultMessage: 'Hello Aura Diamond Atelier, I am interested in your fine jewellery collection.',
+    inquiryNumber: '+919737853060',
+    displayNumber: '+91 97378 53060',
+    defaultMessage: 'Hello AethelCarats, I am interested in your fine jewellery and certified diamonds.',
   };
   await prisma.siteSetting.upsert({
     where: { key: 'whatsapp_config' },
@@ -46,12 +46,12 @@ async function cleanSettings() {
   }
   const fSettings = {
     ...existingFooter,
-    brandName: 'AURA DIAMOND ATELIER',
-    copyrightText: '© 2026 AURA DIAMOND ATELIER. ALL RIGHTS RESERVED.',
-    tagline: 'Fine Jewelry & Certified Solitaire Diamonds',
-    address: 'Surat, India',
-    phone: '+91973785306',
-    email: 'contact@auroradiamonds.com',
+    brandName: 'AETHELCARATS FINE JEWELLERY ATELIER',
+    copyrightText: '© 2026 AETHELCARATS. ALL RIGHTS RESERVED.',
+    tagline: 'Bespoke Luxury & Certified Solitaire Diamonds',
+    address: 'Surat, Gujarat, India',
+    phone: '+91 97378 53060',
+    email: 'concierge@aethelcarats.com',
   };
   await prisma.siteSetting.upsert({
     where: { key: 'footer_settings' },
