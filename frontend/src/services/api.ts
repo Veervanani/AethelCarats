@@ -2,8 +2,12 @@ import axios from 'axios';
 import { Product, Diamond, Category, PageSection, MenuItem, CustomRequest, User, HeroBanner } from '../types';
 
 const getBaseURL = () => {
-  if ((import.meta as any).env?.VITE_API_URL && !(import.meta as any).env?.VITE_API_URL.includes('.php')) {
-    return (import.meta as any).env.VITE_API_URL;
+  if (typeof window !== 'undefined' && window.location.hostname !== 'localhost' && window.location.hostname !== '127.0.0.1') {
+    return '/api/v1';
+  }
+  const envUrl = (import.meta as any).env?.VITE_API_URL;
+  if (envUrl && !envUrl.includes('.php') && !envUrl.includes('localhost:5000')) {
+    return envUrl;
   }
   return '/api/v1';
 };

@@ -416,7 +416,7 @@ const EditorialBannerContainer = styled.div<{
   width: 100%;
   min-height: ${({ $bannerHeightDesktop }) => $bannerHeightDesktop || '540px'};
   background-color: #0B0B0B;
-  background-image: ${({ $bgImage }) => `url(${$bgImage || '/assets/aura_editorial_banner_v3.png'})`};
+  background-image: ${({ $bgImage }) => `url("${encodeURI(normalizeImageUrl($bgImage) || '/assets/aura_editorial_banner_v3.png')}")`};
   background-size: cover;
   background-position: right center;
   border-top: 1px solid rgba(140, 116, 75, 0.25);
@@ -429,14 +429,14 @@ const EditorialBannerContainer = styled.div<{
     padding: 48px 32px;
     min-height: ${({ $bannerHeightTablet }) => $bannerHeightTablet || '420px'};
     background-position: right center;
-    background-image: ${({ $tabletImage, $bgImage }) => `url(${$tabletImage || $bgImage || '/assets/aura_editorial_banner_v3.png'})`};
+    background-image: ${({ $tabletImage, $bgImage }) => `url("${encodeURI(normalizeImageUrl($tabletImage || $bgImage) || '/assets/aura_editorial_banner_v3.png')}")`};
   }
 
   @media (max-width: 768px) {
     padding: 36px 20px;
     min-height: ${({ $bannerHeightMobile }) => $bannerHeightMobile || '380px'};
     background-position: right center;
-    background-image: ${({ $mobileImage, $tabletImage, $bgImage }) => `url(${$mobileImage || $tabletImage || $bgImage || '/assets/aura_editorial_banner_v3.png'})`};
+    background-image: ${({ $mobileImage, $tabletImage, $bgImage }) => `url("${encodeURI(normalizeImageUrl($mobileImage || $tabletImage || $bgImage) || '/assets/aura_editorial_banner_v3.png')}")`};
   }
 `;
 
@@ -1983,10 +1983,13 @@ export const HomePage: React.FC = () => {
     <>
       {/* 1. DYNAMIC DATABASE-DRIVEN HERO SLIDER / BANNER SYSTEM */}
       {cmsConfig?.sectionVisibility?.hero !== false && cmsHeroSection?.isVisible !== false && (() => {
-        let activeHeroSlides: HeroBanner[] = heroBanners && heroBanners.length > 0 ? heroBanners : DEFAULT_HERO_SLIDES;
-        if (cmsHeroSlide) {
-          activeHeroSlides = heroBanners && heroBanners.length > 1 ? [cmsHeroSlide, ...heroBanners.slice(1)] : [cmsHeroSlide];
-        }
+        // Prioritize dynamic hero banners configured in Admin Homepage Manager
+        let activeHeroSlides: HeroBanner[] =
+          heroBanners && heroBanners.length > 0
+            ? heroBanners
+            : cmsHeroSlide
+            ? [cmsHeroSlide]
+            : DEFAULT_HERO_SLIDES;
 
         return (
           <div style={{ width: '100%', position: 'relative', overflow: 'hidden' }}>
