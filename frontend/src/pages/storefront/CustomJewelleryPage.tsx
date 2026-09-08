@@ -552,7 +552,7 @@ export const CustomJewelleryPage: React.FC = () => {
                 <label>WhatsApp Number <span className="req">*</span></label>
                 <input
                   type="tel"
-                  placeholder="e.g. +44 7900 123456"
+                  placeholder="e.g. +91 79902 78892"
                   value={formData.whatsapp}
                   onChange={(e) => setFormData({ ...formData, whatsapp: e.target.value })}
                 />

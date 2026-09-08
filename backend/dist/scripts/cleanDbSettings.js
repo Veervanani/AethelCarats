@@ -9,8 +9,8 @@ async function cleanSettings() {
     // 1. Update whatsappNumber scalar
     await prisma_1.default.siteSetting.upsert({
         where: { key: 'whatsappNumber' },
-        update: { value: '+91973785306' },
-        create: { key: 'whatsappNumber', value: '+91973785306' },
+        update: { value: '+91 79902 78892' },
+        create: { key: 'whatsappNumber', value: '+91 79902 78892' },
     });
     // 2. Update storeName scalar
     await prisma_1.default.siteSetting.upsert({
@@ -26,8 +26,8 @@ async function cleanSettings() {
     });
     // 4. Update whatsapp_config
     const waConfig = {
-        inquiryNumber: '+919737853060',
-        displayNumber: '+91 97378 53060',
+        inquiryNumber: '917990278892',
+        displayNumber: '+91 79902 78892',
         defaultMessage: 'Hello AethelCarats, I am interested in your fine jewellery and certified diamonds.',
     };
     await prisma_1.default.siteSetting.upsert({
@@ -50,8 +50,8 @@ async function cleanSettings() {
         copyrightText: '© 2026 AETHELCARATS. ALL RIGHTS RESERVED.',
         tagline: 'Bespoke Luxury & Certified Solitaire Diamonds',
         address: 'Surat, Gujarat, India',
-        phone: '+91 97378 53060',
-        email: 'concierge@aethelcarats.com',
+        phone: '+91 79902 78892',
+        email: 'contact@aethelcarats.com',
     };
     await prisma_1.default.siteSetting.upsert({
         where: { key: 'footer_settings' },

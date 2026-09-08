@@ -145,7 +145,7 @@ export const DiamondDetailPage: React.FC = () => {
   const [diamond, setDiamond] = useState<Diamond | null>(null);
   const [activeMedia, setActiveMedia] = useState<'image' | 'video'>('image');
 
-  const [waNumber, setWaNumber] = useState('447900123456');
+  const [waNumber, setWaNumber] = useState('917990278892');
 
   useEffect(() => {
     api.getSiteSettings().then((settings) => {

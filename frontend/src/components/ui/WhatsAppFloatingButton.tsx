@@ -63,12 +63,12 @@ const WhatsAppSvg: React.FC<{ size?: number }> = ({ size = 30 }) => (
 export const WhatsAppFloatingButton: React.FC<{ message?: string }> = ({
   message = 'Hello AethelCarats Atelier, I have an inquiry regarding fine jewellery and certified diamonds.',
 }) => {
-  const [waNumber, setWaNumber] = useState('91973785306');
+  const [waNumber, setWaNumber] = useState('917990278892');
 
   useEffect(() => {
     api.getSiteSettings().then((settings) => {
       if (settings) {
-        const rawNum = settings.whatsappNumber || settings.whatsapp || settings.contactPhone || '91973785306';
+        const rawNum = settings.whatsappNumber || settings.whatsapp || settings.contactPhone || '917990278892';
         const clean = rawNum.replace(/[^\d]/g, '');
         if (clean) setWaNumber(clean);
       }

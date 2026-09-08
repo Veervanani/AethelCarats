@@ -1502,7 +1502,7 @@ export const ProductDetailPage: React.FC = () => {
     enableConsultAtelierExpert: 'true',
     consultTitle: 'Consult an AethelCarats Atelier Expert',
     consultDescription: 'Speak directly with our AethelCarats Fine Jewellery Atelier specialists regarding custom design, diamond selection, or sizing guidance.',
-    consultPhone: '+91973785306',
+    consultPhone: '+91 79902 78892',
     consultPhoneLabel: 'Call Atelier',
     consultEmail: 'concierge@aethelcarats.com',
     consultEmailLabel: 'Email Concierge',

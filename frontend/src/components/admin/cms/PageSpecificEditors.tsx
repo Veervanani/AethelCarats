@@ -200,7 +200,7 @@ const DEFAULT_FORM_FIELDS = [
 
 const DEFAULT_BUTTONS = [
   { id: 'btn_1', text: 'SEND ENQUIRY', link: '#submit', style: 'primary', isVisible: true },
-  { id: 'btn_2', text: 'WHATSAPP CONCIERGE', link: 'https://wa.me/91973785306', style: 'gold', isVisible: true },
+  { id: 'btn_2', text: 'WHATSAPP CONCIERGE', link: 'https://wa.me/917990278892', style: 'gold', isVisible: true },
   { id: 'btn_3', text: 'BOOK PRIVATE APPOINTMENT', link: '/appointments', style: 'secondary', isVisible: true },
 ];
 
@@ -288,7 +288,7 @@ export const ContactUsEditor: React.FC<EditorProps> = ({ content, onChange }) =>
               <span>Phone Number</span>
               <AdminColorPicker label="Color" value={content.phoneColor} defaultValue="#1f1f1f" onChange={(val) => updateField('phoneColor', val)} />
             </label>
-            <input type="text" value={content.phone ?? '+91973785306'} onChange={(e) => updateField('phone', e.target.value)} style={{ color: content.phoneColor || undefined }} />
+            <input type="text" value={content.phone ?? '+91 79902 78892'} onChange={(e) => updateField('phone', e.target.value)} style={{ color: content.phoneColor || undefined }} />
           </FormGroup>
           <FormGroup $full>
             <label>

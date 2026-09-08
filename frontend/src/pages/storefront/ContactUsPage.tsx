@@ -366,11 +366,11 @@ export const ContactUsPage: React.FC = () => {
   const [submitted, setSubmitted] = useState(false);
   const [cmsPage, setCmsPage] = useState<any>(null);
   const [contactInfo, setContactInfo] = useState({
-    phone: '+91973785306',
-    displayPhone: '+91973785306',
-    email: 'contact@auroradiamonds.com',
+    phone: '+91 79902 78892',
+    displayPhone: '+91 79902 78892',
+    email: 'contact@aethelcarats.com',
     address: 'Surat, India',
-    whatsappNumber: '91973785306',
+    whatsappNumber: '917990278892',
   });
 
   useEffect(() => {
@@ -508,7 +508,7 @@ export const ContactUsPage: React.FC = () => {
 
             <div>
               <WhatsAppCTA
-                href={`https://wa.me/${(cms.whatsappNumber || contactInfo.whatsappNumber || '91973785306').replace(/[^\d]/g, '') || '91973785306'}?text=${encodeURIComponent('Hello AethelCarats, I would like to inquire about fine jewellery and diamond assistance.')}`}
+                href={`https://wa.me/${(cms.whatsappNumber || contactInfo.whatsappNumber || '917990278892').replace(/[^\d]/g, '') || '917990278892'}?text=${encodeURIComponent('Hello AethelCarats, I would like to inquire about fine jewellery and diamond assistance.')}`}
                 target="_blank"
                 rel="noopener noreferrer"
               >

@@ -163,7 +163,7 @@ export const DiamondCard: React.FC<{ diamond: Diamond }> = ({ diamond }) => {
       const data = await api.getWhatsAppInquiryMessage(diamond.diamondId);
       window.open(data.whatsappUrl, '_blank');
     } catch (error) {
-      window.open(`https://wa.me/447900123456?text=Interested in diamond ${diamond.diamondId}`, '_blank');
+      window.open(`https://wa.me/917990278892?text=Interested in diamond ${diamond.diamondId}`, '_blank');
     }
   };
 

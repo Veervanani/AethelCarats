@@ -1,4 +1,4 @@
-﻿import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
 import { Copy, Check, Upload, Trash2 } from 'lucide-react';
 import { api } from '../../services/api';
@@ -71,32 +71,17 @@ const MediaCard = styled.div`
   }
 `;
 
-const DEFAULT_ASSETS = [
-  { id: '1', name: 'Aura Hero Luxury Banner', url: '/assets/gem-hero-luxury.webp' },
-  { id: '2', name: 'Aura Diamond Atelier Brand Logo', url: '/assets/gem-brand-logo.png' },
-  { id: '3', name: 'Solitaire Ring Editorial', url: '/assets/gem_solitaire_ring_perfect.png' },
-  { id: '4', name: 'Marquise Diamond Jewelry Set', url: '/assets/GOLD-MARQUISE-DIAMOND-JEWELRY-SET.webp' },
-  { id: '5', name: 'Loose Diamond Vault Banner', url: '/assets/gem_diamonds_cat.png' },
-  { id: '6', name: 'Rings Category Card', url: '/assets/gem_rings_cat.png' },
-  { id: '7', name: 'Fashion Rings Promo Card #2', url: '/assets/gem_rings_cat_2.png' },
-  { id: '8', name: 'Earrings Category Card', url: '/assets/gem_earrings_cat.png' },
-  { id: '9', name: 'Necklaces Category Card', url: '/assets/gem_necklaces_cat.png' },
-  { id: '10', name: 'Bracelets Category Card', url: '/assets/gem_bracelets_cat.png' },
-  { id: '11', name: 'Pendants Category Card', url: '/assets/aura_pendants_cat.png' },
-  { id: '12', name: 'Bespoke CAD Craftsmanship', url: '/assets/gem_bracelets_editorial_right_new.png' },
-];
-
 export const AdminMediaLibraryPage: React.FC = () => {
   const [copiedUrl, setCopiedUrl] = useState<string | null>(null);
-  const [mediaList, setMediaList] = useState<any[]>(DEFAULT_ASSETS);
+  const [mediaList, setMediaList] = useState<any[]>([]);
   const [newUrlInput, setNewUrlInput] = useState('');
   const [newFileInputName, setNewFileInputName] = useState('');
 
   const fetchMedia = async () => {
     try {
       const data = await api.getAllMedia();
-      if (data && Array.isArray(data) && data.length > 0) {
-        setMediaList([...DEFAULT_ASSETS, ...data]);
+      if (data && Array.isArray(data)) {
+        setMediaList(data);
       }
     } catch (err) {
       console.error(err);
@@ -126,10 +111,6 @@ export const AdminMediaLibraryPage: React.FC = () => {
   };
 
   const handleDeleteMedia = async (media: any) => {
-    if (DEFAULT_ASSETS.some((a) => a.url === media.url)) {
-      alert(`Safety Lock: "${media.name}" is an active default storefront brand asset and cannot be deleted.`);
-      return;
-    }
     if (!window.confirm(`Delete media item "${media.name}"?`)) return;
     try {
       await api.deleteMedia(media.id);

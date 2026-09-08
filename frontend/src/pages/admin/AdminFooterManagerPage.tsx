@@ -264,9 +264,9 @@ const DEFAULT_FOOTER_STATE = {
   ],
 
   // Contact Info
-  email: 'contact@auroradiamonds.com',
-  phone: '+91973785306',
-  whatsapp: '+91973785306',
+  email: 'contact@aethelcarats.com',
+  phone: '+91 79902 78892',
+  whatsapp: '+91 79902 78892',
   address: 'Surat, India',
   workingHours: 'Mon – Sat: 10:00 AM – 7:00 PM IST',
   appointmentUrl: '/contact-us',
@@ -993,7 +993,7 @@ export const AdminFooterManagerPage: React.FC = () => {
                   type="text"
                   value={footerSettings.phone || ''}
                   onChange={(e) => setFooterSettings({ ...footerSettings, phone: e.target.value })}
-                  placeholder="+91973785306"
+                  placeholder="+91 79902 78892"
                 />
               </AdminFormGroup>
               <AdminFormGroup>
@@ -1002,7 +1002,7 @@ export const AdminFooterManagerPage: React.FC = () => {
                   type="text"
                   value={footerSettings.whatsapp || ''}
                   onChange={(e) => setFooterSettings({ ...footerSettings, whatsapp: e.target.value })}
-                  placeholder="+91973785306"
+                  placeholder="+91 79902 78892"
                 />
               </AdminFormGroup>
             </AdminFormGrid>

@@ -1036,7 +1036,7 @@ async function main() {
             requestNumber: 'REQ-2026-001',
             name: 'Victoria Sterling',
             email: 'victoria@example.com',
-            whatsapp: '+447900123456',
+            whatsapp: '+91 79902 78892',
             jewelleryType: 'Custom Solitaire Ring',
             metal: '18K White Gold',
             diamondPreference: '2.00ct Cushion Cut Natural Diamond',

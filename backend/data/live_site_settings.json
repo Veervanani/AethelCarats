@@ -1,9 +1,9 @@
 {
   "storeName": "AETHELCARATS FINE JEWELLERY ATELIER",
-  "contactEmail": "aethelcarats@gmail.com",
-  "contactPhone": "+917990278892",
-  "whatsappNumber": "+919876543210",
-  "whatsappDisplayNumber": "+919737853206",
+  "contactEmail": "concierge@aethelcarats.com",
+  "contactPhone": "+91 79902 78892",
+  "whatsappNumber": 917990278892,
+  "whatsappDisplayNumber": "+91 79902 78892",
   "whatsappDefaultMessage": "Hello AethelCarats Atelier, I am interested in your fine jewellery collection.",
   "freeShippingThreshold": 1000,
   "publicSiteUrl": "https://aethelcarats.com",
@@ -14,7 +14,7 @@
   "enableConsultAtelierExpert": true,
   "consultTitle": "Consult a AethelCarats Atelier Expert",
   "consultDescription": "Speak directly with our jewelry specialists regarding custom design, diamond selection, or sizing guidance.",
-  "consultPhone": "+919737853206",
+  "consultPhone": "+91 79902 78892",
   "consultPhoneLabel": "Call Atelier",
   "consultEmail": "contact@aethelcarats.com",
   "consultEmailLabel": "Email Concierge",
@@ -56,222 +56,10 @@
   "footer_config": {
     "brandName": "AETHELCARATS FINE JEWELLERY ATELIER",
     "tagline": "Fine Jewelry & Certified Solitaire Diamonds",
-    "brandDescription": "AethelCarats Fine Jewellery Atelier — bespoke master craftsmanship and authenticated diamonds.",
-    "logoImage": "",
-    "logoUrl": "",
-    "logoWidth": "160pxpx",
-    "trustBadgeImage": "",
-    "newsletterHeading": "JOIN AURA DIAMOND ATELIER",
-    "newsletterSubtitle": "Subscribe to receive bespoke invitations and private collection releases.",
-    "newsletterPlaceholder": "Email Address",
-    "newsletterButtonText": "JOIN",
-    "newsletterConsentText": "I agree to receive promotional emails from Aura Diamond Atelier. You can unsubscribe at any time.",
-    "newsletterPrivacyUrl": "/privacy-policy",
-    "columns": [
-      {
-        "title": "THE HOUSE",
-        "links": [
-          {
-            "label": "Quality & Craftsmanship",
-            "url": "/about-us",
-            "isExternal": false
-          },
-          {
-            "label": "Diamond Sustainability",
-            "url": "/sustainability",
-            "isExternal": false
-          },
-          {
-            "label": "Aura Journal",
-            "url": "/blog",
-            "isExternal": false
-          },
-          {
-            "label": "Sale Exclusions",
-            "url": "/sale-exclusions",
-            "isExternal": false
-          }
-        ]
-      },
-      {
-        "title": "COLLECTIONS",
-        "links": [
-          {
-            "label": "Diamond Rings",
-            "url": "/rings",
-            "isExternal": false
-          },
-          {
-            "label": "Fine Earrings",
-            "url": "/earrings",
-            "isExternal": false
-          },
-          {
-            "label": "Riviere Necklaces",
-            "url": "/necklaces",
-            "isExternal": false
-          },
-          {
-            "label": "Tennis Bracelets",
-            "url": "/bracelets",
-            "isExternal": false
-          },
-          {
-            "label": "Solitaire Pendants",
-            "url": "/pendants",
-            "isExternal": false
-          },
-          {
-            "label": "The Diamond Vault",
-            "url": "/diamonds",
-            "isExternal": false
-          }
-        ]
-      },
-      {
-        "title": "CLIENT SERVICES",
-        "links": [
-          {
-            "label": "Contact Concierge",
-            "url": "/contact-us",
-            "isExternal": false
-          },
-          {
-            "label": "Complimentary Insured Shipping",
-            "url": "/shipping-delivery",
-            "isExternal": false
-          },
-          {
-            "label": "Returns & Exchange",
-            "url": "/returns-refunds",
-            "isExternal": false
-          },
-          {
-            "label": "Lifetime Warranty",
-            "url": "/lifetime-warranty",
-            "isExternal": false
-          },
-          {
-            "label": "Frequently Asked Questions",
-            "url": "/faq",
-            "isExternal": false
-          }
-        ]
-      }
-    ],
-    "email": "concierge@aethelcarats.com",
-    "phone": "+917990278892",
-    "whatsapp": "+91 7990278892",
-    "address": "Surat, Gujarat, India",
-    "workingHours": "Mon – Sat: 10:00 AM – 7:00 PM IST",
-    "appointmentUrl": "/contact-us",
-    "instagram": "https://www.instagram.com/aethelcarats",
-    "facebook": "https://facebook.com/aethelcarats",
-    "pinterest": "https://pinterest.com/aethelcarats",
-    "youtube": "https://youtube.com",
-    "tiktok": "",
-    "twitter": "",
-    "linkedin": "",
-    "copyrightText": "© 2026 AethelCarats Fine Jewellery Atelier. All Rights Reserved.",
-    "legalLinks": [
-      {
-        "label": "Terms & Conditions",
-        "url": "/terms-of-service",
-        "isExternal": false
-      },
-      {
-        "label": "Privacy Policy",
-        "url": "/privacy-policy",
-        "isExternal": false
-      },
-      {
-        "label": "Site Map",
-        "url": "/sitemap",
-        "isExternal": false
-      }
-    ],
-    "paymentBadgesText": "Visa, Mastercard, American Express, Apple Pay, Google Pay, Wire Transfer",
-    "socialLinks": [
-      {
-        "platform": "Instagram",
-        "url": "https://www.instagram.com/aethelcarats"
-      },
-      {
-        "platform": "Facebook",
-        "url": "https://facebook.com/aethelcarats"
-      },
-      {
-        "platform": "Pinterest",
-        "url": "https://pinterest.com/aethelcarats"
-      },
-      {
-        "platform": "YouTube",
-        "url": "https://youtube.com"
-      },
-      {
-        "platform": "WhatsApp",
-        "url": "https://wa.me/917990278892"
-      }
-    ]
-  },
-  "global_theme_config": {
-    "primaryColor": "#1f1f1f",
-    "secondaryColor": "#c9a45c",
-    "accentColor": "#b8944d",
-    "backgroundColor": "#ffffff",
-    "textColor": "#1f1f1f",
-    "borderColor": "#d9d3c7",
-    "headingFont": "Cormorant Garamond",
-    "bodyFont": "Inter",
-    "buttonRadius": "2px",
-    "containerWidth": "1280px"
-  },
-  "storefront_labels_config": {
-    "addToCart": "ADD TO SHOPPING BAG",
-    "requestQuote": "REQUEST ATELIER QUOTE",
-    "shopNow": "DISCOVER COLLECTION",
-    "viewCollection": "VIEW COLLECTION",
-    "signIn": "SIGN IN",
-    "createAccount": "CREATE ACCOUNT",
-    "contactUs": "CONTACT ATELIER",
-    "learnMore": "DISCOVER MORE",
-    "clearAll": "CLEAR FILTERS",
-    "noResults": "NO FINE JEWELLERY MATCHES YOUR SELECTION"
-  },
-  "whatsapp_config": {
-    "inquiryNumber": "+919876543210",
-    "displayNumber": "+919876543210",
-    "defaultMessage": "Hello Aura Diamond Atelier, I am interested in your fine jewellery collection."
-  },
-  "consult_expert_config": {
-    "enableConsultAtelierExpert": "true",
-    "consultTitle": "Consult a AethelCarats Atelier Expert",
-    "consultDescription": "Speak directly with our jewelry specialists regarding custom design, diamond selection, or sizing guidance.",
-    "consultPhone": "+44 (0) 20 7946 0912",
-    "consultPhoneLabel": "Call Atelier",
-    "consultEmail": "concierge@aethelcarats.com",
-    "consultEmailLabel": "Email Concierge",
-    "consultCloseLabel": "Close"
-  },
-  "site_settings": {
-    "instagramUrl": "https://www.instagram.com/aethelcarats",
-    "facebookUrl": "https://facebook.com/aethelcarats",
-    "pinterestUrl": "https://pinterest.com/aethelcarats",
-    "contactEmail": "aethelcarats@gmail.com",
-    "contactPhone": "+917990278892",
-    "storeName": "AETHELCARATS FINE JEWELLERY ATELIER",
-    "storeAddress": "Surat, Gujarat, India",
-    "email": "concierge@aethelcarats.com"
-  },
-  "email": "concierge@aethelcarats.com",
-  "paypal_client_id": "BAAqaKN73TPUvj2BG5Fh-G16xs8N0Dvcv0KOK7Nvt1M2jdU4izxVBjhFH7O_Ny_huFK8qD3EsbFmRer70c",
-  "footer_settings": {
-    "brandName": "AETHELCARATS FINE JEWELLERY ATELIER",
-    "tagline": "Fine Jewelry & Certified Solitaire Diamonds",
     "logoImage": "",
     "copyrightText": "© 2026 AethelCarats Fine Jewellery Atelier. All Rights Reserved.",
     "email": "concierge@aethelcarats.com",
-    "phone": "+917990278892",
+    "phone": "+91 79902 78892",
     "address": "Surat, Gujarat, India",
     "instagram": "https://www.instagram.com/aethelcarats",
     "facebook": "https://facebook.com/aethelcarats",
@@ -378,7 +166,221 @@
         ]
       }
     ],
-    "whatsapp": "+91 7990278892",
+    "whatsapp": "+91 79902 78892",
+    "workingHours": "Mon – Sat: 10:00 AM – 7:00 PM IST",
+    "appointmentUrl": "/contact-us",
+    "youtube": "https://youtube.com",
+    "tiktok": "",
+    "twitter": "",
+    "linkedin": "",
+    "legalLinks": [
+      {
+        "label": "Terms & Conditions",
+        "url": "/terms-of-service",
+        "isExternal": false
+      },
+      {
+        "label": "Privacy Policy",
+        "url": "/privacy-policy",
+        "isExternal": false
+      },
+      {
+        "label": "Site Map",
+        "url": "/sitemap",
+        "isExternal": false
+      }
+    ],
+    "paymentBadgesText": "Visa, Mastercard, American Express, Apple Pay, Google Pay, Wire Transfer",
+    "socialLinks": [
+      {
+        "platform": "Instagram",
+        "url": "https://www.instagram.com/aethelcarats"
+      },
+      {
+        "platform": "Facebook",
+        "url": "https://facebook.com/aethelcarats"
+      },
+      {
+        "platform": "Pinterest",
+        "url": "https://pinterest.com/aethelcarats"
+      },
+      {
+        "platform": "YouTube",
+        "url": "https://youtube.com"
+      },
+      {
+        "platform": "WhatsApp",
+        "url": "https://wa.me/917990278892"
+      }
+    ]
+  },
+  "global_theme_config": {
+    "primaryColor": "#1f1f1f",
+    "secondaryColor": "#c9a45c",
+    "accentColor": "#b8944d",
+    "backgroundColor": "#ffffff",
+    "textColor": "#1f1f1f",
+    "borderColor": "#d9d3c7",
+    "headingFont": "Cormorant Garamond",
+    "bodyFont": "Inter",
+    "buttonRadius": "2px",
+    "containerWidth": "1280px"
+  },
+  "storefront_labels_config": {
+    "addToCart": "ADD TO SHOPPING BAG",
+    "requestQuote": "REQUEST ATELIER QUOTE",
+    "shopNow": "DISCOVER COLLECTION",
+    "viewCollection": "VIEW COLLECTION",
+    "signIn": "SIGN IN",
+    "createAccount": "CREATE ACCOUNT",
+    "contactUs": "CONTACT ATELIER",
+    "learnMore": "DISCOVER MORE",
+    "clearAll": "CLEAR FILTERS",
+    "noResults": "NO FINE JEWELLERY MATCHES YOUR SELECTION"
+  },
+  "whatsapp_config": {
+    "inquiryNumber": "917990278892",
+    "displayNumber": "+91 79902 78892",
+    "defaultMessage": "Hello AethelCarats, I am interested in your fine jewellery collection."
+  },
+  "consult_expert_config": {
+    "enableConsultAtelierExpert": "true",
+    "consultTitle": "Consult a AethelCarats Atelier Expert",
+    "consultDescription": "Speak directly with our jewelry specialists regarding custom design, diamond selection, or sizing guidance.",
+    "consultPhone": "+91 79902 78892",
+    "consultPhoneLabel": "Call Atelier",
+    "consultEmail": "concierge@aethelcarats.com",
+    "consultEmailLabel": "Email Concierge",
+    "consultCloseLabel": "Close"
+  },
+  "site_settings": {
+    "instagramUrl": "https://www.instagram.com/aethelcarats",
+    "facebookUrl": "https://facebook.com/aethelcarats",
+    "pinterestUrl": "https://pinterest.com/aethelcarats",
+    "contactEmail": "aethelcarats@gmail.com",
+    "contactPhone": "+91 79902 78892",
+    "storeName": "AETHELCARATS FINE JEWELLERY ATELIER",
+    "storeAddress": "Surat, Gujarat, India",
+    "email": "concierge@aethelcarats.com",
+    "whatsappNumber": "917990278892",
+    "consultPhone": "+91 79902 78892"
+  },
+  "email": "concierge@aethelcarats.com",
+  "paypal_client_id": "BAAqaKN73TPUvj2BG5Fh-G16xs8N0Dvcv0KOK7Nvt1M2jdU4izxVBjhFH7O_Ny_huFK8qD3EsbFmRer70c",
+  "footer_settings": {
+    "brandName": "AETHELCARATS FINE JEWELLERY ATELIER",
+    "tagline": "Fine Jewelry & Certified Solitaire Diamonds",
+    "logoImage": "",
+    "copyrightText": "© 2026 AethelCarats Fine Jewellery Atelier. All Rights Reserved.",
+    "email": "concierge@aethelcarats.com",
+    "phone": "+91 79902 78892",
+    "address": "Surat, Gujarat, India",
+    "instagram": "https://www.instagram.com/aethelcarats",
+    "facebook": "https://facebook.com/aethelcarats",
+    "pinterest": "https://pinterest.com/aethelcarats",
+    "trustBadgeImage": "",
+    "brandDescription": "AethelCarats Fine Jewellery crafts exquisite lab-grown and natural diamond jewelry with unmatched artistry, ethical sourcing, and timeless elegance.",
+    "logoUrl": "",
+    "logoWidth": "160pxpx",
+    "newsletterHeading": "JOIN AURA DIAMOND ATELIER",
+    "newsletterSubtitle": "Subscribe to receive bespoke invitations and private collection releases.",
+    "newsletterPlaceholder": "Email Address",
+    "newsletterButtonText": "JOIN",
+    "newsletterConsentText": "I agree to receive promotional emails from Aura Diamond Atelier. You can unsubscribe at any time.",
+    "newsletterPrivacyUrl": "/privacy-policy",
+    "columns": [
+      {
+        "title": "THE HOUSE",
+        "links": [
+          {
+            "label": "Quality & Craftsmanship",
+            "url": "/about-us",
+            "isExternal": false
+          },
+          {
+            "label": "Diamond Sustainability",
+            "url": "/sustainability",
+            "isExternal": false
+          },
+          {
+            "label": "Aura Journal",
+            "url": "/blog",
+            "isExternal": false
+          },
+          {
+            "label": "Sale Exclusions",
+            "url": "/sale-exclusions",
+            "isExternal": false
+          }
+        ]
+      },
+      {
+        "title": "COLLECTIONS",
+        "links": [
+          {
+            "label": "Diamond Rings",
+            "url": "/rings",
+            "isExternal": false
+          },
+          {
+            "label": "Fine Earrings",
+            "url": "/earrings",
+            "isExternal": false
+          },
+          {
+            "label": "Riviere Necklaces",
+            "url": "/necklaces",
+            "isExternal": false
+          },
+          {
+            "label": "Tennis Bracelets",
+            "url": "/bracelets",
+            "isExternal": false
+          },
+          {
+            "label": "Solitaire Pendants",
+            "url": "/pendants",
+            "isExternal": false
+          },
+          {
+            "label": "The Diamond Vault",
+            "url": "/diamonds",
+            "isExternal": false
+          }
+        ]
+      },
+      {
+        "title": "CLIENT SERVICES",
+        "links": [
+          {
+            "label": "Contact Concierge",
+            "url": "/contact-us",
+            "isExternal": false
+          },
+          {
+            "label": "Complimentary Insured Shipping",
+            "url": "/shipping-delivery",
+            "isExternal": false
+          },
+          {
+            "label": "Returns & Exchange",
+            "url": "/returns-refunds",
+            "isExternal": false
+          },
+          {
+            "label": "Lifetime Warranty",
+            "url": "/lifetime-warranty",
+            "isExternal": false
+          },
+          {
+            "label": "Frequently Asked Questions",
+            "url": "/faq",
+            "isExternal": false
+          }
+        ]
+      }
+    ],
+    "whatsapp": "+91 79902 78892",
     "workingHours": "Mon – Sat: 10:00 AM – 7:00 PM IST",
     "appointmentUrl": "/contact-us",
     "youtube": "https://youtube.com",
@@ -432,7 +434,7 @@
   "holiday_mode_start": "",
   "holiday_end_date": "",
   "company_email": "contact@aethelcarats.com",
-  "statement_footer_text": "For any payment verification or bespoke wire inquiries, please contact contact@aethelcarats.com or call +919737853206.",
+  "statement_footer_text": "For any payment verification or bespoke wire inquiries, please contact contact@aethelcarats.com or call +91 79902 78892.",
   "homepage_config": {
     "categoriesConfig": {
       "eyebrow": "THE COLLECTION MAISON",
@@ -691,7 +693,7 @@
   "default_tax_rate": 0,
   "default_currency": "USD",
   "bank_account_name": "AETHELCARATS FINE JEWELLERY ATELIER",
-  "company_phone": "+919737853206",
+  "company_phone": "+91 79902 78892",
   "bank_routing_code": "HDFC0001234",
   "bank_branch_address": "Surat Diamond Bourse, Gujarat, India",
   "bank_payment_instructions": "Please include your Order Number as the wire transfer reference note. Orders will be processed immediately upon receipt of wire confirmation.",

@@ -289,8 +289,8 @@ export const Footer: React.FC = () => {
     logoUrl: '',
     logoWidth: '160px',
     copyrightText: `© ${new Date().getFullYear()} AethelCarats Fine Jewellery Atelier. All Rights Reserved.`,
-    contactEmail: 'concierge@aethelcarats.com',
-    contactPhone: '+91973785306',
+    contactEmail: 'contact@aethelcarats.com',
+    contactPhone: '+91 79902 78892',
     address: 'Surat, India',
     newsletterHeading: 'JOIN AETHELCARATS ATELIER',
     newsletterSubtitle: 'Subscribe to receive bespoke invitations and private collection releases.',
@@ -322,8 +322,8 @@ export const Footer: React.FC = () => {
       {
         title: 'CLIENT SERVICES',
         links: [
-          { label: 'Phone: +91973785306', url: 'tel:+91973785306', isExternal: true },
-          { label: 'Email: contact@auroradiamonds.com', url: 'mailto:contact@auroradiamonds.com', isExternal: true },
+          { label: 'Phone: +91 79902 78892', url: 'tel:+917990278892', isExternal: true },
+          { label: 'Email: contact@aethelcarats.com', url: 'mailto:contact@aethelcarats.com', isExternal: true },
           { label: 'Contact Concierge', url: '/contact-us' },
           { label: 'Complimentary Insured Shipping', url: '/shipping-delivery' },
           { label: 'Returns & Exchange', url: '/returns-refunds' },
@@ -444,8 +444,8 @@ export const Footer: React.FC = () => {
         {
           title: 'CLIENT SERVICES',
           links: [
-            { label: `Phone: ${footerConfig.contactPhone || '+91973785306'}`, url: `tel:${footerConfig.contactPhone || '+91973785306'}`, isExternal: true },
-            { label: `Email: ${footerConfig.contactEmail || 'contact@auroradiamonds.com'}`, url: `mailto:${footerConfig.contactEmail || 'contact@auroradiamonds.com'}`, isExternal: true },
+            { label: `Phone: ${footerConfig.contactPhone || '+91 79902 78892'}`, url: `tel:${(footerConfig.contactPhone || '+917990278892').replace(/[^\d+]/g, '')}`, isExternal: true },
+            { label: `Email: ${footerConfig.contactEmail || 'contact@aethelcarats.com'}`, url: `mailto:${footerConfig.contactEmail || 'contact@aethelcarats.com'}`, isExternal: true },
             { label: 'Contact Concierge', url: '/contact-us' },
             { label: 'Complimentary Insured Shipping', url: '/shipping-delivery' },
             { label: 'Returns & Exchange', url: '/returns-refunds' },

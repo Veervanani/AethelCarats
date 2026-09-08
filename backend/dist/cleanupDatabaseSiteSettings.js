@@ -31,10 +31,10 @@ async function cleanupDatabaseSiteSettings() {
         let footerObj = {
             brandName: 'AETHELCARATS FINE JEWELLERY ATELIER',
             tagline: 'Fine Jewelry & Certified Solitaire Diamonds',
-            logoImage: '/assets/gem-brand-logo.png',
+            logoImage: '/assets/logo.svg',
             copyrightText: '© 2026 AethelCarats Fine Jewellery Atelier. All Rights Reserved.',
-            email: 'concierge@aethelcarats.com',
-            phone: '+91973785306',
+            email: 'contact@aethelcarats.com',
+            phone: '+91 79902 78892',
             address: 'Surat, Gujarat, India',
             instagram: 'https://www.instagram.com/aethelcarats',
             facebook: 'https://facebook.com/aethelcarats',

@@ -1,4 +1,4 @@
-﻿import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
 import {
   Save,
@@ -142,22 +142,22 @@ const Notification = styled.div`
 
 export const AdminSettingsPage: React.FC = () => {
   const [settings, setSettings] = useState<Record<string, string>>({
-    storeName: 'AURA DIAMOND ATELIER',
-    contactEmail: 'contact@auroradiamonds.com',
-    contactPhone: '+91973785306',
-    whatsappNumber: '+91973785306',
+    storeName: 'AETHELCARATS FINE JEWELLERY ATELIER',
+    contactEmail: 'contact@aethelcarats.com',
+    contactPhone: '+91 79902 78892',
+    whatsappNumber: '+91 79902 78892',
     freeShippingThreshold: '1000',
-    publicSiteUrl: 'https://auroradiamonds.com',
-    instagramUrl: 'https://www.instagram.com/auradiamondatelier',
-    facebookUrl: 'https://facebook.com/auradiamondatelier',
-    pinterestUrl: 'https://pinterest.com/auradiamondatelier',
+    publicSiteUrl: 'https://aethelcarats.com',
+    instagramUrl: 'https://www.instagram.com/aethelcarats',
+    facebookUrl: 'https://facebook.com/aethelcarats',
+    pinterestUrl: 'https://pinterest.com/aethelcarats',
     storeAddress: 'Surat, India',
     enableConsultAtelierExpert: 'true',
-    consultTitle: 'Consult a Aura Diamond Atelier Expert',
+    consultTitle: 'Consult an AethelCarats Atelier Expert',
     consultDescription: 'Speak directly with our jewelry specialists regarding custom design, diamond selection, or sizing guidance.',
-    consultPhone: '+91973785306',
-    consultPhoneLabel: 'Call Aura Diamond Atelier',
-    consultEmail: 'contact@auroradiamonds.com',
+    consultPhone: '+91 79902 78892',
+    consultPhoneLabel: 'Call AethelCarats Atelier',
+    consultEmail: 'contact@aethelcarats.com',
     consultEmailLabel: 'Email Concierge',
     consultCloseLabel: 'Close',
     // Google Analytics, Google Tag & Tracking
@@ -413,25 +413,25 @@ export const AdminSettingsPage: React.FC = () => {
         <SectionHeader><MessageSquare size={18} /> WhatsApp Concierge & Inquiry Settings</SectionHeader>
         <Grid>
           <FormGroup>
-            <label>WhatsApp Inquiry Number (International Format, e.g. +919876543210)</label>
+            <label>WhatsApp Inquiry Number (International Format, e.g. +917990278892)</label>
             <input
               value={settings.whatsappNumber || ''}
               onChange={(e) => {
                 const clean = e.target.value.replace(/[^\d+]/g, '');
                 handleChange('whatsappNumber', clean);
               }}
-              placeholder="+919876543210"
+              placeholder="+917990278892"
             />
             <span style={{ fontSize: '0.75rem', color: '#777' }}>
               Used by all "INQUIRE ON WHATSAPP" & floating concierge buttons. Spaces & hyphens will be automatically stripped.
             </span>
           </FormGroup>
           <FormGroup>
-            <label>WhatsApp Display Number (e.g. +91 98765 43210)</label>
+            <label>WhatsApp Display Number (e.g. +91 79902 78892)</label>
             <input
               value={settings.whatsappDisplayNumber || ''}
               onChange={(e) => handleChange('whatsappDisplayNumber', e.target.value)}
-              placeholder="+91 98765 43210"
+              placeholder="+91 79902 78892"
             />
           </FormGroup>
           <FormGroup style={{ gridColumn: 'span 2' }}>
@@ -439,7 +439,7 @@ export const AdminSettingsPage: React.FC = () => {
             <input
               value={settings.whatsappDefaultMessage || ''}
               onChange={(e) => handleChange('whatsappDefaultMessage', e.target.value)}
-              placeholder="Hello Aura Diamond Atelier, I am interested in..."
+              placeholder="Hello AethelCarats, I am interested in..."
             />
           </FormGroup>
         </Grid>

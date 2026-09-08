@@ -1,21 +1,21 @@
 [
   {
     "id": "hero_default_1",
-    "title": "Handcrafted\r\nElegance &\r\nExceptional\r\nDiamonds",
-    "subtitle": "THE SIGNATURE COLLECTION 2026",
-    "description": "Immerse yourself in world-class craftsmanship, ethically sourced diamonds, and timeless bespoke creations.",
-    "primaryCtaText": "EXPLORE RINGS",
+    "title": "Handcrafted Elegance & Exceptional Diamonds",
+    "subtitle": "Handcrafted Fine Jewelry",
+    "description": "Discover certified solitaire rings and bespoke diamond creations crafted in Surat, India.",
+    "primaryCtaText": "Explore Collection",
     "primaryCtaLink": "/rings",
-    "secondaryCtaText": "THE DIAMOND VAULT →",
+    "secondaryCtaText": "Discover Diamonds",
     "secondaryCtaLink": "/diamonds",
     "productType": "Engagement Ring",
     "imagePath": "/uploads/media/img_1788886030804_trbi9_file_000000001bd482119e2764b12e244749.png",
-    "mobileImagePath": "/uploads/media/img_1788886034483_e2ys8_file_000000001bd482119e2764b12e244749.png",
+    "mobileImagePath": "/assets/gem_hero_luxury.png",
     "imageAlt": "Handcrafted Solitaire Diamond Engagement Ring",
     "isActive": 1,
     "displayOrder": 1,
     "createdAt": "2026-09-08T00:00:00.000Z",
-    "updatedAt": "2026-09-08T16:47:15.869Z"
+    "updatedAt": "2026-09-08T17:40:37.658Z"
   },
   {
     "id": "hero_default_2",

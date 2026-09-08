@@ -60,14 +60,14 @@ const DEFAULT_PAYMENT_SETTINGS: Record<string, string> = {
   company_name: 'AETHELCARATS FINE JEWELLERY ATELIER',
   company_address: 'Surat Diamond Bourse, Gujarat, India / 740 Fifth Avenue, New York, NY 10019',
   company_email: 'contact@aethelcarats.com',
-  company_phone: '+919737853206',
+  company_phone: '+91 79902 78892',
   company_tax_id: 'US-TAX-88492019',
   default_currency: 'USD',
   default_tax_rate: '0',
 
   invoice_notes: 'Thank you for choosing AethelCarats Fine Jewellery Atelier. Certified authenticity documents accompany all delivered creations.',
   receipt_notes: 'Official payment receipt issued by AethelCarats Fine Jewellery Atelier.',
-  statement_footer_text: 'For any payment verification or bespoke wire inquiries, please contact contact@aethelcarats.com or call +919737853206.',
+  statement_footer_text: 'For any payment verification or bespoke wire inquiries, please contact contact@aethelcarats.com or call +91 79902 78892.',
 };
 
 export const getPaymentSettings = async (req: AuthRequest, res: Response) => {

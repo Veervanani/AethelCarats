@@ -148,7 +148,7 @@ const DEFAULT_PAGE_CONTENT: Record<string, any> = {
     brandStory: '1. Accepted Payment Methods\nWe proudly accept the following payment methods:\n• PayPal (Account balance, linked bank accounts, and PayPal Credit)\n• Major Credit & Debit Cards (Visa, Mastercard, American Express, Discover)\n• Direct Bank Wire Transfer (Complimentary wire transfer discounts available for high-value solitaires)\n• Flexible Escrow / Milestone payments for bespoke high jewelry orders upon consultation.',
     craftsmanship: '2. Payment Authorization & Security\n• All payments are authorized immediately upon checkout submission.\n• To safeguard against fraudulent transactions, orders may undergo 3D Secure / OTP verification.\n• Orders will be scheduled for atelier production and insured dispatch only upon successful payment verification.',
     ourValues: '3. Taxes, Customs & Currency Rates\n• Prices are displayed in USD ($) or your localized selected currency.\n• Applicable sales tax, GST, or VAT will be clearly calculated during the checkout process.\n• International shipments: Standard import customs and duties, if applicable to your destination jurisdiction, are handled transparently with our international shipping partners.',
-    coverage: '4. Refund & Cancellation Terms\nApproved refunds are credited back to the original method of payment within 3 to 5 business days following inspection approval at our atelier. For billing inquiries, contact concierge@aethelcarats.com or call +91 97378 53060.',
+    coverage: '4. Refund & Cancellation Terms\nApproved refunds are credited back to the original method of payment within 3 to 5 business days following inspection approval at our atelier. For billing inquiries, contact concierge@aethelcarats.com or call +91 79902 78892.',
     seoCopy: 'AethelCarats Billing Terms, payment methods, secure checkout, PayPal, credit card encryption, and refund policies.'
   }
 };
@@ -177,7 +177,7 @@ export const CMSPage: React.FC = () => {
       subheading: `Official ${formattedTitle} documentation and atelier guidelines for AethelCarats Fine Jewellery.`,
       introduction: `Welcome to the ${formattedTitle} section of AethelCarats Fine Jewellery Atelier. For bespoke guidance, personal diamond consultations, or specific policy inquiries, our concierge is available 24/7.`,
       brandStory: `AethelCarats is dedicated to delivering excellence in every detail. Each piece in our collection is crafted with master precision and certified diamonds.`,
-      craftsmanship: `For personalized assistance or inquiries regarding our ${formattedTitle}, please reach out to our concierge team at concierge@aethelcarats.com or call +91 97378 53060.`,
+      craftsmanship: `For personalized assistance or inquiries regarding our ${formattedTitle}, please reach out to our concierge team at concierge@aethelcarats.com or call +91 79902 78892.`,
       coverage: `All services and purchases are covered by our AethelCarats Authenticity Guarantee and white-glove client support.`
     };
 

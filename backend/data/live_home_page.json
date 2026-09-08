@@ -4,15 +4,15 @@
   "slug": "home",
   "sections": [
     {
-      "id": "2cba9b2a-79df-4eca-b7d4-1cfd3c359b94",
+      "id": "f599edbc-0abc-4a1b-a114-e45b43dc313c",
       "pageId": "6b50a759-545c-49a1-87c4-20c3dc2f4c7c",
       "blockType": "HERO",
       "position": 1,
-      "content": "{\"eyebrow\":\"Handcrafted Fine Jewelry\",\"eyebrowColor\":\"#c9a45c\",\"title\":\"Handcrafted Elegance & Exceptional Diamonds\",\"titleColor\":\"#ffffff\",\"description\":\"Discover certified solitaire rings and bespoke diamond creations crafted in Surat, India.\",\"descriptionColor\":\"#f5f1e8\",\"primaryBtnText\":\"Explore Collection\",\"primaryBtnTextColor\":\"#101418\",\"primaryBtnLink\":\"/rings\",\"secondaryBtnText\":\"Discover Diamonds\",\"secondaryBtnTextColor\":\"#ffffff\",\"secondaryBtnLink\":\"/diamonds\",\"desktopImage\":\"/assets/gem_hero_luxury.png\",\"tabletImage\":\"/assets/gem_hero_luxury.png\",\"mobileImage\":\"/assets/gem_hero_luxury.png\",\"alignment\":\"center\",\"overlayOpacity\":0.2,\"textColor\":\"#ffffff\"}",
+      "content": "{\"eyebrow\":\"Handcrafted Fine Jewelry\",\"eyebrowColor\":\"#c9a45c\",\"title\":\"Handcrafted Elegance & Exceptional Diamonds\",\"titleColor\":\"#ffffff\",\"description\":\"Discover certified solitaire rings and bespoke diamond creations crafted in Surat, India.\",\"descriptionColor\":\"#f5f1e8\",\"primaryBtnText\":\"Explore Collection\",\"primaryBtnTextColor\":\"#101418\",\"primaryBtnLink\":\"/rings\",\"secondaryBtnText\":\"Discover Diamonds\",\"secondaryBtnTextColor\":\"#ffffff\",\"secondaryBtnLink\":\"/diamonds\",\"desktopImage\":\"\",\"tabletImage\":\"/assets/gem_hero_luxury.png\",\"useDesktopTablet\":true,\"mobileImage\":\"/assets/gem_hero_luxury.png\",\"useDesktopMobile\":true,\"alignment\":\"center\",\"overlayOpacity\":0.2,\"textColor\":\"#ffffff\"}",
       "isVisible": 1
     },
     {
-      "id": "71dce1af-1272-42f3-b284-3e8744dd8369",
+      "id": "daeaffbf-aed3-49b1-b781-b296cbece400",
       "pageId": "6b50a759-545c-49a1-87c4-20c3dc2f4c7c",
       "blockType": "FEATURED_COLLECTIONS",
       "position": 2,
@@ -20,7 +20,7 @@
       "isVisible": 1
     },
     {
-      "id": "e47fd998-9e4a-4e03-ac4d-9fbac98e5dc7",
+      "id": "30f01d4b-8d1b-4d5e-97d8-871b3c2fdd77",
       "pageId": "6b50a759-545c-49a1-87c4-20c3dc2f4c7c",
       "blockType": "CAMPAIGN_BANNER",
       "position": 3,
@@ -28,7 +28,7 @@
       "isVisible": 1
     },
     {
-      "id": "403e0690-279a-4312-a54e-986b635a17fe",
+      "id": "ffed4949-9b46-478b-92db-9940b5bcdac5",
       "pageId": "6b50a759-545c-49a1-87c4-20c3dc2f4c7c",
       "blockType": "DIAMOND_SHAPES",
       "position": 4,
@@ -36,7 +36,7 @@
       "isVisible": 1
     },
     {
-      "id": "0aecacfe-815c-470d-a745-d81549d9c390",
+      "id": "cff39e09-1c3e-454f-9020-977b5651bb9f",
       "pageId": "6b50a759-545c-49a1-87c4-20c3dc2f4c7c",
       "blockType": "CRAFTSMANSHIP",
       "position": 5,
@@ -44,7 +44,7 @@
       "isVisible": 1
     },
     {
-      "id": "430820ca-7335-4138-be0f-8b829075c49c",
+      "id": "bda4431d-cd34-4bfd-8d5e-3ad638f3147b",
       "pageId": "6b50a759-545c-49a1-87c4-20c3dc2f4c7c",
       "blockType": "TESTIMONIALS",
       "position": 6,
@@ -55,13 +55,31 @@
   "content": "{}",
   "draftContent": "{}",
   "status": "PUBLISHED",
-  "lastPublishedAt": "2026-09-08T16:00:45.076Z",
+  "lastPublishedAt": "2026-09-08T17:40:37.646Z",
   "publishedBy": "admin@aethelcarats.com",
   "lastModifiedBy": "admin@aethelcarats.com",
   "createdAt": "2026-08-08T02:09:20.341Z",
-  "updatedAt": "2026-09-08T16:58:59.421Z",
+  "updatedAt": "2026-09-08T17:40:37.646Z",
   "seoMetadata": null,
   "revisions": [
+    {
+      "id": "676b2a5f-5fc9-4ca8-b258-7c7e99aa62d5",
+      "pageId": "6b50a759-545c-49a1-87c4-20c3dc2f4c7c",
+      "version": 10,
+      "action": "PUBLISH",
+      "adminUser": "admin@aethelcarats.com",
+      "content": "{}",
+      "createdAt": "2026-09-08T17:40:37.645Z"
+    },
+    {
+      "id": "cd993ec6-ab77-4f4e-b840-c3f61f618ef7",
+      "pageId": "6b50a759-545c-49a1-87c4-20c3dc2f4c7c",
+      "version": 9,
+      "action": "PUBLISH",
+      "adminUser": "admin@aethelcarats.com",
+      "content": "{}",
+      "createdAt": "2026-09-08T17:40:36.540Z"
+    },
     {
       "id": "9cee66b8-28ea-4fe7-9232-096d27d8245b",
       "pageId": "6b50a759-545c-49a1-87c4-20c3dc2f4c7c",

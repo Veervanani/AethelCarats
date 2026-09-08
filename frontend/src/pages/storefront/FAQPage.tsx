@@ -614,8 +614,8 @@ export const FAQPage: React.FC = () => {
             <Link to="/contact-us" className="primary-btn">
               <Mail size={16} /> CONTACT CUSTOMER CARE
             </Link>
-            <a href="tel:+91973785306" className="secondary-btn">
-              <Phone size={16} /> CALL +91973785306
+            <a href="tel:+917990278892" className="secondary-btn">
+              <Phone size={16} /> CALL +91 79902 78892
             </a>
           </div>
         </QuestionsCard>
