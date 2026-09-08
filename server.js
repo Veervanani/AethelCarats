@@ -100,13 +100,50 @@ app.use((req, res, next) => {
   next();
 });
 
+// Static asset & upload serving across all candidate directories
+const staticUploadDirs = [
+  path.resolve(process.cwd(), 'uploads'),
+  path.resolve(process.cwd(), 'backend/uploads'),
+  path.resolve(process.cwd(), 'frontend/public/uploads'),
+  path.resolve(distDir, 'uploads'),
+  path.resolve(__dirname, 'uploads'),
+  path.resolve(__dirname, 'frontend/dist/uploads'),
+];
+
+for (const uploadDir of staticUploadDirs) {
+  if (fs.existsSync(uploadDir)) {
+    app.use('/uploads', express.static(uploadDir));
+  }
+}
+
+const staticAssetDirs = [
+  path.resolve(distDir, 'assets'),
+  path.resolve(process.cwd(), 'frontend/public/assets'),
+  path.resolve(process.cwd(), 'public/assets'),
+  path.resolve(process.cwd(), 'assets'),
+  path.resolve(__dirname, 'frontend/public/assets'),
+  path.resolve(__dirname, 'assets'),
+];
+
+for (const assetDir of staticAssetDirs) {
+  if (fs.existsSync(assetDir)) {
+    app.use('/assets', express.static(assetDir));
+  }
+}
+
 // Serve static React build assets (js, css, images)
 app.use(express.static(distDir));
 
-// SPA Fallback: Serve index.html for all non-API routes to preserve React Router deep links
+// SPA Fallback: Serve index.html for all non-API and non-static routes
 app.get('*', (req, res, next) => {
-  if (req.path.startsWith('/api/') || req.path.startsWith('/api')) {
-    return next();
+  if (
+    req.path.startsWith('/api/') ||
+    req.path.startsWith('/api') ||
+    req.path.startsWith('/uploads/') ||
+    req.path.startsWith('/assets/') ||
+    /\.(png|jpe?g|webp|svg|gif|ico|css|js|map|woff2?|ttf|eot|pdf)$/i.test(req.path)
+  ) {
+    return res.status(404).send('Asset not found');
   }
   const indexPath = path.join(distDir, 'index.html');
   if (fs.existsSync(indexPath)) {

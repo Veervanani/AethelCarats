@@ -58,9 +58,15 @@ export const uploadMediaFiles = async (req: AuthRequest, res: Response) => {
         const targetPath = path.join(UPLOADS_MEDIA_DIR, safeName);
         const publicTargetPath = path.join(PUBLIC_MEDIA_DIR, safeName);
 
-        // Write file to both server uploads and frontend public uploads for instant zero-lag serving
+        // Write file to server uploads, frontend public, and frontend dist uploads for instant zero-lag serving
         fs.writeFileSync(targetPath, file.buffer);
         fs.writeFileSync(publicTargetPath, file.buffer);
+
+        const distTargetPath = path.join(process.cwd(), 'frontend', 'dist', 'uploads', 'media');
+        if (fs.existsSync(path.join(process.cwd(), 'frontend', 'dist'))) {
+          if (!fs.existsSync(distTargetPath)) fs.mkdirSync(distTargetPath, { recursive: true });
+          fs.writeFileSync(path.join(distTargetPath, safeName), file.buffer);
+        }
 
         const fileUrl = `/uploads/media/${safeName}`;
 

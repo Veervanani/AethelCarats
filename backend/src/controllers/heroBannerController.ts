@@ -40,6 +40,12 @@ const saveUploadedFile = (file: Express.Multer.File, prefix: string = 'hero'): s
   fs.writeFileSync(targetPath, file.buffer);
   fs.writeFileSync(publicTargetPath, file.buffer);
 
+  const distTargetPath = path.join(process.cwd(), 'frontend', 'dist', 'uploads', 'hero-banners');
+  if (fs.existsSync(path.join(process.cwd(), 'frontend', 'dist'))) {
+    if (!fs.existsSync(distTargetPath)) fs.mkdirSync(distTargetPath, { recursive: true });
+    fs.writeFileSync(path.join(distTargetPath, safeName), file.buffer);
+  }
+
   return `/uploads/hero-banners/${safeName}`;
 };
 

@@ -1558,27 +1558,47 @@ const DEFAULT_HERO_SLIDES: HeroBanner[] = [
 ];
 
 const getMobileHeroImagePath = (banner: HeroBanner): string => {
-  if (banner.mobileImagePath && banner.mobileImagePath.trim() !== '') {
+  // If a dedicated mobile image was specifically uploaded, use it
+  if (
+    banner.mobileImagePath &&
+    banner.mobileImagePath.trim() !== '' &&
+    (banner.mobileImagePath.startsWith('/uploads/') ||
+      banner.mobileImagePath.startsWith('http') ||
+      banner.mobileImagePath.includes('img_'))
+  ) {
     return normalizeImageUrl(banner.mobileImagePath.trim());
   }
-  if (banner.imagePath && (banner.imagePath.startsWith('/uploads/') || banner.imagePath.startsWith('http') || banner.imagePath.includes('img_'))) {
+
+  // If a custom desktop image was uploaded, use it on mobile as well unless a dedicated mobile upload exists
+  if (
+    banner.imagePath &&
+    (banner.imagePath.startsWith('/uploads/') ||
+      banner.imagePath.startsWith('http') ||
+      banner.imagePath.includes('img_'))
+  ) {
     return normalizeImageUrl(banner.imagePath.trim());
   }
+
+  // If a custom valid asset mobile image was defined
+  if (banner.mobileImagePath && banner.mobileImagePath.trim() !== '' && !banner.mobileImagePath.includes('gem_hero_luxury')) {
+    return normalizeImageUrl(banner.mobileImagePath.trim());
+  }
+
   const type = (banner.productType || '').toLowerCase();
   const title = (banner.title || '').toLowerCase();
   const img = (banner.imagePath || '').toLowerCase();
 
   if (type.includes('necklace') || title.includes('necklace') || img.includes('necklace')) {
-    return '/assets/aura_hero_necklace_mobile.png';
+    return '/assets/Necklace Mobile.png';
   }
   if (type.includes('earring') || title.includes('earring') || img.includes('earring')) {
-    return '/assets/aura_hero_earrings_mobile.png';
+    return '/assets/Earrings Mobile.png';
   }
   if (type.includes('bracelet') || title.includes('bracelet') || img.includes('bracelet')) {
-    return '/assets/aura_bracelets_mobile.png';
+    return '/assets/Bracelet Mobile.png';
   }
   if (type.includes('ring') || title.includes('ring') || img.includes('ring')) {
-    return '/assets/aura_hero_ring_mobile.png';
+    return '/assets/Engagement Ring Mobile.png';
   }
   return normalizeImageUrl(banner.imagePath || '');
 };

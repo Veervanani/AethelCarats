@@ -63,7 +63,21 @@ export const SafeImage: React.FC<SafeImageProps> = ({
     setHasError(false);
   }, [src, fallbackSrc]);
 
+  const [attemptedFallback, setAttemptedFallback] = useState(false);
+
   const handleError = (e: React.SyntheticEvent<HTMLImageElement, Event>) => {
+    if (!attemptedFallback && imgSrc.startsWith('/assets/')) {
+      setAttemptedFallback(true);
+      if (imgSrc.includes('aura_')) {
+        setImgSrc(imgSrc.replace('aura_', 'gem_'));
+        return;
+      }
+      if (imgSrc.includes('floksy_')) {
+        setImgSrc(imgSrc.replace('floksy_', 'gem_'));
+        return;
+      }
+    }
+
     if (!hasError) {
       setHasError(true);
       setImgSrc(fallbackSrc);
