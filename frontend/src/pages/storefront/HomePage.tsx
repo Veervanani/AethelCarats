@@ -737,11 +737,12 @@ const EditorialCollectionRight = styled.div`
 
 /* BLUE NILE-STYLE DUAL-PANEL PROMOTIONAL SECTION */
 const PromoSection = styled.section`
+  position: relative;
   width: 100%;
   margin: 0;
   padding: 0;
-  border-top: none;
-  border-bottom: none;
+  overflow: hidden;
+  background-color: #0B0B0B;
 `;
 
 const PromoGrid = styled.div`
@@ -749,13 +750,14 @@ const PromoGrid = styled.div`
   grid-template-columns: 1fr 1fr;
   gap: 0;
   width: 100%;
-  height: 480px;
+  aspect-ratio: 2 / 1;
+  overflow: hidden;
   margin: 0;
   padding: 0;
 
-  @media (max-width: 992px) {
+  @media (max-width: 768px) {
     grid-template-columns: 1fr;
-    height: auto;
+    aspect-ratio: auto;
   }
 `;
 
@@ -763,23 +765,29 @@ const PromoPanel = styled.div`
   position: relative;
   width: 100%;
   height: 100%;
+  aspect-ratio: 1 / 1;
   overflow: hidden;
 
   img {
+    position: absolute;
+    inset: 0;
     width: 100%;
     height: 100%;
     object-fit: cover;
+    object-position: center;
     display: block;
-    transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+    transition: transform 0.7s cubic-bezier(0.16, 1, 0.3, 1);
+    z-index: 1;
   }
 
   &::after {
     content: '';
     position: absolute;
     inset: 0;
-    background: linear-gradient(to top, rgba(36, 35, 33, 0.32) 0%, transparent 50%);
+    background: linear-gradient(to top, rgba(11, 11, 11, 0.6) 0%, rgba(11, 11, 11, 0.1) 40%, transparent 70%);
     pointer-events: none;
     transition: opacity 0.4s ease;
+    z-index: 2;
   }
 
   &:hover {
@@ -788,114 +796,82 @@ const PromoPanel = styled.div`
     }
   }
 
-  @media (max-width: 992px) {
-    min-height: 380px;
-  }
-`;
-
-const LeftPromoButton = styled(Link)`
-  position: absolute;
-  bottom: 46px;
-  left: 50%;
-  transform: translateX(-50%);
-  z-index: 5;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: min(280px, 85%);
-  height: 50px;
-  padding: 0 22px;
-  background: rgba(17, 17, 17, 0.92);
-  backdrop-filter: blur(10px);
-  border: 1.5px solid #C9A96E;
-  color: #F5F1E8;
-  font-size: 0.8rem;
-  font-weight: 700;
-  letter-spacing: 0.2em;
-  text-transform: uppercase;
-  text-decoration: none;
-  border-radius: 2px;
-  transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1);
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.6);
-
-  &:hover {
-    background: #C9A96E;
-    border-color: #C9A96E;
-    color: #0B0B0B;
-    transform: translateX(-50%) translateY(-3px);
-    box-shadow: 0 14px 32px rgba(201, 169, 110, 0.4);
-  }
-
   @media (max-width: 768px) {
-    bottom: 36px;
-    height: 46px;
+    aspect-ratio: 1 / 1;
   }
 `;
 
-const RightPromoContent = styled.div`
+const PromoContent = styled.div`
   position: absolute;
-  bottom: 42px;
-  left: 50%;
-  transform: translateX(-50%);
-  z-index: 5;
-  text-align: center;
-  width: 90%;
-  max-width: 480px;
+  inset: 0;
   display: flex;
   flex-direction: column;
   align-items: center;
+  justify-content: flex-end;
+  padding: 44px 32px 52px;
+  text-align: center;
+  z-index: 5;
+  pointer-events: none;
 
   @media (max-width: 768px) {
-    bottom: 32px;
-    width: 95%;
+    padding: 32px 20px 38px;
   }
 `;
 
-const RightPromoTitle = styled.h2`
+const PromoTitle = styled.h2`
   font-family: 'Cormorant Garamond', serif;
-  font-size: 2.1rem;
+  font-size: clamp(1.6rem, 2.5vw, 2.4rem);
   font-weight: 500;
   color: #F5F1E8;
   text-transform: uppercase;
-  letter-spacing: 0.1em;
-  margin-bottom: 16px;
+  letter-spacing: 0.12em;
+  margin: 0 0 20px 0;
+  line-height: 1.2;
+  max-width: 90%;
+  pointer-events: none;
 
   @media (max-width: 768px) {
-    font-size: 1.6rem;
-    margin-bottom: 12px;
+    font-size: 1.45rem;
+    margin-bottom: 16px;
   }
 `;
 
-const RightPromoButton = styled(Link)`
+const PromoButton = styled(Link)`
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: min(250px, 85%);
-  height: 50px;
-  padding: 0 22px;
+  width: auto;
+  min-width: 200px;
+  max-width: 280px;
+  height: 52px;
+  padding: 0 32px;
   background: rgba(17, 17, 17, 0.92);
+  border: 1.5px solid #C9A96E;
   backdrop-filter: blur(10px);
   color: #F5F1E8;
-  font-size: 0.8rem;
+  font-size: 0.82rem;
   font-weight: 700;
-  letter-spacing: 0.2em;
+  letter-spacing: 0.22em;
   text-transform: uppercase;
   text-decoration: none;
-  border: 1.5px solid #C9A96E;
   border-radius: 2px;
   transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1);
   box-shadow: 0 8px 24px rgba(0, 0, 0, 0.6);
+  pointer-events: auto;
 
   &:hover {
     background: #C9A96E;
     border-color: #C9A96E;
     color: #0B0B0B;
     transform: translateY(-3px);
-    box-shadow: 0 14px 32px rgba(201, 169, 110, 0.4);
+    box-shadow: 0 12px 28px rgba(201, 169, 110, 0.4);
   }
 
   @media (max-width: 768px) {
-    height: 46px;
+    height: 48px;
+    font-size: 0.78rem;
+    padding: 0 24px;
+    min-width: 180px;
   }
 `;
 
@@ -914,44 +890,56 @@ const DiamondShapesContainer = styled.div`
   grid-template-columns: 1fr 1fr;
   gap: 0;
   width: 100%;
-  min-height: 480px;
+  aspect-ratio: 2 / 1;
+  overflow: hidden;
 
   @media (max-width: 992px) {
     grid-template-columns: 1fr;
-    min-height: auto;
+    aspect-ratio: auto;
   }
 `;
 
 const DiamondShapesLeft = styled.div`
+  position: relative;
   width: 100%;
   height: 100%;
-  min-height: 480px;
+  aspect-ratio: 1 / 1;
   overflow: hidden;
   background-color: #0B0B0B;
-  position: relative;
 
   img {
+    position: absolute;
+    inset: 0;
     width: 100%;
     height: 100%;
     object-fit: cover;
     display: block;
+    transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+
+  &:hover img {
+    transform: scale(1.04);
   }
 
   @media (max-width: 992px) {
-    min-height: 340px;
+    aspect-ratio: auto;
+    min-height: 380px;
   }
 `;
 
 const DiamondShapesRight = styled.div`
-  padding: 38px 48px;
+  width: 100%;
+  height: 100%;
+  aspect-ratio: 1 / 1;
+  padding: clamp(36px, 4.5vw, 64px) clamp(36px, 5vw, 72px);
   display: flex;
   flex-direction: column;
   justify-content: center;
-  height: 100%;
   box-sizing: border-box;
 
   @media (max-width: 992px) {
-    padding: 36px 20px;
+    aspect-ratio: auto;
+    padding: 48px 24px;
   }
 `;
 
@@ -2342,9 +2330,14 @@ export const HomePage: React.FC = () => {
                     src={activeEssentials.leftImageUrl || '/assets/gem_diamonds_cat.png'}
                     alt={activeEssentials.leftTitle || 'Diamond Essentials'}
                   />
-                  <LeftPromoButton to={activeEssentials.leftTargetUrl || '/diamonds'} style={{ color: activeEssentials.leftButtonColor || undefined }}>
-                    {activeEssentials.leftButtonText || activeEssentials.leftTitle || 'DIAMOND ESSENTIALS'}
-                  </LeftPromoButton>
+                  <PromoContent>
+                    <PromoTitle style={{ color: activeEssentials.leftTitleColor || undefined }}>
+                      {activeEssentials.leftTitle || 'DIAMOND ESSENTIALS'}
+                    </PromoTitle>
+                    <PromoButton to={activeEssentials.leftTargetUrl || '/diamonds'} style={{ color: activeEssentials.leftButtonColor || undefined }}>
+                      {activeEssentials.leftButtonText || 'SHOP THE EVENT'}
+                    </PromoButton>
+                  </PromoContent>
                 </PromoPanel>
               </RevealContainer>
 
@@ -2354,14 +2347,14 @@ export const HomePage: React.FC = () => {
                     src={activeEssentials.rightImageUrl || '/assets/gem_earrings_cat.png'}
                     alt={activeEssentials.rightTitle || 'Golden Hour Collection'}
                   />
-                  <RightPromoContent>
-                    <RightPromoTitle style={{ color: activeEssentials.rightTitleColor || undefined }}>
+                  <PromoContent>
+                    <PromoTitle style={{ color: activeEssentials.rightTitleColor || undefined }}>
                       {activeEssentials.rightTitle || 'GOLDEN HOUR IS HERE'}
-                    </RightPromoTitle>
-                    <RightPromoButton to={activeEssentials.rightTargetUrl || '/collections/signature-collection'} style={{ color: activeEssentials.rightButtonColor || undefined }}>
+                    </PromoTitle>
+                    <PromoButton to={activeEssentials.rightTargetUrl || '/collections/signature-collection'} style={{ color: activeEssentials.rightButtonColor || undefined }}>
                       {activeEssentials.rightButtonText || 'SHOP THE EVENT'}
-                    </RightPromoButton>
-                  </RightPromoContent>
+                    </PromoButton>
+                  </PromoContent>
                 </PromoPanel>
               </RevealContainer>
             </PromoGrid>
@@ -2377,7 +2370,13 @@ export const HomePage: React.FC = () => {
               <RevealContainer delay={0.0} yOffset={25} scaleInitial={0.985} style={{ height: '100%', width: '100%' }}>
                 <DiamondShapesLeft>
                   <SafeImage
-                    src={diamondShapesContent.leftImage || diamondShapesContent.desktopImage || '/assets/aethelcarats_diamonds_cat.png'}
+                    src={
+                      (diamondShapesContent.leftImage && !diamondShapesContent.leftImage.includes('gem_diamonds_cat'))
+                        ? diamondShapesContent.leftImage
+                        : (diamondShapesContent.desktopImage && !diamondShapesContent.desktopImage.includes('gem_diamonds_cat'))
+                        ? diamondShapesContent.desktopImage
+                        : '/assets/aethelcarats_diamonds_cat.png'
+                    }
                     alt="Diamond Vault Shapes"
                   />
                 </DiamondShapesLeft>
