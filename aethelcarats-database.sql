@@ -3262,17 +3262,17 @@ ON DUPLICATE KEY UPDATE `title` = VALUES(`title`), `imagePath` = VALUES(`imagePa
 -- ==========================================================================
 -- AETHELCARATS MEDIA LIBRARY SEED
 -- ==========================================================================
-INSERT IGNORE INTO `Media` (`id`, `name`, `url`, `fileType`, `fileSize`, `dimensions`, `altText`, `createdAt`, `updatedAt`) VALUES
-('med_hero_ring', 'Engagement Ring', '/assets/Engagement Ring.png', 'image/png', 524288, '1920x1080', 'Solitaire Diamond Engagement Ring', '2026-09-08 00:00:00.000', '2026-09-08 00:00:00.000'),
-('med_hero_ring_mob', 'Engagement Ring Mobile', '/assets/Engagement Ring Mobile.png', 'image/png', 314572, '1080x1350', 'Solitaire Engagement Ring Mobile', '2026-09-08 00:00:00.000', '2026-09-08 00:00:00.000'),
-('med_hero_necklace', 'High Jewellery Necklace', '/assets/Necklace.png', 'image/png', 612000, '1920x1080', 'Haute Joaillerie Diamond Necklace', '2026-09-08 00:00:00.000', '2026-09-08 00:00:00.000'),
-('med_hero_necklace_mob', 'Necklace Mobile', '/assets/Necklace Mobile.png', 'image/png', 345000, '1080x1350', 'Diamond Necklace Mobile', '2026-09-08 00:00:00.000', '2026-09-08 00:00:00.000'),
-('med_hero_earrings', 'Diamond Earrings', '/assets/Earrings.png', 'image/png', 489000, '1920x1080', 'Brilliant Diamond Earrings', '2026-09-08 00:00:00.000', '2026-09-08 00:00:00.000'),
-('med_hero_earrings_mob', 'Diamond Earrings Mobile', '/assets/Earrings Mobile.png', 'image/png', 298000, '1080x1350', 'Brilliant Diamond Earrings Mobile', '2026-09-08 00:00:00.000', '2026-09-08 00:00:00.000'),
-('med_hero_bracelet', 'Diamond Bracelet', '/assets/Bracelet.png', 'image/png', 542000, '1920x1080', 'Bespoke Diamond Tennis Bracelet', '2026-09-08 00:00:00.000', '2026-09-08 00:00:00.000'),
-('med_hero_bracelet_mob', 'Diamond Bracelet Mobile', '/assets/Bracelet Mobile.png', 'image/png', 312000, '1080x1350', 'Bespoke Diamond Bracelet Mobile', '2026-09-08 00:00:00.000', '2026-09-08 00:00:00.000'),
-('med_logo', 'AethelCarats Logo', '/assets/logo.svg', 'image/svg+xml', 12400, '500x120', 'AethelCarats Logo', '2026-09-08 00:00:00.000', '2026-09-08 00:00:00.000'),
-('med_logo_mob', 'AethelCarats Mobile Logo', '/assets/logo-mobile.svg', 'image/svg+xml', 8900, '300x80', 'AethelCarats Mobile Logo', '2026-09-08 00:00:00.000', '2026-09-08 00:00:00.000');
+INSERT IGNORE INTO `Media` (`id`, `name`, `url`, `fileType`, `fileSize`, `dimensions`, `altText`, `createdAt`) VALUES
+('med_hero_ring', 'Engagement Ring', '/assets/Engagement Ring.png', 'image/png', 524288, '1920x1080', 'Solitaire Diamond Engagement Ring', '2026-09-08 00:00:00.000'),
+('med_hero_ring_mob', 'Engagement Ring Mobile', '/assets/Engagement Ring Mobile.png', 'image/png', 314572, '1080x1350', 'Solitaire Engagement Ring Mobile', '2026-09-08 00:00:00.000'),
+('med_hero_necklace', 'High Jewellery Necklace', '/assets/Necklace.png', 'image/png', 612000, '1920x1080', 'Haute Joaillerie Diamond Necklace', '2026-09-08 00:00:00.000'),
+('med_hero_necklace_mob', 'Necklace Mobile', '/assets/Necklace Mobile.png', 'image/png', 345000, '1080x1350', 'Diamond Necklace Mobile', '2026-09-08 00:00:00.000'),
+('med_hero_earrings', 'Diamond Earrings', '/assets/Earrings.png', 'image/png', 489000, '1920x1080', 'Brilliant Diamond Earrings', '2026-09-08 00:00:00.000'),
+('med_hero_earrings_mob', 'Diamond Earrings Mobile', '/assets/Earrings Mobile.png', 'image/png', 298000, '1080x1350', 'Brilliant Diamond Earrings Mobile', '2026-09-08 00:00:00.000'),
+('med_hero_bracelet', 'Diamond Bracelet', '/assets/Bracelet.png', 'image/png', 542000, '1920x1080', 'Bespoke Diamond Tennis Bracelet', '2026-09-08 00:00:00.000'),
+('med_hero_bracelet_mob', 'Diamond Bracelet Mobile', '/assets/Bracelet Mobile.png', 'image/png', 312000, '1080x1350', 'Bespoke Diamond Bracelet Mobile', '2026-09-08 00:00:00.000'),
+('med_logo', 'AethelCarats Logo', '/assets/logo.svg', 'image/svg+xml', 12400, '500x120', 'AethelCarats Logo', '2026-09-08 00:00:00.000'),
+('med_logo_mob', 'AethelCarats Mobile Logo', '/assets/logo-mobile.svg', 'image/svg+xml', 8900, '300x80', 'AethelCarats Mobile Logo', '2026-09-08 00:00:00.000');
 
 
 SET FOREIGN_KEY_CHECKS = 1;
