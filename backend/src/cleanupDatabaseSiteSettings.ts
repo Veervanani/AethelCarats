@@ -7,37 +7,37 @@ export async function cleanupDatabaseSiteSettings() {
     // 1. UPDATE OR UPSERT INSTAGRAM URL IN DATABASE
     await prisma.siteSetting.upsert({
       where: { key: 'instagramUrl' },
-      update: { value: 'https://www.instagram.com/auradiamondatelier' },
-      create: { key: 'instagramUrl', value: 'https://www.instagram.com/auradiamondatelier' },
+      update: { value: 'https://www.instagram.com/aethelcarats' },
+      create: { key: 'instagramUrl', value: 'https://www.instagram.com/aethelcarats' },
     });
 
     // 2. UPDATE OR UPSERT STORE ADDRESS IN DATABASE
     await prisma.siteSetting.upsert({
       where: { key: 'storeAddress' },
-      update: { value: '740 Fifth Avenue, Suite 1800, New York, NY 10019' },
-      create: { key: 'storeAddress', value: '740 Fifth Avenue, Suite 1800, New York, NY 10019' },
+      update: { value: 'Surat, Gujarat, India' },
+      create: { key: 'storeAddress', value: 'Surat, Gujarat, India' },
     });
 
     // 3. UPDATE OR UPSERT STORE NAME IN DATABASE
     await prisma.siteSetting.upsert({
       where: { key: 'storeName' },
-      update: { value: 'AURA DIAMOND ATELIER' },
-      create: { key: 'storeName', value: 'AURA DIAMOND ATELIER' },
+      update: { value: 'AETHELCARATS FINE JEWELLERY ATELIER' },
+      create: { key: 'storeName', value: 'AETHELCARATS FINE JEWELLERY ATELIER' },
     });
 
     // 4. CLEANUP FOOTER SETTINGS ROW IN DATABASE
     const footerRow = await prisma.siteSetting.findUnique({ where: { key: 'footer_settings' } });
     let footerObj: any = {
-      brandName: 'AURA DIAMOND ATELIER',
+      brandName: 'AETHELCARATS FINE JEWELLERY ATELIER',
       tagline: 'Fine Jewelry & Certified Solitaire Diamonds',
-      logoImage: '/assets/gem_logo_light.svg',
-      copyrightText: '© 2026 Aura Diamond Atelier. All Rights Reserved.',
-      email: 'concierge@auroradiamonds.com',
-      phone: '+1 (800) 555-2872',
-      address: '740 Fifth Avenue, Suite 1800, New York, NY 10019',
-      instagram: 'https://www.instagram.com/auradiamondatelier',
-      facebook: 'https://facebook.com/auradiamondatelier',
-      pinterest: 'https://pinterest.com/auradiamondatelier',
+      logoImage: '/assets/gem-brand-logo.png',
+      copyrightText: '© 2026 AethelCarats Fine Jewellery Atelier. All Rights Reserved.',
+      email: 'concierge@aethelcarats.com',
+      phone: '+91973785306',
+      address: 'Surat, Gujarat, India',
+      instagram: 'https://www.instagram.com/aethelcarats',
+      facebook: 'https://facebook.com/aethelcarats',
+      pinterest: 'https://pinterest.com/aethelcarats',
       trustBadgeImage: '/assets/trust_badges.png',
     };
 
@@ -48,10 +48,13 @@ export async function cleanupDatabaseSiteSettings() {
       } catch (e) {}
     }
 
-    footerObj.brandName = 'AURA DIAMOND ATELIER';
-    footerObj.address = '740 Fifth Avenue, Suite 1800, New York, NY 10019';
-    footerObj.copyrightText = '© 2026 Aura Diamond Atelier. All Rights Reserved.';
-    footerObj.instagram = 'https://www.instagram.com/auradiamondatelier';
+    footerObj.brandName = 'AETHELCARATS FINE JEWELLERY ATELIER';
+    footerObj.address = 'Surat, Gujarat, India';
+    footerObj.copyrightText = '© 2026 AethelCarats Fine Jewellery Atelier. All Rights Reserved.';
+    footerObj.instagram = 'https://www.instagram.com/aethelcarats';
+    footerObj.facebook = 'https://facebook.com/aethelcarats';
+    footerObj.pinterest = 'https://pinterest.com/aethelcarats';
+    footerObj.email = 'concierge@aethelcarats.com';
 
     await prisma.siteSetting.upsert({
       where: { key: 'footer_settings' },
@@ -64,13 +67,21 @@ export async function cleanupDatabaseSiteSettings() {
     if (footerConfigRow?.value) {
       try {
         const parsedConfig = JSON.parse(footerConfigRow.value);
-        parsedConfig.address = '740 Fifth Avenue, Suite 1800, New York, NY 10019';
-        parsedConfig.brandDescription = parsedConfig.brandDescription ? parsedConfig.brandDescription.replace(/Mayfair/g, 'Fifth Avenue') : undefined;
-        parsedConfig.copyrightText = '© 2026 AURA DIAMOND ATELIER. ALL RIGHTS RESERVED.';
+        parsedConfig.brandName = 'AETHELCARATS FINE JEWELLERY ATELIER';
+        parsedConfig.address = 'Surat, Gujarat, India';
+        parsedConfig.brandDescription = 'AethelCarats Fine Jewellery Atelier — bespoke master craftsmanship and authenticated diamonds.';
+        parsedConfig.copyrightText = '© 2026 AethelCarats Fine Jewellery Atelier. All Rights Reserved.';
+        parsedConfig.email = 'concierge@aethelcarats.com';
         if (Array.isArray(parsedConfig.socialLinks)) {
           parsedConfig.socialLinks = parsedConfig.socialLinks.map((link: any) => {
             if (link && link.platform && link.platform.toLowerCase() === 'instagram') {
-              return { ...link, url: 'https://www.instagram.com/auradiamondatelier' };
+              return { ...link, url: 'https://www.instagram.com/aethelcarats' };
+            }
+            if (link && link.platform && link.platform.toLowerCase() === 'facebook') {
+              return { ...link, url: 'https://facebook.com/aethelcarats' };
+            }
+            if (link && link.platform && link.platform.toLowerCase() === 'pinterest') {
+              return { ...link, url: 'https://pinterest.com/aethelcarats' };
             }
             return link;
           });
@@ -87,9 +98,10 @@ export async function cleanupDatabaseSiteSettings() {
     if (siteSettingsRow?.value) {
       try {
         const parsedSiteSettings = JSON.parse(siteSettingsRow.value);
-        parsedSiteSettings.storeName = 'AURA DIAMOND ATELIER';
-        parsedSiteSettings.storeAddress = '740 Fifth Avenue, Suite 1800, New York, NY 10019';
-        parsedSiteSettings.instagramUrl = 'https://www.instagram.com/auradiamondatelier';
+        parsedSiteSettings.storeName = 'AETHELCARATS FINE JEWELLERY ATELIER';
+        parsedSiteSettings.storeAddress = 'Surat, Gujarat, India';
+        parsedSiteSettings.instagramUrl = 'https://www.instagram.com/aethelcarats';
+        parsedSiteSettings.email = 'concierge@aethelcarats.com';
         await prisma.siteSetting.update({
           where: { key: 'site_settings' },
           data: { value: JSON.stringify(parsedSiteSettings) },

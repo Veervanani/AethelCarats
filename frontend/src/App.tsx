@@ -288,22 +288,47 @@ const StorefrontLayout: React.FC = () => {
             <Route path="/education/rings/find-your-ring-size" element={<FindYourRingSizePage />} />
             <Route path="/ring-size-guide" element={<FindYourRingSizePage />} />
             <Route path="/contact-us" element={<ContactUsPage />} />
+            <Route path="/pages/contact-us" element={<ContactUsPage />} />
             <Route path="/faq" element={<FAQPage />} />
+            <Route path="/pages/faq" element={<FAQPage />} />
             <Route path="/returns-refunds" element={<ReturnsRefundsPage />} />
+            <Route path="/pages/returns-refunds" element={<ReturnsRefundsPage />} />
             <Route path="/sustainability" element={<SustainabilityPage />} />
+            <Route path="/pages/sustainability" element={<SustainabilityPage />} />
             <Route path="/price-match" element={<PriceMatchPage />} />
+            <Route path="/pages/price-match" element={<PriceMatchPage />} />
             <Route path="/lifetime-warranty" element={<LifetimeWarrantyPage />} />
+            <Route path="/pages/lifetime-warranty" element={<LifetimeWarrantyPage />} />
             <Route path="/shipping-delivery" element={<ShippingDeliveryPage />} />
+            <Route path="/pages/shipping-delivery" element={<ShippingDeliveryPage />} />
             <Route path="/insurance" element={<InsurancePage />} />
+            <Route path="/pages/insurance" element={<InsurancePage />} />
             <Route path="/about-us" element={<AboutUsPage />} />
+            <Route path="/pages/about-us" element={<AboutUsPage />} />
             <Route path="/blog" element={<BlogPage />} />
+            <Route path="/pages/blog" element={<BlogPage />} />
             <Route path="/sale-exclusions" element={<SaleExclusionsPage />} />
+            <Route path="/pages/sale-exclusions" element={<SaleExclusionsPage />} />
             <Route path="/sitemap" element={<SitemapPage />} />
+            <Route path="/pages/sitemap" element={<SitemapPage />} />
+
             <Route path="/bespoke-service" element={<CMSPage />} />
+            <Route path="/pages/bespoke-service" element={<CMSPage />} />
             <Route path="/jewellery-care" element={<CMSPage />} />
+            <Route path="/pages/jewellery-care" element={<CMSPage />} />
             <Route path="/privacy-policy" element={<CMSPage />} />
+            <Route path="/pages/privacy-policy" element={<CMSPage />} />
+            <Route path="/policies/privacy-policy" element={<CMSPage />} />
             <Route path="/terms-of-service" element={<CMSPage />} />
+            <Route path="/pages/terms-of-service" element={<CMSPage />} />
+            <Route path="/policies/terms-of-service" element={<CMSPage />} />
+            <Route path="/terms-and-conditions" element={<CMSPage />} />
+            <Route path="/pages/terms-and-conditions" element={<CMSPage />} />
+            <Route path="/billing-terms" element={<CMSPage />} />
+            <Route path="/pages/billing-terms" element={<CMSPage />} />
             <Route path="/billing-terms-conditions" element={<CMSPage />} />
+            <Route path="/pages/billing-terms-conditions" element={<CMSPage />} />
+            <Route path="/policies/billing-terms-conditions" element={<CMSPage />} />
             <Route path="/pages/*" element={<CMSPage />} />
             <Route path="/policies/*" element={<CMSPage />} />
           </Routes>
