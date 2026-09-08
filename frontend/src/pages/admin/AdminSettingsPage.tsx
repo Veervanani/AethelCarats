@@ -192,9 +192,30 @@ export const AdminSettingsPage: React.FC = () => {
   useEffect(() => {
     api.getSiteSettings().then((data) => {
       if (data && typeof data === 'object' && Object.keys(data).length > 0) {
-        const merged = { ...data };
+        const merged: Record<string, any> = { ...data };
         if (data.site_settings && typeof data.site_settings === 'object') {
-          Object.assign(merged, data.site_settings);
+          const { site_settings: _nested, ...restSiteSettings } = data.site_settings;
+          Object.assign(merged, restSiteSettings);
+        }
+        if (data.whatsapp_config && typeof data.whatsapp_config === 'object') {
+          if (data.whatsapp_config.inquiryNumber) merged.whatsappNumber = data.whatsapp_config.inquiryNumber;
+          if (data.whatsapp_config.displayNumber) merged.whatsappDisplayNumber = data.whatsapp_config.displayNumber;
+          if (data.whatsapp_config.defaultMessage) merged.whatsappDefaultMessage = data.whatsapp_config.defaultMessage;
+        }
+        if (data.consult_expert_config && typeof data.consult_expert_config === 'object') {
+          if (data.consult_expert_config.consultPhone) merged.consultPhone = data.consult_expert_config.consultPhone;
+          if (data.consult_expert_config.consultTitle) merged.consultTitle = data.consult_expert_config.consultTitle;
+          if (data.consult_expert_config.consultDescription) merged.consultDescription = data.consult_expert_config.consultDescription;
+          if (data.consult_expert_config.consultPhoneLabel) merged.consultPhoneLabel = data.consult_expert_config.consultPhoneLabel;
+          if (data.consult_expert_config.consultEmail) merged.consultEmail = data.consult_expert_config.consultEmail;
+          if (data.consult_expert_config.consultEmailLabel) merged.consultEmailLabel = data.consult_expert_config.consultEmailLabel;
+          if (data.consult_expert_config.consultCloseLabel) merged.consultCloseLabel = data.consult_expert_config.consultCloseLabel;
+        }
+        if (data.whatsappDisplayNumber) merged.whatsappDisplayNumber = data.whatsappDisplayNumber;
+        if (data.consultPhone) merged.consultPhone = data.consultPhone;
+        if (data.consultTitle) merged.consultTitle = data.consultTitle;
+        if (typeof merged.consultTitle === 'string' && merged.consultTitle.includes('Floksy')) {
+          merged.consultTitle = merged.consultTitle.replace(/Floksy/g, 'AethelCarats');
         }
         setSettings((prev) => ({ ...prev, ...merged }));
       }
@@ -210,19 +231,72 @@ export const AdminSettingsPage: React.FC = () => {
     setSaved(false);
     setErrorMsg(null);
     try {
-      const cleanWaNumber = (settings.whatsappNumber || '').replace(/[^\d+]/g, '');
-      
+      const cleanWaNumber = (settings.whatsappNumber || '+917990278892').replace(/[^\d+]/g, '');
+      const displayWaNumber = (settings.whatsappDisplayNumber || settings.whatsappNumber || '+91 79902 78892').trim();
+      const defaultWaMessage = settings.whatsappDefaultMessage || 'Hello AethelCarats Atelier, I am interested in your fine jewellery collection.';
+      const consultPhone = (settings.consultPhone || displayWaNumber || '+91 79902 78892').trim();
+      let consultTitle = (settings.consultTitle || 'Consult an AethelCarats Atelier Expert').replace(/Floksy/g, 'AethelCarats').trim();
+      const consultDescription = (settings.consultDescription || 'Speak directly with our jewelry specialists regarding custom design, diamond selection, or sizing guidance.').replace(/Floksy/g, 'AethelCarats').trim();
+      const consultPhoneLabel = (settings.consultPhoneLabel || 'Call Atelier').trim();
+      const consultEmail = (settings.consultEmail || settings.contactEmail || 'contact@aethelcarats.com').trim();
+      const consultEmailLabel = (settings.consultEmailLabel || 'Email Concierge').trim();
+      const consultCloseLabel = (settings.consultCloseLabel || 'Close').trim();
+      const enableConsult = settings.enableConsultAtelierExpert !== undefined ? String(settings.enableConsultAtelierExpert) : 'true';
+
+      const waConfig = {
+        inquiryNumber: cleanWaNumber,
+        displayNumber: displayWaNumber,
+        defaultMessage: defaultWaMessage,
+      };
+
+      const consultConfig = {
+        enableConsultAtelierExpert: enableConsult,
+        consultTitle,
+        consultDescription,
+        consultPhone,
+        consultPhoneLabel,
+        consultEmail,
+        consultEmailLabel,
+        consultCloseLabel,
+      };
+
       const settingsPayload = {
         ...settings,
         whatsappNumber: cleanWaNumber,
-        whatsapp_config: {
-          inquiryNumber: cleanWaNumber,
-          displayNumber: settings.whatsappDisplayNumber || cleanWaNumber,
-          defaultMessage: settings.whatsappDefaultMessage || 'Hello Aura Diamond Atelier, I am interested in your fine jewellery collection.',
-        }
+        whatsappDisplayNumber: displayWaNumber,
+        whatsappDefaultMessage: defaultWaMessage,
+        whatsapp_config: waConfig,
+        consultPhone,
+        consultTitle,
+        consultDescription,
+        consultPhoneLabel,
+        consultEmail,
+        consultEmailLabel,
+        consultCloseLabel,
+        enableConsultAtelierExpert: enableConsult,
+        consult_expert_config: consultConfig,
       };
+      delete (settingsPayload as any).site_settings;
 
+      // 1. Update the main site_settings dictionary
       await api.updateSiteSettings(settingsPayload);
+
+      // 2. Explicitly persist all individual setting keys to avoid any overwrite by legacy rows
+      await Promise.all([
+        api.updateSiteSetting('whatsapp_config', waConfig),
+        api.updateSiteSetting('whatsappNumber', cleanWaNumber),
+        api.updateSiteSetting('whatsappDisplayNumber', displayWaNumber),
+        api.updateSiteSetting('whatsappDefaultMessage', defaultWaMessage),
+        api.updateSiteSetting('consult_expert_config', consultConfig),
+        api.updateSiteSetting('consultPhone', consultPhone),
+        api.updateSiteSetting('consultTitle', consultTitle),
+        api.updateSiteSetting('consultDescription', consultDescription),
+        api.updateSiteSetting('consultPhoneLabel', consultPhoneLabel),
+        api.updateSiteSetting('consultEmail', consultEmail),
+        api.updateSiteSetting('consultEmailLabel', consultEmailLabel),
+        api.updateSiteSetting('consultCloseLabel', consultCloseLabel),
+        api.updateSiteSetting('enableConsultAtelierExpert', enableConsult),
+      ]);
 
       const currentSettings = await api.getSiteSettings().catch(() => ({}));
       let currentFooterSettings: any = {};
@@ -236,7 +310,7 @@ export const AdminSettingsPage: React.FC = () => {
 
       await api.updateSiteSetting('footer_settings', {
         ...currentFooterSettings,
-        brandName: settings.storeName !== undefined ? settings.storeName : (currentFooterSettings.brandName ?? 'AURA DIAMOND ATELIER'),
+        brandName: settings.storeName !== undefined ? settings.storeName : (currentFooterSettings.brandName ?? 'AETHELCARATS FINE JEWELLERY ATELIER'),
         email: settings.contactEmail !== undefined ? settings.contactEmail : currentFooterSettings.email,
         phone: settings.contactPhone !== undefined ? settings.contactPhone : currentFooterSettings.phone,
         address: settings.storeAddress !== undefined ? settings.storeAddress : (currentFooterSettings.address ?? 'Surat, India'),
@@ -244,12 +318,6 @@ export const AdminSettingsPage: React.FC = () => {
         facebook: settings.facebookUrl !== undefined ? settings.facebookUrl : currentFooterSettings.facebook,
         pinterest: settings.pinterestUrl !== undefined ? settings.pinterestUrl : currentFooterSettings.pinterest,
       });
-      await api.updateSiteSetting('whatsapp_config', {
-        inquiryNumber: cleanWaNumber,
-        displayNumber: settings.whatsappDisplayNumber || cleanWaNumber,
-        defaultMessage: settings.whatsappDefaultMessage || 'Hello Aura Diamond Atelier, I am interested in your fine jewellery collection.',
-      });
-      await api.updateSiteSetting('whatsappNumber', cleanWaNumber);
 
       const hRes = await api.updateHolidayModeSettings({
         active: holidayStatus.active,
@@ -260,11 +328,22 @@ export const AdminSettingsPage: React.FC = () => {
       if (hRes) {
         setHolidayStatus(hRes);
       }
+
       const updatedData = await api.getSiteSettings();
       if (updatedData && typeof updatedData === 'object' && Object.keys(updatedData).length > 0) {
         const merged = { ...updatedData };
         if (updatedData.site_settings && typeof updatedData.site_settings === 'object') {
-          Object.assign(merged, updatedData.site_settings);
+          const { site_settings: _nested, ...restSiteSettings } = updatedData.site_settings;
+          Object.assign(merged, restSiteSettings);
+        }
+        if (updatedData.whatsapp_config && typeof updatedData.whatsapp_config === 'object') {
+          if (updatedData.whatsapp_config.inquiryNumber) merged.whatsappNumber = updatedData.whatsapp_config.inquiryNumber;
+          if (updatedData.whatsapp_config.displayNumber) merged.whatsappDisplayNumber = updatedData.whatsapp_config.displayNumber;
+          if (updatedData.whatsapp_config.defaultMessage) merged.whatsappDefaultMessage = updatedData.whatsapp_config.defaultMessage;
+        }
+        if (updatedData.consult_expert_config && typeof updatedData.consult_expert_config === 'object') {
+          if (updatedData.consult_expert_config.consultPhone) merged.consultPhone = updatedData.consult_expert_config.consultPhone;
+          if (updatedData.consult_expert_config.consultTitle) merged.consultTitle = updatedData.consult_expert_config.consultTitle;
         }
         setSettings((prev) => ({ ...prev, ...merged }));
       }
