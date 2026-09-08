@@ -749,7 +749,7 @@ const PromoGrid = styled.div`
   grid-template-columns: 1fr 1fr;
   gap: 0;
   width: 100%;
-  height: 680px;
+  height: 480px;
   margin: 0;
   padding: 0;
 
@@ -777,7 +777,7 @@ const PromoPanel = styled.div`
     content: '';
     position: absolute;
     inset: 0;
-    background: linear-gradient(to top, rgba(36, 35, 33, 0.28) 0%, transparent 50%);
+    background: linear-gradient(to top, rgba(36, 35, 33, 0.32) 0%, transparent 50%);
     pointer-events: none;
     transition: opacity 0.4s ease;
   }
@@ -789,29 +789,29 @@ const PromoPanel = styled.div`
   }
 
   @media (max-width: 992px) {
-    min-height: 480px;
+    min-height: 380px;
   }
 `;
 
 const LeftPromoButton = styled(Link)`
   position: absolute;
-  bottom: 100px;
+  bottom: 46px;
   left: 50%;
   transform: translateX(-50%);
   z-index: 5;
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: min(290px, 85%);
-  height: 58px;
-  padding: 0 24px;
+  width: min(280px, 85%);
+  height: 50px;
+  padding: 0 22px;
   background: rgba(17, 17, 17, 0.92);
   backdrop-filter: blur(10px);
   border: 1.5px solid #C9A96E;
   color: #F5F1E8;
-  font-size: 0.82rem;
+  font-size: 0.8rem;
   font-weight: 700;
-  letter-spacing: 0.22em;
+  letter-spacing: 0.2em;
   text-transform: uppercase;
   text-decoration: none;
   border-radius: 2px;
@@ -822,19 +822,19 @@ const LeftPromoButton = styled(Link)`
     background: #C9A96E;
     border-color: #C9A96E;
     color: #0B0B0B;
-    transform: translateX(-50%) translateY(-4px);
+    transform: translateX(-50%) translateY(-3px);
     box-shadow: 0 14px 32px rgba(201, 169, 110, 0.4);
   }
 
   @media (max-width: 768px) {
-    bottom: 60px;
-    height: 52px;
+    bottom: 36px;
+    height: 46px;
   }
 `;
 
 const RightPromoContent = styled.div`
   position: absolute;
-  bottom: 100px;
+  bottom: 42px;
   left: 50%;
   transform: translateX(-50%);
   z-index: 5;
@@ -846,23 +846,23 @@ const RightPromoContent = styled.div`
   align-items: center;
 
   @media (max-width: 768px) {
-    bottom: 48px;
+    bottom: 32px;
     width: 95%;
   }
 `;
 
 const RightPromoTitle = styled.h2`
   font-family: 'Cormorant Garamond', serif;
-  font-size: 2.5rem;
+  font-size: 2.1rem;
   font-weight: 500;
   color: #F5F1E8;
   text-transform: uppercase;
   letter-spacing: 0.1em;
-  margin-bottom: 24px;
+  margin-bottom: 16px;
 
   @media (max-width: 768px) {
-    font-size: 1.9rem;
-    margin-bottom: 16px;
+    font-size: 1.6rem;
+    margin-bottom: 12px;
   }
 `;
 
@@ -870,15 +870,15 @@ const RightPromoButton = styled(Link)`
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: min(260px, 85%);
-  height: 58px;
-  padding: 0 24px;
+  width: min(250px, 85%);
+  height: 50px;
+  padding: 0 22px;
   background: rgba(17, 17, 17, 0.92);
   backdrop-filter: blur(10px);
   color: #F5F1E8;
-  font-size: 0.82rem;
+  font-size: 0.8rem;
   font-weight: 700;
-  letter-spacing: 0.22em;
+  letter-spacing: 0.2em;
   text-transform: uppercase;
   text-decoration: none;
   border: 1.5px solid #C9A96E;
@@ -890,12 +890,12 @@ const RightPromoButton = styled(Link)`
     background: #C9A96E;
     border-color: #C9A96E;
     color: #0B0B0B;
-    transform: translateY(-4px);
+    transform: translateY(-3px);
     box-shadow: 0 14px 32px rgba(201, 169, 110, 0.4);
   }
 
   @media (max-width: 768px) {
-    height: 52px;
+    height: 46px;
   }
 `;
 
@@ -914,17 +914,21 @@ const DiamondShapesContainer = styled.div`
   grid-template-columns: 1fr 1fr;
   gap: 0;
   width: 100%;
+  min-height: 480px;
 
   @media (max-width: 992px) {
     grid-template-columns: 1fr;
+    min-height: auto;
   }
 `;
 
 const DiamondShapesLeft = styled.div`
   width: 100%;
-  min-height: 540px;
+  height: 100%;
+  min-height: 480px;
   overflow: hidden;
   background-color: #0B0B0B;
+  position: relative;
 
   img {
     width: 100%;
@@ -934,60 +938,68 @@ const DiamondShapesLeft = styled.div`
   }
 
   @media (max-width: 992px) {
-    min-height: 360px;
+    min-height: 340px;
   }
 `;
 
 const DiamondShapesRight = styled.div`
-  padding: 64px 72px;
+  padding: 38px 48px;
   display: flex;
   flex-direction: column;
   justify-content: center;
+  height: 100%;
+  box-sizing: border-box;
 
   @media (max-width: 992px) {
-    padding: 48px 24px;
+    padding: 36px 20px;
   }
 `;
 
 const DiamondShapesEyebrow = styled.span`
-  font-size: 11.5px;
+  font-size: 11px;
   font-weight: 600;
   letter-spacing: 0.22em;
   text-transform: uppercase;
   color: #C9A96E;
-  margin-bottom: 12px;
+  margin-bottom: 10px;
   display: block;
 `;
 
 const DiamondShapesTitle = styled.h2`
   font-family: 'Cormorant Garamond', 'Playfair Display', serif;
-  font-size: 2.8rem;
+  font-size: 2.1rem;
   font-weight: 500;
   color: #F5F1E8;
-  line-height: 1.15;
-  margin-bottom: 16px;
+  line-height: 1.2;
+  margin-bottom: 10px;
 
   @media (max-width: 768px) {
-    font-size: 2.2rem;
+    font-size: 1.7rem;
   }
 `;
 
 const DiamondShapesSubtitle = styled.p`
-  font-size: 0.95rem;
+  font-size: 0.9rem;
   color: #A8A8A8;
-  line-height: 1.6;
-  margin-bottom: 36px;
+  line-height: 1.55;
+  margin-bottom: 20px;
+  max-width: 520px;
+
+  @media (max-width: 768px) {
+    font-size: 0.85rem;
+    margin-bottom: 16px;
+  }
 `;
 
 const DiamondShapesGrid = styled.div`
   display: grid;
   grid-template-columns: repeat(4, 1fr);
-  gap: 16px;
-  margin-bottom: 40px;
+  gap: 10px;
+  margin-bottom: 22px;
 
   @media (max-width: 992px) {
     grid-template-columns: repeat(4, 1fr);
-    gap: 12px;
+    gap: 10px;
   }
 
   @media (max-width: 768px) {
@@ -996,27 +1008,27 @@ const DiamondShapesGrid = styled.div`
 
   @media (max-width: 576px) {
     grid-template-columns: repeat(2, 1fr);
-    gap: 10px;
+    gap: 8px;
   }
 `;
 
 const DiamondShapeSvg = styled.img<{ $desktopSize?: string; $tabletSize?: string; $mobileSize?: string }>`
-  width: ${({ $desktopSize }) => $desktopSize || '46px'};
-  max-width: 52px;
+  width: ${({ $desktopSize }) => $desktopSize || '38px'};
+  max-width: 44px;
   height: auto;
   object-fit: contain;
   filter: brightness(0) invert(0.9);
   transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1);
   display: block;
-  margin: 0 auto 12px;
+  margin: 0 auto 8px;
 
   @media (max-width: 1024px) {
-    width: ${({ $tabletSize }) => $tabletSize || '42px'};
+    width: ${({ $tabletSize }) => $tabletSize || '34px'};
   }
 
   @media (max-width: 576px) {
-    width: ${({ $mobileSize }) => $mobileSize || '38px'};
-    margin-bottom: 8px;
+    width: ${({ $mobileSize }) => $mobileSize || '30px'};
+    margin-bottom: 6px;
   }
 `;
 
@@ -1025,7 +1037,7 @@ const DiamondShapeCard = styled(Link)`
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  padding: 22px 14px 18px;
+  padding: 13px 8px 11px;
   border: 1px solid rgba(140, 116, 75, 0.25);
   background-color: #151515;
   border-radius: 4px;
@@ -1052,7 +1064,7 @@ const DiamondShapeCard = styled(Link)`
     border-color: #C9A96E;
     background-color: #1A1A1A;
     box-shadow: 0 12px 28px rgba(0, 0, 0, 0.8), 0 0 16px rgba(201, 169, 110, 0.15);
-    transform: translateY(-6px);
+    transform: translateY(-4px);
 
     &::before {
       opacity: 1;
@@ -1060,7 +1072,7 @@ const DiamondShapeCard = styled(Link)`
 
     img {
       filter: brightness(0) saturate(100%) invert(75%) sepia(30%) saturate(600%) hue-rotate(5deg);
-      transform: scale(1.12);
+      transform: scale(1.1);
     }
 
     span {
@@ -1070,9 +1082,9 @@ const DiamondShapeCard = styled(Link)`
 
   span {
     font-family: 'Cormorant Garamond', serif;
-    font-size: 0.95rem;
+    font-size: 0.84rem;
     font-weight: 600;
-    letter-spacing: 0.14em;
+    letter-spacing: 0.12em;
     text-transform: uppercase;
     color: #F5F1E8;
     text-align: center;
@@ -1080,7 +1092,7 @@ const DiamondShapeCard = styled(Link)`
   }
 
   @media (max-width: 576px) {
-    padding: 16px 10px 14px;
+    padding: 10px 6px 8px;
   }
 `;
 
@@ -1088,7 +1100,7 @@ const DiamondShapeCard = styled(Link)`
 const OnlyAtAuraSection = styled.section`
   width: 100%;
   margin: 0;
-  padding: 80px 32px 88px;
+  padding: 72px 32px 80px;
   background-color: #0B0B0B;
   border-bottom: 1px solid rgba(140, 116, 75, 0.25);
   box-sizing: border-box;
@@ -1096,22 +1108,26 @@ const OnlyAtAuraSection = styled.section`
   overflow: hidden;
 
   @media (max-width: 768px) {
-    padding: 56px 18px;
+    padding: 48px 18px 56px;
   }
 `;
 
 const OnlyAtAuraTitle = styled.h2`
   font-family: 'Cormorant Garamond', serif;
-  font-size: 2.4rem;
+  font-size: 2.3rem;
   font-weight: 500;
   letter-spacing: 0.08em;
   text-transform: uppercase;
   color: #F5F1E8;
-  margin-bottom: 32px;
+  max-width: 1400px;
+  margin: 0 auto 28px;
+  padding: 0 4px;
   text-align: left;
 
   @media (max-width: 768px) {
     font-size: 1.8rem;
+    margin-bottom: 20px;
+    padding: 0;
   }
 `;
 
@@ -1122,8 +1138,8 @@ const OnlyAtAuraCarouselWrapper = styled.div`
   margin: 0 auto;
 
   .swiper {
-    padding: 12px 6px 24px;
-    overflow: visible;
+    padding: 8px 4px 16px;
+    overflow: hidden;
   }
 `;
 
@@ -1186,22 +1202,22 @@ const OnlyAtAuraCardOverlay = styled.div`
   display: flex;
   flex-direction: column;
   justify-content: flex-end;
-  padding: 28px 24px;
+  padding: 24px 20px;
   color: #F5F1E8;
 `;
 
 const OnlyAtAuraCardEyebrow = styled.span`
-  font-size: 0.72rem;
+  font-size: 0.7rem;
   font-weight: 700;
   letter-spacing: 0.18em;
   text-transform: uppercase;
   color: #C9A96E;
-  margin-bottom: 8px;
+  margin-bottom: 6px;
 `;
 
 const OnlyAtAuraCardTitle = styled.h3`
   font-family: 'Cormorant Garamond', serif;
-  font-size: 1.4rem;
+  font-size: 1.3rem;
   font-weight: 500;
   color: #F5F1E8;
   line-height: 1.25;
@@ -1228,7 +1244,14 @@ const OnlyAtAuraNavArrow = styled.button<{ $direction: 'prev' | 'next' }>`
   cursor: pointer;
   transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
 
-  &:hover {
+  &.swiper-button-disabled,
+  &.swiper-button-lock {
+    opacity: 0;
+    pointer-events: none;
+    visibility: hidden;
+  }
+
+  &:hover:not(.swiper-button-disabled) {
     background-color: #C9A96E;
     color: #0B0B0B;
     border-color: #C9A96E;
@@ -2351,10 +2374,10 @@ export const HomePage: React.FC = () => {
         <RevealContainer yOffset={35} duration={0.9}>
           <DiamondShapesSection>
             <DiamondShapesContainer>
-              <RevealContainer delay={0.0} yOffset={25} scaleInitial={0.985}>
+              <RevealContainer delay={0.0} yOffset={25} scaleInitial={0.985} style={{ height: '100%', width: '100%' }}>
                 <DiamondShapesLeft>
                   <SafeImage
-                    src={diamondShapesContent.leftImage || diamondShapesContent.desktopImage || '/assets/gem_diamonds_cat.png'}
+                    src={diamondShapesContent.leftImage || diamondShapesContent.desktopImage || '/assets/aethelcarats_diamonds_cat.png'}
                     alt="Diamond Vault Shapes"
                   />
                 </DiamondShapesLeft>
@@ -2436,8 +2459,10 @@ export const HomePage: React.FC = () => {
                   }
                 }}
                 breakpoints={{
+                  480: { slidesPerView: 1.25, spaceBetween: 14 },
                   576: { slidesPerView: 2, spaceBetween: 16 },
-                  992: { slidesPerView: 3, spaceBetween: 16 },
+                  992: { slidesPerView: 3, spaceBetween: 18 },
+                  1200: { slidesPerView: 4, spaceBetween: 20 },
                 }}
               >
                 {activeAuraCards.map((card: any, idx: number) => (
