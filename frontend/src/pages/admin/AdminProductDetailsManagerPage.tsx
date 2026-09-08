@@ -451,23 +451,17 @@ export const AdminProductDetailsManagerPage: React.FC = () => {
       setUploadingItemIdx({ secIdx, itemIdx });
       const formData = new FormData();
       formData.append('files', e.target.files[0]);
+      formData.append('file', e.target.files[0]);
 
-      const token = localStorage.getItem('admin_session_token') || localStorage.getItem('app_auth_token');
-      const res = await fetch('/api/v1/admin/media/upload', {
-        method: 'POST',
-        headers: token ? { Authorization: `Bearer ${token}` } : {},
-        body: formData,
-      });
-
-      const data = await res.json();
-      if (!res.ok) throw new Error(data.message || 'Upload failed');
-      const uploadedUrl = data.media?.[0]?.url || data.url;
+      const res = await api.post('/admin/media/upload', formData);
+      const data = res.data;
+      const uploadedUrl = data.media?.[0]?.url || data.urls?.[0] || data.url;
 
       if (uploadedUrl) {
         handleItemFieldChange(secIdx, itemIdx, 'imageUrl', uploadedUrl);
       }
     } catch (err: any) {
-      alert(`Image upload failed: ${err.message}`);
+      alert(`Image upload failed: ${err.response?.data?.message || err.message}`);
     } finally {
       setUploadingItemIdx(null);
       activeUploadRef.current = null;

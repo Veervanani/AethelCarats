@@ -297,11 +297,11 @@ app.get(['/healthz', '/_health', '/ping'], (req, res) => {
 // Public Storefront & Admin Endpoints
 app.get('/api/v1/hero-banners', getPublicHeroBanners);
 app.get('/api/v1/admin/hero-banners', authenticateToken, requireRole(['CONTENT_MANAGER', 'ADMIN', 'SUPER_ADMIN']), getAdminHeroBanners);
-app.post('/api/v1/admin/hero-banners', authenticateToken, requireRole(['CONTENT_MANAGER', 'ADMIN', 'SUPER_ADMIN']), upload.fields([{ name: 'desktopImage', maxCount: 1 }, { name: 'mobileImage', maxCount: 1 }]), createHeroBanner);
-app.put('/api/v1/admin/hero-banners/:id', authenticateToken, requireRole(['CONTENT_MANAGER', 'ADMIN', 'SUPER_ADMIN']), upload.fields([{ name: 'desktopImage', maxCount: 1 }, { name: 'mobileImage', maxCount: 1 }]), updateHeroBanner);
+app.post('/api/v1/admin/hero-banners', authenticateToken, requireRole(['CONTENT_MANAGER', 'ADMIN', 'SUPER_ADMIN']), upload.any(), createHeroBanner);
+app.put('/api/v1/admin/hero-banners/:id', authenticateToken, requireRole(['CONTENT_MANAGER', 'ADMIN', 'SUPER_ADMIN']), upload.any(), updateHeroBanner);
 app.delete('/api/v1/admin/hero-banners/:id', authenticateToken, requireRole(['CONTENT_MANAGER', 'ADMIN', 'SUPER_ADMIN']), deleteHeroBanner);
 app.post('/api/v1/admin/hero-banners/reorder', authenticateToken, requireRole(['CONTENT_MANAGER', 'ADMIN', 'SUPER_ADMIN']), reorderHeroBanners);
-app.post('/api/v1/admin/hero-banners/upload-image', authenticateToken, requireRole(['CONTENT_MANAGER', 'ADMIN', 'SUPER_ADMIN']), upload.single('file'), uploadHeroBannerImage);
+app.post('/api/v1/admin/hero-banners/upload-image', authenticateToken, requireRole(['CONTENT_MANAGER', 'ADMIN', 'SUPER_ADMIN']), upload.any(), uploadHeroBannerImage);
 
 app.get('/api/v1/products', getProducts);
 app.get('/api/v1/admin/products/:id', getProductById);

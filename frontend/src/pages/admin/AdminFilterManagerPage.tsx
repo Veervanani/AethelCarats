@@ -1,4 +1,4 @@
-﻿import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
 import {
   Plus,
@@ -496,23 +496,17 @@ export const AdminFilterManagerPage: React.FC = () => {
 
     try {
       const formData = new FormData();
+      formData.append('files', file);
       formData.append('file', file);
 
-      const token = localStorage.getItem('admin_session_token') || localStorage.getItem('app_auth_token');
-      const res = await fetch('/api/v1/admin/media/upload', {
-        method: 'POST',
-        headers: { Authorization: token ? `Bearer ${token}` : '' },
-        body: formData,
-      });
+      const res = await api.post('/admin/media/upload', formData);
+      const data = res.data;
 
-      const data = await res.json();
-      if (!res.ok) throw new Error(data.message || 'Upload failed');
-
-      setOptIconUrl(data.url || data.path);
+      setOptIconUrl(data.url || data.urls?.[0] || data.path);
       toast.success('Icon uploaded successfully!');
     } catch (err: any) {
       console.error(err);
-      toast.error(err.message || 'Icon upload failed.');
+      toast.error(err.response?.data?.message || err.message || 'Icon upload failed.');
     }
   };
 

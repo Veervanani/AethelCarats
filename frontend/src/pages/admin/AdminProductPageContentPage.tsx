@@ -751,10 +751,9 @@ export const AdminProductPageContentPage: React.FC = () => {
     formData.append('files', file);
 
     try {
-      showToast('Uploading image to cloud storage...', 'info');
-      const res = await api.post('/admin/media/upload', formData, {
-        headers: { 'Content-Type': 'multipart/form-data' },
-      });
+      showToast('Uploading image to persistent storage...', 'info');
+      formData.append('file', file);
+      const res = await api.post('/admin/media/upload', formData);
 
       if (res.data && res.data.urls && res.data.urls.length > 0) {
         const uploadedUrl = res.data.urls[0];

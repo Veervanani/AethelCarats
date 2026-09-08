@@ -4,15 +4,20 @@ import prisma from '../prisma';
 import fs from 'fs';
 import path from 'path';
 
-const UPLOADS_MEDIA_DIR = path.join(process.cwd(), 'uploads', 'media');
-const PUBLIC_MEDIA_DIR = path.join(process.cwd(), 'frontend', 'public', 'uploads', 'media');
+const getCandidateMediaDirs = () => [
+  path.join(process.cwd(), 'uploads', 'media'),
+  path.join(process.cwd(), 'backend', 'uploads', 'media'),
+  path.join(process.cwd(), 'frontend', 'public', 'uploads', 'media'),
+  path.join(process.cwd(), 'frontend', 'dist', 'uploads', 'media'),
+  path.join(__dirname, '..', '..', 'uploads', 'media'),
+  path.join(__dirname, '..', '..', 'frontend', 'dist', 'uploads', 'media'),
+];
 
 const ensureMediaDirsExist = () => {
-  if (!fs.existsSync(UPLOADS_MEDIA_DIR)) {
-    fs.mkdirSync(UPLOADS_MEDIA_DIR, { recursive: true });
-  }
-  if (!fs.existsSync(PUBLIC_MEDIA_DIR)) {
-    fs.mkdirSync(PUBLIC_MEDIA_DIR, { recursive: true });
+  for (const dir of getCandidateMediaDirs()) {
+    try {
+      if (!fs.existsSync(dir)) fs.mkdirSync(dir, { recursive: true });
+    } catch (e) {}
   }
 };
 
@@ -55,17 +60,12 @@ export const uploadMediaFiles = async (req: AuthRequest, res: Response) => {
         const cleanName = path.basename(file.originalname, ext).replace(/[^a-zA-Z0-9_-]/g, '_');
         const safeName = `img_${Date.now()}_${Math.random().toString(36).substring(2, 7)}_${cleanName}${ext}`;
 
-        const targetPath = path.join(UPLOADS_MEDIA_DIR, safeName);
-        const publicTargetPath = path.join(PUBLIC_MEDIA_DIR, safeName);
-
-        // Write file to server uploads, frontend public, and frontend dist uploads for instant zero-lag serving
-        fs.writeFileSync(targetPath, file.buffer);
-        fs.writeFileSync(publicTargetPath, file.buffer);
-
-        const distTargetPath = path.join(process.cwd(), 'frontend', 'dist', 'uploads', 'media');
-        if (fs.existsSync(path.join(process.cwd(), 'frontend', 'dist'))) {
-          if (!fs.existsSync(distTargetPath)) fs.mkdirSync(distTargetPath, { recursive: true });
-          fs.writeFileSync(path.join(distTargetPath, safeName), file.buffer);
+        // Write file across all candidate directories for immediate multi-environment availability
+        for (const dir of getCandidateMediaDirs()) {
+          try {
+            if (!fs.existsSync(dir)) fs.mkdirSync(dir, { recursive: true });
+            fs.writeFileSync(path.join(dir, safeName), file.buffer);
+          } catch (e) {}
         }
 
         const fileUrl = `/uploads/media/${safeName}`;

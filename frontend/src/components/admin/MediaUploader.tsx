@@ -199,16 +199,11 @@ export const MediaUploader: React.FC<MediaUploaderProps> = ({
         const formData = new FormData();
         for (const file of chunk) {
           formData.append('files', file);
+          formData.append('file', file);
         }
 
-        const res = await fetch('/api/v1/admin/media/upload', {
-          method: 'POST',
-          headers: token ? { Authorization: `Bearer ${token}` } : {},
-          body: formData,
-        });
-
-        const data = await res.json();
-        if (!res.ok) throw new Error(data.message || 'Media upload failed.');
+        const res = await api.post('/admin/media/upload', formData);
+        const data = res.data;
 
         const batchUrls = (data.media || [{ url: data.url }])
           .map((m: any) => (typeof m === 'string' ? m : (m.url || m.path)))

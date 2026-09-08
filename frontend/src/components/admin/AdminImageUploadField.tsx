@@ -152,10 +152,9 @@ export const AdminImageUploadField: React.FC<AdminImageUploadFieldProps> = ({
     try {
       const formData = new FormData();
       formData.append('files', file);
+      formData.append('file', file);
 
-      const res = await api.post('/admin/media/upload', formData, {
-        headers: { 'Content-Type': 'multipart/form-data' },
-      });
+      const res = await api.post('/admin/media/upload', formData);
 
       const uploadedUrl =
         res.data?.url ||

@@ -24,6 +24,7 @@ import { api } from '../../services/api';
 import { HeroBanner } from '../../types';
 import { AdminPageHeader, AdminButton, AdminColorPicker } from '../../components/admin/AdminUI';
 import { AdminImageUploadField } from '../../components/admin/AdminImageUploadField';
+import { normalizeImageUrl } from '../../components/ui/SafeImage';
 
 const Container = styled.div`
   max-width: 1400px;
@@ -859,7 +860,7 @@ export const AdminHomepageManagerPage: React.FC = () => {
                 {heroBanners.map((banner) => (
                   <tr key={banner.id}>
                     <td>
-                      <ThumbnailImg src={banner.imagePath} alt={banner.title} />
+                      <ThumbnailImg src={normalizeImageUrl(banner.imagePath)} alt={banner.title} />
                     </td>
                     <td>
                       <strong>{banner.productType || 'Engagement Ring'}</strong>

@@ -22,8 +22,25 @@ const API = axios.create({
 API.interceptors.request.use((config) => {
   const token = localStorage.getItem('admin_session_token') || localStorage.getItem('app_auth_token');
   if (token) {
-    config.headers.Authorization = `Bearer ${token}`;
+    if (config.headers && typeof (config.headers as any).set === 'function') {
+      (config.headers as any).set('Authorization', `Bearer ${token}`);
+    } else {
+      if (!config.headers) config.headers = {} as any;
+      config.headers['Authorization'] = `Bearer ${token}`;
+    }
   }
+
+  // When uploading FormData, remove hardcoded Content-Type so Axios/browser automatically sets the multipart boundary
+  if (config.data instanceof FormData) {
+    if (config.headers && typeof (config.headers as any).delete === 'function') {
+      (config.headers as any).delete('Content-Type');
+      (config.headers as any).delete('content-type');
+    } else if (config.headers) {
+      delete (config.headers as any)['Content-Type'];
+      delete (config.headers as any)['content-type'];
+    }
+  }
+
   return config;
 });
 
@@ -58,10 +75,13 @@ API.interceptors.response.use(
     }
 
     if (error.response && error.response.status === 401) {
-      if (window.location.pathname.includes('/vault-mgmt-k8m3x9q2v7') && !window.location.pathname.includes('/login')) {
+      const isAethelVault = window.location.pathname.includes('/aethel-vault-2026');
+      const isLegacyVault = window.location.pathname.includes('/vault-mgmt-k8m3x9q2v7');
+      if ((isAethelVault || isLegacyVault) && !window.location.pathname.includes('/login')) {
+        console.warn('Admin token session expired (401). Redirecting to login...');
         localStorage.removeItem('admin_session_token');
         localStorage.removeItem('admin_profile');
-        window.location.href = '/vault-mgmt-k8m3x9q2v7/login';
+        window.location.href = isAethelVault ? '/aethel-vault-2026/login' : '/vault-mgmt-k8m3x9q2v7/login';
       }
     }
     return Promise.reject(error);
@@ -394,9 +414,7 @@ export const api = {
   },
 
   parseExcelFile: async (formData: FormData) => {
-    const res = await API.post('/admin/diamonds/excel-parse', formData, {
-      headers: { 'Content-Type': 'multipart/form-data' },
-    });
+    const res = await API.post('/admin/diamonds/excel-parse', formData);
     return res.data;
   },
 
@@ -406,9 +424,7 @@ export const api = {
   },
 
   uploadZipImages: async (formData: FormData) => {
-    const res = await API.post('/admin/diamonds/zip-upload', formData, {
-      headers: { 'Content-Type': 'multipart/form-data' },
-    });
+    const res = await API.post('/admin/diamonds/zip-upload', formData);
     return res.data;
   },
 
@@ -829,16 +845,12 @@ export const api = {
   },
 
   createHeroBanner: async (formData: FormData) => {
-    const res = await API.post<HeroBanner>('/admin/hero-banners', formData, {
-      headers: { 'Content-Type': 'multipart/form-data' },
-    });
+    const res = await API.post<HeroBanner>('/admin/hero-banners', formData);
     return res.data;
   },
 
   updateHeroBanner: async (id: string, formData: FormData) => {
-    const res = await API.put<HeroBanner>(`/admin/hero-banners/${id}`, formData, {
-      headers: { 'Content-Type': 'multipart/form-data' },
-    });
+    const res = await API.put<HeroBanner>(`/admin/hero-banners/${id}`, formData);
     return res.data;
   },
 
@@ -855,9 +867,8 @@ export const api = {
   uploadHeroBannerImage: async (file: File) => {
     const formData = new FormData();
     formData.append('file', file);
-    const res = await API.post<{ url: string; path: string }>('/admin/hero-banners/upload-image', formData, {
-      headers: { 'Content-Type': 'multipart/form-data' },
-    });
+    formData.append('files', file);
+    const res = await API.post<{ url: string; path: string }>('/admin/hero-banners/upload-image', formData);
     return res.data;
   },
 };

@@ -991,22 +991,11 @@ export const AdminFullProductEditorPage: React.FC = () => {
         for (const file of chunk) {
           const compressed = await compressImageFile(file);
           formData.append('files', compressed);
+          formData.append('file', compressed);
         }
 
-        const res = await fetch('/api/v1/admin/media/upload', {
-          method: 'POST',
-          headers: token ? { Authorization: `Bearer ${token}` } : {},
-          body: formData,
-        });
-
-        const text = await res.text();
-        let data: any = {};
-        try {
-          data = JSON.parse(text);
-        } catch (e) {
-          data = { message: text || 'Server returned invalid response' };
-        }
-        if (!res.ok) throw new Error(data.message || `Media upload failed on batch ${batchNumber}.`);
+        const res = await api.post('/admin/media/upload', formData);
+        const data = res.data;
 
         const batchUrls = (data.media || [{ url: data.url }])
           .map((m: any) => (typeof m === 'string' ? m : (m.url || m.path)))

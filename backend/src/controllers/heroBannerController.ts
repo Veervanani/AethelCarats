@@ -4,15 +4,20 @@ import prisma from '../prisma';
 import fs from 'fs';
 import path from 'path';
 
-const UPLOADS_DIR = path.join(process.cwd(), 'uploads', 'hero-banners');
-const PUBLIC_UPLOADS_DIR = path.join(process.cwd(), 'frontend', 'public', 'uploads', 'hero-banners');
+const getCandidateHeroDirs = () => [
+  path.join(process.cwd(), 'uploads', 'hero-banners'),
+  path.join(process.cwd(), 'backend', 'uploads', 'hero-banners'),
+  path.join(process.cwd(), 'frontend', 'public', 'uploads', 'hero-banners'),
+  path.join(process.cwd(), 'frontend', 'dist', 'uploads', 'hero-banners'),
+  path.join(__dirname, '..', '..', 'uploads', 'hero-banners'),
+  path.join(__dirname, '..', '..', 'frontend', 'dist', 'uploads', 'hero-banners'),
+];
 
 const ensureUploadDirsExist = () => {
-  if (!fs.existsSync(UPLOADS_DIR)) {
-    fs.mkdirSync(UPLOADS_DIR, { recursive: true });
-  }
-  if (!fs.existsSync(PUBLIC_UPLOADS_DIR)) {
-    fs.mkdirSync(PUBLIC_UPLOADS_DIR, { recursive: true });
+  for (const dir of getCandidateHeroDirs()) {
+    try {
+      if (!fs.existsSync(dir)) fs.mkdirSync(dir, { recursive: true });
+    } catch (e) {}
   }
 };
 
@@ -34,19 +39,33 @@ const saveUploadedFile = (file: Express.Multer.File, prefix: string = 'hero'): s
   }
 
   const safeName = `${prefix}_${Date.now()}_${Math.random().toString(36).substring(2, 8)}${ext || '.jpg'}`;
-  const targetPath = path.join(UPLOADS_DIR, safeName);
-  const publicTargetPath = path.join(PUBLIC_UPLOADS_DIR, safeName);
 
-  fs.writeFileSync(targetPath, file.buffer);
-  fs.writeFileSync(publicTargetPath, file.buffer);
-
-  const distTargetPath = path.join(process.cwd(), 'frontend', 'dist', 'uploads', 'hero-banners');
-  if (fs.existsSync(path.join(process.cwd(), 'frontend', 'dist'))) {
-    if (!fs.existsSync(distTargetPath)) fs.mkdirSync(distTargetPath, { recursive: true });
-    fs.writeFileSync(path.join(distTargetPath, safeName), file.buffer);
+  for (const dir of getCandidateHeroDirs()) {
+    try {
+      if (!fs.existsSync(dir)) fs.mkdirSync(dir, { recursive: true });
+      fs.writeFileSync(path.join(dir, safeName), file.buffer);
+    } catch (e) {}
   }
 
   return `/uploads/hero-banners/${safeName}`;
+};
+
+const extractFile = (req: AuthRequest, fieldName: string, altFieldNames: string[] = []): Express.Multer.File | undefined => {
+  if (req.file && (req.file.fieldname === fieldName || altFieldNames.includes(req.file.fieldname))) {
+    return req.file;
+  }
+  if (Array.isArray(req.files)) {
+    const match = req.files.find((f) => f.fieldname === fieldName || altFieldNames.includes(f.fieldname));
+    if (match) return match;
+    if (fieldName === 'desktopImage' && req.files.length > 0) return req.files[0];
+  } else if (req.files && typeof req.files === 'object') {
+    const fileMap = req.files as { [key: string]: Express.Multer.File[] };
+    if (fileMap[fieldName] && fileMap[fieldName][0]) return fileMap[fieldName][0];
+    for (const alt of altFieldNames) {
+      if (fileMap[alt] && fileMap[alt][0]) return fileMap[alt][0];
+    }
+  }
+  return undefined;
 };
 
 const deleteFileIfUnreferenced = async (imagePath: string | null | undefined) => {
@@ -62,10 +81,12 @@ const deleteFileIfUnreferenced = async (imagePath: string | null | undefined) =>
     });
 
     if (count <= 1) {
-      const p1 = path.join(UPLOADS_DIR, filename);
-      const p2 = path.join(PUBLIC_UPLOADS_DIR, filename);
-      if (fs.existsSync(p1)) fs.unlinkSync(p1);
-      if (fs.existsSync(p2)) fs.unlinkSync(p2);
+      for (const dir of getCandidateHeroDirs()) {
+        const p = path.join(dir, filename);
+        if (fs.existsSync(p)) {
+          try { fs.unlinkSync(p); } catch (e) {}
+        }
+      }
     }
   } catch (err) {
     console.error('Error cleaning up hero image file:', err);
@@ -237,13 +258,14 @@ export const createHeroBanner = async (req: AuthRequest, res: Response) => {
     let imagePath = req.body.imagePath || '';
     let mobileImagePath = req.body.mobileImagePath || '';
 
-    const files = req.files as { [fieldname: string]: Express.Multer.File[] } | undefined;
-
-    if (files && files['desktopImage'] && files['desktopImage'][0]) {
-      imagePath = saveUploadedFile(files['desktopImage'][0], 'desktop');
+    const desktopImg = extractFile(req, 'desktopImage', ['file', 'files', 'image']);
+    if (desktopImg) {
+      imagePath = saveUploadedFile(desktopImg, 'desktop');
     }
-    if (files && files['mobileImage'] && files['mobileImage'][0]) {
-      mobileImagePath = saveUploadedFile(files['mobileImage'][0], 'mobile');
+
+    const mobileImg = extractFile(req, 'mobileImage', ['mobileFile', 'mobile']);
+    if (mobileImg) {
+      mobileImagePath = saveUploadedFile(mobileImg, 'mobile');
     }
 
     if (!imagePath) {
@@ -303,18 +325,18 @@ export const updateHeroBanner = async (req: AuthRequest, res: Response) => {
     let imagePath = existing.imagePath;
     let mobileImagePath = existing.mobileImagePath;
 
-    const files = req.files as { [fieldname: string]: Express.Multer.File[] } | undefined;
-
-    if (files && files['desktopImage'] && files['desktopImage'][0]) {
-      const newPath = saveUploadedFile(files['desktopImage'][0], 'desktop');
+    const desktopImg = extractFile(req, 'desktopImage', ['file', 'files', 'image']);
+    if (desktopImg) {
+      const newPath = saveUploadedFile(desktopImg, 'desktop');
       await deleteFileIfUnreferenced(existing.imagePath);
       imagePath = newPath;
     } else if (req.body.imagePath && req.body.imagePath !== existing.imagePath) {
       imagePath = req.body.imagePath;
     }
 
-    if (files && files['mobileImage'] && files['mobileImage'][0]) {
-      const newMobilePath = saveUploadedFile(files['mobileImage'][0], 'mobile');
+    const mobileImg = extractFile(req, 'mobileImage', ['mobileFile', 'mobile']);
+    if (mobileImg) {
+      const newMobilePath = saveUploadedFile(mobileImg, 'mobile');
       await deleteFileIfUnreferenced(existing.mobileImagePath);
       mobileImagePath = newMobilePath;
     } else if (req.body.mobileImagePath !== undefined) {
@@ -391,7 +413,7 @@ export const reorderHeroBanners = async (req: AuthRequest, res: Response) => {
 
 export const uploadHeroBannerImage = async (req: AuthRequest, res: Response) => {
   try {
-    const file = req.file;
+    const file = extractFile(req, 'file', ['files', 'image', 'desktopImage', 'mobileImage']);
     if (!file) {
       return res.status(400).json({ message: 'No file uploaded' });
     }
