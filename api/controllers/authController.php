@@ -49,7 +49,7 @@ function handleLogin(): void {
         // Primary Administrator Identity
         $defaultAdminEmail = 'admin@aethelcarats.com';
         $defaultAdminName = 'admin_aethel';
-        $defaultPasswordHash = '$2y$10$rXuCXN.lCL65FiuvAB6P/eQDvyKDgZiOPSrrZuiI1NFOgyxbVig8q';
+        $defaultPasswordHash = '$2a$10$rB5.kRrodLjETwaL73HHe.oGMpY2KywZZ1YFbgNjCOYjAIumdFUH.';
 
         // Upsert default admin credentials if this admin is logging in or if no admin exists
         if (strtolower($identifier) === strtolower($defaultAdminEmail) || $identifier === $defaultAdminName) {

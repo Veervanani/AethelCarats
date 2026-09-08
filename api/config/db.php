@@ -12,11 +12,11 @@ function getDatabaseConnection(): PDO {
         return $pdo;
     }
 
-    $host = getenv('DB_HOST') ?: ($_ENV['DB_HOST'] ?? '127.0.0.1');
+    $host = getenv('DB_HOST') ?: ($_ENV['DB_HOST'] ?? 'localhost');
     $port = getenv('DB_PORT') ?: ($_ENV['DB_PORT'] ?? '3306');
-    $db   = getenv('DB_NAME') ?: ($_ENV['DB_NAME'] ?? 'aura_atelier_db');
-    $user = getenv('DB_USER') ?: ($_ENV['DB_USER'] ?? 'root');
-    $pass = getenv('DB_PASSWORD') !== false ? getenv('DB_PASSWORD') : (getenv('DB_PASS') ?: ($_ENV['DB_PASSWORD'] ?? ''));
+    $db   = getenv('DB_NAME') ?: ($_ENV['DB_NAME'] ?? 'u707945653_aethelcarats');
+    $user = getenv('DB_USER') ?: ($_ENV['DB_USER'] ?? 'u707945653_admin');
+    $pass = getenv('DB_PASSWORD') !== false ? getenv('DB_PASSWORD') : (getenv('DB_PASS') ?: ($_ENV['DB_PASSWORD'] ?? 'tMg6FPi73a*HbPb'));
 
     $options = [
         PDO::ATTR_ERRMODE            => PDO::ERRMODE_EXCEPTION,
@@ -25,13 +25,9 @@ function getDatabaseConnection(): PDO {
     ];
 
     $connectionProfiles = [
-        ['dsn' => "mysql:host={$host};port={$port};dbname={$db};charset=utf8mb4", 'user' => $user, 'pass' => $pass],
-        ['dsn' => "mysql:host=127.0.0.1;port={$port};dbname={$db};charset=utf8mb4", 'user' => $user, 'pass' => $pass],
         ['dsn' => "mysql:host=localhost;port={$port};dbname={$db};charset=utf8mb4", 'user' => $user, 'pass' => $pass],
-        // Local Fallbacks
-        ['dsn' => "mysql:host=127.0.0.1;port=3306;dbname=aura_atelier;charset=utf8mb4", 'user' => 'root', 'pass' => ''],
-        ['dsn' => "mysql:host=localhost;port=3306;dbname=aura_atelier;charset=utf8mb4", 'user' => 'root', 'pass' => ''],
-        ['dsn' => "mysql:host=127.0.0.1;port=3306;dbname=aura_atelier;charset=utf8mb4", 'user' => 'root', 'pass' => 'root'],
+        ['dsn' => "mysql:host=127.0.0.1;port={$port};dbname={$db};charset=utf8mb4", 'user' => $user, 'pass' => $pass],
+        ['dsn' => "mysql:host={$host};port={$port};dbname={$db};charset=utf8mb4", 'user' => $user, 'pass' => $pass],
     ];
 
     $lastError = null;
