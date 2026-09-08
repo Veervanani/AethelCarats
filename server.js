@@ -31,23 +31,23 @@ process.on('unhandledRejection', (reason, promise) => {
     console.error('CRITICAL UNHANDLED REJECTION:', reason);
 });
 
-// Construct DATABASE_URL if Hostinger provides discrete variables
-if (!process.env.DATABASE_URL) {
+// Sanitize and construct DATABASE_URL ensuring valid mysql:// protocol
+let rawDbUrl = (process.env.DATABASE_URL || '').trim().replace(/^["'“”‘’\s]+|["'“”‘’\s]+$/g, '').trim();
+if (!rawDbUrl || !rawDbUrl.startsWith('mysql://')) {
   const host = process.env.DB_HOST || 'localhost';
   const port = process.env.DB_PORT || '3306';
   const name = process.env.DB_NAME || 'u707945653_aethelcarats';
   const user = process.env.DB_USER || 'u707945653_admin';
   const password = process.env.DB_PASSWORD || 'tMg6FPi73a*HbPb';
-  if (true) {
-    const encodedPassword = encodeURIComponent(password)
-      .replace(/!/g, '%21')
-      .replace(/'/g, '%27')
-      .replace(/\(/g, '%28')
-      .replace(/\)/g, '%29')
-      .replace(/\*/g, '%2A');
-    process.env.DATABASE_URL = `mysql://${user}:${encodedPassword}@${host}:${port}/${name}?connect_timeout=5`;
-  }
+  const encodedPassword = encodeURIComponent(password)
+    .replace(/!/g, '%21')
+    .replace(/'/g, '%27')
+    .replace(/\(/g, '%28')
+    .replace(/\)/g, '%29')
+    .replace(/\*/g, '%2A');
+  rawDbUrl = `mysql://${user}:${encodedPassword}@${host}:${port}/${name}?connect_timeout=5`;
 }
+process.env.DATABASE_URL = rawDbUrl;
 
 const rawPort = process.env.PORT;
 const PORT = rawPort ? (isNaN(Number(rawPort)) ? rawPort : Number(rawPort)) : 3000;
