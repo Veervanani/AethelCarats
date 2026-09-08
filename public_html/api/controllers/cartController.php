@@ -22,7 +22,7 @@ function generateUuidV4Cart(): string {
  */
 function checkIsHolidayModeActive(PDO $pdo): array {
     try {
-        $stmt = $pdo->query("SELECT `key`, `value` FROM `sitesetting` WHERE `key` LIKE 'holiday%' OR `key` IN ('holiday_mode', 'holiday_mode_enabled', 'active', 'site_settings')");
+        $stmt = $pdo->query("SELECT `key`, `value` FROM `SiteSetting` WHERE `key` LIKE 'holiday%' OR `key` IN ('holiday_mode', 'holiday_mode_enabled', 'active', 'site_settings')");
         $rows = $stmt->fetchAll();
 
         $configObj = [];
@@ -121,21 +121,21 @@ function handleGetHolidayModeStatus(): void {
  */
 function getOrCreateCart(PDO $pdo, ?string $customerId = null, ?string $sessionId = null): array {
     if ($customerId) {
-        $stmt = $pdo->prepare("SELECT * FROM `cart` WHERE `customerId` = ? LIMIT 1");
+        $stmt = $pdo->prepare("SELECT * FROM `Cart` WHERE `customerId` = ? LIMIT 1");
         $stmt->execute([$customerId]);
         $cart = $stmt->fetch();
         if ($cart) return $cart;
     }
 
     if ($sessionId) {
-        $stmt = $pdo->prepare("SELECT * FROM `cart` WHERE `sessionId` = ? LIMIT 1");
+        $stmt = $pdo->prepare("SELECT * FROM `Cart` WHERE `sessionId` = ? LIMIT 1");
         $stmt->execute([$sessionId]);
         $cart = $stmt->fetch();
         if ($cart) return $cart;
     }
 
     $cartId = generateUuidV4Cart();
-    $inst = $pdo->prepare("INSERT INTO `cart` (`id`, `customerId`, `sessionId`, `createdAt`, `updatedAt`) VALUES (?, ?, ?, NOW(), NOW())");
+    $inst = $pdo->prepare("INSERT INTO `Cart` (`id`, `customerId`, `sessionId`, `createdAt`, `updatedAt`) VALUES (?, ?, ?, NOW(), NOW())");
     $inst->execute([$cartId, $customerId, $sessionId]);
 
     return [
@@ -166,8 +166,8 @@ function handleGetCart(): void {
 
         $stmt = $pdo->prepare("
             SELECT `ci`.*, `p`.`name` as `product_name`, `p`.`price` as `product_price`, `p`.`mainImage` as `product_image`, `p`.`sku` as `product_sku`
-            FROM `cartitem` `ci`
-            LEFT JOIN `product` `p` ON `ci`.`productId` = `p`.`id`
+            FROM `CartItem` `ci`
+            LEFT JOIN `Product` `p` ON `ci`.`productId` = `p`.`id`
             WHERE `ci`.`cartId` = ?
         ");
         $stmt->execute([$cart['id']]);
@@ -255,18 +255,18 @@ function handleAddToCart(): void {
         $cart = getOrCreateCart($pdo, $customerId, $sessionId);
 
         // Check if matching cart item exists
-        $checkStmt = $pdo->prepare("SELECT * FROM `cartitem` WHERE `cartId` = ? AND `productId` <=> ? AND `diamondId` <=> ? AND `metal` <=> ? AND `size` <=> ? LIMIT 1");
+        $checkStmt = $pdo->prepare("SELECT * FROM `CartItem` WHERE `cartId` = ? AND `productId` <=> ? AND `diamondId` <=> ? AND `metal` <=> ? AND `size` <=> ? LIMIT 1");
         $checkStmt->execute([$cart['id'], $productId, $diamondId, $metal, $size]);
         $existingItem = $checkStmt->fetch();
 
         if ($existingItem) {
             $newQty = $existingItem['quantity'] + $quantity;
-            $upd = $pdo->prepare("UPDATE `cartitem` SET `quantity` = ? WHERE `id` = ?");
+            $upd = $pdo->prepare("UPDATE `CartItem` SET `quantity` = ? WHERE `id` = ?");
             $upd->execute([$newQty, $existingItem['id']]);
             $itemId = $existingItem['id'];
         } else {
             $itemId = generateUuidV4Cart();
-            $inst = $pdo->prepare("INSERT INTO `cartitem` (`id`, `cartId`, `productId`, `diamondId`, `quantity`, `metal`, `goldColor`, `size`) VALUES (?, ?, ?, ?, ?, ?, ?, ?)");
+            $inst = $pdo->prepare("INSERT INTO `CartItem` (`id`, `cartId`, `productId`, `diamondId`, `quantity`, `metal`, `goldColor`, `size`) VALUES (?, ?, ?, ?, ?, ?, ?, ?)");
             $inst->execute([$itemId, $cart['id'], $productId, $diamondId, $quantity, $metal, $goldColor, $size]);
         }
 
@@ -301,12 +301,12 @@ function handleUpdateCartItem(string $itemId): void {
         $pdo = getDatabaseConnection();
 
         if ($quantity <= 0) {
-            $del = $pdo->prepare("DELETE FROM `cartitem` WHERE `id` = ?");
+            $del = $pdo->prepare("DELETE FROM `CartItem` WHERE `id` = ?");
             $del->execute([$itemId]);
             jsonResponse(['success' => true, 'message' => 'Item removed from cart'], 200);
         }
 
-        $upd = $pdo->prepare("UPDATE `cartitem` SET `quantity` = ? WHERE `id` = ?");
+        $upd = $pdo->prepare("UPDATE `CartItem` SET `quantity` = ? WHERE `id` = ?");
         $upd->execute([$quantity, $itemId]);
 
         jsonResponse(['success' => true, 'message' => 'Cart item updated'], 200);
@@ -323,7 +323,7 @@ function handleUpdateCartItem(string $itemId): void {
 function handleRemoveCartItem(string $itemId): void {
     try {
         $pdo = getDatabaseConnection();
-        $del = $pdo->prepare("DELETE FROM `cartitem` WHERE `id` = ?");
+        $del = $pdo->prepare("DELETE FROM `CartItem` WHERE `id` = ?");
         $del->execute([$itemId]);
 
         jsonResponse(['success' => true, 'message' => 'Cart item removed'], 200);
@@ -351,7 +351,7 @@ function handleClearCart(): void {
         $pdo = getDatabaseConnection();
         $cart = getOrCreateCart($pdo, $customerId, $sessionId);
 
-        $del = $pdo->prepare("DELETE FROM `cartitem` WHERE `cartId` = ?");
+        $del = $pdo->prepare("DELETE FROM `CartItem` WHERE `cartId` = ?");
         $del->execute([$cart['id']]);
 
         jsonResponse(['success' => true, 'message' => 'Cart cleared successfully'], 200);
@@ -385,7 +385,7 @@ function handleCheckoutValidation(): void {
         $pdo = getDatabaseConnection();
         $cart = getOrCreateCart($pdo, $customerId, $sessionId);
 
-        $stmt = $pdo->prepare("SELECT COUNT(*) as cnt FROM `cartitem` WHERE `cartId` = ?");
+        $stmt = $pdo->prepare("SELECT COUNT(*) as cnt FROM `CartItem` WHERE `cartId` = ?");
         $stmt->execute([$cart['id']]);
         $count = (int) $stmt->fetch()['cnt'];
 

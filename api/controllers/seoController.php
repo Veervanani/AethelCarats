@@ -21,16 +21,16 @@ function handleGetSeoMetadata(): void {
 
         $seo = null;
         if ($pageSlug) {
-            $pStmt = $pdo->prepare("SELECT `id` FROM `page` WHERE `slug` = ? LIMIT 1");
+            $pStmt = $pdo->prepare("SELECT `id` FROM `Page` WHERE `slug` = ? LIMIT 1");
             $pStmt->execute([$pageSlug]);
             $page = $pStmt->fetch();
             if ($page) {
-                $sStmt = $pdo->prepare("SELECT * FROM `seometadata` WHERE `pageId` = ? LIMIT 1");
+                $sStmt = $pdo->prepare("SELECT * FROM `SeoMetadata` WHERE `pageId` = ? LIMIT 1");
                 $sStmt->execute([$page['id']]);
                 $seo = $sStmt->fetch();
             }
         } else if ($entityType && $entityId) {
-            $sStmt = $pdo->prepare("SELECT * FROM `seometadata` WHERE `entityType` = ? AND `entityId` = ? LIMIT 1");
+            $sStmt = $pdo->prepare("SELECT * FROM `SeoMetadata` WHERE `entityType` = ? AND `entityId` = ? LIMIT 1");
             $sStmt->execute([$entityType, $entityId]);
             $seo = $sStmt->fetch();
         }
@@ -63,16 +63,16 @@ function handleGenerateSitemapXml(): void {
         $baseUrl = getenv('PUBLIC_SITE_URL') ?: 'https://auroradiamonds.com';
         $pdo = getDatabaseConnection();
 
-        $prodStmt = $pdo->query("SELECT `slug`, `updatedAt` FROM `product` WHERE `status` = 'ACTIVE'");
+        $prodStmt = $pdo->query("SELECT `slug`, `updatedAt` FROM `Product` WHERE `status` = 'ACTIVE'");
         $products = $prodStmt->fetchAll();
 
-        $diaStmt = $pdo->query("SELECT `diamondId`, `updatedAt` FROM `diamond` WHERE `status` = 'AVAILABLE'");
+        $diaStmt = $pdo->query("SELECT `diamondId`, `updatedAt` FROM `Diamond` WHERE `status` = 'AVAILABLE'");
         $diamonds = $diaStmt->fetchAll();
 
-        $colStmt = $pdo->query("SELECT `slug`, `updatedAt` FROM `collection`");
+        $colStmt = $pdo->query("SELECT `slug`, `updatedAt` FROM `Collection`");
         $collections = $colStmt->fetchAll();
 
-        $pageStmt = $pdo->query("SELECT `slug`, `updatedAt` FROM `page` WHERE `status` = 'PUBLISHED'");
+        $pageStmt = $pdo->query("SELECT `slug`, `updatedAt` FROM `Page` WHERE `status` = 'PUBLISHED'");
         $pages = $pageStmt->fetchAll();
 
         $urls = [

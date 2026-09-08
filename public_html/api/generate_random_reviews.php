@@ -6,9 +6,9 @@ try {
     $pdo = getDatabaseConnection();
 
     // Clear existing reviews so every product gets fresh, completely distinct, randomized reviews
-    $pdo->exec("DELETE FROM `review`");
+    $pdo->exec("DELETE FROM `Review`");
 
-    $stmt = $pdo->query("SELECT id, name, title, metal, shape, carat, jewelleryType FROM `product`");
+    $stmt = $pdo->query("SELECT id, name, title, metal, shape, carat, jewelleryType FROM `Product`");
     $products = $stmt->fetchAll();
 
     if (empty($products)) {
@@ -60,7 +60,7 @@ try {
         'Surpassed All My Expectations'
     ];
 
-    $insStmt = $pdo->prepare("INSERT INTO `review` (`id`, `productId`, `author`, `email`, `rating`, `comment`, `isApproved`, `isFeatured`, `createdAt`) VALUES (?, ?, ?, ?, ?, ?, 1, ?, ?)");
+    $insStmt = $pdo->prepare("INSERT INTO `Review` (`id`, `productId`, `author`, `email`, `rating`, `comment`, `isApproved`, `isFeatured`, `createdAt`) VALUES (?, ?, ?, ?, ?, ?, 1, ?, ?)");
 
     $totalInserted = 0;
     $summary = [];

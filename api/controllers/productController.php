@@ -53,11 +53,11 @@ if (!function_exists('ensureDescriptionSchemaFix')) {
         if ($done) return;
         try {
             $pdo = getDatabaseConnection();
-            @$pdo->exec("ALTER TABLE `product` MODIFY COLUMN `fullDescription` LONGTEXT NULL");
-            @$pdo->exec("ALTER TABLE `product` MODIFY COLUMN `shortDescription` LONGTEXT NULL");
-            @$pdo->exec("ALTER TABLE `product` MODIFY COLUMN `description` LONGTEXT NULL");
-            @$pdo->exec("ALTER TABLE `product` MODIFY COLUMN `specifications` LONGTEXT NULL");
-            @$pdo->exec("ALTER TABLE `product` MODIFY COLUMN `accordionsConfig` LONGTEXT NULL");
+            @$pdo->exec("ALTER TABLE `Product` MODIFY COLUMN `fullDescription` LONGTEXT NULL");
+            @$pdo->exec("ALTER TABLE `Product` MODIFY COLUMN `shortDescription` LONGTEXT NULL");
+            @$pdo->exec("ALTER TABLE `Product` MODIFY COLUMN `description` LONGTEXT NULL");
+            @$pdo->exec("ALTER TABLE `Product` MODIFY COLUMN `specifications` LONGTEXT NULL");
+            @$pdo->exec("ALTER TABLE `Product` MODIFY COLUMN `accordionsConfig` LONGTEXT NULL");
             $done = true;
         } catch (Throwable $e) {}
     }
@@ -360,7 +360,7 @@ if (!function_exists('mapProductResponse')) {
             $pSlug = $product['slug'] ?? '';
 
             try {
-                $revStmt = $pdo->prepare("SELECT r.*, p.name as productName FROM `review` r LEFT JOIN `product` p ON (r.productId = p.id OR r.productId = p.sku OR r.productId = p.slug) WHERE (r.productId = ? OR r.productId = ? OR r.productId = ? OR p.id = ? OR p.slug = ? OR p.sku = ?) ORDER BY r.createdAt DESC");
+                $revStmt = $pdo->prepare("SELECT r.*, p.name as productName FROM `Review` r LEFT JOIN `Product` p ON (r.productId = p.id OR r.productId = p.sku OR r.productId = p.slug) WHERE (r.productId = ? OR r.productId = ? OR r.productId = ? OR p.id = ? OR p.slug = ? OR p.sku = ?) ORDER BY r.createdAt DESC");
                 $revStmt->execute([$pId, $pSku, $pSlug, $pId, $pSlug, $pSku]);
                 $rawList = $revStmt->fetchAll() ?: [];
 
@@ -635,7 +635,7 @@ function handleGetProducts(): void {
         $whereSql = count($whereClauses) > 0 ? "WHERE " . implode(' AND ', $whereClauses) : "";
 
         // Count total matching products
-        $countStmt = $pdo->prepare("SELECT COUNT(*) as cnt FROM `product` `p` LEFT JOIN `category` `c` ON `p`.`categoryId` = `c`.`id` {$whereSql}");
+        $countStmt = $pdo->prepare("SELECT COUNT(*) as cnt FROM `Product` `p` LEFT JOIN `Category` `c` ON `p`.`categoryId` = `c`.`id` {$whereSql}");
         $countStmt->execute($params);
         $total = (int) $countStmt->fetch()['cnt'];
 
@@ -659,7 +659,7 @@ function handleGetProducts(): void {
                 $whereClauses[] = "(" . implode(' OR ', $orClauses) . ")";
                 $whereSql = "WHERE " . implode(' AND ', $whereClauses);
                 
-                $countStmt = $pdo->prepare("SELECT COUNT(*) as cnt FROM `product` `p` LEFT JOIN `category` `c` ON `p`.`categoryId` = `c`.`id` {$whereSql}");
+                $countStmt = $pdo->prepare("SELECT COUNT(*) as cnt FROM `Product` `p` LEFT JOIN `Category` `c` ON `p`.`categoryId` = `c`.`id` {$whereSql}");
                 $countStmt->execute($params);
                 $total = (int) $countStmt->fetch()['cnt'];
             }
@@ -667,8 +667,8 @@ function handleGetProducts(): void {
 
         // Fetch products
         $sql = "SELECT `p`.*, `c`.`name` as `category_name`, `c`.`slug` as `category_slug` 
-                FROM `product` `p` 
-                LEFT JOIN `category` `c` ON `p`.`categoryId` = `c`.`id` 
+                FROM `Product` `p` 
+                LEFT JOIN `Category` `c` ON `p`.`categoryId` = `c`.`id` 
                 {$whereSql} 
                 ORDER BY {$sortOrder} 
                 LIMIT {$limit} OFFSET {$offset}";
@@ -682,7 +682,7 @@ function handleGetProducts(): void {
         $imagesByProduct = [];
         if (count($productIds) > 0) {
             $inClause = implode(',', array_fill(0, count($productIds), '?'));
-            $imgStmt = $pdo->prepare("SELECT * FROM `productimage` WHERE `productId` IN ({$inClause}) ORDER BY `position` ASC");
+            $imgStmt = $pdo->prepare("SELECT * FROM `ProductImage` WHERE `productId` IN ({$inClause}) ORDER BY `position` ASC");
             $imgStmt->execute($productIds);
             foreach ($imgStmt->fetchAll() as $img) {
                 $imagesByProduct[$img['productId']][] = $img;
@@ -727,7 +727,7 @@ function handleGetProductBySlug(string $slug): void {
         $dashedSlug = str_replace(' ', '-', $cleanSlug);
         $spacedSlug = str_replace('-', ' ', $cleanSlug);
 
-        $stmt = $pdo->prepare("SELECT `p`.*, `c`.`name` as `category_name`, `c`.`slug` as `category_slug` FROM `product` `p` LEFT JOIN `category` `c` ON `p`.`categoryId` = `c`.`id` WHERE `p`.`slug` = ? OR `p`.`id` = ? OR LOWER(REPLACE(`p`.`name`, ' ', '-')) = ? OR LOWER(`p`.`name`) = ? LIMIT 1");
+        $stmt = $pdo->prepare("SELECT `p`.*, `c`.`name` as `category_name`, `c`.`slug` as `category_slug` FROM `Product` `p` LEFT JOIN `Category` `c` ON `p`.`categoryId` = `c`.`id` WHERE `p`.`slug` = ? OR `p`.`id` = ? OR LOWER(REPLACE(`p`.`name`, ' ', '-')) = ? OR LOWER(`p`.`name`) = ? LIMIT 1");
         $stmt->execute([$slug, $slug, $dashedSlug, $spacedSlug]);
         $product = $stmt->fetch();
 
@@ -736,12 +736,12 @@ function handleGetProductBySlug(string $slug): void {
         }
 
         // Fetch images
-        $imgStmt = $pdo->prepare("SELECT * FROM `productimage` WHERE `productId` = ? ORDER BY `position` ASC");
+        $imgStmt = $pdo->prepare("SELECT * FROM `ProductImage` WHERE `productId` = ? ORDER BY `position` ASC");
         $imgStmt->execute([$product['id']]);
         $product['images'] = $imgStmt->fetchAll();
 
         // Fetch related products
-        $relStmt = $pdo->prepare("SELECT * FROM `product` WHERE `categoryId` = ? AND `id` != ? AND `status` = 'ACTIVE' LIMIT 4");
+        $relStmt = $pdo->prepare("SELECT * FROM `Product` WHERE `categoryId` = ? AND `id` != ? AND `status` = 'ACTIVE' LIMIT 4");
         $relStmt->execute([$product['categoryId'], $product['id']]);
         $relatedRaw = $relStmt->fetchAll();
         $relatedMapped = array_map(fn($rp) => mapProductResponse($rp), $relatedRaw);
@@ -863,7 +863,7 @@ function handleAdminProductPageContent(): void {
 function handleGetProductById(string $id): void {
     try {
         $pdo = getDatabaseConnection();
-        $stmt = $pdo->prepare("SELECT `p`.*, `c`.`name` as `category_name`, `c`.`slug` as `category_slug` FROM `product` `p` LEFT JOIN `category` `c` ON `p`.`categoryId` = `c`.`id` WHERE `p`.`id` = ? LIMIT 1");
+        $stmt = $pdo->prepare("SELECT `p`.*, `c`.`name` as `category_name`, `c`.`slug` as `category_slug` FROM `Product` `p` LEFT JOIN `Category` `c` ON `p`.`categoryId` = `c`.`id` WHERE `p`.`id` = ? LIMIT 1");
         $stmt->execute([$id]);
         $product = $stmt->fetch();
 
@@ -871,7 +871,7 @@ function handleGetProductById(string $id): void {
             jsonError('Product not found', 404);
         }
 
-        $imgStmt = $pdo->prepare("SELECT * FROM `productimage` WHERE `productId` = ? ORDER BY `position` ASC");
+        $imgStmt = $pdo->prepare("SELECT * FROM `ProductImage` WHERE `productId` = ? ORDER BY `position` ASC");
         $imgStmt->execute([$id]);
         $product['images'] = $imgStmt->fetchAll();
 
@@ -896,7 +896,7 @@ function handleCalculateServerSidePrice(string $productId): void {
 
     try {
         $pdo = getDatabaseConnection();
-        $stmt = $pdo->prepare("SELECT * FROM `product` WHERE `id` = ? LIMIT 1");
+        $stmt = $pdo->prepare("SELECT * FROM `Product` WHERE `id` = ? LIMIT 1");
         $stmt->execute([$productId]);
         $product = $stmt->fetch();
 
@@ -919,7 +919,7 @@ function handleCalculateServerSidePrice(string $productId): void {
 
         $diamondPrice = 0.0;
         if ($diamondId) {
-            $dStmt = $pdo->prepare("SELECT `price` FROM `diamond` WHERE `id` = ? LIMIT 1");
+            $dStmt = $pdo->prepare("SELECT `price` FROM `Diamond` WHERE `id` = ? LIMIT 1");
             $dStmt->execute([$diamondId]);
             $dbDiamond = $dStmt->fetch();
             if ($dbDiamond) {
@@ -955,7 +955,7 @@ function handleCalculateServerSidePrice(string $productId): void {
 function handleGetCategories(): void {
     try {
         $pdo = getDatabaseConnection();
-        $stmt = $pdo->query("SELECT `c`.*, (SELECT COUNT(*) FROM `product` `p` WHERE `p`.`categoryId` = `c`.`id`) as `_count_products` FROM `category` `c` ORDER BY `c`.`sortOrder` ASC");
+        $stmt = $pdo->query("SELECT `c`.*, (SELECT COUNT(*) FROM `Product` `p` WHERE `p`.`categoryId` = `c`.`id`) as `_count_products` FROM `Category` `c` ORDER BY `c`.`sortOrder` ASC");
         $categories = $stmt->fetchAll();
 
         $mapped = array_map(function($c) {
@@ -978,7 +978,7 @@ function handleGetCategories(): void {
 function handleGetCollections(): void {
     try {
         $pdo = getDatabaseConnection();
-        $stmt = $pdo->query("SELECT `c`.*, (SELECT COUNT(*) FROM `product` `p` WHERE `p`.`collectionId` = `c`.`id`) as `_count_products` FROM `collection` `c` ORDER BY `c`.`name` ASC");
+        $stmt = $pdo->query("SELECT `c`.*, (SELECT COUNT(*) FROM `Product` `p` WHERE `p`.`collectionId` = `c`.`id`) as `_count_products` FROM `Collection` `c` ORDER BY `c`.`name` ASC");
         $collections = $stmt->fetchAll();
 
         $mapped = array_map(function($c) {
@@ -1125,7 +1125,7 @@ function handleGetCustomerPrices(): void {
 
     try {
         $pdo = getDatabaseConnection();
-        $stmt = $pdo->query("SELECT `csp`.*, `c`.`name` as `customer_name`, `c`.`email` as `customer_email`, `p`.`name` as `product_name`, `p`.`sku` as `product_sku`, `p`.`price` as `product_price` FROM `customerspecificprice` `csp` LEFT JOIN `customer` `c` ON `csp`.`customerId` = `c`.`id` LEFT JOIN `product` `p` ON `csp`.`productId` = `p`.`id` ORDER BY `csp`.`updatedAt` DESC");
+        $stmt = $pdo->query("SELECT `csp`.*, `c`.`name` as `customer_name`, `c`.`email` as `customer_email`, `p`.`name` as `product_name`, `p`.`sku` as `product_sku`, `p`.`price` as `product_price` FROM `CustomerSpecificPrice` `csp` LEFT JOIN `Customer` `c` ON `csp`.`customerId` = `c`.`id` LEFT JOIN `Product` `p` ON `csp`.`productId` = `p`.`id` ORDER BY `csp`.`updatedAt` DESC");
         $prices = $stmt->fetchAll();
 
         $mapped = array_map(function($r) {
@@ -1160,7 +1160,7 @@ function handleSaveProduct(): void {
 
         $pdo = getDatabaseConnection();
 
-        $chk = $pdo->prepare("SELECT * FROM `product` WHERE `id` = ? OR `slug` = ? LIMIT 1");
+        $chk = $pdo->prepare("SELECT * FROM `Product` WHERE `id` = ? OR `slug` = ? LIMIT 1");
         $chk->execute([$id, $body['slug'] ?? '']);
         $existing = $chk->fetch();
 
@@ -1217,7 +1217,7 @@ function handleSaveProduct(): void {
         $pdo->beginTransaction();
 
         if ($existing) {
-            $uStmt = $pdo->prepare("UPDATE `product` SET `title` = ?, `name` = ?, `slug` = ?, `sku` = ?, `price` = ?, `comparePrice` = ?, `status` = ?, `categoryId` = ?, `jewelleryType` = ?, `mainImage` = ?, `secondaryImage` = ?, `shortDescription` = ?, `fullDescription` = ?, `masterPrice14k` = ?, `masterPrice18k` = ?, `masterPriceSilver` = ?, `metalsConfig` = ?, `customOptionsJson` = ?, `accordionsConfig` = ?, `benefitsConfig` = ?, `internalTagsJson` = ?, `seoSocialJson` = ?, `diamondDetailsJson` = ?, `variationsJson` = ?, `enableMetalSelection` = ?, `enableCustomOptions` = ?, `enableRingSize` = ?, `isRingSizeRequired` = ?, `isFeatured` = ?, `isNewArrival` = ?, `isBestseller` = ?, `updatedAt` = NOW() WHERE `id` = ?");
+            $uStmt = $pdo->prepare("UPDATE `Product` SET `title` = ?, `name` = ?, `slug` = ?, `sku` = ?, `price` = ?, `comparePrice` = ?, `status` = ?, `categoryId` = ?, `jewelleryType` = ?, `mainImage` = ?, `secondaryImage` = ?, `shortDescription` = ?, `fullDescription` = ?, `masterPrice14k` = ?, `masterPrice18k` = ?, `masterPriceSilver` = ?, `metalsConfig` = ?, `customOptionsJson` = ?, `accordionsConfig` = ?, `benefitsConfig` = ?, `internalTagsJson` = ?, `seoSocialJson` = ?, `diamondDetailsJson` = ?, `variationsJson` = ?, `enableMetalSelection` = ?, `enableCustomOptions` = ?, `enableRingSize` = ?, `isRingSizeRequired` = ?, `isFeatured` = ?, `isNewArrival` = ?, `isBestseller` = ?, `updatedAt` = NOW() WHERE `id` = ?");
             $uStmt->execute([
                 $title, $title, $slug, $sku, $price, $compare, $status, $catId, $jewelleryType, $mainImage, $secondImage, $shortDesc, $fullDesc,
                 $master14k, $master18k, $masterAg, $metalsCfgJson, $customOptsJson, $accordionsJson, $benefitsJson, $internalTagsJson, $seoSocialJson, $diamondDetJson, $variationsJson,
@@ -1226,7 +1226,7 @@ function handleSaveProduct(): void {
             ]);
             $productId = $existing['id'];
         } else {
-            $iStmt = $pdo->prepare("INSERT INTO `product` (`id`, `title`, `name`, `slug`, `sku`, `price`, `comparePrice`, `status`, `categoryId`, `jewelleryType`, `mainImage`, `secondaryImage`, `shortDescription`, `fullDescription`, `masterPrice14k`, `masterPrice18k`, `masterPriceSilver`, `metalsConfig`, `customOptionsJson`, `accordionsConfig`, `benefitsConfig`, `internalTagsJson`, `seoSocialJson`, `diamondDetailsJson`, `variationsJson`, `enableMetalSelection`, `enableCustomOptions`, `enableRingSize`, `isRingSizeRequired`, `isFeatured`, `isNewArrival`, `isBestseller`, `createdAt`, `updatedAt`) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, NOW(), NOW())");
+            $iStmt = $pdo->prepare("INSERT INTO `Product` (`id`, `title`, `name`, `slug`, `sku`, `price`, `comparePrice`, `status`, `categoryId`, `jewelleryType`, `mainImage`, `secondaryImage`, `shortDescription`, `fullDescription`, `masterPrice14k`, `masterPrice18k`, `masterPriceSilver`, `metalsConfig`, `customOptionsJson`, `accordionsConfig`, `benefitsConfig`, `internalTagsJson`, `seoSocialJson`, `diamondDetailsJson`, `variationsJson`, `enableMetalSelection`, `enableCustomOptions`, `enableRingSize`, `isRingSizeRequired`, `isFeatured`, `isNewArrival`, `isBestseller`, `createdAt`, `updatedAt`) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, NOW(), NOW())");
             $iStmt->execute([
                 $id, $title, $title, $slug, $sku, $price, $compare, $status, $catId, $jewelleryType, $mainImage, $secondImage, $shortDesc, $fullDesc,
                 $master14k, $master18k, $masterAg, $metalsCfgJson, $customOptsJson, $accordionsJson, $benefitsJson, $internalTagsJson, $seoSocialJson, $diamondDetJson, $variationsJson,
@@ -1236,8 +1236,8 @@ function handleSaveProduct(): void {
         }
 
         if (!empty($body['images']) && is_array($body['images'])) {
-            $pdo->prepare("DELETE FROM `productimage` WHERE `productId` = ?")->execute([$productId]);
-            $imgIns = $pdo->prepare("INSERT INTO `productimage` (`id`, `productId`, `url`, `position`, `imageType`, `createdAt`) VALUES (?, ?, ?, ?, ?, NOW())");
+            $pdo->prepare("DELETE FROM `ProductImage` WHERE `productId` = ?")->execute([$productId]);
+            $imgIns = $pdo->prepare("INSERT INTO `ProductImage` (`id`, `productId`, `url`, `position`, `imageType`, `createdAt`) VALUES (?, ?, ?, ?, ?, NOW())");
             foreach ($body['images'] as $pos => $img) {
                 $imgUrl = is_array($img) ? ($img['url'] ?? '') : $img;
                 if ($imgUrl) {
@@ -1250,7 +1250,7 @@ function handleSaveProduct(): void {
 
         $pdo->commit();
 
-        $rStmt = $pdo->prepare("SELECT * FROM `product` WHERE `id` = ? LIMIT 1");
+        $rStmt = $pdo->prepare("SELECT * FROM `Product` WHERE `id` = ? LIMIT 1");
         $rStmt->execute([$productId]);
         $savedProduct = $rStmt->fetch();
 
@@ -1277,7 +1277,7 @@ function handleProductDetailsRoute(string $id): void {
     $method = $_SERVER['REQUEST_METHOD'] ?? 'GET';
     $pdo = getDatabaseConnection();
 
-    $pStmt = $pdo->prepare("SELECT * FROM `product` WHERE `id` = ? OR `slug` = ? LIMIT 1");
+    $pStmt = $pdo->prepare("SELECT * FROM `Product` WHERE `id` = ? OR `slug` = ? LIMIT 1");
     $pStmt->execute([$id, $id]);
     $product = $pStmt->fetch();
 
@@ -1300,7 +1300,7 @@ function handleProductDetailsRoute(string $id): void {
         $sections = $body['sections'] ?? [];
 
         $sectionsJson = json_encode($sections);
-        $upd = $pdo->prepare("UPDATE `product` SET `accordionsConfig` = ?, `updatedAt` = NOW() WHERE `id` = ?");
+        $upd = $pdo->prepare("UPDATE `Product` SET `accordionsConfig` = ?, `updatedAt` = NOW() WHERE `id` = ?");
         $upd->execute([$sectionsJson, $product['id']]);
 
         $mappedProduct = mapProductResponse($product);
@@ -1521,7 +1521,7 @@ function handleValidateProductBulkUpload(): void {
     $existingTitles = [];
     $existingSkus = [];
     try {
-        $dbProds = $pdo->query("SELECT `name`, `sku` FROM `product`")->fetchAll();
+        $dbProds = $pdo->query("SELECT `name`, `sku` FROM `Product`")->fetchAll();
         foreach ($dbProds as $dp) {
             if (!empty($dp['name'])) $existingTitles[strtolower(trim($dp['name']))] = true;
             if (!empty($dp['sku']))  $existingSkus[strtolower(trim($dp['sku']))] = true;
@@ -1730,38 +1730,38 @@ function handleExecuteProductBulkUpload(): void {
             $secImage = !empty($extractedImages[1]) ? $extractedImages[1] : null;
 
             // Find or create Category
-            $cStmt = $pdo->prepare("SELECT `id` FROM `category` WHERE `name` = ? OR `slug` = ? LIMIT 1");
+            $cStmt = $pdo->prepare("SELECT `id` FROM `Category` WHERE `name` = ? OR `slug` = ? LIMIT 1");
             $cStmt->execute([$categoryName, strtolower($categoryName)]);
             $cat = $cStmt->fetch();
             $catId = $cat['id'] ?? null;
 
             if (!$catId) {
                 $catId = 'cat_' . bin2hex(random_bytes(6));
-                $insC = $pdo->prepare("INSERT INTO `category` (`id`, `name`, `slug`, `description`, `createdAt`, `updatedAt`) VALUES (?, ?, ?, ?, NOW(), NOW())");
+                $insC = $pdo->prepare("INSERT INTO `Category` (`id`, `name`, `slug`, `description`, `createdAt`, `updatedAt`) VALUES (?, ?, ?, ?, NOW(), NOW())");
                 $insC->execute([$catId, $categoryName, strtolower(trim(preg_replace('/[^a-z0-9]+/i', '-', $categoryName), '-')), "{$categoryName} Collection"]);
             }
 
             // Check if product exists by SKU OR Title (name) OR Slug
-            $chk = $pdo->prepare("SELECT `id` FROM `product` WHERE `sku` = ? OR `name` = ? OR `slug` = ? LIMIT 1");
+            $chk = $pdo->prepare("SELECT `id` FROM `Product` WHERE `sku` = ? OR `name` = ? OR `slug` = ? LIMIT 1");
             $chk->execute([$sku, $name, $slug]);
             $exists = $chk->fetch();
 
             if ($exists) {
                 $productId = $exists['id'];
-                $upd = $pdo->prepare("UPDATE `product` SET `name` = ?, `slug` = ?, `categoryId` = ?, `status` = ?, `shortDescription` = ?, `fullDescription` = ?, `price` = ?, `mainImage` = ?, `secondaryImage` = ?, `updatedAt` = NOW() WHERE `id` = ?");
+                $upd = $pdo->prepare("UPDATE `Product` SET `name` = ?, `slug` = ?, `categoryId` = ?, `status` = ?, `shortDescription` = ?, `fullDescription` = ?, `price` = ?, `mainImage` = ?, `secondaryImage` = ?, `updatedAt` = NOW() WHERE `id` = ?");
                 $upd->execute([$name, $slug, $catId, $status, $description, $description, $price, $mainImage, $secImage, $productId]);
                 $updatedCount++;
             } else {
                 $productId = 'prod_' . bin2hex(random_bytes(8));
-                $ins = $pdo->prepare("INSERT INTO `product` (`id`, `name`, `sku`, `slug`, `categoryId`, `status`, `shortDescription`, `fullDescription`, `price`, `mainImage`, `secondaryImage`, `createdAt`, `updatedAt`) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, NOW(), NOW())");
+                $ins = $pdo->prepare("INSERT INTO `Product` (`id`, `name`, `sku`, `slug`, `categoryId`, `status`, `shortDescription`, `fullDescription`, `price`, `mainImage`, `secondaryImage`, `createdAt`, `updatedAt`) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, NOW(), NOW())");
                 $ins->execute([$productId, $name, $sku, $slug, $catId, $status, $description, $description, $price, $mainImage, $secImage]);
                 $createdCount++;
             }
 
             // Clear and insert ALL images (IMAGE1 through IMAGE10) into productimage table
             if (count($extractedImages) > 0) {
-                $pdo->prepare("DELETE FROM `productimage` WHERE `productId` = ?")->execute([$productId]);
-                $imgIns = $pdo->prepare("INSERT INTO `productimage` (`id`, `productId`, `url`, `position`, `imageType`, `createdAt`) VALUES (?, ?, ?, ?, ?, NOW())");
+                $pdo->prepare("DELETE FROM `ProductImage` WHERE `productId` = ?")->execute([$productId]);
+                $imgIns = $pdo->prepare("INSERT INTO `ProductImage` (`id`, `productId`, `url`, `position`, `imageType`, `createdAt`) VALUES (?, ?, ?, ?, ?, NOW())");
                 foreach ($extractedImages as $pos => $imgUrl) {
                     $imgId = 'img_' . bin2hex(random_bytes(8));
                     $imgType = ($pos === 0) ? 'primary' : (($pos === 1) ? 'secondary' : 'GALLERY');
@@ -1807,7 +1807,7 @@ function handleBulkSaleUpdate(): void {
     try {
         $pdo = getDatabaseConnection();
         try {
-            $pdo->exec("ALTER TABLE `product` ADD COLUMN `saleEndsAt` DATETIME NULL AFTER `onSale`");
+            $pdo->exec("ALTER TABLE `Product` ADD COLUMN `saleEndsAt` DATETIME NULL AFTER `onSale`");
         } catch (Throwable $e) {}
 
         $inClause = implode(',', array_fill(0, count($productIds), '?'));
@@ -1821,29 +1821,29 @@ function handleBulkSaleUpdate(): void {
         }
 
         if ($action === 'SET_ON_SALE') {
-            $stmt = $pdo->prepare("UPDATE `product` SET `onSale` = 1, `saleEndsAt` = ?, `updatedAt` = NOW() WHERE `id` IN ({$inClause})");
+            $stmt = $pdo->prepare("UPDATE `Product` SET `onSale` = 1, `saleEndsAt` = ?, `updatedAt` = NOW() WHERE `id` IN ({$inClause})");
             $params = array_merge([$saleEndsAtVal], $productIds);
             $stmt->execute($params);
         } else if ($action === 'SET_OFF_SALE') {
-            $stmt = $pdo->prepare("UPDATE `product` SET `onSale` = 0, `saleEndsAt` = NULL, `updatedAt` = NOW() WHERE `id` IN ({$inClause})");
+            $stmt = $pdo->prepare("UPDATE `Product` SET `onSale` = 0, `saleEndsAt` = NULL, `updatedAt` = NOW() WHERE `id` IN ({$inClause})");
             $stmt->execute($productIds);
         } else if ($action === 'APPLY_DISCOUNT_PERCENT') {
             if ($discountPercent <= 0 || $discountPercent >= 100) {
                 jsonError('Discount percentage must be between 1 and 99.', 400);
             }
             $factor = (100 - $discountPercent) / 100.0;
-            $stmt = $pdo->prepare("UPDATE `product` SET `comparePrice` = `price`, `salePrice` = ROUND(`price` * {$factor}, 2), `onSale` = 1, `saleEndsAt` = ?, `updatedAt` = NOW() WHERE `id` IN ({$inClause})");
+            $stmt = $pdo->prepare("UPDATE `Product` SET `comparePrice` = `price`, `salePrice` = ROUND(`price` * {$factor}, 2), `onSale` = 1, `saleEndsAt` = ?, `updatedAt` = NOW() WHERE `id` IN ({$inClause})");
             $params = array_merge([$saleEndsAtVal], $productIds);
             $stmt->execute($params);
         } else if ($action === 'SET_FIXED_SALE_PRICE') {
             if ($fixedSalePrice <= 0) {
                 jsonError('Fixed sale price must be greater than 0.', 400);
             }
-            $stmt = $pdo->prepare("UPDATE `product` SET `comparePrice` = `price`, `salePrice` = ?, `onSale` = 1, `saleEndsAt` = ?, `updatedAt` = NOW() WHERE `id` IN ({$inClause})");
+            $stmt = $pdo->prepare("UPDATE `Product` SET `comparePrice` = `price`, `salePrice` = ?, `onSale` = 1, `saleEndsAt` = ?, `updatedAt` = NOW() WHERE `id` IN ({$inClause})");
             $params = array_merge([$fixedSalePrice, $saleEndsAtVal], $productIds);
             $stmt->execute($params);
         } else if ($action === 'CLEAR_SALE') {
-            $stmt = $pdo->prepare("UPDATE `product` SET `onSale` = 0, `salePrice` = NULL, `comparePrice` = NULL, `saleEndsAt` = NULL, `updatedAt` = NOW() WHERE `id` IN ({$inClause})");
+            $stmt = $pdo->prepare("UPDATE `Product` SET `onSale` = 0, `salePrice` = NULL, `comparePrice` = NULL, `saleEndsAt` = NULL, `updatedAt` = NOW() WHERE `id` IN ({$inClause})");
             $stmt->execute($productIds);
         }
 
@@ -1875,10 +1875,10 @@ function handleInlineProductSaleUpdate(string $id): void {
     try {
         $pdo = getDatabaseConnection();
         try {
-            $pdo->exec("ALTER TABLE `product` ADD COLUMN `saleEndsAt` DATETIME NULL AFTER `onSale`");
+            $pdo->exec("ALTER TABLE `Product` ADD COLUMN `saleEndsAt` DATETIME NULL AFTER `onSale`");
         } catch (Throwable $e) {}
 
-        $stmt = $pdo->prepare("UPDATE `product` SET `onSale` = ?, `salePrice` = ?, `comparePrice` = ?, `saleEndsAt` = ?, `updatedAt` = NOW() WHERE `id` = ? OR `sku` = ?");
+        $stmt = $pdo->prepare("UPDATE `Product` SET `onSale` = ?, `salePrice` = ?, `comparePrice` = ?, `saleEndsAt` = ?, `updatedAt` = NOW() WHERE `id` = ? OR `sku` = ?");
         $stmt->execute([$onSale, $salePrice, $comparePrice, $saleEndsAt, $id, $id]);
 
         jsonResponse(['message' => 'Product sale pricing updated successfully'], 200);
@@ -1916,32 +1916,32 @@ function handleBulkPriceUpdate(): void {
                 jsonError('Percentage must be greater than 0.', 400);
             }
             $factor = (100.0 + $percentValue) / 100.0;
-            $stmt = $pdo->prepare("UPDATE `product` SET `price` = ROUND(`price` * {$factor}, 2), `updatedAt` = NOW() WHERE `id` IN ({$inClause})");
+            $stmt = $pdo->prepare("UPDATE `Product` SET `price` = ROUND(`price` * {$factor}, 2), `updatedAt` = NOW() WHERE `id` IN ({$inClause})");
             $stmt->execute($productIds);
         } else if ($action === 'DECREASE_PERCENT') {
             if ($percentValue <= 0 || $percentValue >= 100) {
                 jsonError('Percentage must be between 1 and 99.', 400);
             }
             $factor = (100.0 - $percentValue) / 100.0;
-            $stmt = $pdo->prepare("UPDATE `product` SET `price` = ROUND(`price` * {$factor}, 2), `updatedAt` = NOW() WHERE `id` IN ({$inClause})");
+            $stmt = $pdo->prepare("UPDATE `Product` SET `price` = ROUND(`price` * {$factor}, 2), `updatedAt` = NOW() WHERE `id` IN ({$inClause})");
             $stmt->execute($productIds);
         } else if ($action === 'INCREASE_FLAT') {
             if ($flatAmount <= 0) {
                 jsonError('Flat amount must be greater than 0.', 400);
             }
-            $stmt = $pdo->prepare("UPDATE `product` SET `price` = ROUND(`price` + {$flatAmount}, 2), `updatedAt` = NOW() WHERE `id` IN ({$inClause})");
+            $stmt = $pdo->prepare("UPDATE `Product` SET `price` = ROUND(`price` + {$flatAmount}, 2), `updatedAt` = NOW() WHERE `id` IN ({$inClause})");
             $stmt->execute($productIds);
         } else if ($action === 'DECREASE_FLAT') {
             if ($flatAmount <= 0) {
                 jsonError('Flat amount must be greater than 0.', 400);
             }
-            $stmt = $pdo->prepare("UPDATE `product` SET `price` = GREATEST(1.0, ROUND(`price` - {$flatAmount}, 2)), `updatedAt` = NOW() WHERE `id` IN ({$inClause})");
+            $stmt = $pdo->prepare("UPDATE `Product` SET `price` = GREATEST(1.0, ROUND(`price` - {$flatAmount}, 2)), `updatedAt` = NOW() WHERE `id` IN ({$inClause})");
             $stmt->execute($productIds);
         } else if ($action === 'SET_UNIFORM_PRICE') {
             if ($fixedPrice <= 0) {
                 jsonError('Fixed price must be greater than 0.', 400);
             }
-            $stmt = $pdo->prepare("UPDATE `product` SET `price` = ?, `updatedAt` = NOW() WHERE `id` IN ({$inClause})");
+            $stmt = $pdo->prepare("UPDATE `Product` SET `price` = ?, `updatedAt` = NOW() WHERE `id` IN ({$inClause})");
             $params = array_merge([$fixedPrice], $productIds);
             $stmt->execute($params);
         }
@@ -1971,7 +1971,7 @@ function handleDeleteProduct(string $id): void {
     requireRole(['PRODUCT_MANAGER', 'ADMIN', 'SUPER_ADMIN']);
     $pdo = getDatabaseConnection();
     try {
-        $stmt = $pdo->prepare("SELECT `id`, `name`, `sku` FROM `product` WHERE `id` = ? OR `sku` = ? OR `slug` = ? LIMIT 1");
+        $stmt = $pdo->prepare("SELECT `id`, `name`, `sku` FROM `Product` WHERE `id` = ? OR `sku` = ? OR `slug` = ? LIMIT 1");
         $stmt->execute([$id, $id, $id]);
         $prod = $stmt->fetch();
         if (!$prod) {
@@ -1979,13 +1979,13 @@ function handleDeleteProduct(string $id): void {
         }
 
         $pId = $prod['id'];
-        $pdo->prepare("DELETE FROM `productimage` WHERE `productId` = ?")->execute([$pId]);
-        $pdo->prepare("DELETE FROM `productvideo` WHERE `productId` = ?")->execute([$pId]);
-        $pdo->prepare("DELETE FROM `productvariant` WHERE `productId` = ?")->execute([$pId]);
-        $pdo->prepare("DELETE FROM `wishlistitem` WHERE `productId` = ?")->execute([$pId]);
-        $pdo->prepare("DELETE FROM `cartitem` WHERE `productId` = ?")->execute([$pId]);
-        $pdo->prepare("DELETE FROM `review` WHERE `productId` = ?")->execute([$pId]);
-        $pdo->prepare("DELETE FROM `product` WHERE `id` = ?")->execute([$pId]);
+        $pdo->prepare("DELETE FROM `ProductImage` WHERE `productId` = ?")->execute([$pId]);
+        $pdo->prepare("DELETE FROM `ProductVideo` WHERE `productId` = ?")->execute([$pId]);
+        $pdo->prepare("DELETE FROM `ProductVariant` WHERE `productId` = ?")->execute([$pId]);
+        $pdo->prepare("DELETE FROM `WishlistItem` WHERE `productId` = ?")->execute([$pId]);
+        $pdo->prepare("DELETE FROM `CartItem` WHERE `productId` = ?")->execute([$pId]);
+        $pdo->prepare("DELETE FROM `Review` WHERE `productId` = ?")->execute([$pId]);
+        $pdo->prepare("DELETE FROM `Product` WHERE `id` = ?")->execute([$pId]);
 
         jsonResponse(['success' => true, 'message' => 'Product deleted successfully', 'deletedId' => $pId], 200);
     } catch (Throwable $e) {

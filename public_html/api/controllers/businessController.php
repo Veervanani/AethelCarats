@@ -12,7 +12,7 @@ require_once __DIR__ . '/../middleware/auth.php';
 
 function ensureBusinessTablesExist(PDO $pdo): void {
     // 1. Employee
-    $pdo->exec("CREATE TABLE IF NOT EXISTS `employee` (
+    $pdo->exec("CREATE TABLE IF NOT EXISTS `Employee` (
         `id` VARCHAR(191) PRIMARY KEY,
         `employeeCode` VARCHAR(50) UNIQUE NOT NULL,
         `name` VARCHAR(191) NOT NULL,
@@ -48,7 +48,7 @@ function ensureBusinessTablesExist(PDO $pdo): void {
     ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;");
 
     // 3. CommissionPlan & CommissionRule
-    $pdo->exec("CREATE TABLE IF NOT EXISTS `commissionplan` (
+    $pdo->exec("CREATE TABLE IF NOT EXISTS `CommissionPlan` (
         `id` VARCHAR(191) PRIMARY KEY,
         `name` VARCHAR(191) NOT NULL,
         `description` TEXT NULL,
@@ -69,14 +69,14 @@ function ensureBusinessTablesExist(PDO $pdo): void {
         `email` VARCHAR(191) NULL,
         `phone` VARCHAR(50) NULL,
         `country` VARCHAR(100) NULL,
-        `address` TEXT NULL,
+        `Address` TEXT NULL,
         `notes` TEXT NULL,
         `createdAt` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
         `updatedAt` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
     ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;");
 
     // 4b. Customer
-    $pdo->exec("CREATE TABLE IF NOT EXISTS `customer` (
+    $pdo->exec("CREATE TABLE IF NOT EXISTS `Customer` (
         `id` VARCHAR(191) PRIMARY KEY,
         `name` VARCHAR(191) NOT NULL,
         `country` VARCHAR(100) NULL,
@@ -96,26 +96,26 @@ function ensureBusinessTablesExist(PDO $pdo): void {
     ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;");
 
     // Self-healing columns for employee table (authentication & user linkage)
-    try { $pdo->exec("ALTER TABLE `employee` ADD COLUMN `passwordHash` VARCHAR(255) NULL"); } catch (\Throwable $e) {}
-    try { $pdo->exec("ALTER TABLE `employee` ADD COLUMN `userId` VARCHAR(191) NULL"); } catch (\Throwable $e) {}
+    try { $pdo->exec("ALTER TABLE `Employee` ADD COLUMN `passwordHash` VARCHAR(255) NULL"); } catch (\Throwable $e) {}
+    try { $pdo->exec("ALTER TABLE `Employee` ADD COLUMN `userId` VARCHAR(191) NULL"); } catch (\Throwable $e) {}
 
     // Self-healing columns for customer table (supports all legacy & prisma schemas)
-    try { $pdo->exec("ALTER TABLE `customer` MODIFY COLUMN `email` VARCHAR(191) NULL DEFAULT NULL"); } catch (\Throwable $e) {}
-    try { $pdo->exec("ALTER TABLE `customer` DROP INDEX `Customer_email_key`"); } catch (\Throwable $e) {}
-    try { $pdo->exec("ALTER TABLE `customer` DROP INDEX `email`"); } catch (\Throwable $e) {}
-    try { $pdo->exec("ALTER TABLE `customer` ADD COLUMN `companyName` VARCHAR(191) NULL"); } catch (\Throwable $e) {}
-    try { $pdo->exec("ALTER TABLE `customer` ADD COLUMN `company` VARCHAR(191) NULL"); } catch (\Throwable $e) {}
-    try { $pdo->exec("ALTER TABLE `customer` ADD COLUMN `country` VARCHAR(100) NULL"); } catch (\Throwable $e) {}
-    try { $pdo->exec("ALTER TABLE `customer` ADD COLUMN `assignedStaff` VARCHAR(191) NULL DEFAULT 'Sales Team'"); } catch (\Throwable $e) {}
-    try { $pdo->exec("ALTER TABLE `customer` ADD COLUMN `assignedEmployeeId` VARCHAR(191) NULL"); } catch (\Throwable $e) {}
-    try { $pdo->exec("ALTER TABLE `customer` ADD COLUMN `totalInvoicedDeals` INT NOT NULL DEFAULT 0"); } catch (\Throwable $e) {}
-    try { $pdo->exec("ALTER TABLE `customer` ADD COLUMN `lifetimeVolume` DOUBLE NOT NULL DEFAULT 0"); } catch (\Throwable $e) {}
-    try { $pdo->exec("ALTER TABLE `customer` ADD COLUMN `netProfit` DOUBLE NOT NULL DEFAULT 0"); } catch (\Throwable $e) {}
-    try { $pdo->exec("ALTER TABLE `customer` ADD COLUMN `lastSaleDate` DATETIME NULL"); } catch (\Throwable $e) {}
-    try { $pdo->exec("ALTER TABLE `customer` ADD COLUMN `notes` TEXT NULL"); } catch (\Throwable $e) {}
+    try { $pdo->exec("ALTER TABLE `Customer` MODIFY COLUMN `email` VARCHAR(191) NULL DEFAULT NULL"); } catch (\Throwable $e) {}
+    try { $pdo->exec("ALTER TABLE `Customer` DROP INDEX `Customer_email_key`"); } catch (\Throwable $e) {}
+    try { $pdo->exec("ALTER TABLE `Customer` DROP INDEX `email`"); } catch (\Throwable $e) {}
+    try { $pdo->exec("ALTER TABLE `Customer` ADD COLUMN `companyName` VARCHAR(191) NULL"); } catch (\Throwable $e) {}
+    try { $pdo->exec("ALTER TABLE `Customer` ADD COLUMN `company` VARCHAR(191) NULL"); } catch (\Throwable $e) {}
+    try { $pdo->exec("ALTER TABLE `Customer` ADD COLUMN `country` VARCHAR(100) NULL"); } catch (\Throwable $e) {}
+    try { $pdo->exec("ALTER TABLE `Customer` ADD COLUMN `assignedStaff` VARCHAR(191) NULL DEFAULT 'Sales Team'"); } catch (\Throwable $e) {}
+    try { $pdo->exec("ALTER TABLE `Customer` ADD COLUMN `assignedEmployeeId` VARCHAR(191) NULL"); } catch (\Throwable $e) {}
+    try { $pdo->exec("ALTER TABLE `Customer` ADD COLUMN `totalInvoicedDeals` INT NOT NULL DEFAULT 0"); } catch (\Throwable $e) {}
+    try { $pdo->exec("ALTER TABLE `Customer` ADD COLUMN `lifetimeVolume` DOUBLE NOT NULL DEFAULT 0"); } catch (\Throwable $e) {}
+    try { $pdo->exec("ALTER TABLE `Customer` ADD COLUMN `netProfit` DOUBLE NOT NULL DEFAULT 0"); } catch (\Throwable $e) {}
+    try { $pdo->exec("ALTER TABLE `Customer` ADD COLUMN `lastSaleDate` DATETIME NULL"); } catch (\Throwable $e) {}
+    try { $pdo->exec("ALTER TABLE `Customer` ADD COLUMN `notes` TEXT NULL"); } catch (\Throwable $e) {}
 
     // 5. InternalSale (46 Columns matching Excel)
-    $pdo->exec("CREATE TABLE IF NOT EXISTS `internalsale` (
+    $pdo->exec("CREATE TABLE IF NOT EXISTS `InternalSale` (
         `id` VARCHAR(191) PRIMARY KEY,
         `invoiceNo` VARCHAR(100) UNIQUE NOT NULL,
         `saleDate` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -190,7 +190,7 @@ function ensureBusinessTablesExist(PDO $pdo): void {
     ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;");
 
     // 7. SalesTarget (Company Month-Wise)
-    $pdo->exec("CREATE TABLE IF NOT EXISTS `salestarget` (
+    $pdo->exec("CREATE TABLE IF NOT EXISTS `SalesTarget` (
         `id` VARCHAR(191) PRIMARY KEY,
         `employeeId` VARCHAR(191) NULL DEFAULT 'COMPANY',
         `periodType` VARCHAR(50) NOT NULL DEFAULT 'MONTHLY',
@@ -205,12 +205,12 @@ function ensureBusinessTablesExist(PDO $pdo): void {
     ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;");
 
     // Self-healing columns for salestarget
-    try { $pdo->exec("ALTER TABLE `salestarget` MODIFY COLUMN `employeeId` VARCHAR(191) NULL DEFAULT 'COMPANY'"); } catch (\Throwable $e) {}
-    try { $pdo->exec("ALTER TABLE `salestarget` ADD COLUMN `periodType` VARCHAR(50) NOT NULL DEFAULT 'MONTHLY'"); } catch (\Throwable $e) {}
-    try { $pdo->exec("ALTER TABLE `salestarget` ADD COLUMN `periodYear` INT NOT NULL DEFAULT 2026"); } catch (\Throwable $e) {}
-    try { $pdo->exec("ALTER TABLE `salestarget` ADD COLUMN `periodMonth` INT NOT NULL DEFAULT 1"); } catch (\Throwable $e) {}
-    try { $pdo->exec("ALTER TABLE `salestarget` ADD COLUMN `year` INT NOT NULL DEFAULT 2026"); } catch (\Throwable $e) {}
-    try { $pdo->exec("ALTER TABLE `salestarget` ADD COLUMN `month` INT NOT NULL DEFAULT 1"); } catch (\Throwable $e) {}
+    try { $pdo->exec("ALTER TABLE `SalesTarget` MODIFY COLUMN `employeeId` VARCHAR(191) NULL DEFAULT 'COMPANY'"); } catch (\Throwable $e) {}
+    try { $pdo->exec("ALTER TABLE `SalesTarget` ADD COLUMN `periodType` VARCHAR(50) NOT NULL DEFAULT 'MONTHLY'"); } catch (\Throwable $e) {}
+    try { $pdo->exec("ALTER TABLE `SalesTarget` ADD COLUMN `periodYear` INT NOT NULL DEFAULT 2026"); } catch (\Throwable $e) {}
+    try { $pdo->exec("ALTER TABLE `SalesTarget` ADD COLUMN `periodMonth` INT NOT NULL DEFAULT 1"); } catch (\Throwable $e) {}
+    try { $pdo->exec("ALTER TABLE `SalesTarget` ADD COLUMN `year` INT NOT NULL DEFAULT 2026"); } catch (\Throwable $e) {}
+    try { $pdo->exec("ALTER TABLE `SalesTarget` ADD COLUMN `month` INT NOT NULL DEFAULT 1"); } catch (\Throwable $e) {}
 
     // 8. Business Backups
     $pdo->exec("CREATE TABLE IF NOT EXISTS `business_backups` (
@@ -468,7 +468,7 @@ function handleGetBusinessDashboard(): void {
             COALESCE(SUM(profitAfterCommission), 0) as totalProfitAfterCommission,
             COALESCE(SUM(gstAmount), 0) as totalGST,
             COALESCE(SUM(pendingAmount), 0) as totalPendingReceivables
-        FROM `internalsale` {$whereSql}");
+        FROM `InternalSale` {$whereSql}");
         $stmt->execute($params);
         $metrics = $stmt->fetch(PDO::FETCH_ASSOC) ?: [];
 
@@ -510,7 +510,7 @@ function handleGetBusinessDashboard(): void {
             COALESCE(SUM(finalSaleAmount), 0) as revenue,
             COALESCE(SUM(netProfit), 0) as netProfitUSD,
             COALESCE(SUM(commissionAmount), 0) as commissionUSD
-        FROM `internalsale`
+        FROM `InternalSale`
         {$whereSql}
         GROUP BY salesPersonName
         ORDER BY revenue DESC");
@@ -532,7 +532,7 @@ function handleGetBusinessDashboard(): void {
             COUNT(*) as orders,
             COALESCE(SUM(finalSaleAmount), 0) as revenue,
             COALESCE(SUM(netProfit), 0) as netProfit
-        FROM `internalsale`
+        FROM `InternalSale`
         {$whereSql}
         GROUP BY productType");
         $pStmt->execute($params);
@@ -560,7 +560,7 @@ function handleGetBusinessDashboard(): void {
             else if ($st === 'absent') $attendanceToday['absent'] += (int)$a['cnt'];
             else if ($st === 'leave') $attendanceToday['onLeave'] += (int)$a['cnt'];
         }
-        $totalEmpStmt = $pdo->query("SELECT COUNT(*) FROM `employee` WHERE `status` = 'ACTIVE'");
+        $totalEmpStmt = $pdo->query("SELECT COUNT(*) FROM `Employee` WHERE `status` = 'ACTIVE'");
         $attendanceToday['total'] = (int)$totalEmpStmt->fetchColumn();
 
         // Company Monthly Sales Target calculation (month-specific)
@@ -580,7 +580,7 @@ function handleGetBusinessDashboard(): void {
         }
 
         // Fetch configured target for this month/year
-        $tgtStmt = $pdo->prepare("SELECT * FROM `salestarget` 
+        $tgtStmt = $pdo->prepare("SELECT * FROM `SalesTarget` 
             WHERE (`year` = ? OR `periodYear` = ?) AND (`month` = ? OR `periodMonth` = ?) 
             LIMIT 1");
         $tgtStmt->execute([$curYear, $curYear, $curMonth, $curMonth]);
@@ -588,7 +588,7 @@ function handleGetBusinessDashboard(): void {
 
         if (!$targetRow && !$isMonthFiltered) {
             // When viewing All Months, fall back to the latest configured target for this year
-            $anyTgt = $pdo->prepare("SELECT * FROM `salestarget` WHERE (`year` = ? OR `periodYear` = ?) ORDER BY `month` DESC, `periodMonth` DESC, `createdAt` DESC LIMIT 1");
+            $anyTgt = $pdo->prepare("SELECT * FROM `SalesTarget` WHERE (`year` = ? OR `periodYear` = ?) ORDER BY `month` DESC, `periodMonth` DESC, `createdAt` DESC LIMIT 1");
             $anyTgt->execute([$curYear, $curYear]);
             $targetRow = $anyTgt->fetch(PDO::FETCH_ASSOC);
         }
@@ -603,7 +603,7 @@ function handleGetBusinessDashboard(): void {
             COUNT(id) as orderCount,
             COALESCE(SUM(finalSaleAmount), 0) as actualRevenue,
             COALESCE(SUM(netProfit), 0) as netProfit
-        FROM `internalsale`
+        FROM `InternalSale`
         WHERE (YEAR(saleDate) = ? AND MONTH(saleDate) = ?) OR LOWER(TRIM(saleMonth)) = ?");
         $tSalesStmt->execute([$tYear, $tMonth, strtolower($targetMonthName)]);
         $tMetrics = $tSalesStmt->fetch(PDO::FETCH_ASSOC);
@@ -620,7 +620,7 @@ function handleGetBusinessDashboard(): void {
             MAX(customerCountry) as country,
             COUNT(*) as orders,
             COALESCE(SUM(finalSaleAmount), 0) as revenue
-        FROM `internalsale`
+        FROM `InternalSale`
         {$whereSql}
         " . (!empty($whereSql) ? "AND" : "WHERE") . " customerName IS NOT NULL AND TRIM(customerName) != ''
         GROUP BY TRIM(customerName)
@@ -639,7 +639,7 @@ function handleGetBusinessDashboard(): void {
             COALESCE(NULLIF(TRIM(customerCountry), ''), 'Global') as country,
             COUNT(*) as orders,
             COALESCE(SUM(finalSaleAmount), 0) as revenue
-        FROM `internalsale`
+        FROM `InternalSale`
         {$whereSql}
         GROUP BY COALESCE(NULLIF(TRIM(customerCountry), ''), 'Global')
         ORDER BY revenue DESC
@@ -754,7 +754,7 @@ function handleGetBusinessSales(): void {
 
     $whereSql = !empty($where) ? ('WHERE ' . implode(' AND ', $where)) : '';
 
-    $countStmt = $pdo->prepare("SELECT COUNT(*) FROM `internalsale` {$whereSql}");
+    $countStmt = $pdo->prepare("SELECT COUNT(*) FROM `InternalSale` {$whereSql}");
     $countStmt->execute($params);
     $total = (int)$countStmt->fetchColumn();
 
@@ -766,11 +766,11 @@ function handleGetBusinessSales(): void {
         COALESCE(SUM(netProfit), 0) as totalNetProfit,
         COALESCE(SUM(commissionAmount), 0) as totalCommission,
         COALESCE(SUM(profitAfterCommission), 0) as totalProfitAfterCommission
-    FROM `internalsale` {$whereSql}");
+    FROM `InternalSale` {$whereSql}");
     $sumStmt->execute($params);
     $summary = $sumStmt->fetch(PDO::FETCH_ASSOC);
 
-    $dataStmt = $pdo->prepare("SELECT * FROM `internalsale` {$whereSql} ORDER BY `saleDate` DESC, `createdAt` DESC LIMIT {$limit} OFFSET {$offset}");
+    $dataStmt = $pdo->prepare("SELECT * FROM `InternalSale` {$whereSql} ORDER BY `saleDate` DESC, `createdAt` DESC LIMIT {$limit} OFFSET {$offset}");
     $dataStmt->execute($params);
     $sales = $dataStmt->fetchAll(PDO::FETCH_ASSOC);
 
@@ -797,7 +797,7 @@ function handleCreateBusinessSale(): void {
     $fin = computePhpFinancials($body);
     $id = generateUuidV4();
 
-    $stmt = $pdo->prepare("INSERT INTO `internalsale` (
+    $stmt = $pdo->prepare("INSERT INTO `InternalSale` (
         `id`, `invoiceNo`, `saleDate`, `customerName`, `customerCountry`, `customerId`, `productType`,
         `productDescription`, `stoneType`, `shape`, `diamondColor`, `clarity`, `cut`, `polish`,
         `symmetry`, `fluorescence`, `measurement`, `pricePerCarat`, `caratWeight`, `quantity`,
@@ -875,7 +875,7 @@ function handleCreateBusinessSale(): void {
 function handleGetBusinessSaleDetail(string $id): void {
     $pdo = getDatabaseConnection();
     ensureBusinessTablesExist($pdo);
-    $stmt = $pdo->prepare("SELECT * FROM `internalsale` WHERE `id` = ? OR `invoiceNo` = ? LIMIT 1");
+    $stmt = $pdo->prepare("SELECT * FROM `InternalSale` WHERE `id` = ? OR `invoiceNo` = ? LIMIT 1");
     $stmt->execute([$id, $id]);
     $sale = $stmt->fetch(PDO::FETCH_ASSOC);
     if (!$sale) {
@@ -891,7 +891,7 @@ function handleUpdateBusinessSale(string $id): void {
     $raw = file_get_contents('php://input');
     $body = json_decode($raw, true) ?? $_POST;
 
-    $stmt = $pdo->prepare("SELECT * FROM `internalsale` WHERE `id` = ? OR `invoiceNo` = ? LIMIT 1");
+    $stmt = $pdo->prepare("SELECT * FROM `InternalSale` WHERE `id` = ? OR `invoiceNo` = ? LIMIT 1");
     $stmt->execute([$id, $id]);
     $existing = $stmt->fetch(PDO::FETCH_ASSOC);
 
@@ -904,7 +904,7 @@ function handleUpdateBusinessSale(string $id): void {
     // If only dollarRate is being updated (live inline edit)
     if (isset($body['dollarRate']) && (count($body) === 1 || (count($body) === 2 && isset($body['id'])))) {
         $rate = (float)$body['dollarRate'];
-        $up = $pdo->prepare("UPDATE `internalsale` SET `dollarRate` = ?, `updatedAt` = NOW() WHERE `id` = ?");
+        $up = $pdo->prepare("UPDATE `InternalSale` SET `dollarRate` = ?, `updatedAt` = NOW() WHERE `id` = ?");
         $up->execute([$rate, $actualId]);
         recordBusinessAuditLog('UPDATE_RATE', 'Sale', "Updated Dollar Rate to {$rate} for invoice {$existing['invoiceNo']}");
         jsonResponse(['message' => 'Dollar rate updated successfully', 'dollarRate' => $rate, 'success' => true]);
@@ -917,7 +917,7 @@ function handleUpdateBusinessSale(string $id): void {
     $saleDate = !empty($merged['saleDate']) ? parseFlexibleDate($merged['saleDate']) : $existing['saleDate'];
     $saleMonth = !empty($merged['saleMonth']) ? $merged['saleMonth'] : date('F', strtotime($saleDate));
 
-    $updateStmt = $pdo->prepare("UPDATE `internalsale` SET
+    $updateStmt = $pdo->prepare("UPDATE `InternalSale` SET
         `invoiceNo` = ?, `saleDate` = ?, `customerName` = ?, `customerCountry` = ?, `customerId` = ?, `productType` = ?,
         `productDescription` = ?, `stoneType` = ?, `shape` = ?, `diamondColor` = ?, `clarity` = ?, `cut` = ?, `polish` = ?,
         `symmetry` = ?, `fluorescence` = ?, `measurement` = ?, `pricePerCarat` = ?, `caratWeight` = ?, `quantity` = ?,
@@ -1006,7 +1006,7 @@ function handleBulkUpdateBusinessSales(): void {
 
     $updatedCount = 0;
     foreach ($ids as $id) {
-        $stmt = $pdo->prepare("SELECT * FROM `internalsale` WHERE `id` = ? OR `invoiceNo` = ? LIMIT 1");
+        $stmt = $pdo->prepare("SELECT * FROM `InternalSale` WHERE `id` = ? OR `invoiceNo` = ? LIMIT 1");
         $stmt->execute([$id, $id]);
         $existing = $stmt->fetch(PDO::FETCH_ASSOC);
         if (!$existing) continue;
@@ -1014,7 +1014,7 @@ function handleBulkUpdateBusinessSales(): void {
         $merged = array_merge($existing, $updates);
         $fin = computePhpFinancials($merged);
 
-        $updateStmt = $pdo->prepare("UPDATE `internalsale` SET 
+        $updateStmt = $pdo->prepare("UPDATE `InternalSale` SET 
             `paymentStatus` = ?, `paymentMethod` = ?, `orderStatus` = ?, `salesPersonName` = ?, 
             `dollarRate` = ?, `discount` = ?, `finalSaleAmount` = ?, `grossProfit` = ?, 
             `netProfit` = ?, `commissionPercent` = ?, `commissionAmount` = ?, 
@@ -1064,12 +1064,12 @@ function handleMarkAllEmployeesPresentForMonth(): void {
     $daysInMonth = (int)date('t', strtotime("{$year}-{$month}-01"));
 
     // Get all employees
-    $empStmt = $pdo->query("SELECT id, name FROM `employee`");
+    $empStmt = $pdo->query("SELECT id, name FROM `Employee`");
     $employees = $empStmt->fetchAll(PDO::FETCH_ASSOC);
 
     if (empty($employees)) {
         ensureBusinessTablesExist($pdo);
-        $employees = $pdo->query("SELECT id, name FROM `employee`")->fetchAll(PDO::FETCH_ASSOC);
+        $employees = $pdo->query("SELECT id, name FROM `Employee`")->fetchAll(PDO::FETCH_ASSOC);
     }
 
     $insertStmt = $pdo->prepare("INSERT INTO `attendance` (`id`, `employeeId`, `date`, `hoursWorked`, `status`, `lateStatus`, `isManualEntry`, `notes`, `createdAt`, `updatedAt`)
@@ -1110,7 +1110,7 @@ function handleExecuteSalesImport(): void {
     $importedCount = 0;
     $skippedCount = 0;
 
-    $checkStmt = $pdo->prepare("SELECT id FROM `internalsale` WHERE `invoiceNo` = ? LIMIT 1");
+    $checkStmt = $pdo->prepare("SELECT id FROM `InternalSale` WHERE `invoiceNo` = ? LIMIT 1");
 
     foreach ($rows as $r) {
         $inv = trim($r['invoiceNo'] ?? '');
@@ -1125,7 +1125,7 @@ function handleExecuteSalesImport(): void {
         }
 
         $id = generateUuidV4();
-        $stmt = $pdo->prepare("INSERT INTO `internalsale` (
+        $stmt = $pdo->prepare("INSERT INTO `InternalSale` (
             `id`, `invoiceNo`, `saleDate`, `customerName`, `customerCountry`, `productType`,
             `productDescription`, `stoneType`, `shape`, `diamondColor`, `clarity`, `cut`, `polish`,
             `symmetry`, `fluorescence`, `measurement`, `pricePerCarat`, `caratWeight`, `quantity`,
@@ -1210,7 +1210,7 @@ function handleGetBusinessEmployees(): void {
     requireBusinessAccess(['SALES_HR_MANAGER']);
     $pdo = getDatabaseConnection();
     ensureBusinessTablesExist($pdo);
-    $stmt = $pdo->query("SELECT * FROM `employee` ORDER BY `name` ASC");
+    $stmt = $pdo->query("SELECT * FROM `Employee` ORDER BY `name` ASC");
     $raw = $stmt->fetchAll(PDO::FETCH_ASSOC);
     $employees = [];
     foreach ($raw as $e) {
@@ -1228,7 +1228,7 @@ function handleGetBusinessEmployeeDetail(string $id): void {
     $pdo = getDatabaseConnection();
     ensureBusinessTablesExist($pdo);
 
-    $stmt = $pdo->prepare("SELECT * FROM `employee` WHERE `id` = ? OR `employeeCode` = ? OR LOWER(`name`) = LOWER(?) LIMIT 1");
+    $stmt = $pdo->prepare("SELECT * FROM `Employee` WHERE `id` = ? OR `employeeCode` = ? OR LOWER(`name`) = LOWER(?) LIMIT 1");
     $stmt->execute([$id, $id, $id]);
     $emp = $stmt->fetch(PDO::FETCH_ASSOC);
 
@@ -1247,7 +1247,7 @@ function handleGetBusinessEmployeeDetail(string $id): void {
         COALESCE(SUM(finalSaleAmount), 0) as totalSalesAmount,
         COALESCE(SUM(netProfit), 0) as netProfit,
         COALESCE(SUM(commissionAmount), 0) as totalCommission
-    FROM `internalsale`
+    FROM `InternalSale`
     WHERE `employeeId` = ? OR LOWER(`salesPersonName`) = LOWER(?)");
     $salesStmt->execute([$emp['id'], $emp['name']]);
     $stats = $salesStmt->fetch(PDO::FETCH_ASSOC) ?: [
@@ -1258,7 +1258,7 @@ function handleGetBusinessEmployeeDetail(string $id): void {
     ];
 
     // Query full sales history for this employee
-    $ordersStmt = $pdo->prepare("SELECT * FROM `internalsale` WHERE `employeeId` = ? OR LOWER(`salesPersonName`) = LOWER(?) ORDER BY `saleDate` DESC");
+    $ordersStmt = $pdo->prepare("SELECT * FROM `InternalSale` WHERE `employeeId` = ? OR LOWER(`salesPersonName`) = LOWER(?) ORDER BY `saleDate` DESC");
     $ordersStmt->execute([$emp['id'], $emp['name']]);
     $sales = $ordersStmt->fetchAll(PDO::FETCH_ASSOC);
 
@@ -1283,7 +1283,7 @@ function handleGetBusinessEmployeeDetail(string $id): void {
     // Query commission ledger for this employee
     $commStmt = $pdo->prepare("SELECT c.*, s.`invoiceNo` as saleInvoice, s.`finalSaleAmount`, s.`netProfit` 
         FROM `commission` c 
-        LEFT JOIN `internalsale` s ON c.`saleId` = s.`id` OR c.`saleId` = s.`invoiceNo`
+        LEFT JOIN `InternalSale` s ON c.`saleId` = s.`id` OR c.`saleId` = s.`invoiceNo`
         WHERE c.`employeeId` = ? 
         ORDER BY c.`createdAt` DESC");
     $commStmt->execute([$emp['id']]);
@@ -1391,7 +1391,7 @@ function handleCreateBusinessEmployee(): void {
     }
 
     // Check duplicate email in employee table
-    $chkEmp = $pdo->prepare("SELECT `id` FROM `employee` WHERE LOWER(`email`) = ? LIMIT 1");
+    $chkEmp = $pdo->prepare("SELECT `id` FROM `Employee` WHERE LOWER(`email`) = ? LIMIT 1");
     $chkEmp->execute([$email]);
     if ($chkEmp->fetch()) {
         jsonError('An employee with this email address already exists.', 400);
@@ -1412,14 +1412,14 @@ function handleCreateBusinessEmployee(): void {
     }
 
     // Generate Unique Employee Code
-    $codeStmt = $pdo->query("SELECT MAX(CAST(SUBSTRING(`employeeCode`, 5) AS UNSIGNED)) as maxNum FROM `employee` WHERE `employeeCode` LIKE 'EMP-%'");
+    $codeStmt = $pdo->query("SELECT MAX(CAST(SUBSTRING(`employeeCode`, 5) AS UNSIGNED)) as maxNum FROM `Employee` WHERE `employeeCode` LIKE 'EMP-%'");
     $maxNum = (int)($codeStmt->fetchColumn() ?: 1000);
     $nextCode = 'EMP-' . max($maxNum + 1, 1001);
 
     $empId = generateUuidV4();
     $userId = generateUuidV4();
 
-    $stmt = $pdo->prepare("INSERT INTO `employee` (
+    $stmt = $pdo->prepare("INSERT INTO `Employee` (
         `id`, `employeeCode`, `name`, `email`, `phone`, `department`, `designation`, `role`,
         `status`, `monthlyTarget`, `passwordHash`, `userId`, `notes`, `createdAt`, `updatedAt`
     ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, 'ACTIVE', ?, ?, ?, ?, NOW(), NOW())");
@@ -1442,7 +1442,7 @@ function handleCreateBusinessEmployee(): void {
     // If login is created, sync to user table
     if ($passwordHash) {
         try {
-            $uStmt = $pdo->prepare("INSERT INTO `user` (`id`, `email`, `name`, `passwordHash`, `role`, `createdAt`, `updatedAt`) 
+            $uStmt = $pdo->prepare("INSERT INTO `User` (`id`, `email`, `name`, `passwordHash`, `role`, `createdAt`, `updatedAt`) 
                 VALUES (?, ?, ?, ?, ?, NOW(), NOW()) 
                 ON DUPLICATE KEY UPDATE `name` = VALUES(`name`), `passwordHash` = VALUES(`passwordHash`), `role` = VALUES(`role`), `updatedAt` = NOW()");
             $uStmt->execute([$userId, $email, $fullName, $passwordHash, $role]);
@@ -1482,7 +1482,7 @@ function handleUpdateBusinessEmployee(string $id): void {
     $pdo = getDatabaseConnection();
     ensureBusinessTablesExist($pdo);
 
-    $getStmt = $pdo->prepare("SELECT * FROM `employee` WHERE `id` = ? OR `employeeCode` = ? LIMIT 1");
+    $getStmt = $pdo->prepare("SELECT * FROM `Employee` WHERE `id` = ? OR `employeeCode` = ? LIMIT 1");
     $getStmt->execute([$id, $id]);
     $existing = $getStmt->fetch(PDO::FETCH_ASSOC);
 
@@ -1520,7 +1520,7 @@ function handleUpdateBusinessEmployee(string $id): void {
 
     // Check duplicate email
     if ($email !== strtolower($existing['email'])) {
-        $chkEmp = $pdo->prepare("SELECT `id` FROM `employee` WHERE LOWER(`email`) = ? AND `id` != ? LIMIT 1");
+        $chkEmp = $pdo->prepare("SELECT `id` FROM `Employee` WHERE LOWER(`email`) = ? AND `id` != ? LIMIT 1");
         $chkEmp->execute([$email, $existing['id']]);
         if ($chkEmp->fetch()) {
             jsonError('Another employee with this email address already exists.', 400);
@@ -1545,7 +1545,7 @@ function handleUpdateBusinessEmployee(string $id): void {
         jsonError('A password is required for SALES_HR_MANAGER.', 400);
     }
 
-    $updStmt = $pdo->prepare("UPDATE `employee` SET 
+    $updStmt = $pdo->prepare("UPDATE `Employee` SET 
         `name` = ?, 
         `email` = ?, 
         `phone` = ?, 
@@ -1576,21 +1576,21 @@ function handleUpdateBusinessEmployee(string $id): void {
     // Sync to user table
     if ($passwordHash || $role === 'SALES_HR_MANAGER' || $existing['role'] === 'SALES_HR_MANAGER') {
         try {
-            $userCheck = $pdo->prepare("SELECT `id` FROM `user` WHERE LOWER(`email`) = ? OR `email` = ? LIMIT 1");
+            $userCheck = $pdo->prepare("SELECT `id` FROM `User` WHERE LOWER(`email`) = ? OR `email` = ? LIMIT 1");
             $userCheck->execute([$email, $existing['email']]);
             $uRow = $userCheck->fetch(PDO::FETCH_ASSOC);
 
             if ($uRow) {
                 if ($passwordUpdated) {
-                    $uUpd = $pdo->prepare("UPDATE `user` SET `email` = ?, `name` = ?, `passwordHash` = ?, `role` = ?, `updatedAt` = NOW() WHERE `id` = ?");
+                    $uUpd = $pdo->prepare("UPDATE `User` SET `email` = ?, `name` = ?, `passwordHash` = ?, `role` = ?, `updatedAt` = NOW() WHERE `id` = ?");
                     $uUpd->execute([$email, $fullName, $passwordHash, $role, $uRow['id']]);
                 } else {
-                    $uUpd = $pdo->prepare("UPDATE `user` SET `email` = ?, `name` = ?, `role` = ?, `updatedAt` = NOW() WHERE `id` = ?");
+                    $uUpd = $pdo->prepare("UPDATE `User` SET `email` = ?, `name` = ?, `role` = ?, `updatedAt` = NOW() WHERE `id` = ?");
                     $uUpd->execute([$email, $fullName, $role, $uRow['id']]);
                 }
             } else if ($passwordHash) {
                 $newUserId = generateUuidV4();
-                $uIns = $pdo->prepare("INSERT INTO `user` (`id`, `email`, `name`, `passwordHash`, `role`, `createdAt`, `updatedAt`) VALUES (?, ?, ?, ?, ?, NOW(), NOW())");
+                $uIns = $pdo->prepare("INSERT INTO `User` (`id`, `email`, `name`, `passwordHash`, `role`, `createdAt`, `updatedAt`) VALUES (?, ?, ?, ?, ?, NOW(), NOW())");
                 $uIns->execute([$newUserId, $email, $fullName, $passwordHash, $role]);
             }
         } catch (\Throwable $e) {
@@ -1626,7 +1626,7 @@ function handleToggleEmployeeStatus(string $id): void {
     $pdo = getDatabaseConnection();
     ensureBusinessTablesExist($pdo);
 
-    $stmt = $pdo->prepare("SELECT * FROM `employee` WHERE `id` = ? OR `employeeCode` = ? LIMIT 1");
+    $stmt = $pdo->prepare("SELECT * FROM `Employee` WHERE `id` = ? OR `employeeCode` = ? LIMIT 1");
     $stmt->execute([$id, $id]);
     $emp = $stmt->fetch(PDO::FETCH_ASSOC);
 
@@ -1635,7 +1635,7 @@ function handleToggleEmployeeStatus(string $id): void {
     }
 
     $newStatus = ($emp['status'] === 'ACTIVE') ? 'INACTIVE' : 'ACTIVE';
-    $upd = $pdo->prepare("UPDATE `employee` SET `status` = ?, `updatedAt` = NOW() WHERE `id` = ?");
+    $upd = $pdo->prepare("UPDATE `Employee` SET `status` = ?, `updatedAt` = NOW() WHERE `id` = ?");
     $upd->execute([$newStatus, $emp['id']]);
 
     recordBusinessAuditLog('STATUS_CHANGE', 'Employee', "Changed employee {$emp['name']} status to {$newStatus}");
@@ -1655,7 +1655,7 @@ function handleGetBusinessAttendance(): void {
     $date = $_GET['date'] ?? date('Y-m-d');
     $stmt = $pdo->prepare("SELECT a.*, e.name as employeeName, e.employeeCode, e.department 
         FROM `attendance` a 
-        JOIN `employee` e ON a.employeeId = e.id 
+        JOIN `Employee` e ON a.employeeId = e.id 
         WHERE a.date = ?");
     $stmt->execute([$date]);
     $records = $stmt->fetchAll(PDO::FETCH_ASSOC);
@@ -1675,7 +1675,7 @@ function handleGetBusinessAttendanceToday(): void {
         else if ($st === 'absent') $summary['absent'] += (int)$a['cnt'];
         else if ($st === 'leave') $summary['onLeave'] += (int)$a['cnt'];
     }
-    $totalEmpStmt = $pdo->query("SELECT COUNT(*) FROM `employee` WHERE `status` = 'ACTIVE'");
+    $totalEmpStmt = $pdo->query("SELECT COUNT(*) FROM `Employee` WHERE `status` = 'ACTIVE'");
     $summary['totalEmployees'] = (int)$totalEmpStmt->fetchColumn();
     jsonResponse($summary);
 }
@@ -1692,12 +1692,12 @@ function handleGetBusinessAttendanceReport(): void {
     $daysInMonth = (int)date('t', strtotime("{$year}-{$month}-01"));
 
     // Get all active employees (fallback to all employees if none marked active)
-    $empStmt = $pdo->query("SELECT * FROM `employee` ORDER BY `name` ASC");
+    $empStmt = $pdo->query("SELECT * FROM `Employee` ORDER BY `name` ASC");
     $employees = $empStmt->fetchAll(PDO::FETCH_ASSOC);
 
     if (empty($employees)) {
         ensureBusinessTablesExist($pdo);
-        $empStmt = $pdo->query("SELECT * FROM `employee` ORDER BY `name` ASC");
+        $empStmt = $pdo->query("SELECT * FROM `Employee` ORDER BY `name` ASC");
         $employees = $empStmt->fetchAll(PDO::FETCH_ASSOC);
     }
 
@@ -1784,7 +1784,7 @@ function handleBusinessCheckIn(): void {
 
     $empId = $body['employeeId'] ?? null;
     if (empty($empId)) {
-        $firstEmp = $pdo->query("SELECT id FROM `employee` WHERE `status` = 'ACTIVE' LIMIT 1")->fetchColumn();
+        $firstEmp = $pdo->query("SELECT id FROM `Employee` WHERE `status` = 'ACTIVE' LIMIT 1")->fetchColumn();
         $empId = $firstEmp ?: 'emp-rutu-001';
     }
 
@@ -1809,7 +1809,7 @@ function handleBusinessCheckOut(): void {
 
     $empId = $body['employeeId'] ?? null;
     if (empty($empId)) {
-        $firstEmp = $pdo->query("SELECT id FROM `employee` WHERE `status` = 'ACTIVE' LIMIT 1")->fetchColumn();
+        $firstEmp = $pdo->query("SELECT id FROM `Employee` WHERE `status` = 'ACTIVE' LIMIT 1")->fetchColumn();
         $empId = $firstEmp ?: 'emp-rutu-001';
     }
 
@@ -1865,7 +1865,7 @@ function syncBusinessCustomersFromSales(PDO $pdo): void {
             COALESCE(SUM(netProfit), 0) as netProfit,
             MAX(saleDate) as lastSaleDate,
             MAX(salesPersonName) as assignedStaff
-        FROM `internalsale`
+        FROM `InternalSale`
         WHERE customerName IS NOT NULL AND TRIM(customerName) != ''
         GROUP BY TRIM(customerName)");
         $salesCustomers = $salesCustStmt->fetchAll(PDO::FETCH_ASSOC);
@@ -1874,7 +1874,7 @@ function syncBusinessCustomersFromSales(PDO $pdo): void {
             return;
         }
 
-        $existStmt = $pdo->query("SELECT `id`, LOWER(TRIM(`name`)) as normName FROM `customer` WHERE `name` IS NOT NULL");
+        $existStmt = $pdo->query("SELECT `id`, LOWER(TRIM(`name`)) as normName FROM `Customer` WHERE `name` IS NOT NULL");
         $existingMap = [];
         while ($row = $existStmt->fetch(PDO::FETCH_ASSOC)) {
             $norm = $row['normName'];
@@ -1883,7 +1883,7 @@ function syncBusinessCustomersFromSales(PDO $pdo): void {
             }
         }
 
-        $updateStmt = $pdo->prepare("UPDATE `customer` SET 
+        $updateStmt = $pdo->prepare("UPDATE `Customer` SET 
             `country` = COALESCE(?, `country`),
             `companyName` = COALESCE(?, `companyName`),
             `company` = COALESCE(?, `company`),
@@ -1895,7 +1895,7 @@ function syncBusinessCustomersFromSales(PDO $pdo): void {
             `updatedAt` = NOW()
             WHERE `id` = ?");
 
-        $insertStmt = $pdo->prepare("INSERT INTO `customer` (
+        $insertStmt = $pdo->prepare("INSERT INTO `Customer` (
             `id`, `name`, `email`, `country`, `companyName`, `company`, `assignedStaff`, `totalInvoicedDeals`, `lifetimeVolume`, `netProfit`, `lastSaleDate`, `createdAt`, `updatedAt`
         ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, NOW(), NOW())");
 
@@ -1963,11 +1963,11 @@ function handleGetBusinessCustomers(): void {
     }
 
     try {
-        $stmt = $pdo->prepare("SELECT * FROM `customer` {$where} ORDER BY `lifetimeVolume` DESC, `createdAt` DESC LIMIT 500");
+        $stmt = $pdo->prepare("SELECT * FROM `Customer` {$where} ORDER BY `lifetimeVolume` DESC, `createdAt` DESC LIMIT 500");
         $stmt->execute($params);
         $rawCustomers = $stmt->fetchAll(PDO::FETCH_ASSOC);
     } catch (\Throwable $e) {
-        $stmt = $pdo->prepare("SELECT * FROM `customer` {$where} ORDER BY `createdAt` DESC LIMIT 500");
+        $stmt = $pdo->prepare("SELECT * FROM `Customer` {$where} ORDER BY `createdAt` DESC LIMIT 500");
         $stmt->execute($params);
         $rawCustomers = $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
@@ -2009,13 +2009,13 @@ function handleGetBusinessCustomerOrders(string $id): void {
     $pdo = getDatabaseConnection();
     ensureBusinessTablesExist($pdo);
 
-    $cStmt = $pdo->prepare("SELECT * FROM `customer` WHERE `id` = ? OR LOWER(TRIM(`name`)) = ? LIMIT 1");
+    $cStmt = $pdo->prepare("SELECT * FROM `Customer` WHERE `id` = ? OR LOWER(TRIM(`name`)) = ? LIMIT 1");
     $cStmt->execute([$id, strtolower(trim($id))]);
     $customer = $cStmt->fetch(PDO::FETCH_ASSOC);
 
     $custName = $customer['name'] ?? $id;
 
-    $salesStmt = $pdo->prepare("SELECT * FROM `internalsale` 
+    $salesStmt = $pdo->prepare("SELECT * FROM `InternalSale` 
         WHERE LOWER(TRIM(`customerName`)) = ? OR `customerId` = ? OR LOWER(TRIM(`customerName`)) = ?
         ORDER BY `saleDate` DESC, `createdAt` DESC");
     $salesStmt->execute([strtolower(trim($custName)), $id, strtolower(trim($id))]);
@@ -2047,14 +2047,14 @@ function handleCreateBusinessCustomer(): void {
 
     // Check duplicate
     $norm = strtolower($name);
-    $checkStmt = $pdo->prepare("SELECT id FROM `customer` WHERE LOWER(TRIM(`name`)) = ? LIMIT 1");
+    $checkStmt = $pdo->prepare("SELECT id FROM `Customer` WHERE LOWER(TRIM(`name`)) = ? LIMIT 1");
     $checkStmt->execute([$norm]);
     if ($checkStmt->fetch()) {
         jsonError('A customer with this name already exists', 409);
     }
 
     $id = 'cust-' . substr(md5($norm), 0, 16);
-    $stmt = $pdo->prepare("INSERT INTO `customer` (
+    $stmt = $pdo->prepare("INSERT INTO `Customer` (
         `id`, `name`, `country`, `companyName`, `email`, `phone`, `assignedStaff`, `notes`, `createdAt`, `updatedAt`
     ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, NOW(), NOW())");
 
@@ -2131,7 +2131,7 @@ function handleGetBusinessCommissions(): void {
     ensureBusinessTablesExist($pdo);
     $stmt = $pdo->query("SELECT c.*, s.invoiceNo, s.customerName, s.finalSaleAmount, s.netProfit 
         FROM `commission` c 
-        JOIN `internalsale` s ON c.saleId = s.id 
+        JOIN `InternalSale` s ON c.saleId = s.id 
         ORDER BY c.createdAt DESC");
     jsonResponse(['commissions' => $stmt->fetchAll(PDO::FETCH_ASSOC)]);
 }
@@ -2142,7 +2142,7 @@ function handleGetBusinessTargets(): void {
 
     $year = (int)($_GET['year'] ?? date('Y'));
 
-    $stmt = $pdo->prepare("SELECT * FROM `salestarget` WHERE `year` = ? OR `periodYear` = ? ORDER BY `month` ASC, `periodMonth` ASC, `createdAt` DESC");
+    $stmt = $pdo->prepare("SELECT * FROM `SalesTarget` WHERE `year` = ? OR `periodYear` = ? ORDER BY `month` ASC, `periodMonth` ASC, `createdAt` DESC");
     $stmt->execute([$year, $year]);
     $rawTargets = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
@@ -2158,7 +2158,7 @@ function handleGetBusinessTargets(): void {
             COUNT(id) as orderCount,
             COALESCE(SUM(finalSaleAmount), 0) as actualRevenue,
             COALESCE(SUM(netProfit), 0) as netProfit
-        FROM `internalsale`
+        FROM `InternalSale`
         WHERE (YEAR(saleDate) = ? AND MONTH(saleDate) = ?) OR LOWER(TRIM(saleMonth)) = ?");
         $salesStmt->execute([$tYear, $tMonth, strtolower($monthName)]);
         $metrics = $salesStmt->fetch(PDO::FETCH_ASSOC);
@@ -2214,7 +2214,7 @@ function handleCreateBusinessTarget(): void {
         $id = 'tgt-company-' . $tYear . '-' . $tMonth;
 
         try {
-            $stmt = $pdo->prepare("INSERT INTO `salestarget` (
+            $stmt = $pdo->prepare("INSERT INTO `SalesTarget` (
                 `id`, `employeeId`, `periodType`, `periodYear`, `periodMonth`, `year`, `month`, `targetAmount`, `notes`, `createdAt`, `updatedAt`
             ) VALUES (?, 'COMPANY', 'MONTHLY', ?, ?, ?, ?, ?, ?, NOW(), NOW())
             ON DUPLICATE KEY UPDATE `targetAmount` = VALUES(`targetAmount`), `notes` = VALUES(`notes`), `updatedAt` = NOW()");
@@ -2229,7 +2229,7 @@ function handleCreateBusinessTarget(): void {
                 $notes
             ]);
         } catch (\Throwable $err1) {
-            $stmt = $pdo->prepare("INSERT INTO `salestarget` (
+            $stmt = $pdo->prepare("INSERT INTO `SalesTarget` (
                 `id`, `year`, `month`, `targetAmount`, `notes`, `createdAt`, `updatedAt`
             ) VALUES (?, ?, ?, ?, ?, NOW(), NOW())
             ON DUPLICATE KEY UPDATE `targetAmount` = VALUES(`targetAmount`), `notes` = VALUES(`notes`), `updatedAt` = NOW()");
@@ -2255,14 +2255,14 @@ function handleDeleteBusinessTarget(string $id): void {
     $pdo = getDatabaseConnection();
     ensureBusinessTablesExist($pdo);
 
-    $stmt = $pdo->prepare("DELETE FROM `salestarget` WHERE `id` = ?");
+    $stmt = $pdo->prepare("DELETE FROM `SalesTarget` WHERE `id` = ?");
     $stmt->execute([$id]);
 
     if (preg_match('/tgt-company-(\d+)-(\d+)/', $id, $m)) {
         $yr = (int)$m[1];
         $mo = (int)$m[2];
         try {
-            $pdo->prepare("DELETE FROM `salestarget` WHERE (`year` = ? AND `month` = ?) OR (`periodYear` = ? AND `periodMonth` = ?)")->execute([$yr, $mo, $yr, $mo]);
+            $pdo->prepare("DELETE FROM `SalesTarget` WHERE (`year` = ? AND `month` = ?) OR (`periodYear` = ? AND `periodMonth` = ?)")->execute([$yr, $mo, $yr, $mo]);
         } catch (\Throwable $e) {}
     }
 
@@ -2273,7 +2273,7 @@ function handleDeleteBusinessTarget(string $id): void {
 function handleGetBusinessAuditLogs(): void {
     requireAdminOnly();
     $pdo = getDatabaseConnection();
-    $stmt = $pdo->query("SELECT * FROM `activitylog` ORDER BY `createdAt` DESC LIMIT 100");
+    $stmt = $pdo->query("SELECT * FROM `ActivityLog` ORDER BY `createdAt` DESC LIMIT 100");
     jsonResponse(['logs' => $stmt->fetchAll(PDO::FETCH_ASSOC)]);
 }
 
@@ -2284,16 +2284,16 @@ function handleResetBusinessData(): void {
 
     // 1. Delete all sales and commissions
     $pdo->exec("DELETE FROM `commission`");
-    $pdo->exec("DELETE FROM `internalsale`");
+    $pdo->exec("DELETE FROM `InternalSale`");
 
     // 2. Delete all attendance and targets
     $pdo->exec("DELETE FROM `attendance`");
-    $pdo->exec("DELETE FROM `salestarget`");
+    $pdo->exec("DELETE FROM `SalesTarget`");
     $pdo->exec("DELETE FROM `commissionrule`");
-    $pdo->exec("DELETE FROM `commissionplan`");
+    $pdo->exec("DELETE FROM `CommissionPlan`");
 
     // Remove legacy demo employees
-    $pdo->exec("DELETE FROM `employee` WHERE `employeeCode` IN ('EMP-1001', 'EMP-1002', 'EMP-1003', 'EMP001', 'EMP002', 'EMP003', 'DEMO001') OR `email` LIKE '%auroradiamonds.com%'");
+    $pdo->exec("DELETE FROM `Employee` WHERE `employeeCode` IN ('EMP-1001', 'EMP-1002', 'EMP-1003', 'EMP001', 'EMP002', 'EMP003', 'DEMO001') OR `email` LIKE '%auroradiamonds.com%'");
 
     jsonResponse([
         'message' => 'All sales, attendance, and commission records reset successfully.',
@@ -2306,7 +2306,7 @@ function handleDeleteAllSales(): void {
     $pdo = getDatabaseConnection();
     ensureBusinessTablesExist($pdo);
     $pdo->exec("DELETE FROM `commission`");
-    $pdo->exec("DELETE FROM `internalsale`");
+    $pdo->exec("DELETE FROM `InternalSale`");
     syncBusinessCustomersFromSales($pdo);
     jsonResponse(['message' => 'All sales removed successfully', 'success' => true]);
 }
@@ -2317,7 +2317,7 @@ function handleDeleteSaleById(string $id): void {
     ensureBusinessTablesExist($pdo);
 
     $pdo->prepare("DELETE FROM `commission` WHERE `saleId` = ?")->execute([$id]);
-    $stmt = $pdo->prepare("DELETE FROM `internalsale` WHERE `id` = ? OR `invoiceNo` = ?");
+    $stmt = $pdo->prepare("DELETE FROM `InternalSale` WHERE `id` = ? OR `invoiceNo` = ?");
     $stmt->execute([$id, $id]);
 
     syncBusinessCustomersFromSales($pdo);
@@ -2328,7 +2328,7 @@ function recordBusinessAuditLog(string $action, string $object, ?string $details
     try {
         $pdo = getDatabaseConnection();
         $id = generateUuidV4();
-        $stmt = $pdo->prepare("INSERT INTO `activitylog` (`id`, `action`, `object`, `newValue`, `createdAt`) VALUES (?, ?, ?, ?, NOW())");
+        $stmt = $pdo->prepare("INSERT INTO `ActivityLog` (`id`, `action`, `object`, `newValue`, `createdAt`) VALUES (?, ?, ?, ?, NOW())");
         $stmt->execute([$id, $action, $object, $details]);
     } catch (\Throwable $e) {
         error_log('Audit log error: ' . $e->getMessage());
@@ -2339,7 +2339,7 @@ function handleDeleteAllCustomers(): void {
     requireAdminOnly();
     $pdo = getDatabaseConnection();
     ensureBusinessTablesExist($pdo);
-    $pdo->exec("DELETE FROM `customer`");
+    $pdo->exec("DELETE FROM `Customer`");
     recordBusinessAuditLog('DELETE_ALL', 'Customer', 'Purged all client CRM records');
     jsonResponse(['message' => 'All customers removed successfully', 'success' => true]);
 }
@@ -2348,7 +2348,7 @@ function handleDeleteCustomerById(string $id): void {
     requireBusinessAccess(['SALES_HR_MANAGER']);
     $pdo = getDatabaseConnection();
     ensureBusinessTablesExist($pdo);
-    $stmt = $pdo->prepare("DELETE FROM `customer` WHERE `id` = ?");
+    $stmt = $pdo->prepare("DELETE FROM `Customer` WHERE `id` = ?");
     $stmt->execute([$id]);
     recordBusinessAuditLog('DELETE', 'Customer', "Deleted customer ID {$id}");
     jsonResponse(['message' => 'Customer deleted successfully', 'success' => true]);
@@ -2367,7 +2367,7 @@ function handleDeleteCustomersBatch(): void {
     }
 
     $placeholders = implode(',', array_fill(0, count($ids), '?'));
-    $stmt = $pdo->prepare("DELETE FROM `customer` WHERE `id` IN ($placeholders)");
+    $stmt = $pdo->prepare("DELETE FROM `Customer` WHERE `id` IN ($placeholders)");
     $stmt->execute($ids);
     recordBusinessAuditLog('DELETE_BATCH', 'Customer', "Deleted " . count($ids) . " customers");
     jsonResponse(['message' => count($ids) . ' customers deleted successfully', 'success' => true]);
@@ -2381,7 +2381,7 @@ function handleDeleteEmployeeById(string $id): void {
     $pdo = getDatabaseConnection();
     ensureBusinessTablesExist($pdo);
 
-    $chkStmt = $pdo->prepare("SELECT `role`, `email` FROM `employee` WHERE `id` = ? OR `employeeCode` = ? LIMIT 1");
+    $chkStmt = $pdo->prepare("SELECT `role`, `email` FROM `Employee` WHERE `id` = ? OR `employeeCode` = ? LIMIT 1");
     $chkStmt->execute([$id, $id]);
     $emp = $chkStmt->fetch(PDO::FETCH_ASSOC);
 
@@ -2389,7 +2389,7 @@ function handleDeleteEmployeeById(string $id): void {
         jsonError('Only Administrators can delete Manager or Administrator employee records', 403);
     }
 
-    $stmt = $pdo->prepare("DELETE FROM `employee` WHERE `id` = ? OR `employeeCode` = ?");
+    $stmt = $pdo->prepare("DELETE FROM `Employee` WHERE `id` = ? OR `employeeCode` = ?");
     $stmt->execute([$id, $id]);
     recordBusinessAuditLog('DELETE', 'Employee', "Deleted employee ID {$id}");
     jsonResponse(['message' => 'Employee deleted successfully', 'success' => true]);
@@ -2412,7 +2412,7 @@ function handleDeleteEmployeesBatch(): void {
 
     if (!$isFullAdmin) {
         $placeholders = implode(',', array_fill(0, count($ids), '?'));
-        $roleStmt = $pdo->prepare("SELECT COUNT(*) FROM `employee` WHERE `id` IN ($placeholders) AND `role` IN ('SUPER_ADMIN', 'ADMIN', 'SALES_HR_MANAGER')");
+        $roleStmt = $pdo->prepare("SELECT COUNT(*) FROM `Employee` WHERE `id` IN ($placeholders) AND `role` IN ('SUPER_ADMIN', 'ADMIN', 'SALES_HR_MANAGER')");
         $roleStmt->execute($ids);
         if ((int)$roleStmt->fetchColumn() > 0) {
             jsonError('Only Administrators can delete Manager or Administrator records', 403);
@@ -2420,7 +2420,7 @@ function handleDeleteEmployeesBatch(): void {
     }
 
     $placeholders = implode(',', array_fill(0, count($ids), '?'));
-    $stmt = $pdo->prepare("DELETE FROM `employee` WHERE `id` IN ($placeholders)");
+    $stmt = $pdo->prepare("DELETE FROM `Employee` WHERE `id` IN ($placeholders)");
     $stmt->execute($ids);
     recordBusinessAuditLog('DELETE_BATCH', 'Employee', "Deleted " . count($ids) . " employees");
     jsonResponse(['message' => count($ids) . ' employees deleted successfully', 'success' => true]);
@@ -2438,13 +2438,13 @@ function performAutomatedWeeklyBackup(PDO $pdo): void {
         }
 
         // Generate full snapshot of all operational data
-        $sales = $pdo->query("SELECT * FROM `internalsale`")->fetchAll(PDO::FETCH_ASSOC);
-        $employees = $pdo->query("SELECT * FROM `employee`")->fetchAll(PDO::FETCH_ASSOC);
-        $customers = $pdo->query("SELECT * FROM `customer`")->fetchAll(PDO::FETCH_ASSOC);
+        $sales = $pdo->query("SELECT * FROM `InternalSale`")->fetchAll(PDO::FETCH_ASSOC);
+        $employees = $pdo->query("SELECT * FROM `Employee`")->fetchAll(PDO::FETCH_ASSOC);
+        $customers = $pdo->query("SELECT * FROM `Customer`")->fetchAll(PDO::FETCH_ASSOC);
         $attendance = $pdo->query("SELECT * FROM `attendance`")->fetchAll(PDO::FETCH_ASSOC);
         $commissions = $pdo->query("SELECT * FROM `commission`")->fetchAll(PDO::FETCH_ASSOC);
         $suppliers = $pdo->query("SELECT * FROM `supplier`")->fetchAll(PDO::FETCH_ASSOC);
-        $targets = $pdo->query("SELECT * FROM `salestarget`")->fetchAll(PDO::FETCH_ASSOC);
+        $targets = $pdo->query("SELECT * FROM `SalesTarget`")->fetchAll(PDO::FETCH_ASSOC);
 
         $snapshot = [
             'meta' => [
@@ -2513,13 +2513,13 @@ function handleCreateManualBackup(): void {
     $pdo = getDatabaseConnection();
     ensureBusinessTablesExist($pdo);
 
-    $sales = $pdo->query("SELECT * FROM `internalsale`")->fetchAll(PDO::FETCH_ASSOC);
-    $employees = $pdo->query("SELECT * FROM `employee`")->fetchAll(PDO::FETCH_ASSOC);
-    $customers = $pdo->query("SELECT * FROM `customer`")->fetchAll(PDO::FETCH_ASSOC);
+    $sales = $pdo->query("SELECT * FROM `InternalSale`")->fetchAll(PDO::FETCH_ASSOC);
+    $employees = $pdo->query("SELECT * FROM `Employee`")->fetchAll(PDO::FETCH_ASSOC);
+    $customers = $pdo->query("SELECT * FROM `Customer`")->fetchAll(PDO::FETCH_ASSOC);
     $attendance = $pdo->query("SELECT * FROM `attendance`")->fetchAll(PDO::FETCH_ASSOC);
     $commissions = $pdo->query("SELECT * FROM `commission`")->fetchAll(PDO::FETCH_ASSOC);
     $suppliers = $pdo->query("SELECT * FROM `supplier`")->fetchAll(PDO::FETCH_ASSOC);
-    $targets = $pdo->query("SELECT * FROM `salestarget`")->fetchAll(PDO::FETCH_ASSOC);
+    $targets = $pdo->query("SELECT * FROM `SalesTarget`")->fetchAll(PDO::FETCH_ASSOC);
 
     $weekNumber = (int)date('W');
     $year = (int)date('Y');
@@ -2634,7 +2634,7 @@ function handleRestoreBusinessBackup(string $id): void {
     // 1. Restore Employees
     if (!empty($snapshot['employees']) && is_array($snapshot['employees'])) {
         foreach ($snapshot['employees'] as $emp) {
-            $eStmt = $pdo->prepare("INSERT INTO `employee` (
+            $eStmt = $pdo->prepare("INSERT INTO `Employee` (
                 `id`, `employeeCode`, `name`, `email`, `phone`, `department`, `designation`, `role`, 
                 `status`, `monthlyTarget`, `notes`, `createdAt`, `updatedAt`
             ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, NOW(), NOW())
@@ -2665,7 +2665,7 @@ function handleRestoreBusinessBackup(string $id): void {
         foreach ($snapshot['sales'] as $s) {
             $sDate = parseFlexibleDate($s['saleDate'] ?? null);
             $fin = computePhpFinancials($s);
-            $sStmt = $pdo->prepare("INSERT INTO `internalsale` (
+            $sStmt = $pdo->prepare("INSERT INTO `InternalSale` (
                 `id`, `invoiceNo`, `saleDate`, `customerName`, `customerCountry`, `customerId`, `productType`,
                 `productDescription`, `stoneType`, `shape`, `diamondColor`, `clarity`, `cut`, `polish`,
                 `symmetry`, `fluorescence`, `measurement`, `pricePerCarat`, `caratWeight`, `quantity`,
@@ -2741,7 +2741,7 @@ function handleRestoreBusinessBackup(string $id): void {
     // 3. Restore Customers
     if (!empty($snapshot['customers']) && is_array($snapshot['customers'])) {
         foreach ($snapshot['customers'] as $c) {
-            $cStmt = $pdo->prepare("INSERT INTO `customer` (
+            $cStmt = $pdo->prepare("INSERT INTO `Customer` (
                 `id`, `name`, `email`, `phone`, `country`, `company`, `assignedEmployeeId`, `notes`, `createdAt`, `updatedAt`
             ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, NOW(), NOW())
             ON DUPLICATE KEY UPDATE 

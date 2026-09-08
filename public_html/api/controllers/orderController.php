@@ -74,13 +74,13 @@ function computeOrderFinancialsPHP(array $order, array $payments = [], array $re
  * Concurrency-Safe Order Number Generator (FJ-100XX)
  */
 function generateConcurrencySafeOrderNumber(PDO $pdo): string {
-    $cntStmt = $pdo->query("SELECT COUNT(*) as cnt FROM `order`");
+    $cntStmt = $pdo->query("SELECT COUNT(*) as cnt FROM `Order`");
     $count = (int) $cntStmt->fetch()['cnt'];
     $candidateNum = 10001 + $count;
 
     while (true) {
         $orderNumber = "FJ-{$candidateNum}";
-        $checkStmt = $pdo->prepare("SELECT `id` FROM `order` WHERE `orderNumber` = ? LIMIT 1");
+        $checkStmt = $pdo->prepare("SELECT `id` FROM `Order` WHERE `orderNumber` = ? LIMIT 1");
         $checkStmt->execute([$orderNumber]);
         if (!$checkStmt->fetch()) {
             return $orderNumber;
@@ -127,14 +127,14 @@ function handleCreatePublicOrder(): void {
         // Resolve or create Customer record
         $customerId = null;
         if (!empty($customerEmail)) {
-            $custStmt = $pdo->prepare("SELECT `id` FROM `customer` WHERE `email` = ? LIMIT 1");
+            $custStmt = $pdo->prepare("SELECT `id` FROM `Customer` WHERE `email` = ? LIMIT 1");
             $custStmt->execute([$customerEmail]);
             $existingCust = $custStmt->fetch();
             if ($existingCust) {
                 $customerId = $existingCust['id'];
             } else {
                 $customerId = generateUuidV4Order();
-                $insCust = $pdo->prepare("INSERT INTO `customer` (`id`, `name`, `email`, `phone`, `createdAt`, `updatedAt`) VALUES (?, ?, ?, ?, NOW(), NOW())");
+                $insCust = $pdo->prepare("INSERT INTO `Customer` (`id`, `name`, `email`, `phone`, `createdAt`, `updatedAt`) VALUES (?, ?, ?, ?, NOW(), NOW())");
                 $insCust->execute([$customerId, $customerName, $customerEmail, $customerPhone ?: null]);
             }
         }
@@ -153,7 +153,7 @@ function handleCreatePublicOrder(): void {
 
         $orderId = generateUuidV4Order();
         $insOrder = $pdo->prepare("
-            INSERT INTO `order` (`id`, `orderNumber`, `customerId`, `customerName`, `customerEmail`, `customerPhone`, `billingAddress`, `shippingAddress`, `subtotal`, `tax`, `shippingFee`, `discount`, `totalAmount`, `currency`, `orderStatus`, `notes`, `createdAt`, `updatedAt`)
+            INSERT INTO `Order` (`id`, `orderNumber`, `customerId`, `customerName`, `customerEmail`, `customerPhone`, `billingAddress`, `shippingAddress`, `subtotal`, `tax`, `shippingFee`, `discount`, `totalAmount`, `currency`, `orderStatus`, `notes`, `createdAt`, `updatedAt`)
             VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'PENDING', ?, NOW(), NOW())
         ");
         $insOrder->execute([
@@ -164,7 +164,7 @@ function handleCreatePublicOrder(): void {
 
         // Insert Order Items
         $insItem = $pdo->prepare("
-            INSERT INTO `orderitem` (`id`, `orderId`, `productId`, `diamondId`, `productName`, `sku`, `variantInfo`, `unitPrice`, `quantity`, `discount`, `subtotal`)
+            INSERT INTO `OrderItem` (`id`, `orderId`, `productId`, `diamondId`, `productName`, `sku`, `variantInfo`, `unitPrice`, `quantity`, `discount`, `subtotal`)
             VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
         ");
 
@@ -251,7 +251,7 @@ function handleTrackPublicOrder(): void {
         $rawQ = ltrim($orderNumber, '#');
 
         $stmt = $pdo->prepare("
-            SELECT * FROM `order`
+            SELECT * FROM `Order`
             WHERE `orderNumber` = ? OR `orderNumber` LIKE ? OR `orderNumber` = ?
             LIMIT 1
         ");
@@ -259,7 +259,7 @@ function handleTrackPublicOrder(): void {
         $order = $stmt->fetch();
 
         if (!$order && !empty($email)) {
-            $eStmt = $pdo->prepare("SELECT * FROM `order` WHERE `customerEmail` = ? LIMIT 1");
+            $eStmt = $pdo->prepare("SELECT * FROM `Order` WHERE `customerEmail` = ? LIMIT 1");
             $eStmt->execute([$email]);
             $order = $eStmt->fetch();
         }
@@ -269,12 +269,12 @@ function handleTrackPublicOrder(): void {
         }
 
         // Fetch Items
-        $iStmt = $pdo->prepare("SELECT * FROM `orderitem` WHERE `orderId` = ?");
+        $iStmt = $pdo->prepare("SELECT * FROM `OrderItem` WHERE `orderId` = ?");
         $iStmt->execute([$order['id']]);
         $items = $iStmt->fetchAll();
 
         // Fetch Payments
-        $pStmt = $pdo->prepare("SELECT * FROM `payment` WHERE `orderId` = ?");
+        $pStmt = $pdo->prepare("SELECT * FROM `Payment` WHERE `orderId` = ?");
         $pStmt->execute([$order['id']]);
         $payments = $pStmt->fetchAll();
 
@@ -323,17 +323,17 @@ function handleGetOrdersByCustomerEmail(): void {
 
     try {
         $pdo = getDatabaseConnection();
-        $stmt = $pdo->prepare("SELECT * FROM `order` WHERE `customerEmail` = ? ORDER BY `createdAt` DESC");
+        $stmt = $pdo->prepare("SELECT * FROM `Order` WHERE `customerEmail` = ? ORDER BY `createdAt` DESC");
         $stmt->execute([$targetEmail]);
         $orders = $stmt->fetchAll();
 
         $result = [];
         foreach ($orders as $o) {
-            $iStmt = $pdo->prepare("SELECT * FROM `orderitem` WHERE `orderId` = ?");
+            $iStmt = $pdo->prepare("SELECT * FROM `OrderItem` WHERE `orderId` = ?");
             $iStmt->execute([$o['id']]);
             $items = $iStmt->fetchAll();
 
-            $pStmt = $pdo->prepare("SELECT * FROM `payment` WHERE `orderId` = ?");
+            $pStmt = $pdo->prepare("SELECT * FROM `Payment` WHERE `orderId` = ?");
             $pStmt->execute([$o['id']]);
             $payments = $pStmt->fetchAll();
 
@@ -386,17 +386,17 @@ function handleGetAdminOrders(): void {
 
         $whereSql = count($where) > 0 ? "WHERE " . implode(' AND ', $where) : "";
 
-        $stmt = $pdo->prepare("SELECT * FROM `order` {$whereSql} ORDER BY `createdAt` DESC");
+        $stmt = $pdo->prepare("SELECT * FROM `Order` {$whereSql} ORDER BY `createdAt` DESC");
         $stmt->execute($params);
         $orders = $stmt->fetchAll();
 
         $result = [];
         foreach ($orders as $o) {
-            $iStmt = $pdo->prepare("SELECT * FROM `orderitem` WHERE `orderId` = ?");
+            $iStmt = $pdo->prepare("SELECT * FROM `OrderItem` WHERE `orderId` = ?");
             $iStmt->execute([$o['id']]);
             $items = $iStmt->fetchAll();
 
-            $pStmt = $pdo->prepare("SELECT * FROM `payment` WHERE `orderId` = ?");
+            $pStmt = $pdo->prepare("SELECT * FROM `Payment` WHERE `orderId` = ?");
             $pStmt->execute([$o['id']]);
             $payments = $pStmt->fetchAll();
 
@@ -424,7 +424,7 @@ function handleGetAdminOrderById(string $id): void {
 
     try {
         $pdo = getDatabaseConnection();
-        $stmt = $pdo->prepare("SELECT * FROM `order` WHERE `id` = ? OR `orderNumber` = ? LIMIT 1");
+        $stmt = $pdo->prepare("SELECT * FROM `Order` WHERE `id` = ? OR `orderNumber` = ? LIMIT 1");
         $stmt->execute([$id, $id]);
         $order = $stmt->fetch();
 
@@ -432,15 +432,15 @@ function handleGetAdminOrderById(string $id): void {
             jsonError('Order not found', 404);
         }
 
-        $iStmt = $pdo->prepare("SELECT * FROM `orderitem` WHERE `orderId` = ?");
+        $iStmt = $pdo->prepare("SELECT * FROM `OrderItem` WHERE `orderId` = ?");
         $iStmt->execute([$order['id']]);
         $items = $iStmt->fetchAll();
 
-        $pStmt = $pdo->prepare("SELECT * FROM `payment` WHERE `orderId` = ? ORDER BY `paymentDate` DESC");
+        $pStmt = $pdo->prepare("SELECT * FROM `Payment` WHERE `orderId` = ? ORDER BY `paymentDate` DESC");
         $pStmt->execute([$order['id']]);
         $payments = $pStmt->fetchAll();
 
-        $rStmt = $pdo->prepare("SELECT * FROM `refund` WHERE `orderId` = ? ORDER BY `refundDate` DESC");
+        $rStmt = $pdo->prepare("SELECT * FROM `Refund` WHERE `orderId` = ? ORDER BY `refundDate` DESC");
         $rStmt->execute([$order['id']]);
         $refunds = $rStmt->fetchAll();
 
@@ -466,11 +466,11 @@ function handleWipeAllOrders(): void {
 
     try {
         $pdo = getDatabaseConnection();
-        $pdo->exec("DELETE FROM `orderitem`");
-        $pdo->exec("DELETE FROM `payment`");
-        $pdo->exec("DELETE FROM `refund`");
+        $pdo->exec("DELETE FROM `OrderItem`");
+        $pdo->exec("DELETE FROM `Payment`");
+        $pdo->exec("DELETE FROM `Refund`");
         $pdo->exec("DELETE FROM `Shipment`");
-        $pdo->exec("DELETE FROM `order`");
+        $pdo->exec("DELETE FROM `Order`");
 
         jsonResponse(['message' => 'All orders wiped to 0 successfully.'], 200);
 
@@ -488,13 +488,13 @@ function handleGetOrderSummary(): void {
 
     try {
         $pdo = getDatabaseConnection();
-        $totalOrdersStmt = $pdo->query("SELECT COUNT(*) as cnt, COALESCE(SUM(`totalAmount`), 0) as totalRevenue FROM `order`");
+        $totalOrdersStmt = $pdo->query("SELECT COUNT(*) as cnt, COALESCE(SUM(`totalAmount`), 0) as totalRevenue FROM `Order`");
         $tot = $totalOrdersStmt->fetch();
 
-        $pendingStmt = $pdo->query("SELECT COUNT(*) as cnt FROM `order` WHERE `orderStatus` = 'PROCESSING' OR `orderStatus` = 'PENDING'");
+        $pendingStmt = $pdo->query("SELECT COUNT(*) as cnt FROM `Order` WHERE `orderStatus` = 'PROCESSING' OR `orderStatus` = 'PENDING'");
         $pendingCnt = (int) $pendingStmt->fetch()['cnt'];
 
-        $completedStmt = $pdo->query("SELECT COUNT(*) as cnt FROM `order` WHERE `orderStatus` = 'DELIVERED' OR `orderStatus` = 'SHIPPED'");
+        $completedStmt = $pdo->query("SELECT COUNT(*) as cnt FROM `Order` WHERE `orderStatus` = 'DELIVERED' OR `orderStatus` = 'SHIPPED'");
         $completedCnt = (int) $completedStmt->fetch()['cnt'];
 
         jsonResponse([
@@ -530,7 +530,7 @@ function handleGenerateStatementReport(string $reportType, ?string $param = null
         $dataHtml = "<p>Aura Diamond Atelier Haute Joaillerie Financial Record</p>";
 
         if ($reportType === 'order-statement' || $reportType === 'invoice') {
-            $stmt = $pdo->prepare("SELECT * FROM `order` WHERE `id` = ? OR `orderNumber` = ? LIMIT 1");
+            $stmt = $pdo->prepare("SELECT * FROM `Order` WHERE `id` = ? OR `orderNumber` = ? LIMIT 1");
             $stmt->execute([$param, $param]);
             $order = $stmt->fetch();
             if ($order) {
@@ -538,7 +538,7 @@ function handleGenerateStatementReport(string $reportType, ?string $param = null
                 $dataHtml = "<h2>{$title}</h2><p>Customer: {$order['customerName']} ({$order['customerEmail']})</p><p>Total Amount: \${$order['totalAmount']} {$order['currency']}</p><p>Status: {$order['orderStatus']}</p>";
             }
         } else if ($reportType === 'payment-receipt') {
-            $stmt = $pdo->prepare("SELECT * FROM `payment` WHERE `id` = ? OR `paymentNumber` = ? LIMIT 1");
+            $stmt = $pdo->prepare("SELECT * FROM `Payment` WHERE `id` = ? OR `paymentNumber` = ? LIMIT 1");
             $stmt->execute([$param, $param]);
             $payment = $stmt->fetch();
             if ($payment) {
@@ -568,7 +568,7 @@ function handleExportFinancialData(): void {
         $format = $_GET['format'] ?? 'csv';
 
         if ($type === 'payments') {
-            $stmt = $pdo->query("SELECT `paymentNumber`, `orderId`, `amount`, `currency`, `paymentMethod`, `status`, `paymentDate` FROM `payment` ORDER BY `paymentDate` DESC");
+            $stmt = $pdo->query("SELECT `paymentNumber`, `orderId`, `amount`, `currency`, `paymentMethod`, `status`, `paymentDate` FROM `Payment` ORDER BY `paymentDate` DESC");
             $rows = $stmt->fetchAll();
 
             $csv = "Payment Number,Order ID,Amount,Currency,Payment Method,Status,Payment Date\n";
@@ -577,7 +577,7 @@ function handleExportFinancialData(): void {
             }
             $filename = "Aura_Atelier_Payments_" . date('Y-m-d') . ".csv";
         } else {
-            $stmt = $pdo->query("SELECT `orderNumber`, `customerName`, `customerEmail`, `totalAmount`, `currency`, `orderStatus`, `createdAt` FROM `order` ORDER BY `createdAt` DESC");
+            $stmt = $pdo->query("SELECT `orderNumber`, `customerName`, `customerEmail`, `totalAmount`, `currency`, `orderStatus`, `createdAt` FROM `Order` ORDER BY `createdAt` DESC");
             $rows = $stmt->fetchAll();
 
             $csv = "Order Number,Customer Name,Customer Email,Total Amount,Currency,Order Status,Created At\n";
@@ -603,7 +603,7 @@ function handleGetFinancialAuditLogs(): void {
     requireRole(['FINANCE_MANAGER', 'SUPER_ADMIN', 'ADMIN']);
     try {
         $pdo = getDatabaseConnection();
-        $stmt = $pdo->query("SELECT * FROM `activitylog` ORDER BY `createdAt` DESC LIMIT 200");
+        $stmt = $pdo->query("SELECT * FROM `ActivityLog` ORDER BY `createdAt` DESC LIMIT 200");
         $logs = $stmt->fetchAll();
         jsonResponse($logs, 200);
     } catch (Throwable $e) {
@@ -620,7 +620,7 @@ function handleGetCustomerDetailWithLedger(string $id): void {
     requireRole(['FINANCE_MANAGER', 'SUPER_ADMIN', 'ADMIN', 'ORDER_MANAGER']);
     try {
         $pdo = getDatabaseConnection();
-        $stmt = $pdo->prepare("SELECT * FROM `customer` WHERE `id` = ? LIMIT 1");
+        $stmt = $pdo->prepare("SELECT * FROM `Customer` WHERE `id` = ? LIMIT 1");
         $stmt->execute([$id]);
         $customer = $stmt->fetch();
 
@@ -628,7 +628,7 @@ function handleGetCustomerDetailWithLedger(string $id): void {
             jsonError('Customer not found', 404);
         }
 
-        $oStmt = $pdo->prepare("SELECT * FROM `order` WHERE `customerId` = ? ORDER BY `createdAt` DESC");
+        $oStmt = $pdo->prepare("SELECT * FROM `Order` WHERE `customerId` = ? ORDER BY `createdAt` DESC");
         $oStmt->execute([$customer['id']]);
         $orders = $oStmt->fetchAll();
 
@@ -666,7 +666,7 @@ function handleUpdateOrder(string $id): void {
 
     try {
         $pdo = getDatabaseConnection();
-        $stmt = $pdo->prepare("SELECT * FROM `order` WHERE `id` = ? OR `orderNumber` = ? LIMIT 1");
+        $stmt = $pdo->prepare("SELECT * FROM `Order` WHERE `id` = ? OR `orderNumber` = ? LIMIT 1");
         $stmt->execute([$id, $id]);
         $order = $stmt->fetch();
 
@@ -678,23 +678,23 @@ function handleUpdateOrder(string $id): void {
         $notes       = isset($body['notes']) ? $body['notes'] : $order['notes'];
         $shipping    = isset($body['shippingAddress']) ? $body['shippingAddress'] : $order['shippingAddress'];
 
-        $upd = $pdo->prepare("UPDATE `order` SET `orderStatus` = ?, `notes` = ?, `shippingAddress` = ?, `updatedAt` = NOW() WHERE `id` = ?");
+        $upd = $pdo->prepare("UPDATE `Order` SET `orderStatus` = ?, `notes` = ?, `shippingAddress` = ?, `updatedAt` = NOW() WHERE `id` = ?");
         $upd->execute([$status, $notes, $shipping, $order['id']]);
 
         // Re-read updated record
-        $rStmt = $pdo->prepare("SELECT * FROM `order` WHERE `id` = ? LIMIT 1");
+        $rStmt = $pdo->prepare("SELECT * FROM `Order` WHERE `id` = ? LIMIT 1");
         $rStmt->execute([$order['id']]);
         $updatedOrder = $rStmt->fetch();
 
-        $iStmt = $pdo->prepare("SELECT * FROM `orderitem` WHERE `orderId` = ?");
+        $iStmt = $pdo->prepare("SELECT * FROM `OrderItem` WHERE `orderId` = ?");
         $iStmt->execute([$order['id']]);
         $items = $iStmt->fetchAll();
 
-        $pStmt = $pdo->prepare("SELECT * FROM `payment` WHERE `orderId` = ? ORDER BY `paymentDate` DESC");
+        $pStmt = $pdo->prepare("SELECT * FROM `Payment` WHERE `orderId` = ? ORDER BY `paymentDate` DESC");
         $pStmt->execute([$order['id']]);
         $payments = $pStmt->fetchAll();
 
-        $rStmt2 = $pdo->prepare("SELECT * FROM `refund` WHERE `orderId` = ? ORDER BY `refundDate` DESC");
+        $rStmt2 = $pdo->prepare("SELECT * FROM `Refund` WHERE `orderId` = ? ORDER BY `refundDate` DESC");
         $rStmt2->execute([$order['id']]);
         $refunds = $rStmt2->fetchAll();
 

@@ -18,7 +18,7 @@ function generateUuidV4Payment(): string {
 }
 
 function getPayPalCredentials(PDO $pdo): array {
-    $stmt = $pdo->prepare("SELECT `key`, `value` FROM `sitesetting` WHERE `key` IN ('paypal_client_id', 'paypal_client_secret', 'paypal_mode', 'paypalClientId', 'paypalClientSecret', 'paypalMode')");
+    $stmt = $pdo->prepare("SELECT `key`, `value` FROM `SiteSetting` WHERE `key` IN ('paypal_client_id', 'paypal_client_secret', 'paypal_mode', 'paypalClientId', 'paypalClientSecret', 'paypalMode')");
     $stmt->execute();
     $rows = $stmt->fetchAll();
 
@@ -170,7 +170,7 @@ function handleCapturePayPalOrder(): void {
         // Check if sandbox order ID
         if (str_starts_with($paypalOrderId, 'PAYPAL-SANDBOX-') || $creds['mode'] === 'sandbox' || $creds['clientId'] === 'sb') {
             if ($dbOrderId) {
-                $u = $pdo->prepare("UPDATE `order` SET `orderStatus` = 'CONFIRMED', `updatedAt` = NOW() WHERE `id` = ? OR `orderNumber` = ?");
+                $u = $pdo->prepare("UPDATE `Order` SET `orderStatus` = 'CONFIRMED', `updatedAt` = NOW() WHERE `id` = ? OR `orderNumber` = ?");
                 $u->execute([$dbOrderId, $dbOrderId]);
             }
             jsonResponse([
@@ -196,7 +196,7 @@ function handleCapturePayPalOrder(): void {
 
         if (!$accessToken) {
             if ($dbOrderId) {
-                $u = $pdo->prepare("UPDATE `order` SET `orderStatus` = 'CONFIRMED', `updatedAt` = NOW() WHERE `id` = ? OR `orderNumber` = ?");
+                $u = $pdo->prepare("UPDATE `Order` SET `orderStatus` = 'CONFIRMED', `updatedAt` = NOW() WHERE `id` = ? OR `orderNumber` = ?");
                 $u->execute([$dbOrderId, $dbOrderId]);
             }
             jsonResponse([
@@ -222,7 +222,7 @@ function handleCapturePayPalOrder(): void {
         $captureData = json_decode($captureRes, true);
 
         if ($dbOrderId) {
-            $u = $pdo->prepare("UPDATE `order` SET `orderStatus` = 'CONFIRMED', `updatedAt` = NOW() WHERE `id` = ? OR `orderNumber` = ?");
+            $u = $pdo->prepare("UPDATE `Order` SET `orderStatus` = 'CONFIRMED', `updatedAt` = NOW() WHERE `id` = ? OR `orderNumber` = ?");
             $u->execute([$dbOrderId, $dbOrderId]);
         }
 
@@ -232,20 +232,20 @@ function handleCapturePayPalOrder(): void {
             $paypalCaptureId = $captureDetails['id'] ?? $paypalOrderId;
 
             if ($dbOrderId) {
-                $oStmt = $pdo->prepare("SELECT * FROM `order` WHERE `id` = ? LIMIT 1");
+                $oStmt = $pdo->prepare("SELECT * FROM `Order` WHERE `id` = ? LIMIT 1");
                 $oStmt->execute([$dbOrderId]);
                 $order = $oStmt->fetch();
 
                 if ($order) {
                     $year = date('Y');
-                    $cntStmt = $pdo->query("SELECT COUNT(*) as cnt FROM `payment`");
+                    $cntStmt = $pdo->query("SELECT COUNT(*) as cnt FROM `Payment`");
                     $count = (int) $cntStmt->fetch()['cnt'];
                     $numPadded = str_pad((string)($count + 1), 4, '0', STR_PAD_LEFT);
                     $paymentNumber = "FJ-PAY-{$year}-{$numPadded}";
 
                     $payId = generateUuidV4Payment();
                     $insPay = $pdo->prepare("
-                        INSERT INTO `payment` (`id`, `paymentNumber`, `orderId`, `amount`, `currency`, `paymentMethod`, `referenceId`, `status`, `notes`, `paymentDate`, `createdAt`, `updatedAt`)
+                        INSERT INTO `Payment` (`id`, `paymentNumber`, `orderId`, `amount`, `currency`, `paymentMethod`, `referenceId`, `status`, `notes`, `paymentDate`, `createdAt`, `updatedAt`)
                         VALUES (?, ?, ?, ?, ?, 'PayPal', ?, 'SUCCESS', ?, NOW(), NOW(), NOW())
                     ");
                     $insPay->execute([
@@ -257,7 +257,7 @@ function handleCapturePayPalOrder(): void {
                     ]);
 
                     // Update Order Status to CONFIRMED
-                    $updOrd = $pdo->prepare("UPDATE `order` SET `orderStatus` = 'CONFIRMED' WHERE `id` = ?");
+                    $updOrd = $pdo->prepare("UPDATE `Order` SET `orderStatus` = 'CONFIRMED' WHERE `id` = ?");
                     $updOrd->execute([$order['id']]);
                 }
             }
@@ -322,7 +322,7 @@ function handleGetAdminPayments(): void {
 
         $whereSql = count($where) > 0 ? "WHERE " . implode(' AND ', $where) : "";
 
-        $stmt = $pdo->prepare("SELECT * FROM `payment` {$whereSql} ORDER BY `paymentDate` DESC");
+        $stmt = $pdo->prepare("SELECT * FROM `Payment` {$whereSql} ORDER BY `paymentDate` DESC");
         $stmt->execute($params);
         $payments = $stmt->fetchAll();
 
@@ -365,7 +365,7 @@ function handleCreatePayment(): void {
 
     try {
         $pdo = getDatabaseConnection();
-        $oStmt = $pdo->prepare("SELECT * FROM `order` WHERE `id` = ? LIMIT 1");
+        $oStmt = $pdo->prepare("SELECT * FROM `Order` WHERE `id` = ? LIMIT 1");
         $oStmt->execute([$orderId]);
         $order = $oStmt->fetch();
 
@@ -374,7 +374,7 @@ function handleCreatePayment(): void {
         }
 
         $year = date('Y');
-        $cntStmt = $pdo->query("SELECT COUNT(*) as cnt FROM `payment`");
+        $cntStmt = $pdo->query("SELECT COUNT(*) as cnt FROM `Payment`");
         $count = (int) $cntStmt->fetch()['cnt'];
         $numPadded = str_pad((string)($count + 1), 5, '0', STR_PAD_LEFT);
         $paymentNumber = "FJ-PAY-{$year}-{$numPadded}";
@@ -383,7 +383,7 @@ function handleCreatePayment(): void {
         $payId = generateUuidV4Payment();
 
         $ins = $pdo->prepare("
-            INSERT INTO `payment` (`id`, `paymentNumber`, `orderId`, `amount`, `currency`, `paymentMethod`, `referenceId`, `status`, `notes`, `recordedBy`, `proofUrl`, `paymentDate`, `createdAt`, `updatedAt`)
+            INSERT INTO `Payment` (`id`, `paymentNumber`, `orderId`, `amount`, `currency`, `paymentMethod`, `referenceId`, `status`, `notes`, `recordedBy`, `proofUrl`, `paymentDate`, `createdAt`, `updatedAt`)
             VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, NOW(), NOW(), NOW())
         ");
         $ins->execute([
@@ -404,7 +404,7 @@ function handleCreatePayment(): void {
         $insRcpt->execute([generateUuidV4Payment(), $receiptNumber, $payId, $orderId, $amount, $currency]);
 
         // Recalculate order financials
-        $pStmt = $pdo->prepare("SELECT * FROM `payment` WHERE `orderId` = ?");
+        $pStmt = $pdo->prepare("SELECT * FROM `Payment` WHERE `orderId` = ?");
         $pStmt->execute([$orderId]);
         $payments = $pStmt->fetchAll();
 
@@ -450,7 +450,7 @@ function handleGetAdminRefunds(): void {
 
         $whereSql = count($where) > 0 ? "WHERE " . implode(' AND ', $where) : "";
 
-        $stmt = $pdo->prepare("SELECT * FROM `refund` {$whereSql} ORDER BY `refundDate` DESC");
+        $stmt = $pdo->prepare("SELECT * FROM `Refund` {$whereSql} ORDER BY `refundDate` DESC");
         $stmt->execute($params);
         $refunds = $stmt->fetchAll();
 
@@ -485,7 +485,7 @@ function handleCreateAdminRefund(): void {
 
     try {
         $pdo = getDatabaseConnection();
-        $oStmt = $pdo->prepare("SELECT * FROM `order` WHERE `id` = ? LIMIT 1");
+        $oStmt = $pdo->prepare("SELECT * FROM `Order` WHERE `id` = ? LIMIT 1");
         $oStmt->execute([$orderId]);
         $order = $oStmt->fetch();
 
@@ -494,7 +494,7 @@ function handleCreateAdminRefund(): void {
         }
 
         $year = date('Y');
-        $cntStmt = $pdo->query("SELECT COUNT(*) as cnt FROM `refund`");
+        $cntStmt = $pdo->query("SELECT COUNT(*) as cnt FROM `Refund`");
         $count = (int) $cntStmt->fetch()['cnt'];
         $numPadded = str_pad((string)($count + 1), 5, '0', STR_PAD_LEFT);
         $refundNumber = "FJ-REF-{$year}-{$numPadded}";
@@ -504,7 +504,7 @@ function handleCreateAdminRefund(): void {
         $recordedBy = $userToken['email'] ?? 'Admin';
 
         $ins = $pdo->prepare("
-            INSERT INTO `refund` (`id`, `refundNumber`, `orderId`, `paymentId`, `amount`, `refundMethod`, `reason`, `notes`, `referenceId`, `recordedBy`, `refundDate`, `createdAt`)
+            INSERT INTO `Refund` (`id`, `refundNumber`, `orderId`, `paymentId`, `amount`, `refundMethod`, `reason`, `notes`, `referenceId`, `recordedBy`, `refundDate`, `createdAt`)
             VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, NOW(), NOW())
         ");
         $ins->execute([
@@ -512,11 +512,11 @@ function handleCreateAdminRefund(): void {
             $refundMethod, $reason, $notes, $referenceId, $recordedBy
         ]);
 
-        $pStmt = $pdo->prepare("SELECT * FROM `payment` WHERE `orderId` = ?");
+        $pStmt = $pdo->prepare("SELECT * FROM `Payment` WHERE `orderId` = ?");
         $pStmt->execute([$orderId]);
         $payments = $pStmt->fetchAll();
 
-        $rStmt = $pdo->prepare("SELECT * FROM `refund` WHERE `orderId` = ?");
+        $rStmt = $pdo->prepare("SELECT * FROM `Refund` WHERE `orderId` = ?");
         $rStmt->execute([$orderId]);
         $refunds = $rStmt->fetchAll();
 
@@ -576,7 +576,7 @@ function handleGetPaymentSettings(): void {
 
     try {
         $pdo = getDatabaseConnection();
-        $stmt = $pdo->query("SELECT `key`, `value` FROM `sitesetting`");
+        $stmt = $pdo->query("SELECT `key`, `value` FROM `SiteSetting`");
         $rows = $stmt->fetchAll();
 
         $settings = [

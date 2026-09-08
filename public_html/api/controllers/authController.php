@@ -19,7 +19,7 @@ function generateUuidV4(): string {
 function logActivity(PDO $pdo, ?string $userId, string $action, string $object, ?string $newValue = null, ?string $oldValue = null): void {
     try {
         $id = generateUuidV4();
-        $stmt = $pdo->prepare("INSERT INTO `activitylog` (`id`, `userId`, `action`, `object`, `oldValue`, `newValue`, `createdAt`) VALUES (?, ?, ?, ?, ?, ?, NOW())");
+        $stmt = $pdo->prepare("INSERT INTO `ActivityLog` (`id`, `userId`, `action`, `object`, `oldValue`, `newValue`, `createdAt`) VALUES (?, ?, ?, ?, ?, ?, NOW())");
         $stmt->execute([$id, $userId, $action, $object, $oldValue, $newValue]);
     } catch (Throwable $e) {
         error_log("ActivityLog write error: " . $e->getMessage());
@@ -53,35 +53,35 @@ function handleLogin(): void {
 
         // Upsert default admin credentials if this admin is logging in or if no admin exists
         if (strtolower($identifier) === strtolower($defaultAdminEmail) || $identifier === $defaultAdminName) {
-            $admCheck = $pdo->prepare("SELECT `id` FROM `user` WHERE LOWER(`email`) = LOWER(?) OR `name` = ? LIMIT 1");
+            $admCheck = $pdo->prepare("SELECT `id` FROM `User` WHERE LOWER(`email`) = LOWER(?) OR `name` = ? LIMIT 1");
             $admCheck->execute([$defaultAdminEmail, $defaultAdminName]);
             $existingAdminId = $admCheck->fetchColumn();
             if ($existingAdminId) {
-                $updAdmin = $pdo->prepare("UPDATE `user` SET `passwordHash` = ?, `role` = 'SUPER_ADMIN', `updatedAt` = NOW() WHERE `id` = ?");
+                $updAdmin = $pdo->prepare("UPDATE `User` SET `passwordHash` = ?, `role` = 'SUPER_ADMIN', `updatedAt` = NOW() WHERE `id` = ?");
                 $updAdmin->execute([$defaultPasswordHash, $existingAdminId]);
             } else {
                 $newAdminId = generateUuidV4();
-                $insAdmin = $pdo->prepare("INSERT INTO `user` (`id`, `email`, `name`, `passwordHash`, `role`, `createdAt`, `updatedAt`) VALUES (?, ?, ?, ?, 'SUPER_ADMIN', NOW(), NOW())");
+                $insAdmin = $pdo->prepare("INSERT INTO `User` (`id`, `email`, `name`, `passwordHash`, `role`, `createdAt`, `updatedAt`) VALUES (?, ?, ?, ?, 'SUPER_ADMIN', NOW(), NOW())");
                 $insAdmin->execute([$newAdminId, $defaultAdminEmail, $defaultAdminName, $defaultPasswordHash]);
             }
         } else {
             // Check if any admin exists; if not, seed default admin
-            $adminCountStmt = $pdo->query("SELECT COUNT(*) FROM `user` WHERE `role` IN ('ADMIN', 'SUPER_ADMIN')");
+            $adminCountStmt = $pdo->query("SELECT COUNT(*) FROM `User` WHERE `role` IN ('ADMIN', 'SUPER_ADMIN')");
             if ($adminCountStmt && (int)$adminCountStmt->fetchColumn() === 0) {
                 $newAdminId = generateUuidV4();
-                $insAdmin = $pdo->prepare("INSERT INTO `user` (`id`, `email`, `name`, `passwordHash`, `role`, `createdAt`, `updatedAt`) VALUES (?, ?, ?, ?, 'SUPER_ADMIN', NOW(), NOW())");
+                $insAdmin = $pdo->prepare("INSERT INTO `User` (`id`, `email`, `name`, `passwordHash`, `role`, `createdAt`, `updatedAt`) VALUES (?, ?, ?, ?, 'SUPER_ADMIN', NOW(), NOW())");
                 $insAdmin->execute([$newAdminId, $defaultAdminEmail, $defaultAdminName, $defaultPasswordHash]);
             }
         }
 
         // Search by email OR username (name)
-        $stmt = $pdo->prepare("SELECT `id`, `email`, `passwordHash`, `name`, `role`, `avatar` FROM `user` WHERE LOWER(`email`) = LOWER(?) OR `name` = ? LIMIT 1");
+        $stmt = $pdo->prepare("SELECT `id`, `email`, `passwordHash`, `name`, `role`, `avatar` FROM `User` WHERE LOWER(`email`) = LOWER(?) OR `name` = ? LIMIT 1");
         $stmt->execute([$identifier, $identifier]);
         $user = $stmt->fetch();
 
         // If not found in user table, check employee table for employee login
         if (!$user) {
-            $empStmt = $pdo->prepare("SELECT `id`, `name`, `email`, `role`, `passwordHash`, `status` FROM `employee` WHERE LOWER(`email`) = LOWER(?) LIMIT 1");
+            $empStmt = $pdo->prepare("SELECT `id`, `name`, `email`, `role`, `passwordHash`, `status` FROM `Employee` WHERE LOWER(`email`) = LOWER(?) LIMIT 1");
             $empStmt->execute([$identifier]);
             $emp = $empStmt->fetch();
             if ($emp && !empty($emp['passwordHash'])) {
@@ -98,7 +98,7 @@ function handleLogin(): void {
                 ];
                 // Sync to user table
                 try {
-                    $insU = $pdo->prepare("INSERT INTO `user` (`id`, `email`, `name`, `passwordHash`, `role`, `createdAt`, `updatedAt`) VALUES (?, ?, ?, ?, ?, NOW(), NOW()) ON DUPLICATE KEY UPDATE `passwordHash` = VALUES(`passwordHash`), `role` = VALUES(`role`), `name` = VALUES(`name`), `updatedAt` = NOW()");
+                    $insU = $pdo->prepare("INSERT INTO `User` (`id`, `email`, `name`, `passwordHash`, `role`, `createdAt`, `updatedAt`) VALUES (?, ?, ?, ?, ?, NOW(), NOW()) ON DUPLICATE KEY UPDATE `passwordHash` = VALUES(`passwordHash`), `role` = VALUES(`role`), `name` = VALUES(`name`), `updatedAt` = NOW()");
                     $insU->execute([$emp['id'], $emp['email'], $emp['name'], $emp['passwordHash'], $emp['role']]);
                 } catch (\Throwable $e) {}
             }
@@ -110,7 +110,7 @@ function handleLogin(): void {
 
         // Check if employee account is inactive
         if (!empty($user['email'])) {
-            $empCheck = $pdo->prepare("SELECT `status` FROM `employee` WHERE LOWER(`email`) = LOWER(?) LIMIT 1");
+            $empCheck = $pdo->prepare("SELECT `status` FROM `Employee` WHERE LOWER(`email`) = LOWER(?) LIMIT 1");
             $empCheck->execute([$user['email']]);
             $empStatus = $empCheck->fetchColumn();
             if ($empStatus && strtoupper($empStatus) === 'INACTIVE') {
@@ -150,7 +150,7 @@ function handleLogin(): void {
 
     } catch (Throwable $e) {
         error_log("handleLogin error: " . $e->getMessage());
-        jsonError('Login failed', 500);
+        jsonError('Login failed: ' . $e->getMessage(), 500, ['message' => $e->getMessage()]);
     }
 }
 
@@ -174,7 +174,7 @@ function handleRegister(): void {
         $pdo = getDatabaseConnection();
 
         // Check if email already registered
-        $checkStmt = $pdo->prepare("SELECT `id` FROM `user` WHERE `email` = ? LIMIT 1");
+        $checkStmt = $pdo->prepare("SELECT `id` FROM `User` WHERE `email` = ? LIMIT 1");
         $checkStmt->execute([$email]);
         if ($checkStmt->fetch()) {
             jsonError('This email is already registered. Please sign in instead.', 400);
@@ -186,15 +186,15 @@ function handleRegister(): void {
         $role = 'CUSTOMER';
 
         // Insert User Record
-        $userStmt = $pdo->prepare("INSERT INTO `user` (`id`, `email`, `name`, `passwordHash`, `role`, `createdAt`, `updatedAt`) VALUES (?, ?, ?, ?, ?, NOW(), NOW())");
+        $userStmt = $pdo->prepare("INSERT INTO `User` (`id`, `email`, `name`, `passwordHash`, `role`, `createdAt`, `updatedAt`) VALUES (?, ?, ?, ?, ?, NOW(), NOW())");
         $userStmt->execute([$userId, $email, $displayName, $passwordHash, $role]);
 
         // Insert or Upsert Customer Record
-        $custCheck = $pdo->prepare("SELECT `id` FROM `customer` WHERE `email` = ? LIMIT 1");
+        $custCheck = $pdo->prepare("SELECT `id` FROM `Customer` WHERE `email` = ? LIMIT 1");
         $custCheck->execute([$email]);
         if (!$custCheck->fetch()) {
             $custId = generateUuidV4();
-            $custStmt = $pdo->prepare("INSERT INTO `customer` (`id`, `email`, `name`, `phone`, `createdAt`, `updatedAt`) VALUES (?, ?, ?, ?, NOW(), NOW())");
+            $custStmt = $pdo->prepare("INSERT INTO `Customer` (`id`, `email`, `name`, `phone`, `createdAt`, `updatedAt`) VALUES (?, ?, ?, ?, NOW(), NOW())");
             $custStmt->execute([$custId, $email, $displayName, $phone ?: null]);
         }
 
@@ -381,7 +381,7 @@ function handleGoogleAuth(): void {
     try {
         $pdo = getDatabaseConnection();
 
-        $stmt = $pdo->prepare("SELECT `id`, `email`, `name`, `role`, `avatar` FROM `user` WHERE `email` = ? LIMIT 1");
+        $stmt = $pdo->prepare("SELECT `id`, `email`, `name`, `role`, `avatar` FROM `User` WHERE `email` = ? LIMIT 1");
         $stmt->execute([$email]);
         $user = $stmt->fetch();
 
@@ -390,7 +390,7 @@ function handleGoogleAuth(): void {
             $role = $isPrimaryAdmin ? 'ADMIN' : 'CUSTOMER';
             $dummyHash = password_hash("GOOGLE_OAUTH_{$googleId}", PASSWORD_BCRYPT, ['cost' => 10]);
 
-            $inst = $pdo->prepare("INSERT INTO `user` (`id`, `email`, `name`, `avatar`, `passwordHash`, `role`, `createdAt`, `updatedAt`) VALUES (?, ?, ?, ?, ?, ?, NOW(), NOW())");
+            $inst = $pdo->prepare("INSERT INTO `User` (`id`, `email`, `name`, `avatar`, `passwordHash`, `role`, `createdAt`, `updatedAt`) VALUES (?, ?, ?, ?, ?, ?, NOW(), NOW())");
             $inst->execute([$userId, $email, $name, $picture, $dummyHash, $role]);
 
             $user = [
@@ -403,22 +403,22 @@ function handleGoogleAuth(): void {
         } else {
             // Role resolution & avatar updates
             if ($isPrimaryAdmin && $user['role'] !== 'ADMIN' && $user['role'] !== 'SUPER_ADMIN') {
-                $upd = $pdo->prepare("UPDATE `user` SET `role` = 'ADMIN', `avatar` = COALESCE(?, `avatar`), `updatedAt` = NOW() WHERE `id` = ?");
+                $upd = $pdo->prepare("UPDATE `User` SET `role` = 'ADMIN', `avatar` = COALESCE(?, `avatar`), `updatedAt` = NOW() WHERE `id` = ?");
                 $upd->execute([$picture, $user['id']]);
                 $user['role'] = 'ADMIN';
                 $user['avatar'] = $picture ?: $user['avatar'];
             } else if ($picture && empty($user['avatar'])) {
-                $upd = $pdo->prepare("UPDATE `user` SET `avatar` = ?, `updatedAt` = NOW() WHERE `id` = ?");
+                $upd = $pdo->prepare("UPDATE `User` SET `avatar` = ?, `updatedAt` = NOW() WHERE `id` = ?");
                 $upd->execute([$picture, $user['id']]);
                 $user['avatar'] = $picture;
             }
         }
 
         // Find or create Customer record
-        $cStmt = $pdo->prepare("SELECT `id` FROM `customer` WHERE `email` = ? LIMIT 1");
+        $cStmt = $pdo->prepare("SELECT `id` FROM `Customer` WHERE `email` = ? LIMIT 1");
         $cStmt->execute([$email]);
         if (!$cStmt->fetch()) {
-            $cInst = $pdo->prepare("INSERT INTO `customer` (`id`, `email`, `name`, `createdAt`, `updatedAt`) VALUES (?, ?, ?, NOW(), NOW())");
+            $cInst = $pdo->prepare("INSERT INTO `Customer` (`id`, `email`, `name`, `createdAt`, `updatedAt`) VALUES (?, ?, ?, NOW(), NOW())");
             $cInst->execute([generateUuidV4(), $email, $name]);
         }
 
@@ -466,7 +466,7 @@ function handleGetMe(bool $requireAdminRole = false): void {
 
     try {
         $pdo = getDatabaseConnection();
-        $stmt = $pdo->prepare("SELECT `id`, `email`, `name`, `role`, `avatar`, `createdAt` FROM `user` WHERE `id` = ? LIMIT 1");
+        $stmt = $pdo->prepare("SELECT `id`, `email`, `name`, `role`, `avatar`, `createdAt` FROM `User` WHERE `id` = ? LIMIT 1");
         $stmt->execute([$currentUser['id']]);
         $user = $stmt->fetch();
 
@@ -495,7 +495,7 @@ function handleGetAdminUsers(): void {
 
     try {
         $pdo = getDatabaseConnection();
-        $stmt = $pdo->query("SELECT `id`, `email`, `name`, `role`, `avatar`, `createdAt`, `updatedAt` FROM `user` ORDER BY `createdAt` DESC");
+        $stmt = $pdo->query("SELECT `id`, `email`, `name`, `role`, `avatar`, `createdAt`, `updatedAt` FROM `User` ORDER BY `createdAt` DESC");
         $users = $stmt->fetchAll();
 
         $filtered = array_values(array_filter($users, function($u) use ($search, $roleFilter) {
@@ -545,7 +545,7 @@ function handleUpdateUserRole(string $targetUserId): void {
         $pdo = getDatabaseConnection();
 
         // Fetch calling user's live record from DB
-        $cStmt = $pdo->prepare("SELECT `id`, `email`, `role` FROM `user` WHERE `id` = ? LIMIT 1");
+        $cStmt = $pdo->prepare("SELECT `id`, `email`, `role` FROM `User` WHERE `id` = ? LIMIT 1");
         $cStmt->execute([$callingUserToken['id']]);
         $callingUser = $cStmt->fetch();
 
@@ -558,7 +558,7 @@ function handleUpdateUserRole(string $targetUserId): void {
         }
 
         // Fetch target user
-        $tStmt = $pdo->prepare("SELECT `id`, `email`, `role` FROM `user` WHERE `id` = ? LIMIT 1");
+        $tStmt = $pdo->prepare("SELECT `id`, `email`, `role` FROM `User` WHERE `id` = ? LIMIT 1");
         $tStmt->execute([$targetUserId]);
         $targetUser = $tStmt->fetch();
 
@@ -571,10 +571,10 @@ function handleUpdateUserRole(string $targetUserId): void {
         }
 
         $oldRole = $targetUser['role'];
-        $upd = $pdo->prepare("UPDATE `user` SET `role` = ?, `updatedAt` = NOW() WHERE `id` = ?");
+        $upd = $pdo->prepare("UPDATE `User` SET `role` = ?, `updatedAt` = NOW() WHERE `id` = ?");
         $upd->execute([$newRole, $targetUserId]);
 
-        $uStmt = $pdo->prepare("SELECT `id`, `email`, `name`, `role`, `avatar`, `createdAt` FROM `user` WHERE `id` = ? LIMIT 1");
+        $uStmt = $pdo->prepare("SELECT `id`, `email`, `name`, `role`, `avatar`, `createdAt` FROM `User` WHERE `id` = ? LIMIT 1");
         $uStmt->execute([$targetUserId]);
         $updatedUser = $uStmt->fetch();
 
@@ -599,7 +599,7 @@ function handleGetCustomers(): void {
 
     try {
         $pdo = getDatabaseConnection();
-        $stmt = $pdo->query("SELECT `c`.*, (SELECT COUNT(*) FROM `order` `o` WHERE `o`.`customerId` = `c`.`id` OR `o`.`customerEmail` = `c`.`email`) as `orderCount`, (SELECT COALESCE(SUM(`totalAmount`), 0) FROM `order` `o` WHERE `o`.`customerId` = `c`.`id` OR `o`.`customerEmail` = `c`.`email`) as `totalSpent` FROM `customer` `c` ORDER BY `c`.`createdAt` DESC");
+        $stmt = $pdo->query("SELECT `c`.*, (SELECT COUNT(*) FROM `Order` `o` WHERE `o`.`customerId` = `c`.`id` OR `o`.`customerEmail` = `c`.`email`) as `orderCount`, (SELECT COALESCE(SUM(`totalAmount`), 0) FROM `Order` `o` WHERE `o`.`customerId` = `c`.`id` OR `o`.`customerEmail` = `c`.`email`) as `totalSpent` FROM `Customer` `c` ORDER BY `c`.`createdAt` DESC");
         $customers = $stmt->fetchAll();
 
         $mapped = array_map(function($c) {
@@ -626,7 +626,7 @@ function handleGetAdminLogs(): void {
 
     try {
         $pdo = getDatabaseConnection();
-        $stmt = $pdo->query("SELECT `al`.*, `u`.`email` as `user_email`, `u`.`name` as `user_name` FROM `activitylog` `al` LEFT JOIN `user` `u` ON `al`.`userId` = `u`.`id` ORDER BY `al`.`createdAt` DESC LIMIT 200");
+        $stmt = $pdo->query("SELECT `al`.*, `u`.`email` as `user_email`, `u`.`name` as `user_name` FROM `ActivityLog` `al` LEFT JOIN `User` `u` ON `al`.`userId` = `u`.`id` ORDER BY `al`.`createdAt` DESC LIMIT 200");
         $logs = $stmt->fetchAll();
 
         $mapped = array_map(function($l) {

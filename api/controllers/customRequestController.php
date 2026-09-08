@@ -41,7 +41,7 @@ function handleCreateCustomRequest(): void {
         $reqId = generateUuidV4Custom();
 
         $ins = $pdo->prepare("
-            INSERT INTO `customrequest` (`id`, `requestNumber`, `name`, `email`, `whatsapp`, `jewelleryType`, `metal`, `diamondPreference`, `budget`, `deadline`, `description`, `status`, `createdAt`, `updatedAt`)
+            INSERT INTO `CustomRequest` (`id`, `requestNumber`, `name`, `email`, `whatsapp`, `jewelleryType`, `metal`, `diamondPreference`, `budget`, `deadline`, `description`, `status`, `createdAt`, `updatedAt`)
             VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'NEW', NOW(), NOW())
         ");
         $ins->execute([
@@ -80,14 +80,14 @@ function handleGetAdminCustomRequests(): void {
 
     try {
         $pdo = getDatabaseConnection();
-        $stmt = $pdo->query("SELECT * FROM `customrequest` ORDER BY `createdAt` DESC");
+        $stmt = $pdo->query("SELECT * FROM `CustomRequest` ORDER BY `createdAt` DESC");
         $requests = $stmt->fetchAll();
 
         $result = [];
         foreach ($requests as $r) {
             $files = [];
             try {
-                $fStmt = $pdo->prepare("SELECT * FROM `customrequestfile` WHERE `customRequestId` = ?");
+                $fStmt = $pdo->prepare("SELECT * FROM `CustomRequestFile` WHERE `customRequestId` = ?");
                 $fStmt->execute([$r['id']]);
                 $files = $fStmt->fetchAll();
             } catch (Throwable $fe) {}

@@ -39,16 +39,16 @@ function handlePurgeHomepageDbImages(): void {
 function handleGetAllPages(): void {
     try {
         $pdo = getDatabaseConnection();
-        $stmt = $pdo->query("SELECT * FROM `page` ORDER BY `title` ASC");
+        $stmt = $pdo->query("SELECT * FROM `Page` ORDER BY `title` ASC");
         $pages = $stmt->fetchAll();
 
         $result = [];
         foreach ($pages as $p) {
-            $secStmt = $pdo->prepare("SELECT COUNT(*) as cnt FROM `pagesection` WHERE `pageId` = ?");
+            $secStmt = $pdo->prepare("SELECT COUNT(*) as cnt FROM `PageSection` WHERE `pageId` = ?");
             $secStmt->execute([$p['id']]);
             $secCount = (int) $secStmt->fetch()['cnt'];
 
-            $revStmt = $pdo->prepare("SELECT COUNT(*) as cnt FROM `pagerevision` WHERE `pageId` = ?");
+            $revStmt = $pdo->prepare("SELECT COUNT(*) as cnt FROM `PageRevision` WHERE `pageId` = ?");
             $revStmt->execute([$p['id']]);
             $revCount = (int) $revStmt->fetch()['cnt'];
 
@@ -71,7 +71,7 @@ function handleGetAllPages(): void {
 function handleGetPageBySlug(string $slug): void {
     try {
         $pdo = getDatabaseConnection();
-        $stmt = $pdo->prepare("SELECT * FROM `page` WHERE `slug` = ? LIMIT 1");
+        $stmt = $pdo->prepare("SELECT * FROM `Page` WHERE `slug` = ? LIMIT 1");
         $stmt->execute([$slug]);
         $page = $stmt->fetch();
 
@@ -82,7 +82,7 @@ function handleGetPageBySlug(string $slug): void {
             $pageId = generateUuidV4Cms();
 
             $ins = $pdo->prepare("
-                INSERT INTO `page` (`id`, `title`, `slug`, `content`, `draftContent`, `status`, `lastPublishedAt`, `publishedBy`, `createdAt`, `updatedAt`)
+                INSERT INTO `Page` (`id`, `title`, `slug`, `content`, `draftContent`, `status`, `lastPublishedAt`, `publishedBy`, `createdAt`, `updatedAt`)
                 VALUES (?, ?, ?, ?, ?, 'PUBLISHED', NOW(), 'System', NOW(), NOW())
             ");
             $ins->execute([$pageId, $formattedTitle, $slug, $jsonStr, $jsonStr]);
@@ -100,17 +100,17 @@ function handleGetPageBySlug(string $slug): void {
         }
 
         // Fetch sections
-        $secStmt = $pdo->prepare("SELECT * FROM `pagesection` WHERE `pageId` = ? ORDER BY `position` ASC");
+        $secStmt = $pdo->prepare("SELECT * FROM `PageSection` WHERE `pageId` = ? ORDER BY `position` ASC");
         $secStmt->execute([$page['id']]);
         $sections = $secStmt->fetchAll();
 
         // Fetch SEO metadata
-        $seoStmt = $pdo->prepare("SELECT * FROM `seometadata` WHERE `pageId` = ? LIMIT 1");
+        $seoStmt = $pdo->prepare("SELECT * FROM `SeoMetadata` WHERE `pageId` = ? LIMIT 1");
         $seoStmt->execute([$page['id']]);
         $seoMetadata = $seoStmt->fetch() ?: null;
 
         // Fetch revisions
-        $revStmt = $pdo->prepare("SELECT * FROM `pagerevision` WHERE `pageId` = ? ORDER BY `createdAt` DESC LIMIT 20");
+        $revStmt = $pdo->prepare("SELECT * FROM `PageRevision` WHERE `pageId` = ? ORDER BY `createdAt` DESC LIMIT 20");
         $revStmt->execute([$page['id']]);
         $revisions = $revStmt->fetchAll();
 
@@ -143,13 +143,13 @@ function handleSavePageDraft(string $slug): void {
 
     try {
         $pdo = getDatabaseConnection();
-        $stmt = $pdo->prepare("SELECT * FROM `page` WHERE `slug` = ? LIMIT 1");
+        $stmt = $pdo->prepare("SELECT * FROM `Page` WHERE `slug` = ? LIMIT 1");
         $stmt->execute([$slug]);
         $page = $stmt->fetch();
 
         if (!$page) {
             $pageId = generateUuidV4Cms();
-            $ins = $pdo->prepare("INSERT INTO `page` (`id`, `title`, `slug`, `status`, `createdAt`, `updatedAt`) VALUES (?, ?, ?, 'DRAFT', NOW(), NOW())");
+            $ins = $pdo->prepare("INSERT INTO `Page` (`id`, `title`, `slug`, `status`, `createdAt`, `updatedAt`) VALUES (?, ?, ?, 'DRAFT', NOW(), NOW())");
             $ins->execute([$pageId, $title ?: $slug, $slug]);
             $page = ['id' => $pageId, 'title' => $title ?: $slug, 'slug' => $slug];
         }
@@ -157,26 +157,26 @@ function handleSavePageDraft(string $slug): void {
         $draftStr = is_string($draftContent) ? $draftContent : json_encode($draftContent ?: []);
 
         // Record PageRevision
-        $cntStmt = $pdo->prepare("SELECT COUNT(*) as cnt FROM `pagerevision` WHERE `pageId` = ?");
+        $cntStmt = $pdo->prepare("SELECT COUNT(*) as cnt FROM `PageRevision` WHERE `pageId` = ?");
         $cntStmt->execute([$page['id']]);
         $revCount = (int) $cntStmt->fetch()['cnt'];
 
         $insRev = $pdo->prepare("
-            INSERT INTO `pagerevision` (`id`, `pageId`, `version`, `action`, `adminUser`, `content`, `createdAt`)
+            INSERT INTO `PageRevision` (`id`, `pageId`, `version`, `action`, `adminUser`, `content`, `createdAt`)
             VALUES (?, ?, ?, 'SAVE_DRAFT', ?, ?, NOW())
         ");
         $insRev->execute([generateUuidV4Cms(), $page['id'], $revCount + 1, $adminUser, $draftStr]);
 
         // Update Page draftContent
-        $updPage = $pdo->prepare("UPDATE `page` SET `draftContent` = ?, `lastModifiedBy` = ?, `updatedAt` = NOW() WHERE `id` = ?");
+        $updPage = $pdo->prepare("UPDATE `Page` SET `draftContent` = ?, `lastModifiedBy` = ?, `updatedAt` = NOW() WHERE `id` = ?");
         $updPage->execute([$draftStr, $adminUser, $page['id']]);
 
         // Sections update if provided
         if (is_array($sections)) {
-            $delSec = $pdo->prepare("DELETE FROM `pagesection` WHERE `pageId` = ?");
+            $delSec = $pdo->prepare("DELETE FROM `PageSection` WHERE `pageId` = ?");
             $delSec->execute([$page['id']]);
 
-            $insSec = $pdo->prepare("INSERT INTO `pagesection` (`id`, `pageId`, `blockType`, `position`, `content`, `isVisible`) VALUES (?, ?, ?, ?, ?, ?)");
+            $insSec = $pdo->prepare("INSERT INTO `PageSection` (`id`, `pageId`, `blockType`, `position`, `content`, `isVisible`) VALUES (?, ?, ?, ?, ?, ?)");
             foreach ($sections as $pos => $s) {
                 $contentStr = is_string($s['content'] ?? null) ? $s['content'] : json_encode($s['content'] ?? []);
                 $insSec->execute([generateUuidV4Cms(), $page['id'], $s['blockType'] ?? 'SECTION', $pos + 1, $contentStr, ($s['isVisible'] ?? true) ? 1 : 0]);
@@ -209,13 +209,13 @@ function handlePublishPage(string $slug): void {
 
     try {
         $pdo = getDatabaseConnection();
-        $stmt = $pdo->prepare("SELECT * FROM `page` WHERE `slug` = ? LIMIT 1");
+        $stmt = $pdo->prepare("SELECT * FROM `Page` WHERE `slug` = ? LIMIT 1");
         $stmt->execute([$slug]);
         $page = $stmt->fetch();
 
         if (!$page) {
             $pageId = generateUuidV4Cms();
-            $ins = $pdo->prepare("INSERT INTO `page` (`id`, `title`, `slug`, `status`, `createdAt`, `updatedAt`) VALUES (?, ?, ?, 'PUBLISHED', NOW(), NOW())");
+            $ins = $pdo->prepare("INSERT INTO `Page` (`id`, `title`, `slug`, `status`, `createdAt`, `updatedAt`) VALUES (?, ?, ?, 'PUBLISHED', NOW(), NOW())");
             $ins->execute([$pageId, $title ?: $slug, $slug]);
             $page = ['id' => $pageId, 'title' => $title ?: $slug, 'slug' => $slug];
         }
@@ -223,18 +223,18 @@ function handlePublishPage(string $slug): void {
         $draftStr = is_string($draftContent) ? $draftContent : json_encode($draftContent ?: []);
 
         // Record PageRevision
-        $cntStmt = $pdo->prepare("SELECT COUNT(*) as cnt FROM `pagerevision` WHERE `pageId` = ?");
+        $cntStmt = $pdo->prepare("SELECT COUNT(*) as cnt FROM `PageRevision` WHERE `pageId` = ?");
         $cntStmt->execute([$page['id']]);
         $revCount = (int) $cntStmt->fetch()['cnt'];
 
         $insRev = $pdo->prepare("
-            INSERT INTO `pagerevision` (`id`, `pageId`, `version`, `action`, `adminUser`, `content`, `createdAt`)
+            INSERT INTO `PageRevision` (`id`, `pageId`, `version`, `action`, `adminUser`, `content`, `createdAt`)
             VALUES (?, ?, ?, 'PUBLISH', ?, ?, NOW())
         ");
         $insRev->execute([generateUuidV4Cms(), $page['id'], $revCount + 1, $adminUser, $draftStr]);
 
         // Update Page content & status to PUBLISHED
-        $updPage = $pdo->prepare("UPDATE `page` SET `content` = ?, `draftContent` = ?, `status` = 'PUBLISHED', `publishedBy` = ?, `lastPublishedAt` = NOW(), `lastModifiedBy` = ?, `updatedAt` = NOW() WHERE `id` = ?");
+        $updPage = $pdo->prepare("UPDATE `Page` SET `content` = ?, `draftContent` = ?, `status` = 'PUBLISHED', `publishedBy` = ?, `lastPublishedAt` = NOW(), `lastModifiedBy` = ?, `updatedAt` = NOW() WHERE `id` = ?");
         $updPage->execute([$draftStr, $draftStr, $adminUser, $adminUser, $page['id']]);
 
         // Save SEO Metadata if provided
@@ -247,25 +247,25 @@ function handlePublishPage(string $slug): void {
             $ogDesc = $seoMetadata['ogDescription'] ?? '';
             $ogImg = $seoMetadata['ogImage'] ?? '';
 
-            $checkSeo = $pdo->prepare("SELECT `id` FROM `seometadata` WHERE `pageId` = ? LIMIT 1");
+            $checkSeo = $pdo->prepare("SELECT `id` FROM `SeoMetadata` WHERE `pageId` = ? LIMIT 1");
             $checkSeo->execute([$page['id']]);
             $existingSeo = $checkSeo->fetch();
 
             if ($existingSeo) {
-                $updSeo = $pdo->prepare("UPDATE `seometadata` SET `seoTitle` = ?, `metaDescription` = ?, `canonicalUrl` = ?, `robots` = ?, `ogTitle` = ?, `ogDescription` = ?, `ogImage` = ?, `updatedAt` = NOW() WHERE `pageId` = ?");
+                $updSeo = $pdo->prepare("UPDATE `SeoMetadata` SET `seoTitle` = ?, `metaDescription` = ?, `canonicalUrl` = ?, `robots` = ?, `ogTitle` = ?, `ogDescription` = ?, `ogImage` = ?, `updatedAt` = NOW() WHERE `pageId` = ?");
                 $updSeo->execute([$seoTitle, $metaDesc, $canonical, $robots, $ogTitle, $ogDesc, $ogImg, $page['id']]);
             } else {
-                $insSeo = $pdo->prepare("INSERT INTO `seometadata` (`id`, `pageId`, `seoTitle`, `metaDescription`, `canonicalUrl`, `robots`, `ogTitle`, `ogDescription`, `ogImage`, `updatedAt`) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, NOW())");
+                $insSeo = $pdo->prepare("INSERT INTO `SeoMetadata` (`id`, `pageId`, `seoTitle`, `metaDescription`, `canonicalUrl`, `robots`, `ogTitle`, `ogDescription`, `ogImage`, `updatedAt`) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, NOW())");
                 $insSeo->execute([generateUuidV4Cms(), $page['id'], $seoTitle, $metaDesc, $canonical, $robots, $ogTitle, $ogDesc, $ogImg]);
             }
         }
 
         // Sections update if provided
         if (is_array($sections)) {
-            $delSec = $pdo->prepare("DELETE FROM `pagesection` WHERE `pageId` = ?");
+            $delSec = $pdo->prepare("DELETE FROM `PageSection` WHERE `pageId` = ?");
             $delSec->execute([$page['id']]);
 
-            $insSec = $pdo->prepare("INSERT INTO `pagesection` (`id`, `pageId`, `blockType`, `position`, `content`, `isVisible`) VALUES (?, ?, ?, ?, ?, ?)");
+            $insSec = $pdo->prepare("INSERT INTO `PageSection` (`id`, `pageId`, `blockType`, `position`, `content`, `isVisible`) VALUES (?, ?, ?, ?, ?, ?)");
             foreach ($sections as $pos => $s) {
                 $contentStr = is_string($s['content'] ?? null) ? $s['content'] : json_encode($s['content'] ?? []);
                 $insSec->execute([generateUuidV4Cms(), $page['id'], $s['blockType'] ?? 'SECTION', $pos + 1, $contentStr, ($s['isVisible'] ?? true) ? 1 : 0]);
@@ -286,7 +286,7 @@ function handlePublishPage(string $slug): void {
 function handleGetPageRevisions(string $slug): void {
     try {
         $pdo = getDatabaseConnection();
-        $stmt = $pdo->prepare("SELECT * FROM `page` WHERE `slug` = ? LIMIT 1");
+        $stmt = $pdo->prepare("SELECT * FROM `Page` WHERE `slug` = ? LIMIT 1");
         $stmt->execute([$slug]);
         $page = $stmt->fetch();
 
@@ -295,7 +295,7 @@ function handleGetPageRevisions(string $slug): void {
             return;
         }
 
-        $revStmt = $pdo->prepare("SELECT * FROM `pagerevision` WHERE `pageId` = ? ORDER BY `version` DESC");
+        $revStmt = $pdo->prepare("SELECT * FROM `PageRevision` WHERE `pageId` = ? ORDER BY `version` DESC");
         $revStmt->execute([$page['id']]);
         $revisions = $revStmt->fetchAll();
 
@@ -314,7 +314,7 @@ function handleRestorePageRevision(string $slug, string $revisionId): void {
 
     try {
         $pdo = getDatabaseConnection();
-        $stmt = $pdo->prepare("SELECT * FROM `pagerevision` WHERE `id` = ? LIMIT 1");
+        $stmt = $pdo->prepare("SELECT * FROM `PageRevision` WHERE `id` = ? LIMIT 1");
         $stmt->execute([$revisionId]);
         $rev = $stmt->fetch();
 
@@ -322,7 +322,7 @@ function handleRestorePageRevision(string $slug, string $revisionId): void {
             jsonError('Revision not found', 404);
         }
 
-        $updPage = $pdo->prepare("UPDATE `page` SET `draftContent` = ?, `updatedAt` = NOW() WHERE `id` = ?");
+        $updPage = $pdo->prepare("UPDATE `Page` SET `draftContent` = ?, `updatedAt` = NOW() WHERE `id` = ?");
         $updPage->execute([$rev['content'], $rev['pageId']]);
 
         handleGetPageBySlug($slug);
@@ -344,13 +344,13 @@ function handleGetFaqs(): void {
         $where = [];
         $params = [];
         if ($category && $category !== 'ALL') {
-            $where[] = "`category` = ?";
+            $where[] = "`Category` = ?";
             $params[] = $category;
         }
 
         $whereSql = count($where) > 0 ? "WHERE " . implode(' AND ', $where) : "";
 
-        $stmt = $pdo->prepare("SELECT * FROM `faqitem` {$whereSql} ORDER BY `sortOrder` ASC");
+        $stmt = $pdo->prepare("SELECT * FROM `FaqItem` {$whereSql} ORDER BY `sortOrder` ASC");
         $stmt->execute($params);
         $faqs = $stmt->fetchAll();
 
@@ -368,7 +368,7 @@ function handleGetFaqs(): void {
 function handleGetSiteSettings(): void {
     try {
         $pdo = getDatabaseConnection();
-        $stmt = $pdo->query("SELECT `key`, `value` FROM `sitesetting` WHERE `key` IS NOT NULL AND `key` != ''");
+        $stmt = $pdo->query("SELECT `key`, `value` FROM `SiteSetting` WHERE `key` IS NOT NULL AND `key` != ''");
         $rows = $stmt->fetchAll();
 
         $settings = [];
@@ -437,12 +437,12 @@ function handleGetSiteSettings(): void {
 function handleGetMenus(): void {
     try {
         $pdo = getDatabaseConnection();
-        $stmt = $pdo->query("SELECT * FROM `menu` ORDER BY `createdAt` ASC");
+        $stmt = $pdo->query("SELECT * FROM `Menu` ORDER BY `createdAt` ASC");
         $menus = $stmt->fetchAll();
 
         $result = [];
         foreach ($menus as $m) {
-            $itemStmt = $pdo->prepare("SELECT * FROM `menuitem` WHERE `menuId` = ? ORDER BY `position` ASC");
+            $itemStmt = $pdo->prepare("SELECT * FROM `MenuItem` WHERE `menuId` = ? ORDER BY `position` ASC");
             $itemStmt->execute([$m['id']]);
             $items = $itemStmt->fetchAll();
 
@@ -488,10 +488,10 @@ function handleGetReviews(): void {
         $productId = trim($_GET['productId'] ?? ($_GET['productId'] ?? ''));
 
         if ($productId) {
-            $stmt = $pdo->prepare("SELECT r.*, p.name as productName FROM `review` r LEFT JOIN `product` p ON r.productId = p.id WHERE (r.productId = ? OR r.productId = (SELECT id FROM product WHERE sku = ? LIMIT 1) OR r.productId = (SELECT id FROM product WHERE slug = ? LIMIT 1)) ORDER BY r.createdAt DESC");
+            $stmt = $pdo->prepare("SELECT r.*, p.name as productName FROM `Review` r LEFT JOIN `Product` p ON r.productId = p.id WHERE (r.productId = ? OR r.productId = (SELECT id FROM product WHERE sku = ? LIMIT 1) OR r.productId = (SELECT id FROM product WHERE slug = ? LIMIT 1)) ORDER BY r.createdAt DESC");
             $stmt->execute([$productId, $productId, $productId]);
         } else {
-            $stmt = $pdo->query("SELECT r.*, p.name as productName FROM `review` r LEFT JOIN `product` p ON r.productId = p.id ORDER BY r.createdAt DESC LIMIT 100");
+            $stmt = $pdo->query("SELECT r.*, p.name as productName FROM `Review` r LEFT JOIN `Product` p ON r.productId = p.id ORDER BY r.createdAt DESC LIMIT 100");
         }
         $rawReviews = $stmt ? $stmt->fetchAll() : [];
 
@@ -690,7 +690,7 @@ function handleSaveSiteSettings(): void {
             }
         }
 
-        $ins = $pdo->prepare("INSERT INTO `sitesetting` (`id`, `key`, `value`, `updatedAt`) VALUES (?, ?, ?, NOW()) ON DUPLICATE KEY UPDATE `value` = VALUES(`value`), `updatedAt` = NOW()");
+        $ins = $pdo->prepare("INSERT INTO `SiteSetting` (`id`, `key`, `value`, `updatedAt`) VALUES (?, ?, ?, NOW()) ON DUPLICATE KEY UPDATE `value` = VALUES(`value`), `updatedAt` = NOW()");
 
         if (isset($body['key']) && array_key_exists('value', $body)) {
             $k = (string) $body['key'];
@@ -719,7 +719,7 @@ function handleSaveSiteSettings(): void {
         $cfg = $status['config'] ?? [];
 
         // Re-fetch all saved settings from DB
-        $allStmt = $pdo->query("SELECT `key`, `value` FROM `sitesetting`");
+        $allStmt = $pdo->query("SELECT `key`, `value` FROM `SiteSetting`");
         $allRows = $allStmt->fetchAll();
         $settingsMap = [];
         foreach ($allRows as $r) {
@@ -796,7 +796,7 @@ function handleGetAdminReviews(): void {
     requireRole(['CONTENT_MANAGER', 'ADMIN', 'SUPER_ADMIN']);
     try {
         $pdo = getDatabaseConnection();
-        $stmt = $pdo->query("SELECT r.*, p.name as productName, p.sku as productSku FROM `review` r LEFT JOIN `product` p ON r.productId = p.id ORDER BY r.createdAt DESC");
+        $stmt = $pdo->query("SELECT r.*, p.name as productName, p.sku as productSku FROM `Review` r LEFT JOIN `Product` p ON r.productId = p.id ORDER BY r.createdAt DESC");
         $reviews = $stmt ? $stmt->fetchAll() : [];
         jsonResponse($reviews, 200);
     } catch (Throwable $e) {
@@ -832,11 +832,11 @@ function handleSaveReview(): void {
 
         $pdo = getDatabaseConnection();
         if ($id) {
-            $u = $pdo->prepare("UPDATE `review` SET `author` = ?, `rating` = ?, `comment` = ?, `isApproved` = ?, `isFeatured` = ? WHERE `id` = ?");
+            $u = $pdo->prepare("UPDATE `Review` SET `author` = ?, `rating` = ?, `comment` = ?, `isApproved` = ?, `isFeatured` = ? WHERE `id` = ?");
             $u->execute([$author, $rating, $comment, $isApproved, $isFeatured, $id]);
         } else {
             $newId = 'rev_' . bin2hex(random_bytes(8));
-            $ins = $pdo->prepare("INSERT INTO `review` (`id`, `productId`, `author`, `email`, `rating`, `comment`, `isApproved`, `isFeatured`, `createdAt`) VALUES (?, ?, ?, 'customer@auroradiamonds.com', ?, ?, ?, ?, NOW())");
+            $ins = $pdo->prepare("INSERT INTO `Review` (`id`, `productId`, `author`, `email`, `rating`, `comment`, `isApproved`, `isFeatured`, `createdAt`) VALUES (?, ?, ?, 'customer@auroradiamonds.com', ?, ?, ?, ?, NOW())");
             $ins->execute([$newId, $productId, $author, $rating, $comment, $isApproved, $isFeatured]);
             $id = $newId;
         }
@@ -855,7 +855,7 @@ function handleDeleteReview(string $id): void {
     requireRole(['CONTENT_MANAGER', 'ADMIN', 'SUPER_ADMIN']);
     try {
         $pdo = getDatabaseConnection();
-        $pdo->prepare("DELETE FROM `review` WHERE `id` = ?")->execute([$id]);
+        $pdo->prepare("DELETE FROM `Review` WHERE `id` = ?")->execute([$id]);
         jsonResponse(['success' => true, 'message' => 'Review deleted successfully'], 200);
     } catch (Throwable $e) {
         error_log("handleDeleteReview error: " . $e->getMessage());
@@ -870,7 +870,7 @@ function handleDeleteAllReviews(): void {
     requireRole(['CONTENT_MANAGER', 'ADMIN', 'SUPER_ADMIN']);
     try {
         $pdo = getDatabaseConnection();
-        $stmt = $pdo->query("DELETE FROM `review`");
+        $stmt = $pdo->query("DELETE FROM `Review`");
         $deleted = $stmt ? $stmt->rowCount() : 0;
         jsonResponse(['success' => true, 'message' => "All reviews deleted successfully! ({$deleted} reviews removed)", 'deletedCount' => $deleted], 200);
     } catch (Throwable $e) {
@@ -888,9 +888,9 @@ function handleGenerateRandomReviewsPerProduct(): void {
         $pdo = getDatabaseConnection();
 
         // Step 1: Clear existing reviews so all products get fresh, completely distinct reviews
-        $pdo->exec("DELETE FROM `review`");
+        $pdo->exec("DELETE FROM `Review`");
 
-        $stmt = $pdo->query("SELECT id, name, title, metal, shape, carat, jewelleryType FROM `product`");
+        $stmt = $pdo->query("SELECT id, name, title, metal, shape, carat, jewelleryType FROM `Product`");
         $products = $stmt->fetchAll();
 
         if (empty($products)) {
@@ -942,7 +942,7 @@ function handleGenerateRandomReviewsPerProduct(): void {
             'Surpassed All My Expectations'
         ];
 
-        $insStmt = $pdo->prepare("INSERT INTO `review` (`id`, `productId`, `author`, `email`, `rating`, `comment`, `isApproved`, `isFeatured`, `createdAt`) VALUES (?, ?, ?, ?, ?, ?, 1, ?, ?)");
+        $insStmt = $pdo->prepare("INSERT INTO `Review` (`id`, `productId`, `author`, `email`, `rating`, `comment`, `isApproved`, `isFeatured`, `createdAt`) VALUES (?, ?, ?, ?, ?, ?, 1, ?, ?)");
 
         $totalInserted = 0;
         $productReviewCounts = [];

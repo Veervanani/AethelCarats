@@ -12,13 +12,13 @@ function handleHealthCheck(): void {
         $pdo = getDatabaseConnection();
 
         // Safe, harmless read-only count queries
-        $userStmt = $pdo->query("SELECT COUNT(*) as count FROM `user`");
+        $userStmt = $pdo->query("SELECT COUNT(*) as count FROM `User`");
         $userCount = (int) $userStmt->fetch()['count'];
 
-        $diamondStmt = $pdo->query("SELECT COUNT(*) as count FROM `diamond`");
+        $diamondStmt = $pdo->query("SELECT COUNT(*) as count FROM `Diamond`");
         $diamondCount = (int) $diamondStmt->fetch()['count'];
 
-        $productStmt = $pdo->query("SELECT COUNT(*) as count FROM `product`");
+        $productStmt = $pdo->query("SELECT COUNT(*) as count FROM `Product`");
         $productCount = (int) $productStmt->fetch()['count'];
 
         $dbName = $pdo->query("SELECT DATABASE()")->fetchColumn() ?: 'aura_atelier_db';

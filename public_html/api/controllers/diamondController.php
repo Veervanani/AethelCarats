@@ -235,12 +235,12 @@ function handleGetDiamonds(): void {
         $orderSql = $allowedSorts[$sort] ?? '`price` ASC';
 
         // Count query
-        $countStmt = $pdo->prepare("SELECT COUNT(*) as cnt FROM `diamond` {$whereSql}");
+        $countStmt = $pdo->prepare("SELECT COUNT(*) as cnt FROM `Diamond` {$whereSql}");
         $countStmt->execute($params);
         $total = (int) $countStmt->fetch()['cnt'];
 
         // Data query
-        $sql = "SELECT * FROM `diamond` {$whereSql} ORDER BY {$orderSql} LIMIT {$limit} OFFSET {$offset}";
+        $sql = "SELECT * FROM `Diamond` {$whereSql} ORDER BY {$orderSql} LIMIT {$limit} OFFSET {$offset}";
         $stmt = $pdo->prepare($sql);
         $stmt->execute($params);
         $diamonds = $stmt->fetchAll();
@@ -272,7 +272,7 @@ function handleGetDiamonds(): void {
 function handleGetDiamondById(string $id): void {
     try {
         $pdo = getDatabaseConnection();
-        $stmt = $pdo->prepare("SELECT * FROM `diamond` WHERE `id` = ? OR `diamondId` = ? LIMIT 1");
+        $stmt = $pdo->prepare("SELECT * FROM `Diamond` WHERE `id` = ? OR `diamondId` = ? LIMIT 1");
         $stmt->execute([$id, $id]);
         $diamond = $stmt->fetch();
 
@@ -294,7 +294,7 @@ function handleGetDiamondById(string $id): void {
 function handleGetWhatsAppInquiry(string $id): void {
     try {
         $pdo = getDatabaseConnection();
-        $stmt = $pdo->prepare("SELECT * FROM `diamond` WHERE `id` = ? OR `diamondId` = ? LIMIT 1");
+        $stmt = $pdo->prepare("SELECT * FROM `Diamond` WHERE `id` = ? OR `diamondId` = ? LIMIT 1");
         $stmt->execute([$id, $id]);
         $diamond = $stmt->fetch();
 
@@ -307,7 +307,7 @@ function handleGetWhatsAppInquiry(string $id): void {
         $text = "Hello Aura Diamond Atelier,\n\nI am interested in this diamond:\n\nDiamond ID: {$diamond['diamondId']}\nShape: {$diamond['shape']}\nCarat: {$diamond['carat']}ct\nColor: {$diamond['color']}\nClarity: {$diamond['clarity']}\nCut: " . ($diamond['cut'] ?: 'N/A') . "\nCertificate: " . ($diamond['lab'] ?: 'N/A') . "\nCertificate No: " . ($diamond['certificateNumber'] ?: 'N/A') . "\nPrice: $" . number_format((float)$diamond['price']) . "\n\nDiamond Link:\n{$diamondUrl}";
 
         $waNumber = '447900123456';
-        $waStmt = $pdo->prepare("SELECT `value` FROM `sitesetting` WHERE `key` = 'whatsapp_config' LIMIT 1");
+        $waStmt = $pdo->prepare("SELECT `value` FROM `SiteSetting` WHERE `key` = 'whatsapp_config' LIMIT 1");
         $waStmt->execute();
         $waSetting = $waStmt->fetch();
         if ($waSetting && !empty($waSetting['value'])) {
@@ -343,10 +343,10 @@ function handleDeleteAllDiamonds(): void {
 
     try {
         $pdo = getDatabaseConnection();
-        $countStmt = $pdo->query("SELECT COUNT(*) as cnt FROM `diamond`");
+        $countStmt = $pdo->query("SELECT COUNT(*) as cnt FROM `Diamond`");
         $count = (int) $countStmt->fetch()['cnt'];
 
-        $pdo->exec("DELETE FROM `diamond`");
+        $pdo->exec("DELETE FROM `Diamond`");
 
         jsonResponse([
             'message' => 'Successfully wiped all diamonds from database',
@@ -365,7 +365,7 @@ function handleDeleteAllDiamonds(): void {
 function handleGetDiamondFilterConfig(): void {
     try {
         $pdo = getDatabaseConnection();
-        $stmt = $pdo->prepare("SELECT `value` FROM `sitesetting` WHERE `key` = 'diamond_filter_config' LIMIT 1");
+        $stmt = $pdo->prepare("SELECT `value` FROM `SiteSetting` WHERE `key` = 'diamond_filter_config' LIMIT 1");
         $stmt->execute();
         $row = $stmt->fetch();
 
@@ -431,7 +431,7 @@ function handleSaveDiamond(): void {
 
         $pdo = getDatabaseConnection();
 
-        $chk = $pdo->prepare("SELECT * FROM `diamond` WHERE `id` = ? OR `diamondId` = ? LIMIT 1");
+        $chk = $pdo->prepare("SELECT * FROM `Diamond` WHERE `id` = ? OR `diamondId` = ? LIMIT 1");
         $chk->execute([$id, $body['diamondId'] ?? '']);
         $existing = $chk->fetch();
 
@@ -452,18 +452,18 @@ function handleSaveDiamond(): void {
         $pdo->beginTransaction();
 
         if ($existing) {
-            $u = $pdo->prepare("UPDATE `diamond` SET `diamondId` = ?, `diamondType` = ?, `shape` = ?, `carat` = ?, `color` = ?, `clarity` = ?, `cut` = ?, `lab` = ?, `price` = ?, `status` = ?, `videoUrl` = ?, `imageUrl` = ?, `certificateNo` = ?, `updatedAt` = NOW() WHERE `id` = ?");
+            $u = $pdo->prepare("UPDATE `Diamond` SET `diamondId` = ?, `diamondType` = ?, `shape` = ?, `carat` = ?, `color` = ?, `clarity` = ?, `cut` = ?, `lab` = ?, `price` = ?, `status` = ?, `videoUrl` = ?, `imageUrl` = ?, `certificateNo` = ?, `updatedAt` = NOW() WHERE `id` = ?");
             $u->execute([$diamondId, $type, $shape, $carat, $color, $clarity, $cut, $lab, $price, $status, $videoUrl, $imageUrl, $certNo, $existing['id']]);
             $dId = $existing['id'];
         } else {
-            $ins = $pdo->prepare("INSERT INTO `diamond` (`id`, `diamondId`, `diamondType`, `shape`, `carat`, `color`, `clarity`, `cut`, `lab`, `price`, `status`, `videoUrl`, `imageUrl`, `certificateNo`, `createdAt`, `updatedAt`) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, NOW(), NOW())");
+            $ins = $pdo->prepare("INSERT INTO `Diamond` (`id`, `diamondId`, `diamondType`, `shape`, `carat`, `color`, `clarity`, `cut`, `lab`, `price`, `status`, `videoUrl`, `imageUrl`, `certificateNo`, `createdAt`, `updatedAt`) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, NOW(), NOW())");
             $ins->execute([$id, $diamondId, $type, $shape, $carat, $color, $clarity, $cut, $lab, $price, $status, $videoUrl, $imageUrl, $certNo]);
             $dId = $id;
         }
 
         $pdo->commit();
 
-        $rStmt = $pdo->prepare("SELECT * FROM `diamond` WHERE `id` = ? LIMIT 1");
+        $rStmt = $pdo->prepare("SELECT * FROM `Diamond` WHERE `id` = ? LIMIT 1");
         $rStmt->execute([$dId]);
         $savedDiamond = $rStmt->fetch();
 
@@ -489,7 +489,7 @@ function handleDeleteDiamondById(string $id): void {
 
     try {
         $pdo = getDatabaseConnection();
-        $stmt = $pdo->prepare("DELETE FROM `diamond` WHERE `id` = ? OR `diamondId` = ?");
+        $stmt = $pdo->prepare("DELETE FROM `Diamond` WHERE `id` = ? OR `diamondId` = ?");
         $stmt->execute([$id, $id]);
 
         jsonResponse(['message' => 'Diamond record deleted successfully'], 200);
@@ -755,13 +755,13 @@ function handleExecuteDiamondImport(): void {
         $fancyColor = $d['fancyColor'] ?? null;
         $fancyInt   = $d['fancyIntensity'] ?? null;
 
-        $chk = $pdo->prepare("SELECT `id` FROM `diamond` WHERE `diamondId` = ? OR `stockId` = ? LIMIT 1");
+        $chk = $pdo->prepare("SELECT `id` FROM `Diamond` WHERE `diamondId` = ? OR `stockId` = ? LIMIT 1");
         $chk->execute([$dId, $dId]);
         $exists = $chk->fetch();
 
         if ($exists) {
             $u = $pdo->prepare("
-                UPDATE `diamond` SET
+                UPDATE `Diamond` SET
                     `diamondType` = ?, `growthType` = ?, `shape` = ?, `carat` = ?, `color` = ?, `clarity` = ?,
                     `cut` = ?, `polish` = ?, `symmetry` = ?, `fluorescence` = ?, `lab` = ?,
                     `price` = ?, `pricePerCarat` = ?, `certificateNumber` = ?, `certificateUrl` = ?,
@@ -778,7 +778,7 @@ function handleExecuteDiamondImport(): void {
             ]);
         } else {
             $ins = $pdo->prepare("
-                INSERT INTO `diamond` (
+                INSERT INTO `Diamond` (
                     `id`, `diamondId`, `stockId`, `diamondType`, `growthType`, `shape`, `carat`, `color`, `clarity`,
                     `cut`, `polish`, `symmetry`, `fluorescence`, `lab`, `price`, `pricePerCarat`,
                     `certificateNumber`, `certificateUrl`, `imageUrl`, `videoUrl`,
@@ -807,7 +807,7 @@ function handleExecuteDiamondImport(): void {
     $importedBy = $userToken['email'] ?? 'Admin';
 
     try {
-        $insHist = $pdo->prepare("INSERT INTO `diamondimporthistory` (`id`, `fileName`, `totalRows`, `importedCount`, `updatedCount`, `failedCount`, `importedBy`, `createdAt`) VALUES (?, ?, ?, ?, ?, 0, ?, NOW())");
+        $insHist = $pdo->prepare("INSERT INTO `DiamondImportHistory` (`id`, `fileName`, `totalRows`, `importedCount`, `updatedCount`, `failedCount`, `importedBy`, `createdAt`) VALUES (?, ?, ?, ?, ?, 0, ?, NOW())");
         $insHist->execute([generateUuidV4Diamond(), $fileName, count($diamonds), $imported, 0, $importedBy]);
     } catch (Throwable $e) {
         error_log("DiamondImportHistory log warning: " . $e->getMessage());
@@ -839,7 +839,7 @@ function handleGetImportHistory(): void {
     requireRole(['PRODUCT_MANAGER', 'ADMIN', 'SUPER_ADMIN']);
     try {
         $pdo = getDatabaseConnection();
-        $stmt = $pdo->query("SELECT * FROM `diamondimporthistory` ORDER BY `createdAt` DESC LIMIT 20");
+        $stmt = $pdo->query("SELECT * FROM `DiamondImportHistory` ORDER BY `createdAt` DESC LIMIT 20");
         $history = $stmt->fetchAll();
 
         if (empty($history)) {
@@ -898,18 +898,18 @@ function handleBulkPriceAdjustment(): void {
 
         if ($action === 'INCREASE') {
             if ($type === 'PERCENTAGE') {
-                $sql = "UPDATE `diamond` SET `price` = ROUND(`price` * (1 + (? / 100)), 2)" . $whereSql;
+                $sql = "UPDATE `Diamond` SET `price` = ROUND(`price` * (1 + (? / 100)), 2)" . $whereSql;
                 $params = array_merge([$value], $params);
             } else {
-                $sql = "UPDATE `diamond` SET `price` = ROUND(`price` + ?, 2)" . $whereSql;
+                $sql = "UPDATE `Diamond` SET `price` = ROUND(`price` + ?, 2)" . $whereSql;
                 $params = array_merge([$value], $params);
             }
         } else { // DECREASE
             if ($type === 'PERCENTAGE') {
-                $sql = "UPDATE `diamond` SET `price` = ROUND(GREATEST(0, `price` * (1 - (? / 100))), 2)" . $whereSql;
+                $sql = "UPDATE `Diamond` SET `price` = ROUND(GREATEST(0, `price` * (1 - (? / 100))), 2)" . $whereSql;
                 $params = array_merge([$value], $params);
             } else {
-                $sql = "UPDATE `diamond` SET `price` = ROUND(GREATEST(0, `price` - ?), 2)" . $whereSql;
+                $sql = "UPDATE `Diamond` SET `price` = ROUND(GREATEST(0, `price` - ?), 2)" . $whereSql;
                 $params = array_merge([$value], $params);
             }
         }
@@ -920,7 +920,7 @@ function handleBulkPriceAdjustment(): void {
 
         // Recalculate pricePerCarat column
         try {
-            $pdo->exec("UPDATE `diamond` SET `pricePerCarat` = ROUND(`price` / NULLIF(`carat`, 0), 2) WHERE `carat` > 0");
+            $pdo->exec("UPDATE `Diamond` SET `pricePerCarat` = ROUND(`price` / NULLIF(`carat`, 0), 2) WHERE `carat` > 0");
         } catch (Throwable $e) {}
 
         // Persist price rule in sitesetting database table
@@ -933,7 +933,7 @@ function handleBulkPriceAdjustment(): void {
             'updatedAt'     => date('c')
         ];
 
-        $ins = $pdo->prepare("INSERT INTO `sitesetting` (`id`, `key`, `value`, `updatedAt`) VALUES (?, 'global_diamond_price_rule', ?, NOW()) ON DUPLICATE KEY UPDATE `value` = VALUES(`value`), `updatedAt` = NOW()");
+        $ins = $pdo->prepare("INSERT INTO `SiteSetting` (`id`, `key`, `value`, `updatedAt`) VALUES (?, 'global_diamond_price_rule', ?, NOW()) ON DUPLICATE KEY UPDATE `value` = VALUES(`value`), `updatedAt` = NOW()");
         $ins->execute([generateUuidV4Diamond(), json_encode($rulePayload)]);
 
         jsonResponse([
@@ -955,7 +955,7 @@ function handleBulkPriceAdjustment(): void {
 function handleGetBulkPriceRule(): void {
     try {
         $pdo = getDatabaseConnection();
-        $stmt = $pdo->prepare("SELECT `value` FROM `sitesetting` WHERE `key` = 'global_diamond_price_rule' LIMIT 1");
+        $stmt = $pdo->prepare("SELECT `value` FROM `SiteSetting` WHERE `key` = 'global_diamond_price_rule' LIMIT 1");
         $stmt->execute();
         $row = $stmt->fetch();
         if ($row && !empty($row['value'])) {
