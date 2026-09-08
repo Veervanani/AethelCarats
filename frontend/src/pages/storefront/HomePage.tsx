@@ -1800,10 +1800,6 @@ export const HomePage: React.FC = () => {
     textColor: '#1F1F1F',
   };
 
-  if (cmsConfig?.campaignBannerConfig) {
-    campaignBannerContent = { ...campaignBannerContent, ...cmsConfig.campaignBannerConfig };
-  }
-
   if (campaignBannerSection && campaignBannerSection.content) {
     try {
       const parsed = typeof campaignBannerSection.content === 'string' ? JSON.parse(campaignBannerSection.content) : campaignBannerSection.content;
@@ -1823,6 +1819,21 @@ export const HomePage: React.FC = () => {
         textColor: parsed.textColor || campaignBannerContent.textColor,
       };
     } catch (e) {}
+  }
+
+  // Active admin homepage_config from Homepage Manager takes HIGHEST precedence
+  if (cmsConfig?.campaignBannerConfig) {
+    campaignBannerContent = {
+      ...campaignBannerContent,
+      ...cmsConfig.campaignBannerConfig,
+      desktopImage: normalizeImageUrl(cmsConfig.campaignBannerConfig.desktopImage) || campaignBannerContent.desktopImage,
+      tabletImage: normalizeImageUrl(cmsConfig.campaignBannerConfig.tabletImage || cmsConfig.campaignBannerConfig.desktopImage) || campaignBannerContent.tabletImage,
+      mobileImage: normalizeImageUrl(cmsConfig.campaignBannerConfig.mobileImage || cmsConfig.campaignBannerConfig.desktopImage) || campaignBannerContent.mobileImage,
+      heading: cmsConfig.campaignBannerConfig.heading || campaignBannerContent.heading,
+      description: cmsConfig.campaignBannerConfig.description !== undefined ? cmsConfig.campaignBannerConfig.description : campaignBannerContent.description,
+      buttonText: cmsConfig.campaignBannerConfig.buttonText || campaignBannerContent.buttonText,
+      buttonLink: cmsConfig.campaignBannerConfig.buttonLink || campaignBannerContent.buttonLink,
+    };
   }
 
   // Section 8: Diamond Shapes Section Content
@@ -1846,10 +1857,6 @@ export const HomePage: React.FC = () => {
     ],
   };
 
-  if (cmsConfig?.diamondShapesConfig) {
-    diamondShapesContent = { ...diamondShapesContent, ...cmsConfig.diamondShapesConfig };
-  }
-
   if (diamondShapesSection && diamondShapesSection.content) {
     try {
       const parsed = typeof diamondShapesSection.content === 'string' ? JSON.parse(diamondShapesSection.content) : diamondShapesSection.content;
@@ -1868,6 +1875,18 @@ export const HomePage: React.FC = () => {
         shapes: parsed.shapes && parsed.shapes.length > 0 ? parsed.shapes : diamondShapesContent.shapes,
       };
     } catch (e) {}
+  }
+
+  // Active admin diamondShapesConfig from Homepage Manager takes HIGHEST precedence
+  if (cmsConfig?.diamondShapesConfig) {
+    diamondShapesContent = {
+      ...diamondShapesContent,
+      ...cmsConfig.diamondShapesConfig,
+      leftImage: normalizeImageUrl(cmsConfig.diamondShapesConfig.leftImage) || diamondShapesContent.leftImage,
+      heading: cmsConfig.diamondShapesConfig.heading || diamondShapesContent.heading,
+      eyebrow: cmsConfig.diamondShapesConfig.eyebrow || diamondShapesContent.eyebrow,
+      description: cmsConfig.diamondShapesConfig.description !== undefined ? cmsConfig.diamondShapesConfig.description : diamondShapesContent.description,
+    };
   }
 
   // Section 5: Atelier Craftsmanship Content

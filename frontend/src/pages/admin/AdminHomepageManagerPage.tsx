@@ -592,6 +592,37 @@ export const AdminHomepageManagerPage: React.FC = () => {
       };
 
       await api.updateSiteSetting('homepage_config', JSON.stringify(payload));
+
+      // Also sync campaignBannerConfig directly into the CAMPAIGN_BANNER PageSection for dual persistence
+      try {
+        const homePage = await api.getPageBySlug('home');
+        if (homePage && Array.isArray(homePage.sections)) {
+          const updatedSections = homePage.sections.map((s: any) => {
+            if (s.blockType === 'CAMPAIGN_BANNER' || String(s.id).toLowerCase().includes('campaign')) {
+              let existingContent = {};
+              try {
+                existingContent = typeof s.content === 'string' ? JSON.parse(s.content) : (s.content || {});
+              } catch (e) {}
+              return {
+                ...s,
+                content: JSON.stringify({
+                  ...existingContent,
+                  ...campaignBannerConfig,
+                  title: campaignBannerConfig.heading,
+                  desktopImage: campaignBannerConfig.desktopImage,
+                  mobileImage: campaignBannerConfig.mobileImage,
+                  image: campaignBannerConfig.desktopImage,
+                }),
+              };
+            }
+            return s;
+          });
+          await api.updatePageSections('home', { sections: updatedSections });
+        }
+      } catch (syncErr) {
+        console.warn('Notice: Dual-source PageSection sync notice:', syncErr);
+      }
+
       setSaveStatus('✨ Homepage configuration saved to database and live on storefront!');
       setTimeout(() => setSaveStatus(null), 4000);
     } catch (err: any) {
