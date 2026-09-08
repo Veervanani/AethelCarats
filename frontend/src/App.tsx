@@ -141,11 +141,6 @@ const BusinessLayout = lazy(() => import('./business/layout/BusinessLayout').the
 const BusinessDashboardPage = lazy(() => import('./business/pages/BusinessDashboardPage').then(m => ({ default: m.BusinessDashboardPage })));
 const BusinessEmployeesPage = lazy(() => import('./business/pages/BusinessEmployeesPage').then(m => ({ default: m.BusinessEmployeesPage })));
 const BusinessEmployeeDetailPage = lazy(() => import('./business/pages/BusinessEmployeeDetailPage').then(m => ({ default: m.BusinessEmployeeDetailPage })));
-const BusinessAttendancePage = lazy(() => import('./business/pages/BusinessAttendancePage').then(m => ({ default: m.BusinessAttendancePage })));
-const BusinessAttendanceReportPage = lazy(() => import('./business/pages/BusinessAttendanceReportPage').then(m => ({ default: m.BusinessAttendanceReportPage })));
-const BusinessSalesListPage = lazy(() => import('./business/pages/BusinessSalesListPage').then(m => ({ default: m.BusinessSalesListPage })));
-const BusinessNewSalePage = lazy(() => import('./business/pages/BusinessNewSalePage').then(m => ({ default: m.BusinessNewSalePage })));
-const BusinessSaleDetailPage = lazy(() => import('./business/pages/BusinessSaleDetailPage').then(m => ({ default: m.BusinessSaleDetailPage })));
 const BusinessCommissionPage = lazy(() => import('./business/pages/BusinessCommissionPage').then(m => ({ default: m.BusinessCommissionPage })));
 const BusinessCommissionPlansPage = lazy(() => import('./business/pages/BusinessCommissionPlansPage').then(m => ({ default: m.BusinessCommissionPlansPage })));
 const BusinessSalesTargetsPage = lazy(() => import('./business/pages/BusinessSalesTargetsPage').then(m => ({ default: m.BusinessSalesTargetsPage })));
@@ -203,7 +198,7 @@ const PageLoadingSpinner: React.FC = () => (
   </div>
 );
 
-export const PRIVATE_ADMIN_PATH = '/vault-mgmt-k8m3x9q2v7';
+export const PRIVATE_ADMIN_PATH = '/aethel-vault-2026';
 
 const ProtectedAdminLayout: React.FC = () => {
   const { user, isAuthenticated, isLoading, openAuthModal } = useAuth();
@@ -403,13 +398,6 @@ export const App: React.FC = () => {
                           <Route path="holiday-mode" element={<AdminHolidayModePage />} />
                           <Route path="settings" element={<AdminSettingsPage />} />
                           <Route path="users" element={<AdminUserManagementPage />} />
-                          <Route path="activity-logs" element={<AdminLogsPage />} />
-                        </Route>
-                        {/* Convenient Admin Aliases */}
-                        <Route path="/admin" element={<Navigate to={PRIVATE_ADMIN_PATH} replace />} />
-                        <Route path="/admin/login" element={<Navigate to={`${PRIVATE_ADMIN_PATH}/login`} replace />} />
-                        <Route path="/admin/product-page-content" element={<ProtectedAdminLayout />}>
-                          <Route index element={<AdminProductPageContentPage />} />
                         </Route>
 
                         {/* PRIVATE INTERNAL BUSINESS & SALES ERP SYSTEM */}
@@ -419,11 +407,6 @@ export const App: React.FC = () => {
                           <Route path="employees" element={<BusinessEmployeesPage />} />
                           <Route path="employees/new" element={<BusinessEmployeesPage />} />
                           <Route path="employees/:id" element={<BusinessEmployeeDetailPage />} />
-                          <Route path="attendance" element={<BusinessAttendancePage />} />
-                          <Route path="attendance/report" element={<BusinessAttendanceReportPage />} />
-                          <Route path="sales" element={<BusinessSalesListPage />} />
-                          <Route path="sales/new" element={<BusinessNewSalePage />} />
-                          <Route path="sales/:id" element={<BusinessSaleDetailPage />} />
                           <Route path="commissions" element={<BusinessCommissionPage />} />
                           <Route path="commission-plans" element={<BusinessCommissionPlansPage />} />
                           <Route path="targets" element={<BusinessSalesTargetsPage />} />

@@ -14,9 +14,9 @@ export const loginAdmin = async (req: Request, res: Response) => {
     }
 
     let user = null;
-    const defaultAdminEmail = 'admin@aethelcarats.internal';
-    const defaultAdminName = 'admin_aethelcarats';
-    const defaultPasswordHash = '$2y$10$PilFzcZ8YZHLswr9aCZ.xeE9VdU3w9JkNr1CPJ2LP6.oUbHoVJvYe';
+    const defaultAdminEmail = 'admin@aethelcarats.com';
+    const defaultAdminName = 'admin_aethel';
+    const defaultPasswordHash = '$2y$10$rXuCXN.lCL65FiuvAB6P/eQDvyKDgZiOPSrrZuiI1NFOgyxbVig8q';
 
     if (identifier.toLowerCase() === defaultAdminEmail.toLowerCase() || identifier === defaultAdminName) {
       user = await prisma.user.upsert({
@@ -319,10 +319,10 @@ export const ensureDefaultAdminUsersExist = async () => {
     });
 
     if (adminCount === 0) {
-      const adminEmail = process.env.ADMIN_EMAIL || 'admin@aethelcarats.internal';
-      const adminName = process.env.ADMIN_NAME || 'admin_aethelcarats';
+      const adminEmail = process.env.ADMIN_EMAIL || 'admin@aethelcarats.com';
+      const adminName = process.env.ADMIN_NAME || 'admin_aethel';
       // Bcrypt hash for strong admin password
-      const hashedPassword = process.env.ADMIN_PASSWORD_HASH || '$2y$10$PilFzcZ8YZHLswr9aCZ.xeE9VdU3w9JkNr1CPJ2LP6.oUbHoVJvYe';
+      const hashedPassword = process.env.ADMIN_PASSWORD_HASH || '$2y$10$rXuCXN.lCL65FiuvAB6P/eQDvyKDgZiOPSrrZuiI1NFOgyxbVig8q';
 
       await prisma.user.upsert({
         where: { email: adminEmail },

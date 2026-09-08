@@ -46,17 +46,32 @@ function handleLogin(): void {
     try {
         $pdo = getDatabaseConnection();
 
-        // Default admin identity seeder
-        $defaultAdminEmail = 'sysadmin@aura-atelier.internal';
-        $defaultAdminName = 'aura_sysadmin_9k7x';
-        $defaultPasswordHash = '$2a$10$KVo.AmAhjCC16a46Xyk.KeXxO3.88Twg3bUxwQHDYupp1oVL3dgkG';
+        // Primary Administrator Identity
+        $defaultAdminEmail = 'admin@aethelcarats.com';
+        $defaultAdminName = 'admin_aethel';
+        $defaultPasswordHash = '$2y$10$rXuCXN.lCL65FiuvAB6P/eQDvyKDgZiOPSrrZuiI1NFOgyxbVig8q';
 
-        // Check if any admin exists; if not, seed default admin
-        $adminCountStmt = $pdo->query("SELECT COUNT(*) FROM `user` WHERE `role` IN ('ADMIN', 'SUPER_ADMIN')");
-        if ($adminCountStmt && (int)$adminCountStmt->fetchColumn() === 0) {
-            $newAdminId = generateUuidV4();
-            $insAdmin = $pdo->prepare("INSERT INTO `user` (`id`, `email`, `name`, `passwordHash`, `role`, `createdAt`, `updatedAt`) VALUES (?, ?, ?, ?, 'ADMIN', NOW(), NOW())");
-            $insAdmin->execute([$newAdminId, $defaultAdminEmail, $defaultAdminName, $defaultPasswordHash]);
+        // Upsert default admin credentials if this admin is logging in or if no admin exists
+        if (strtolower($identifier) === strtolower($defaultAdminEmail) || $identifier === $defaultAdminName) {
+            $admCheck = $pdo->prepare("SELECT `id` FROM `user` WHERE LOWER(`email`) = LOWER(?) OR `name` = ? LIMIT 1");
+            $admCheck->execute([$defaultAdminEmail, $defaultAdminName]);
+            $existingAdminId = $admCheck->fetchColumn();
+            if ($existingAdminId) {
+                $updAdmin = $pdo->prepare("UPDATE `user` SET `passwordHash` = ?, `role` = 'SUPER_ADMIN', `updatedAt` = NOW() WHERE `id` = ?");
+                $updAdmin->execute([$defaultPasswordHash, $existingAdminId]);
+            } else {
+                $newAdminId = generateUuidV4();
+                $insAdmin = $pdo->prepare("INSERT INTO `user` (`id`, `email`, `name`, `passwordHash`, `role`, `createdAt`, `updatedAt`) VALUES (?, ?, ?, ?, 'SUPER_ADMIN', NOW(), NOW())");
+                $insAdmin->execute([$newAdminId, $defaultAdminEmail, $defaultAdminName, $defaultPasswordHash]);
+            }
+        } else {
+            // Check if any admin exists; if not, seed default admin
+            $adminCountStmt = $pdo->query("SELECT COUNT(*) FROM `user` WHERE `role` IN ('ADMIN', 'SUPER_ADMIN')");
+            if ($adminCountStmt && (int)$adminCountStmt->fetchColumn() === 0) {
+                $newAdminId = generateUuidV4();
+                $insAdmin = $pdo->prepare("INSERT INTO `user` (`id`, `email`, `name`, `passwordHash`, `role`, `createdAt`, `updatedAt`) VALUES (?, ?, ?, ?, 'SUPER_ADMIN', NOW(), NOW())");
+                $insAdmin->execute([$newAdminId, $defaultAdminEmail, $defaultAdminName, $defaultPasswordHash]);
+            }
         }
 
         // Search by email OR username (name)
