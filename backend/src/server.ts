@@ -704,7 +704,7 @@ app.get('/api/v1/business/audit-logs', authenticateToken, requireBusinessAdmin, 
 app.get('/api/v1/health', async (req, res) => {
   const rawDbUrl = (process.env.DATABASE_URL || '').trim();
   const maskedDbUrl = rawDbUrl.replace(/:([^:@]+)@/, ':****@');
-  const envHost = process.env.DB_HOST || 'srv844.hstgr.io';
+  const envHost = process.env.DB_HOST || (process.platform === 'linux' ? '127.0.0.1' : 'srv844.hstgr.io');
   const envName = process.env.DB_NAME || 'u707945653_aethelcarats';
   const envUser = process.env.DB_USER || 'u707945653_admin';
 
