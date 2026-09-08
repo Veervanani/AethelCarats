@@ -37,9 +37,9 @@ You have **2 Easy Methods** to import your complete database into Hostinger:
 1. In Hostinger hPanel, go to **Databases** → **phpMyAdmin** → click **Enter phpMyAdmin**.
 2. Select your newly created database on the left sidebar.
 3. Click the **Import** tab at the top.
-4. Click **Choose File** and select `hostinger-mysql-migration.sql` from your local computer.
+4. Click **Choose File** and select `aethelcarats-database.sql` from your local computer.
 5. Click **Import** at the bottom.
-   ✨ *All 57 tables and 1,990 data records will be restored instantly!*
+   ✨ *All 66 tables, certified loose diamonds, live media, and complete site settings will be restored instantly!*
 
 #### Method B: Via Hostinger SSH / Terminal
 1. Open Hostinger SSH Terminal in `public_html/backend`:
