@@ -1,4 +1,4 @@
-﻿import axios from 'axios';
+import axios from 'axios';
 
 const getBaseURL = () => {
   if ((import.meta as any).env?.VITE_API_URL) {
@@ -99,6 +99,11 @@ export const financialApi = {
 
   updatePaymentMethod: async (id: string, data: any) => {
     const res = await API.put(`/admin/payment-methods/${id}`, data);
+    return res.data;
+  },
+
+  deletePaymentMethod: async (id: string) => {
+    const res = await API.delete(`/admin/payment-methods/${id}`);
     return res.data;
   },
 
@@ -220,6 +225,16 @@ export const financialApi = {
 
   updatePaymentSettings: async (data: Record<string, string>) => {
     const res = await API.post('/admin/payment-settings', data);
+    return res.data;
+  },
+
+  getPublicPaymentConfig: async () => {
+    const res = await API.get('/payments/config');
+    return res.data;
+  },
+
+  getPublicPaymentMethods: async () => {
+    const res = await API.get('/payments/methods');
     return res.data;
   },
 };

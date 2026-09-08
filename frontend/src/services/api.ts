@@ -778,6 +778,21 @@ export const api = {
     return res.data;
   },
 
+  deletePaymentMethod: async (id: string) => {
+    const res = await API.delete(`/admin/payment-methods/${id}`);
+    return res.data;
+  },
+
+  getPublicPaymentConfig: async () => {
+    const res = await API.get('/payments/config');
+    return res.data;
+  },
+
+  getPublicPaymentMethods: async () => {
+    const res = await API.get('/payments/methods');
+    return res.data;
+  },
+
   getFinancialStatementData: async (params?: { type?: string; fromDate?: string; toDate?: string; customerEmail?: string; orderId?: string }) => {
     const res = await API.get('/admin/reports/statements', { params });
     return res.data;

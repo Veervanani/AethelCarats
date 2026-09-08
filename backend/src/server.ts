@@ -180,6 +180,8 @@ import {
   getPaymentMethods,
   createPaymentMethod,
   updatePaymentMethod,
+  deletePaymentMethod,
+  getPublicPaymentMethods,
 } from './controllers/paymentController';
 import {
   getRefunds,
@@ -201,6 +203,7 @@ import {
 import {
   getPaymentSettings,
   updatePaymentSettings,
+  getPublicPaymentConfig,
 } from './controllers/paymentSettingsController';
 import {
   createPayPalOrder,
@@ -313,6 +316,7 @@ app.post('/api/v1/admin/payments/:id/void', authenticateToken, requireRole([...f
 app.get('/api/v1/admin/payment-methods', authenticateToken, requireRole([...financeRoles]), getPaymentMethods);
 app.post('/api/v1/admin/payment-methods', authenticateToken, requireRole([...financeRoles]), createPaymentMethod);
 app.put('/api/v1/admin/payment-methods/:id', authenticateToken, requireRole([...financeRoles]), updatePaymentMethod);
+app.delete('/api/v1/admin/payment-methods/:id', authenticateToken, requireRole([...financeRoles]), deletePaymentMethod);
 
 app.get('/api/v1/admin/refunds', authenticateToken, requireRole([...financeRoles]), getRefunds);
 app.post('/api/v1/admin/refunds', authenticateToken, requireRole([...financeRoles]), createRefund);
@@ -337,6 +341,8 @@ app.post('/api/v1/admin/payment-settings', authenticateToken, requireRole([...fi
 app.get('/api/v1/orders/track', trackPublicOrder);
 app.get('/api/v1/orders/my-orders', getOrdersByCustomerEmail);
 app.post('/api/v1/checkout/create-order', requireStoreOpenForOrders, createPublicOrder);
+app.get('/api/v1/payments/config', getPublicPaymentConfig);
+app.get('/api/v1/payments/methods', getPublicPaymentMethods);
 app.get('/api/v1/payments/paypal/client-id', getPublicPayPalClientId);
 app.post('/api/v1/payments/paypal/create-order', requireStoreOpenForOrders, createPayPalOrder);
 app.post('/api/v1/payments/paypal/capture-order', requireStoreOpenForOrders, capturePayPalOrder);

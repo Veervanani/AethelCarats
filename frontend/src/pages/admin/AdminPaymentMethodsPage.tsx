@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
-import { Plus, Edit, Check, X, Shield, Settings } from 'lucide-react';
+import { Plus, Edit, Check, X, Shield, Settings, Trash2, CheckCircle, AlertCircle } from 'lucide-react';
 import { financialApi } from '../../services/financialApi';
 
 const PageHeader = styled.div`
@@ -86,6 +86,7 @@ const FormGroup = styled.div`
 export const AdminPaymentMethodsPage: React.FC = () => {
   const [methods, setMethods] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
+  const [successMsg, setSuccessMsg] = useState('');
 
   // Add / Edit Modal
   const [showModal, setShowModal] = useState(false);
@@ -111,9 +112,24 @@ export const AdminPaymentMethodsPage: React.FC = () => {
   const handleToggleActive = async (m: any) => {
     try {
       await financialApi.updatePaymentMethod(m.id, { isActive: !m.isActive });
+      setSuccessMsg(`✓ Status for "${m.name}" updated in database.`);
+      setTimeout(() => setSuccessMsg(''), 3500);
       loadMethods();
     } catch (e) {
-      alert('Error toggling status');
+      alert('Error toggling status in database');
+    }
+  };
+
+  const handleDelete = async (m: any) => {
+    if (window.confirm(`Are you sure you want to permanently delete "${m.name}" from the database?\n\nIf you have added a new payment method, deleting the old one ensures only the new one remains in the database.`)) {
+      try {
+        await financialApi.deletePaymentMethod(m.id);
+        setSuccessMsg(`✓ "${m.name}" permanently deleted from database. Only active methods remain.`);
+        setTimeout(() => setSuccessMsg(''), 4000);
+        loadMethods();
+      } catch (err: any) {
+        alert(err.response?.data?.message || err.message || 'Error deleting payment method from database');
+      }
     }
   };
 
@@ -122,15 +138,18 @@ export const AdminPaymentMethodsPage: React.FC = () => {
     try {
       if (editingMethod) {
         await financialApi.updatePaymentMethod(editingMethod.id, form);
+        setSuccessMsg(`✓ "${form.name}" updated in database.`);
       } else {
         await financialApi.createPaymentMethod(form);
+        setSuccessMsg(`✓ New payment method "${form.name}" stored in database.`);
       }
+      setTimeout(() => setSuccessMsg(''), 4000);
       setShowModal(false);
       setEditingMethod(null);
       setForm({ name: '', code: '', description: '', sortOrder: 0 });
       loadMethods();
     } catch (err: any) {
-      alert(err.response?.data?.message || 'Error saving payment method');
+      alert(err.response?.data?.message || 'Error saving payment method to database');
     }
   };
 
@@ -140,7 +159,7 @@ export const AdminPaymentMethodsPage: React.FC = () => {
         <div>
           <h1>Payment Methods Management</h1>
           <p style={{ color: '#666', fontSize: '0.85rem' }}>
-            Configure available payment channels. Inactive methods remain available for historical transaction logging.
+            Configure and manage available payment channels stored in your MySQL database. Add new payment methods, or delete old ones so only your desired options exist.
           </p>
         </div>
         <button
@@ -166,6 +185,27 @@ export const AdminPaymentMethodsPage: React.FC = () => {
         </button>
       </PageHeader>
 
+      {successMsg && (
+        <div
+          style={{
+            display: 'flex',
+            alignItems: 'center',
+            gap: 10,
+            padding: '12px 18px',
+            background: '#e6f4ea',
+            border: '1px solid #ceead6',
+            color: '#137333',
+            borderRadius: 6,
+            fontWeight: 600,
+            marginBottom: 20,
+            fontSize: '0.85rem',
+          }}
+        >
+          <CheckCircle size={18} />
+          <span>{successMsg}</span>
+        </div>
+      )}
+
       <TableContainer>
         <Table>
           <thead>
@@ -181,7 +221,7 @@ export const AdminPaymentMethodsPage: React.FC = () => {
             {loading ? (
               <tr>
                 <td colSpan={5} style={{ textAlign: 'center', padding: 30, color: '#888' }}>
-                  Loading payment methods...
+                  Loading payment methods from database...
                 </td>
               </tr>
             ) : (
@@ -205,7 +245,7 @@ export const AdminPaymentMethodsPage: React.FC = () => {
                     </span>
                   </td>
                   <td>
-                    <div style={{ display: 'flex', gap: 10 }}>
+                    <div style={{ display: 'flex', gap: 10, alignItems: 'center' }}>
                       <button
                         onClick={() => handleToggleActive(m)}
                         style={{
@@ -217,7 +257,7 @@ export const AdminPaymentMethodsPage: React.FC = () => {
                           fontSize: '0.75rem',
                         }}
                       >
-                        {m.isActive ? 'Disable (Set Inactive)' : 'Enable (Activate)'}
+                        {m.isActive ? 'Disable' : 'Enable'}
                       </button>
 
                       <button
@@ -226,9 +266,40 @@ export const AdminPaymentMethodsPage: React.FC = () => {
                           setForm({ name: m.name, code: m.code, description: m.description || '', sortOrder: m.sortOrder });
                           setShowModal(true);
                         }}
-                        style={{ border: 'none', background: 'none', cursor: 'pointer', color: '#555' }}
+                        style={{
+                          border: '1px solid #d9d3c7',
+                          background: '#fff',
+                          padding: '4px 8px',
+                          borderRadius: 4,
+                          cursor: 'pointer',
+                          color: '#555',
+                          display: 'flex',
+                          alignItems: 'center',
+                          gap: 4,
+                          fontSize: '0.75rem',
+                        }}
+                        title="Edit method"
                       >
-                        <Edit size={16} />
+                        <Edit size={14} /> Edit
+                      </button>
+
+                      <button
+                        onClick={() => handleDelete(m)}
+                        style={{
+                          border: '1px solid #feb2b2',
+                          background: '#fff5f5',
+                          padding: '4px 8px',
+                          borderRadius: 4,
+                          cursor: 'pointer',
+                          color: '#c53030',
+                          display: 'flex',
+                          alignItems: 'center',
+                          gap: 4,
+                          fontSize: '0.75rem',
+                        }}
+                        title={`Permanently delete ${m.name} from database`}
+                      >
+                        <Trash2 size={14} /> Delete
                       </button>
                     </div>
                   </td>

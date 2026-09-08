@@ -359,3 +359,43 @@ export const updatePaymentMethod = async (req: AuthRequest, res: Response) => {
     return res.status(500).json({ message: 'Error updating payment method' });
   }
 };
+
+export const deletePaymentMethod = async (req: AuthRequest, res: Response) => {
+  try {
+    const { id } = req.params;
+    if (!id) {
+      return res.status(400).json({ message: 'Payment method ID is required' });
+    }
+
+    const existing = await prisma.paymentMethod.findUnique({ where: { id } });
+    if (!existing) {
+      return res.status(404).json({ message: 'Payment method not found in database' });
+    }
+
+    await prisma.paymentMethod.delete({
+      where: { id },
+    });
+
+    return res.status(200).json({
+      success: true,
+      message: `Payment method "${existing.name}" successfully deleted from database`,
+      id,
+    });
+  } catch (error: any) {
+    console.error('deletePaymentMethod error:', error);
+    return res.status(500).json({ message: 'Error deleting payment method from database', error: error?.message });
+  }
+};
+
+export const getPublicPaymentMethods = async (req: any, res: Response) => {
+  try {
+    const methods = await prisma.paymentMethod.findMany({
+      where: { isActive: true },
+      orderBy: { sortOrder: 'asc' },
+    });
+    return res.status(200).json(methods);
+  } catch (error: any) {
+    console.error('getPublicPaymentMethods error:', error);
+    return res.status(500).json({ message: 'Error retrieving active payment methods', error: error?.message });
+  }
+};
