@@ -1,0 +1,714 @@
+{
+  "storeName": "AETHELCARATS FINE JEWELLERY ATELIER",
+  "contactEmail": "aethelcarats@gmail.com",
+  "contactPhone": "+917990278892",
+  "whatsappNumber": "+919876543210",
+  "whatsappDisplayNumber": "+919737853206",
+  "whatsappDefaultMessage": "Hello AethelCarats Atelier, I am interested in your fine jewellery collection.",
+  "freeShippingThreshold": 1000,
+  "publicSiteUrl": "https://aethelcarats.com",
+  "instagramUrl": "https://www.instagram.com/aethelcarats",
+  "facebookUrl": "https://facebook.com/aethelcarats",
+  "pinterestUrl": "https://pinterest.com/aethelcarats",
+  "storeAddress": "Surat, Gujarat, India",
+  "enableConsultAtelierExpert": true,
+  "consultTitle": "Consult a AethelCarats Atelier Expert",
+  "consultDescription": "Speak directly with our jewelry specialists regarding custom design, diamond selection, or sizing guidance.",
+  "consultPhone": "+919737853206",
+  "consultPhoneLabel": "Call Atelier",
+  "consultEmail": "contact@aethelcarats.com",
+  "consultEmailLabel": "Email Concierge",
+  "consultCloseLabel": "Close",
+  "header_config": {
+    "logoUrl": "/assets/logo.svg",
+    "logoImage": "/assets/logo.svg",
+    "mobileLogoUrl": "/assets/logo-mobile.svg",
+    "logoLink": "/",
+    "logoWidth": "180px",
+    "topbarText": "FREE WORLDWIDE SHIPPING ✦",
+    "topbarLink": "/bespoke-service",
+    "topbarVisible": true,
+    "showSearch": true,
+    "showAccount": true,
+    "showWishlist": true,
+    "showCart": true
+  },
+  "header_settings": {
+    "logoUrl": "/assets/logo.svg",
+    "logoImage": "/assets/logo.svg",
+    "logoWidth": "180px",
+    "announcementText": "FREE WORLDWIDE SHIPPING ✦",
+    "announcementEnabled": true,
+    "announcementBg": "#12161a",
+    "announcementTextColor": "#fffdf9",
+    "headerBg": "#ffffff",
+    "stickyHeader": true,
+    "showSearch": true,
+    "showWishlist": true,
+    "showAccount": true,
+    "showCart": true,
+    "mobileLogoUrl": "/assets/logo-mobile.svg",
+    "logoLink": "/",
+    "topbarText": "FREE WORLDWIDE SHIPPING ✦",
+    "topbarLink": "/bespoke-service",
+    "topbarVisible": true
+  },
+  "footer_config": {
+    "brandName": "AETHELCARATS FINE JEWELLERY ATELIER",
+    "tagline": "Fine Jewelry & Certified Solitaire Diamonds",
+    "brandDescription": "AethelCarats Fine Jewellery crafts exquisite lab-grown and natural diamond jewelry with unmatched artistry, ethical sourcing, and timeless elegance.",
+    "logoImage": "",
+    "logoUrl": "",
+    "logoWidth": "160pxpx",
+    "trustBadgeImage": "",
+    "newsletterHeading": "JOIN AURA DIAMOND ATELIER",
+    "newsletterSubtitle": "Subscribe to receive bespoke invitations and private collection releases.",
+    "newsletterPlaceholder": "Email Address",
+    "newsletterButtonText": "JOIN",
+    "newsletterConsentText": "I agree to receive promotional emails from Aura Diamond Atelier. You can unsubscribe at any time.",
+    "newsletterPrivacyUrl": "/privacy-policy",
+    "columns": [
+      {
+        "title": "THE HOUSE",
+        "links": [
+          {
+            "label": "Quality & Craftsmanship",
+            "url": "/about-us",
+            "isExternal": false
+          },
+          {
+            "label": "Diamond Sustainability",
+            "url": "/sustainability",
+            "isExternal": false
+          },
+          {
+            "label": "Aura Journal",
+            "url": "/blog",
+            "isExternal": false
+          },
+          {
+            "label": "Sale Exclusions",
+            "url": "/sale-exclusions",
+            "isExternal": false
+          }
+        ]
+      },
+      {
+        "title": "COLLECTIONS",
+        "links": [
+          {
+            "label": "Diamond Rings",
+            "url": "/rings",
+            "isExternal": false
+          },
+          {
+            "label": "Fine Earrings",
+            "url": "/earrings",
+            "isExternal": false
+          },
+          {
+            "label": "Riviere Necklaces",
+            "url": "/necklaces",
+            "isExternal": false
+          },
+          {
+            "label": "Tennis Bracelets",
+            "url": "/bracelets",
+            "isExternal": false
+          },
+          {
+            "label": "Solitaire Pendants",
+            "url": "/pendants",
+            "isExternal": false
+          },
+          {
+            "label": "The Diamond Vault",
+            "url": "/diamonds",
+            "isExternal": false
+          }
+        ]
+      },
+      {
+        "title": "CLIENT SERVICES",
+        "links": [
+          {
+            "label": "Contact Concierge",
+            "url": "/contact-us",
+            "isExternal": false
+          },
+          {
+            "label": "Complimentary Insured Shipping",
+            "url": "/shipping-delivery",
+            "isExternal": false
+          },
+          {
+            "label": "Returns & Exchange",
+            "url": "/returns-refunds",
+            "isExternal": false
+          },
+          {
+            "label": "Lifetime Warranty",
+            "url": "/lifetime-warranty",
+            "isExternal": false
+          },
+          {
+            "label": "Frequently Asked Questions",
+            "url": "/faq",
+            "isExternal": false
+          }
+        ]
+      }
+    ],
+    "email": "aethelcarats@gmail.com",
+    "phone": "+917990278892",
+    "whatsapp": "+91 7990278892",
+    "address": "Surat, Gujarat, India",
+    "workingHours": "Mon – Sat: 10:00 AM – 7:00 PM IST",
+    "appointmentUrl": "/contact-us",
+    "instagram": "https://www.instagram.com/aethelcarats",
+    "facebook": "https://facebook.com/aethelcarats",
+    "pinterest": "https://pinterest.com/aethelcarats",
+    "youtube": "https://youtube.com",
+    "tiktok": "",
+    "twitter": "",
+    "linkedin": "",
+    "copyrightText": "© 2026 AethelCarats Fine Jewellery Atelier. All Rights Reserved.",
+    "legalLinks": [
+      {
+        "label": "Terms & Conditions",
+        "url": "/terms-of-service",
+        "isExternal": false
+      },
+      {
+        "label": "Privacy Policy",
+        "url": "/privacy-policy",
+        "isExternal": false
+      },
+      {
+        "label": "Site Map",
+        "url": "/sitemap",
+        "isExternal": false
+      }
+    ],
+    "paymentBadgesText": "Visa, Mastercard, American Express, Apple Pay, Google Pay, Wire Transfer",
+    "socialLinks": [
+      {
+        "platform": "Instagram",
+        "url": "https://www.instagram.com/aethelcarats"
+      },
+      {
+        "platform": "Facebook",
+        "url": "https://facebook.com/aethelcarats"
+      },
+      {
+        "platform": "Pinterest",
+        "url": "https://pinterest.com/aethelcarats"
+      },
+      {
+        "platform": "YouTube",
+        "url": "https://youtube.com"
+      },
+      {
+        "platform": "WhatsApp",
+        "url": "https://wa.me/917990278892"
+      }
+    ]
+  },
+  "global_theme_config": {
+    "primaryColor": "#1f1f1f",
+    "secondaryColor": "#c9a45c",
+    "accentColor": "#b8944d",
+    "backgroundColor": "#ffffff",
+    "textColor": "#1f1f1f",
+    "borderColor": "#d9d3c7",
+    "headingFont": "Cormorant Garamond",
+    "bodyFont": "Inter",
+    "buttonRadius": "2px",
+    "containerWidth": "1280px"
+  },
+  "storefront_labels_config": {
+    "addToCart": "ADD TO SHOPPING BAG",
+    "requestQuote": "REQUEST ATELIER QUOTE",
+    "shopNow": "DISCOVER COLLECTION",
+    "viewCollection": "VIEW COLLECTION",
+    "signIn": "SIGN IN",
+    "createAccount": "CREATE ACCOUNT",
+    "contactUs": "CONTACT ATELIER",
+    "learnMore": "DISCOVER MORE",
+    "clearAll": "CLEAR FILTERS",
+    "noResults": "NO FINE JEWELLERY MATCHES YOUR SELECTION"
+  },
+  "whatsapp_config": {
+    "inquiryNumber": "+919876543210",
+    "displayNumber": "+919876543210",
+    "defaultMessage": "Hello Aura Diamond Atelier, I am interested in your fine jewellery collection."
+  },
+  "consult_expert_config": {
+    "enableConsultAtelierExpert": "true",
+    "consultTitle": "Consult a AethelCarats Atelier Expert",
+    "consultDescription": "Speak directly with our jewelry specialists regarding custom design, diamond selection, or sizing guidance.",
+    "consultPhone": "+44 (0) 20 7946 0912",
+    "consultPhoneLabel": "Call Atelier",
+    "consultEmail": "concierge@aethelcarats.com",
+    "consultEmailLabel": "Email Concierge",
+    "consultCloseLabel": "Close"
+  },
+  "site_settings": {
+    "instagramUrl": "https://www.instagram.com/aethelcarats",
+    "facebookUrl": "https://facebook.com/aethelcarats",
+    "pinterestUrl": "https://pinterest.com/aethelcarats",
+    "contactEmail": "aethelcarats@gmail.com",
+    "contactPhone": "+917990278892",
+    "storeName": "AETHELCARATS FINE JEWELLERY ATELIER",
+    "storeAddress": "Surat, Gujarat, India"
+  },
+  "paypal_client_id": "BAAqaKN73TPUvj2BG5Fh-G16xs8N0Dvcv0KOK7Nvt1M2jdU4izxVBjhFH7O_Ny_huFK8qD3EsbFmRer70c",
+  "footer_settings": {
+    "brandName": "AETHELCARATS FINE JEWELLERY ATELIER",
+    "tagline": "Fine Jewelry & Certified Solitaire Diamonds",
+    "brandDescription": "AethelCarats Fine Jewellery crafts exquisite lab-grown and natural diamond jewelry with unmatched artistry, ethical sourcing, and timeless elegance.",
+    "logoImage": "",
+    "logoUrl": "",
+    "logoWidth": "160pxpx",
+    "trustBadgeImage": "",
+    "newsletterHeading": "JOIN AURA DIAMOND ATELIER",
+    "newsletterSubtitle": "Subscribe to receive bespoke invitations and private collection releases.",
+    "newsletterPlaceholder": "Email Address",
+    "newsletterButtonText": "JOIN",
+    "newsletterConsentText": "I agree to receive promotional emails from Aura Diamond Atelier. You can unsubscribe at any time.",
+    "newsletterPrivacyUrl": "/privacy-policy",
+    "columns": [
+      {
+        "title": "THE HOUSE",
+        "links": [
+          {
+            "label": "Quality & Craftsmanship",
+            "url": "/about-us",
+            "isExternal": false
+          },
+          {
+            "label": "Diamond Sustainability",
+            "url": "/sustainability",
+            "isExternal": false
+          },
+          {
+            "label": "Aura Journal",
+            "url": "/blog",
+            "isExternal": false
+          },
+          {
+            "label": "Sale Exclusions",
+            "url": "/sale-exclusions",
+            "isExternal": false
+          }
+        ]
+      },
+      {
+        "title": "COLLECTIONS",
+        "links": [
+          {
+            "label": "Diamond Rings",
+            "url": "/rings",
+            "isExternal": false
+          },
+          {
+            "label": "Fine Earrings",
+            "url": "/earrings",
+            "isExternal": false
+          },
+          {
+            "label": "Riviere Necklaces",
+            "url": "/necklaces",
+            "isExternal": false
+          },
+          {
+            "label": "Tennis Bracelets",
+            "url": "/bracelets",
+            "isExternal": false
+          },
+          {
+            "label": "Solitaire Pendants",
+            "url": "/pendants",
+            "isExternal": false
+          },
+          {
+            "label": "The Diamond Vault",
+            "url": "/diamonds",
+            "isExternal": false
+          }
+        ]
+      },
+      {
+        "title": "CLIENT SERVICES",
+        "links": [
+          {
+            "label": "Contact Concierge",
+            "url": "/contact-us",
+            "isExternal": false
+          },
+          {
+            "label": "Complimentary Insured Shipping",
+            "url": "/shipping-delivery",
+            "isExternal": false
+          },
+          {
+            "label": "Returns & Exchange",
+            "url": "/returns-refunds",
+            "isExternal": false
+          },
+          {
+            "label": "Lifetime Warranty",
+            "url": "/lifetime-warranty",
+            "isExternal": false
+          },
+          {
+            "label": "Frequently Asked Questions",
+            "url": "/faq",
+            "isExternal": false
+          }
+        ]
+      }
+    ],
+    "email": "aethelcarats@gmail.com",
+    "phone": "+917990278892",
+    "whatsapp": "+91 7990278892",
+    "address": "Surat, Gujarat, India",
+    "workingHours": "Mon – Sat: 10:00 AM – 7:00 PM IST",
+    "appointmentUrl": "/contact-us",
+    "instagram": "https://www.instagram.com/aethelcarats",
+    "facebook": "https://facebook.com/aethelcarats",
+    "pinterest": "https://pinterest.com/aethelcarats",
+    "youtube": "https://youtube.com",
+    "tiktok": "",
+    "twitter": "",
+    "linkedin": "",
+    "copyrightText": "© 2026 AethelCarats Fine Jewellery Atelier. All Rights Reserved.",
+    "legalLinks": [
+      {
+        "label": "Terms & Conditions",
+        "url": "/terms-of-service",
+        "isExternal": false
+      },
+      {
+        "label": "Privacy Policy",
+        "url": "/privacy-policy",
+        "isExternal": false
+      },
+      {
+        "label": "Site Map",
+        "url": "/sitemap",
+        "isExternal": false
+      }
+    ],
+    "paymentBadgesText": "Visa, Mastercard, American Express, Apple Pay, Google Pay, Wire Transfer",
+    "socialLinks": [
+      {
+        "platform": "Instagram",
+        "url": "https://www.instagram.com/aethelcarats"
+      },
+      {
+        "platform": "Facebook",
+        "url": "https://facebook.com/aethelcarats"
+      },
+      {
+        "platform": "Pinterest",
+        "url": "https://pinterest.com/aethelcarats"
+      },
+      {
+        "platform": "YouTube",
+        "url": "https://youtube.com"
+      },
+      {
+        "platform": "WhatsApp",
+        "url": "https://wa.me/917990278892"
+      }
+    ]
+  },
+  "company_address": "Surat Diamond Bourse, Gujarat, India / 740 Fifth Avenue, New York, NY 10019",
+  "holiday_message": "Orders are temporarily unavailable while we are away. Please check back soon.",
+  "upi_id": "aethelcarats@okhdfcbank",
+  "holiday_mode_start": "",
+  "holiday_end_date": "",
+  "company_email": "contact@aethelcarats.com",
+  "statement_footer_text": "For any payment verification or bespoke wire inquiries, please contact contact@aethelcarats.com or call +919737853206.",
+  "homepage_config": {
+    "categoriesConfig": {
+      "eyebrow": "THE COLLECTION MAISON",
+      "title": "Shop By Category",
+      "items": [
+        {
+          "title": "RINGS",
+          "url": "/rings",
+          "image": "/uploads/media/img_1788886093108_s4jb4_file_0000000009088211863d95f18b6bb0cf.png"
+        },
+        {
+          "title": "EARRINGS",
+          "url": "/earrings",
+          "image": "/uploads/media/img_1788886097691_8sesw_file_0000000057208211bc947189838809cc.png"
+        },
+        {
+          "title": "NECKLACES",
+          "url": "/necklaces",
+          "image": "/uploads/media/img_1788886103515_z93eb_file_00000000f6e4820780de465989e7afd2.png"
+        },
+        {
+          "title": "BRACELETS",
+          "url": "/bracelets",
+          "image": "/uploads/media/img_1788886110579_oupjc_file_0000000066f882118151eccb7b1dfe22.png"
+        },
+        {
+          "title": "PENDANTS",
+          "url": "/pendants",
+          "image": "/uploads/media/img_1788886115185_aq1v2_file_000000008e4482119a66b24519980a3e.png"
+        },
+        {
+          "title": "DIAMONDS",
+          "url": "/diamonds",
+          "image": "/uploads/media/img_1788886119507_m866j_IMG_20260904_023848.png"
+        }
+      ]
+    },
+    "campaignBannerConfig": {
+      "enableBanner": true,
+      "heading": "A NEW EXPRESSION OF FINE JEWELLERY",
+      "description": "Designed with intention. Crafted with precision. Made to be treasured for generations.",
+      "buttonText": "EXPLORE THE COLLECTION",
+      "buttonLink": "/collections/signature-collection",
+      "desktopImage": "/uploads/media/img_1788886732901_gcs2t_file_000000006720821193f36b2fd1dcf0b0.png",
+      "mobileImage": "/uploads/media/img_1788886736846_pqkz5_file_000000006720821193f36b2fd1dcf0b0.png",
+      "showOverlay": true,
+      "overlayOpacity": 0.45,
+      "textColor": "#1F1F1F",
+      "buttonBg": "#1F1F1F",
+      "buttonColor": "#FFFDF9"
+    },
+    "featuredCards": [
+      {
+        "title": "RIVIÈRE NECKLACES",
+        "subtitle": "Solitaire & Tennis Necklaces",
+        "imageUrl": "/uploads/media/img_1788886139937_18iw0_loraidajewels_14050613_015225120.jpg",
+        "targetUrl": "/necklaces",
+        "buttonText": "SHOP NOW →"
+      },
+      {
+        "title": "HIGH JEWELLERY BRACELETS",
+        "subtitle": "Emerald Cut Tennis Bracelets",
+        "imageUrl": "/uploads/media/img_1788886143838_xez5q_c_stradaa_14050613_015220954.jpg",
+        "targetUrl": "/bracelets",
+        "buttonText": "SHOP NOW →"
+      }
+    ],
+    "collectionSlides": [
+      {
+        "id": "slide-1",
+        "leftImage": "/uploads/media/img_1788886152316_pg7mu_loraidajewels_14050616_122056704.jpg",
+        "rightImage": "/uploads/media/img_1788886155723_9j2a8_loraidajewels_14050616_122058547.jpg",
+        "eyebrow": "THE 2026 ANNIVERSARY COLLECTION",
+        "title": "The Signature Solitaire Collection",
+        "link": "/collections/signature-collection"
+      },
+      {
+        "id": "slide-2",
+        "leftImage": "/uploads/media/img_1788886161844_smz42_loraidajewels_14050616_122015203.jpg",
+        "rightImage": "/uploads/media/img_1788886165692_oeecz_loraidajewels_14050616_122017085.jpg",
+        "eyebrow": "RIVIERE & TENNIS DESIGNS",
+        "title": "The Haute Joaillerie Necklaces",
+        "link": "/necklaces"
+      },
+      {
+        "id": "slide-3",
+        "leftImage": "/uploads/media/img_1788886172356_xs3wl_loraidajewels_14050616_121747812.jpg",
+        "rightImage": "/uploads/media/img_1788886177085_sbmom_loraidajewels_14050616_121839656.jpg",
+        "eyebrow": "FINE EARRINGS & CHANDELIERS",
+        "title": "The Diamond Chandelier Collection",
+        "link": "/earrings"
+      },
+      {
+        "id": "slide-4",
+        "leftImage": "/uploads/media/img_1788886181851_b4rll_loraidajewels_14050616_122254057.jpg",
+        "rightImage": "/uploads/media/img_1788886186367_gpfpl_loraidajewels_14050616_121931542.jpg",
+        "eyebrow": "EMERALD CUT TENNIS LINE",
+        "title": "Bespoke Diamond Line Bracelets",
+        "link": "/bracelets"
+      }
+    ],
+    "essentialsConfig": {
+      "leftTitle": "DIAMOND ESSENTIALS",
+      "leftImageUrl": "/uploads/media/img_1788886584281_03v6y_ChatGPT_Image_Sep_8__2026__10_25_22_PM.png",
+      "leftTargetUrl": "/diamonds",
+      "leftButtonText": "DIAMOND ESSENTIALS",
+      "rightTitle": "GOLDEN HOUR IS HERE",
+      "rightImageUrl": "/uploads/media/img_1788886598471_639lo_jeandousset_14050617_222458355.jpg",
+      "rightTargetUrl": "/collections/signature-collection",
+      "rightButtonText": "SHOP THE EVENT"
+    },
+    "diamondShapesConfig": {
+      "eyebrow": "AUTHENTICATED LOOSE DIAMONDS",
+      "heading": "Discover Exceptional Diamond Shapes",
+      "description": "Select your ideal cut from certified GIA & IGI diamonds, ethically sourced and precision-cut for maximum fire and brilliance.",
+      "leftImage": "/uploads/media/img_1788886607914_01ynt_IMG_20260908_222324.png",
+      "buttonText": "FIND YOUR DIAMOND",
+      "buttonLink": "/diamonds",
+      "shapes": [
+        {
+          "name": "ROUND",
+          "shape": "round",
+          "url": "/diamonds?shape=round",
+          "enabled": true
+        },
+        {
+          "name": "OVAL",
+          "shape": "oval",
+          "url": "/diamonds?shape=oval",
+          "enabled": true
+        },
+        {
+          "name": "EMERALD",
+          "shape": "emerald",
+          "url": "/diamonds?shape=emerald",
+          "enabled": true
+        },
+        {
+          "name": "PRINCESS",
+          "shape": "princess",
+          "url": "/diamonds?shape=princess",
+          "enabled": true
+        },
+        {
+          "name": "CUSHION",
+          "shape": "cushion",
+          "url": "/diamonds?shape=cushion",
+          "enabled": true
+        },
+        {
+          "name": "PEAR",
+          "shape": "pear",
+          "url": "/diamonds?shape=pear",
+          "enabled": true
+        },
+        {
+          "name": "RADIANT",
+          "shape": "radiant",
+          "url": "/diamonds?shape=radiant",
+          "enabled": true
+        },
+        {
+          "name": "MARQUISE",
+          "shape": "marquise",
+          "url": "/diamonds?shape=marquise",
+          "enabled": true
+        }
+      ]
+    },
+    "auraCards": [
+      {
+        "id": "only-1",
+        "eyebrow": "MASTER ATELIER CRAFTSMANSHIP",
+        "title": "Hand-finished custom CAD & precision diamond setting",
+        "image": "/assets/aura_only_at_1.png",
+        "url": "/custom-jewellery"
+      },
+      {
+        "id": "only-2",
+        "eyebrow": "PRIVATE CONCIERGE CONSULTATION",
+        "title": "Bespoke 1-on-1 atelier guidance & CAD preview",
+        "image": "/assets/aura_only_at_2.png",
+        "url": "/custom-jewellery"
+      },
+      {
+        "id": "only-3",
+        "eyebrow": "AUTHENTICATED CERTIFIED VAULT",
+        "title": "100% GIA & IGI verified natural & lab-grown stones",
+        "image": "/assets/aura_only_at_3.png",
+        "url": "/diamonds"
+      },
+      {
+        "id": "only-4",
+        "eyebrow": "SIGNATURE HERITAGE COLLECTIONS",
+        "title": "Timeless solitaire & riviere high jewellery pieces",
+        "image": "/assets/aura_only_at_4.png",
+        "url": "/collections/signature-collection"
+      }
+    ],
+    "reviewsConfig": {
+      "eyebrow": "AUTHENTICATED CLIENT TESTIMONIALS",
+      "title": "VOICES OF ELEGANCE",
+      "useDbReviews": true,
+      "customReviews": [
+        {
+          "id": "rev-1",
+          "text": "Amazing selection at incredible prices!",
+          "author": "Ryan K.",
+          "rating": 5
+        },
+        {
+          "id": "rev-2",
+          "text": "Our wedding bands are perfect. Simple. High quality. Easy. Comfortable.",
+          "author": "Melissa S.",
+          "rating": 5
+        },
+        {
+          "id": "rev-3",
+          "text": "Beautiful and great price",
+          "author": "Carolyn M.",
+          "rating": 5
+        },
+        {
+          "id": "rev-4",
+          "text": "Exactly as depicted. Beautiful ring, Excellent service.",
+          "author": "Scott C.",
+          "rating": 5
+        }
+      ]
+    },
+    "sectionVisibility": {
+      "hero": true,
+      "categories": true,
+      "campaignBanner": true,
+      "featured": true,
+      "signature": true,
+      "essentials": true,
+      "shapes": true,
+      "onlyAura": true,
+      "reviews": true
+    },
+    "heroColors": {
+      "subtitleColor": "",
+      "titleColor": "",
+      "descriptionColor": "",
+      "primaryCtaTextColor": "",
+      "secondaryCtaTextColor": ""
+    }
+  },
+  "paypal_client_secret": "ECq63bOo-D4k6XlcuEuaRwdt9TQd5YuZN7bUHMAHbRj0mHW9-iF90wEaTtGo5RSnlItWx6RCBcaXsHWM",
+  "holiday_mode_end": "",
+  "holiday_start_date": "",
+  "company_name": "AETHELCARATS FINE JEWELLERY ATELIER",
+  "paypal_enabled": true,
+  "bank_swift_bic": "HDFCINBBXXX",
+  "default_tax_rate": 0,
+  "default_currency": "USD",
+  "bank_account_name": "AETHELCARATS FINE JEWELLERY ATELIER",
+  "company_phone": "+919737853206",
+  "bank_routing_code": "HDFC0001234",
+  "bank_branch_address": "Surat Diamond Bourse, Gujarat, India",
+  "bank_payment_instructions": "Please include your Order Number as the wire transfer reference note. Orders will be processed immediately upon receipt of wire confirmation.",
+  "holiday_mode_message": "Orders are temporarily unavailable while we are away. Please check back soon.",
+  "company_tax_id": "US-TAX-88492019",
+  "bank_account_number": 50200084920192,
+  "bank_transfer_enabled": true,
+  "holiday_mode": {
+    "holiday_mode_enabled": false,
+    "holiday_mode_message": "Orders are temporarily unavailable while we are away. Please check back soon.",
+    "holiday_mode_reopening_message": "",
+    "holiday_mode_banner_text": "",
+    "holiday_mode_show_banner": true,
+    "holiday_mode_start": "",
+    "holiday_mode_end": ""
+  },
+  "invoice_notes": "Thank you for choosing AethelCarats Fine Jewellery Atelier. Certified authenticity documents accompany all delivered creations.",
+  "upi_enabled": false,
+  "paypal_mode": "live",
+  "bank_name": "HDFC Bank Ltd / Global Wire",
+  "receipt_notes": "Official payment receipt issued by AethelCarats Fine Jewellery Atelier."
+}

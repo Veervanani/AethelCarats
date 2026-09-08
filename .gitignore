@@ -53,3 +53,7 @@ pnpm-debug.log*
 Thumbs.db
 scratch/
 frontend/Diamond/
+
+# Redundant upload mirrors (canonical uploads in uploads/ and frontend/public/uploads/)
+backend/uploads/
+public_html/uploads/

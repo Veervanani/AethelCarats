@@ -1,0 +1,139 @@
+{
+  "id": "6b50a759-545c-49a1-87c4-20c3dc2f4c7c",
+  "title": "Diamond Engagement & Fashion Rings",
+  "slug": "home",
+  "sections": [
+    {
+      "id": "2cba9b2a-79df-4eca-b7d4-1cfd3c359b94",
+      "pageId": "6b50a759-545c-49a1-87c4-20c3dc2f4c7c",
+      "blockType": "HERO",
+      "position": 1,
+      "content": "{\"eyebrow\":\"Handcrafted Fine Jewelry\",\"eyebrowColor\":\"#c9a45c\",\"title\":\"Handcrafted Elegance & Exceptional Diamonds\",\"titleColor\":\"#ffffff\",\"description\":\"Discover certified solitaire rings and bespoke diamond creations crafted in Surat, India.\",\"descriptionColor\":\"#f5f1e8\",\"primaryBtnText\":\"Explore Collection\",\"primaryBtnTextColor\":\"#101418\",\"primaryBtnLink\":\"/rings\",\"secondaryBtnText\":\"Discover Diamonds\",\"secondaryBtnTextColor\":\"#ffffff\",\"secondaryBtnLink\":\"/diamonds\",\"desktopImage\":\"/assets/gem_hero_luxury.png\",\"tabletImage\":\"/assets/gem_hero_luxury.png\",\"mobileImage\":\"/assets/gem_hero_luxury.png\",\"alignment\":\"center\",\"overlayOpacity\":0.2,\"textColor\":\"#ffffff\"}",
+      "isVisible": 1
+    },
+    {
+      "id": "71dce1af-1272-42f3-b284-3e8744dd8369",
+      "pageId": "6b50a759-545c-49a1-87c4-20c3dc2f4c7c",
+      "blockType": "FEATURED_COLLECTIONS",
+      "position": 2,
+      "content": "{\"eyebrow\":\"CURATED ATELIER EDIT\",\"eyebrowColor\":\"#c9a45c\",\"title\":\"Featured Collections\",\"titleColor\":\"#1f1f1f\",\"subtitle\":\"Handcrafted Luxury Jewelry\",\"subtitleColor\":\"#77736c\",\"description\":\"Explore signature bridal, solitaire engagement, and fine diamond suites.\",\"descriptionColor\":\"#55514b\",\"primaryBtnText\":\"View All Collections\",\"primaryBtnTextColor\":\"#101418\",\"primaryBtnLink\":\"/collections\",\"image\":\"/assets/gem_rings_cat.png\",\"textColor\":\"#1f1f1f\"}",
+      "isVisible": 1
+    },
+    {
+      "id": "e47fd998-9e4a-4e03-ac4d-9fbac98e5dc7",
+      "pageId": "6b50a759-545c-49a1-87c4-20c3dc2f4c7c",
+      "blockType": "CAMPAIGN_BANNER",
+      "position": 3,
+      "content": "{\"eyebrow\":\"THE ATELIER VISION\",\"eyebrowColor\":\"#c9a45c\",\"title\":\"A NEW EXPRESSION OF FINE JEWELLERY\",\"titleColor\":\"#1f1f1f\",\"description\":\"Designed with intention. Crafted with precision. Made to be treasured for generations.\",\"descriptionColor\":\"#444444\",\"primaryBtnText\":\"EXPLORE THE COLLECTION\",\"primaryBtnTextColor\":\"#fffdf9\",\"primaryBtnLink\":\"/collections/signature-collection\",\"image\":\"/uploads/media/img_1788886732901_gcs2t_file_000000006720821193f36b2fd1dcf0b0.png\",\"textColor\":\"#1F1F1F\",\"enableBanner\":true,\"heading\":\"A NEW EXPRESSION OF FINE JEWELLERY\",\"buttonText\":\"EXPLORE THE COLLECTION\",\"buttonLink\":\"/collections/signature-collection\",\"desktopImage\":\"/uploads/media/img_1788886732901_gcs2t_file_000000006720821193f36b2fd1dcf0b0.png\",\"mobileImage\":\"/uploads/media/img_1788886736846_pqkz5_file_000000006720821193f36b2fd1dcf0b0.png\",\"showOverlay\":true,\"overlayOpacity\":0.45,\"buttonBg\":\"#1F1F1F\",\"buttonColor\":\"#FFFDF9\"}",
+      "isVisible": 1
+    },
+    {
+      "id": "403e0690-279a-4312-a54e-986b635a17fe",
+      "pageId": "6b50a759-545c-49a1-87c4-20c3dc2f4c7c",
+      "blockType": "DIAMOND_SHAPES",
+      "position": 4,
+      "content": "{\"eyebrow\":\"AUTHENTICATED LOOSE DIAMONDS\",\"eyebrowColor\":\"#c9a45c\",\"title\":\"Exceptional Cut & Clarity\",\"titleColor\":\"#1f1f1f\",\"description\":\"Select your ideal cut from certified GIA & IGI diamonds, ethically sourced and precision-cut for maximum fire and brilliance.\",\"descriptionColor\":\"#77736c\",\"primaryBtnText\":\"DISCOVER ALL SHAPES\",\"primaryBtnTextColor\":\"#ffffff\",\"primaryBtnLink\":\"/diamonds\",\"textColor\":\"#1f1f1f\"}",
+      "isVisible": 1
+    },
+    {
+      "id": "0aecacfe-815c-470d-a745-d81549d9c390",
+      "pageId": "6b50a759-545c-49a1-87c4-20c3dc2f4c7c",
+      "blockType": "CRAFTSMANSHIP",
+      "position": 5,
+      "content": "{\"eyebrow\":\"SURAT HERITAGE\",\"eyebrowColor\":\"#c9a45c\",\"title\":\"The Art of Fine Jewelry\",\"titleColor\":\"#1f1f1f\",\"description\":\"Every diamond is hand-selected and precisely set in our Gujarat atelier by fourth-generation artisans dedicated to perfection.\",\"descriptionColor\":\"#55514b\",\"primaryBtnText\":\"OUR CRAFT STORY\",\"primaryBtnTextColor\":\"#ffffff\",\"primaryBtnLink\":\"/about-us\",\"image\":\"/assets/gem_craftsmanship.jpg\",\"textColor\":\"#1f1f1f\"}",
+      "isVisible": 1
+    },
+    {
+      "id": "430820ca-7335-4138-be0f-8b829075c49c",
+      "pageId": "6b50a759-545c-49a1-87c4-20c3dc2f4c7c",
+      "blockType": "TESTIMONIALS",
+      "position": 6,
+      "content": "{\"eyebrow\":\"CLIENT PRAISE\",\"eyebrowColor\":\"#c9a45c\",\"title\":\"Client Experiences\",\"titleColor\":\"#1f1f1f\",\"subtitle\":\"Over 1,800 Verified 5-Star Reviews\",\"subtitleColor\":\"#77736c\",\"description\":\"Read genuine reviews from clients who chose Aura Diamond Atelier for life’s most significant moments.\",\"descriptionColor\":\"#55514b\",\"textColor\":\"#1f1f1f\"}",
+      "isVisible": 1
+    }
+  ],
+  "content": "{}",
+  "draftContent": "{}",
+  "status": "PUBLISHED",
+  "lastPublishedAt": "2026-09-08T16:00:45.076Z",
+  "publishedBy": "admin@aethelcarats.com",
+  "lastModifiedBy": "admin@aethelcarats.com",
+  "createdAt": "2026-08-08T02:09:20.341Z",
+  "updatedAt": "2026-09-08T16:58:59.421Z",
+  "seoMetadata": null,
+  "revisions": [
+    {
+      "id": "9cee66b8-28ea-4fe7-9232-096d27d8245b",
+      "pageId": "6b50a759-545c-49a1-87c4-20c3dc2f4c7c",
+      "version": 8,
+      "action": "SAVE_DRAFT",
+      "adminUser": "admin@aethelcarats.com",
+      "content": "{}",
+      "createdAt": "2026-09-08T16:58:59.421Z"
+    },
+    {
+      "id": "2d3c36f4-d760-423a-a936-4855297327ad",
+      "pageId": "6b50a759-545c-49a1-87c4-20c3dc2f4c7c",
+      "version": 7,
+      "action": "SAVE_DRAFT",
+      "adminUser": "admin@aethelcarats.com",
+      "content": "{}",
+      "createdAt": "2026-09-08T16:58:32.597Z"
+    },
+    {
+      "id": "702ee179-2bc5-4236-9974-009b0dfc7ccb",
+      "pageId": "6b50a759-545c-49a1-87c4-20c3dc2f4c7c",
+      "version": 6,
+      "action": "SAVE_DRAFT",
+      "adminUser": "admin@aethelcarats.com",
+      "content": "{}",
+      "createdAt": "2026-09-08T16:57:00.560Z"
+    },
+    {
+      "id": "face0c84-8246-40f3-8923-b2080b8c0e0e",
+      "pageId": "6b50a759-545c-49a1-87c4-20c3dc2f4c7c",
+      "version": 5,
+      "action": "SAVE_DRAFT",
+      "adminUser": "admin@aethelcarats.com",
+      "content": "{}",
+      "createdAt": "2026-09-08T16:56:58.732Z"
+    },
+    {
+      "id": "eab209de-a6c5-4268-9a54-1bb379b3543c",
+      "pageId": "6b50a759-545c-49a1-87c4-20c3dc2f4c7c",
+      "version": 4,
+      "action": "SAVE_DRAFT",
+      "adminUser": "admin@aethelcarats.com",
+      "content": "{\"heading\":\"Diamond Engagement & Fashion Rings\",\"headingDescription\":\"Handcrafted solitaire, halo, three-stone, and eternity rings in 18K gold and platinum.\",\"seoContent\":\"Explore our exquisite collection of diamond engagement rings, eternity bands, and stacking rings.\"}",
+      "createdAt": "2026-09-08T16:14:39.105Z"
+    },
+    {
+      "id": "0403eeb2-c737-4c06-9665-ca5ae907c35e",
+      "pageId": "6b50a759-545c-49a1-87c4-20c3dc2f4c7c",
+      "version": 3,
+      "action": "PUBLISH",
+      "adminUser": "admin@aethelcarats.com",
+      "content": "{}",
+      "createdAt": "2026-09-08T16:00:45.075Z"
+    },
+    {
+      "id": "f9f357ef-97a3-429a-9e17-2c84b943cc1d",
+      "pageId": "6b50a759-545c-49a1-87c4-20c3dc2f4c7c",
+      "version": 2,
+      "action": "SAVE_DRAFT",
+      "adminUser": "admin@aethelcarats.com",
+      "content": "{}",
+      "createdAt": "2026-09-08T14:31:26.397Z"
+    },
+    {
+      "id": "e92176be-6402-458c-b350-dc8474c561b2",
+      "pageId": "6b50a759-545c-49a1-87c4-20c3dc2f4c7c",
+      "version": 1,
+      "action": "SAVE_DRAFT",
+      "adminUser": "admin@aethelcarats.com",
+      "content": "{}",
+      "createdAt": "2026-09-08T14:16:55.677Z"
+    }
+  ],
+  "faqs": []
+}
