@@ -84,6 +84,16 @@ function resolveFrontendDistDir() {
 
 const distDir = resolveFrontendDistDir();
 
+// Transparently handle legacy PHP URL formats (/api/index.php/v1/* -> /api/v1/*)
+app.use((req, res, next) => {
+  if (req.url.startsWith('/api/index.php/')) {
+    req.url = req.url.replace('/api/index.php/', '/api/');
+  } else if (req.url === '/api/index.php') {
+    req.url = '/api/v1/health';
+  }
+  next();
+});
+
 // Request Diagnostics Logging Middleware
 app.use((req, res, next) => {
   console.log(`📥 [${new Date().toISOString()}] HTTP ${req.method} ${req.url} - Host: ${req.headers.host || 'unknown'}`);

@@ -8,9 +8,9 @@ const getBaseURL = () => {
     return 'http://127.0.0.1:8000/api/v1';
   }
   if (typeof window !== 'undefined') {
-    return `${window.location.origin}/api/index.php/v1`;
+    return `${window.location.origin}/api/v1`;
   }
-  return '/api/index.php/v1';
+  return '/api/v1';
 };
 
 const API = axios.create({

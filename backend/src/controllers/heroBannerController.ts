@@ -66,108 +66,154 @@ const deleteFileIfUnreferenced = async (imagePath: string | null | undefined) =>
   }
 };
 
+const DEFAULT_SLIDES = [
+  {
+    id: 'hero_default_1',
+    title: "Handcrafted\nElegance &\nExceptional\nDiamonds",
+    subtitle: 'THE SIGNATURE COLLECTION 2026',
+    description: 'Immerse yourself in world-class craftsmanship, exceptional diamonds, and timeless bespoke creations.',
+    primaryCtaText: 'EXPLORE RINGS',
+    primaryCtaLink: '/rings',
+    secondaryCtaText: 'THE DIAMOND VAULT →',
+    secondaryCtaLink: '/diamonds',
+    productType: 'Engagement Ring',
+    imagePath: '/assets/Engagement Ring.png',
+    mobileImagePath: '/assets/Engagement Ring Mobile.png',
+    imageAlt: 'Handcrafted Solitaire Diamond Engagement Ring',
+    isActive: true,
+    displayOrder: 1,
+  },
+  {
+    id: 'hero_default_2',
+    title: "Timeless\nDiamonds,\nRefined\nForever",
+    subtitle: 'THE ART OF HIGH JEWELRY',
+    description: 'Discover exquisite diamond necklaces crafted with precision, elegance, and an uncompromising eye for detail.',
+    primaryCtaText: 'EXPLORE NECKLACES',
+    primaryCtaLink: '/necklaces',
+    secondaryCtaText: 'VIEW COLLECTION →',
+    secondaryCtaLink: '/collections/signature-collection',
+    productType: 'Necklace',
+    imagePath: '/assets/Necklace.png',
+    mobileImagePath: '/assets/Necklace Mobile.png',
+    imageAlt: 'Haute Joaillerie Diamond Necklace',
+    isActive: true,
+    displayOrder: 2,
+  },
+  {
+    id: 'hero_default_3',
+    title: "Brilliance\nDesigned to\nBe Remembered",
+    subtitle: 'THE SIGNATURE COLLECTION',
+    description: 'Exceptional diamond earrings, thoughtfully crafted to bring understated brilliance to every occasion.',
+    primaryCtaText: 'EXPLORE EARRINGS',
+    primaryCtaLink: '/earrings',
+    secondaryCtaText: 'DISCOVER DIAMONDS →',
+    secondaryCtaLink: '/diamonds',
+    productType: 'Earrings',
+    imagePath: '/assets/Earrings.png',
+    mobileImagePath: '/assets/Earrings Mobile.png',
+    imageAlt: 'Brilliant Diamond Earrings',
+    isActive: true,
+    displayOrder: 3,
+  },
+  {
+    id: 'hero_default_4',
+    title: "Exceptional\nCraftsmanship,\nWorn Forever",
+    subtitle: 'BESPOKE DIAMOND JEWELRY',
+    description: 'Discover refined diamond bracelets created with precision, timeless design, and exceptional craftsmanship.',
+    primaryCtaText: 'EXPLORE BRACELETS',
+    primaryCtaLink: '/bracelets',
+    secondaryCtaText: 'CREATE YOUR OWN →',
+    secondaryCtaLink: '/custom-jewellery',
+    productType: 'Bracelet',
+    imagePath: '/assets/Bracelet.png',
+    mobileImagePath: '/assets/Bracelet Mobile.png',
+    imageAlt: 'Bespoke Diamond Bracelet',
+    isActive: true,
+    displayOrder: 4,
+  },
+];
+
+let heroTableChecked = false;
+export const ensureHeroBannerTableExists = async () => {
+  if (heroTableChecked) return;
+  try {
+    await prisma.$executeRawUnsafe(`
+      CREATE TABLE IF NOT EXISTS \`HeroBanner\` (
+        \`id\` VARCHAR(191) NOT NULL,
+        \`title\` VARCHAR(191) NOT NULL,
+        \`subtitle\` VARCHAR(191) NULL,
+        \`description\` LONGTEXT NULL,
+        \`primaryCtaText\` VARCHAR(191) NULL,
+        \`primaryCtaLink\` VARCHAR(191) NULL,
+        \`secondaryCtaText\` VARCHAR(191) NULL,
+        \`secondaryCtaLink\` VARCHAR(191) NULL,
+        \`productType\` VARCHAR(191) NOT NULL DEFAULT 'Engagement Ring',
+        \`imagePath\` VARCHAR(191) NOT NULL,
+        \`mobileImagePath\` VARCHAR(191) NULL,
+        \`imageAlt\` VARCHAR(191) NULL,
+        \`isActive\` TINYINT(1) NOT NULL DEFAULT 1,
+        \`displayOrder\` INT NOT NULL DEFAULT 0,
+        \`createdAt\` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
+        \`updatedAt\` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3) ON UPDATE CURRENT_TIMESTAMP(3),
+        PRIMARY KEY (\`id\`)
+      ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+    `);
+    heroTableChecked = true;
+  } catch (e: any) {
+    console.warn('HeroBanner table auto-creation notice:', e?.message || e);
+  }
+};
+
 export const getPublicHeroBanners = async (req: Request, res: Response) => {
   try {
+    await ensureHeroBannerTableExists();
     let banners = await prisma.heroBanner.findMany({
       where: { isActive: true },
       orderBy: { displayOrder: 'asc' },
     });
 
-    if (banners.length === 0) {
-      const defaultSlides = [
-        {
-          title: "Handcrafted\nElegance &\nExceptional\nDiamonds",
-          subtitle: 'THE SIGNATURE COLLECTION 2026',
-          description: 'Immerse yourself in world-class craftsmanship, exceptional diamonds, and timeless bespoke creations.',
-          primaryCtaText: 'EXPLORE RINGS',
-          primaryCtaLink: '/rings',
-          secondaryCtaText: 'THE DIAMOND VAULT →',
-          secondaryCtaLink: '/diamonds',
-          productType: 'Engagement Ring',
-          imagePath: '/assets/Engagement Ring.png',
-          mobileImagePath: '/assets/Engagement Ring Mobile.png',
-          imageAlt: 'Handcrafted Solitaire Diamond Engagement Ring',
-          isActive: true,
-          displayOrder: 1,
-        },
-        {
-          title: "Timeless\nDiamonds,\nRefined\nForever",
-          subtitle: 'THE ART OF HIGH JEWELRY',
-          description: 'Discover exquisite diamond necklaces crafted with precision, elegance, and an uncompromising eye for detail.',
-          primaryCtaText: 'EXPLORE NECKLACES',
-          primaryCtaLink: '/necklaces',
-          secondaryCtaText: 'VIEW COLLECTION →',
-          secondaryCtaLink: '/collections/signature-collection',
-          productType: 'Necklace',
-          imagePath: '/assets/Necklace.png',
-          mobileImagePath: '/assets/Necklace Mobile.png',
-          imageAlt: 'Haute Joaillerie Diamond Necklace',
-          isActive: true,
-          displayOrder: 2,
-        },
-        {
-          title: "Brilliance\nDesigned to\nBe Remembered",
-          subtitle: 'THE SIGNATURE COLLECTION',
-          description: 'Exceptional diamond earrings, thoughtfully crafted to bring understated brilliance to every occasion.',
-          primaryCtaText: 'EXPLORE EARRINGS',
-          primaryCtaLink: '/earrings',
-          secondaryCtaText: 'DISCOVER DIAMONDS →',
-          secondaryCtaLink: '/diamonds',
-          productType: 'Earrings',
-          imagePath: '/assets/Earrings.png',
-          mobileImagePath: '/assets/Earrings Mobile.png',
-          imageAlt: 'Brilliant Diamond Earrings',
-          isActive: true,
-          displayOrder: 3,
-        },
-        {
-          title: "Exceptional\nCraftsmanship,\nWorn Forever",
-          subtitle: 'BESPOKE DIAMOND JEWELRY',
-          description: 'Discover refined diamond bracelets created with precision, timeless design, and exceptional craftsmanship.',
-          primaryCtaText: 'EXPLORE BRACELETS',
-          primaryCtaLink: '/bracelets',
-          secondaryCtaText: 'CREATE YOUR OWN →',
-          secondaryCtaLink: '/custom-jewellery',
-          productType: 'Bracelet',
-          imagePath: '/assets/Bracelet.png',
-          mobileImagePath: '/assets/Bracelet Mobile.png',
-          imageAlt: 'Bespoke Diamond Bracelet',
-          isActive: true,
-          displayOrder: 4,
-        },
-      ];
-
-      for (const slide of defaultSlides) {
-        await prisma.heroBanner.create({ data: slide });
+    if (!banners || banners.length === 0) {
+      try {
+        for (const slide of DEFAULT_SLIDES) {
+          const { id, ...data } = slide;
+          await prisma.heroBanner.create({ data });
+        }
+        banners = await prisma.heroBanner.findMany({
+          where: { isActive: true },
+          orderBy: { displayOrder: 'asc' },
+        });
+      } catch (seedErr) {
+        console.warn('Could not seed default slides into DB, returning fallback:', seedErr);
+        return res.json(DEFAULT_SLIDES);
       }
-
-      banners = await prisma.heroBanner.findMany({
-        where: { isActive: true },
-        orderBy: { displayOrder: 'asc' },
-      });
     }
 
-    res.json(banners);
+    return res.json(banners && banners.length > 0 ? banners : DEFAULT_SLIDES);
   } catch (error) {
-    console.error('getPublicHeroBanners error:', error);
-    res.status(500).json({ message: 'Error fetching hero banners' });
+    console.error('getPublicHeroBanners fallback to defaults:', error);
+    return res.json(DEFAULT_SLIDES);
   }
 };
 
 export const getAdminHeroBanners = async (req: Request, res: Response) => {
   try {
+    await ensureHeroBannerTableExists();
     const banners = await prisma.heroBanner.findMany({
       orderBy: { displayOrder: 'asc' },
     });
-    res.json(banners);
+    if (!banners || banners.length === 0) {
+      return res.json(DEFAULT_SLIDES);
+    }
+    return res.json(banners);
   } catch (error) {
-    console.error('getAdminHeroBanners error:', error);
-    res.status(500).json({ message: 'Error fetching hero banners' });
+    console.error('getAdminHeroBanners fallback to defaults:', error);
+    return res.json(DEFAULT_SLIDES);
   }
 };
 
 export const createHeroBanner = async (req: AuthRequest, res: Response) => {
   try {
+    await ensureHeroBannerTableExists();
     const {
       title,
       subtitle,
@@ -227,6 +273,7 @@ export const createHeroBanner = async (req: AuthRequest, res: Response) => {
 
 export const updateHeroBanner = async (req: AuthRequest, res: Response) => {
   try {
+    await ensureHeroBannerTableExists();
     const { id } = req.params;
     const existing = await prisma.heroBanner.findUnique({ where: { id } });
     if (!existing) {
@@ -296,6 +343,7 @@ export const updateHeroBanner = async (req: AuthRequest, res: Response) => {
 
 export const deleteHeroBanner = async (req: AuthRequest, res: Response) => {
   try {
+    await ensureHeroBannerTableExists();
     const { id } = req.params;
     const banner = await prisma.heroBanner.findUnique({ where: { id } });
     if (!banner) {
@@ -315,6 +363,7 @@ export const deleteHeroBanner = async (req: AuthRequest, res: Response) => {
 
 export const reorderHeroBanners = async (req: AuthRequest, res: Response) => {
   try {
+    await ensureHeroBannerTableExists();
     const { orderedIds } = req.body;
     if (!Array.isArray(orderedIds)) {
       return res.status(400).json({ message: 'orderedIds array is required' });

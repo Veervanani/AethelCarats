@@ -349,7 +349,7 @@ export const AdminHomepageManagerPage: React.FC = () => {
       { title: 'EARRINGS', url: '/earrings', image: '/assets/gem_earrings_cat.png' },
       { title: 'NECKLACES', url: '/necklaces', image: '/assets/gem_necklaces_cat.png' },
       { title: 'BRACELETS', url: '/bracelets', image: '/assets/gem_bracelets_cat.png' },
-      { title: 'PENDANTS', url: '/pendants', image: '/assets/aura_pendants_cat.png' },
+      { title: 'PENDANTS', url: '/pendants', image: '/assets/gem_pendants_cat.png' },
       { title: 'DIAMONDS', url: '/diamonds', image: '/assets/gem_diamonds_cat.png' },
     ],
   });

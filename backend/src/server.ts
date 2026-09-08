@@ -225,6 +225,17 @@ const app = express();
 const PORT = Number(process.env.PORT) || 3000;
 
 app.use(cors());
+
+// Transparently handle legacy PHP URL formats (/api/index.php/v1/* -> /api/v1/*)
+app.use((req, res, next) => {
+  if (req.url.startsWith('/api/index.php/')) {
+    req.url = req.url.replace('/api/index.php/', '/api/');
+  } else if (req.url === '/api/index.php') {
+    req.url = '/api/v1/health';
+  }
+  next();
+});
+
 app.use(express.json({ limit: '100mb' }));
 app.use(express.urlencoded({ extended: true, limit: '100mb' }));
 
