@@ -31,6 +31,9 @@ backend/prisma/dev.db-journal
 # Database Dumps & SQL Backups (NEVER COMMIT BACKUPS OR SECRETS)
 *.sql
 !aethelcarats-database.sql
+!database/
+!database/*.sql
+!database/*.md
 *.dump
 Cloud_SQL_Export*
 hostinger-mysql-migration.sql
