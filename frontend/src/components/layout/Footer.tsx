@@ -204,9 +204,9 @@ const BottomBar = styled.div`
 `;
 
 const FooterLogoImg = styled.img<{ $width?: string }>`
-  width: ${({ $width }) => $width || '160px'};
-  max-width: 100%;
-  max-height: 48px;
+  width: ${({ $width }) => $width || 'auto'};
+  max-width: 200px;
+  max-height: 52px;
   object-fit: contain;
   display: block;
   transition: width 0.2s ease;
@@ -558,21 +558,19 @@ export const Footer: React.FC = () => {
       <BottomBar>
         <BrandCopyright>
           <Link to="/" onClick={() => window.scrollTo(0, 0)} aria-label="AethelCarats Homepage" style={{ textDecoration: 'none' }}>
-            {(footerConfig.logoUrl || footerConfig.logoImage) ? (
-              <FooterLogoImg
-                src={footerConfig.logoUrl || footerConfig.logoImage}
-                alt={footerConfig.brandName || 'AethelCarats Fine Jewellery Atelier'}
-                $width={typeof footerConfig.logoWidth === 'number' ? `${footerConfig.logoWidth}px` : (footerConfig.logoWidth || '160px')}
-                onError={(e) => {
-                  (e.currentTarget as HTMLElement).style.display = 'none';
-                  const fallback = document.getElementById('footer-text-logo-fallback');
-                  if (fallback) fallback.style.display = 'flex';
-                }}
-              />
-            ) : null}
+            <FooterLogoImg
+              src={footerConfig.logoUrl || footerConfig.logoImage || '/assets/aethelcarats-logo.png'}
+              alt={footerConfig.brandName || 'AethelCarats Fine Jewellery Atelier'}
+              $width={typeof footerConfig.logoWidth === 'number' ? `${footerConfig.logoWidth}px` : (footerConfig.logoWidth || '180px')}
+              onError={(e) => {
+                (e.currentTarget as HTMLElement).style.display = 'none';
+                const fallback = document.getElementById('footer-text-logo-fallback');
+                if (fallback) fallback.style.display = 'flex';
+              }}
+            />
             <FooterBrandText
               id="footer-text-logo-fallback"
-              style={{ display: (footerConfig.logoUrl || footerConfig.logoImage) ? 'none' : 'flex' }}
+              style={{ display: 'none' }}
             >
               <div className="brand-name">
                 AETHEL<span className="gold-accent">CARATS</span>

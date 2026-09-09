@@ -105,18 +105,22 @@ const BrandSection = styled(Link)`
   flex-shrink: 0;
 
   .brand-logo-badge {
-    width: 34px;
-    height: 34px;
-    background: linear-gradient(135deg, #c9a45c 0%, #8e6c27 100%);
+    width: 36px;
+    height: 36px;
+    background: #14191f;
+    border: 1px solid rgba(201, 164, 92, 0.4);
     border-radius: 8px;
     display: flex;
     align-items: center;
     justify-content: center;
-    color: #101418;
-    font-family: 'Cormorant Garamond', Georgia, serif;
-    font-weight: 700;
-    font-size: 1.15rem;
-    box-shadow: 0 2px 8px rgba(201, 164, 92, 0.35);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.45);
+    overflow: hidden;
+
+    img {
+      width: 28px;
+      height: 28px;
+      object-fit: contain;
+    }
   }
 
   .brand-texts {
@@ -788,7 +792,9 @@ export const AdminLayout: React.FC = () => {
           <HeaderMainRow>
             {/* BRAND / LOGO */}
             <BrandSection to={`${PRIVATE_ADMIN_PATH}/dashboard`}>
-              <div className="brand-logo-badge">AC</div>
+              <div className="brand-logo-badge">
+                <img src="/assets/aethelcarats-monogram.png" alt="AethelCarats" />
+              </div>
               <div className="brand-texts">
                 <span className="brand-title">AETHELCARATS</span>
                 <span className="brand-sub">ATELIER CMS & ADMIN</span>
@@ -1254,7 +1260,9 @@ export const AdminLayout: React.FC = () => {
         <MobileDrawer $isOpen={mobileDrawerOpen}>
           <MobileDrawerHeader>
             <BrandSection to={`${PRIVATE_ADMIN_PATH}/dashboard`}>
-              <div className="brand-logo-badge">AC</div>
+              <div className="brand-logo-badge">
+                <img src="/assets/aethelcarats-monogram.png" alt="AethelCarats" />
+              </div>
               <div className="brand-texts">
                 <span className="brand-title">AETHELCARATS</span>
                 <span className="brand-sub">ADMIN PORTAL</span>

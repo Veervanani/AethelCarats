@@ -453,12 +453,17 @@ const LogoLink = styled(Link)`
 `;
 
 const LogoImg = styled.img<{ $width?: string }>`
-  width: ${({ $width }) => $width || '180px'};
-  max-width: 100%;
-  max-height: 52px;
+  width: ${({ $width }) => $width || 'auto'};
+  max-width: 220px;
+  max-height: 56px;
   object-fit: contain;
   display: block;
-  transition: width 0.2s ease;
+  transition: width 0.2s ease, max-height 0.2s ease;
+
+  @media (max-width: 576px) {
+    max-height: 44px;
+    max-width: 160px;
+  }
 `;
 
 const LogoBrandText = styled.div`
@@ -1003,21 +1008,19 @@ export const Header: React.FC = () => {
           </MobileLeft>
 
           <LogoLink to="/" aria-label="AethelCarats Home" onClick={closeAllMenus} onMouseEnter={() => { handleNonNavMouseEnter(); setHoveredNavId(null); }}>
-            {(headerConfig.logoUrl || headerConfig.logoImage) ? (
-              <LogoImg
-                src={headerConfig.logoUrl || headerConfig.logoImage}
-                alt="AethelCarats Fine Jewellery"
-                $width={typeof headerConfig.logoWidth === 'number' ? `${headerConfig.logoWidth}px` : (headerConfig.logoWidth || '180px')}
-                onError={(e) => {
-                  (e.currentTarget as HTMLElement).style.display = 'none';
-                  const fallback = document.getElementById('header-text-logo-fallback');
-                  if (fallback) fallback.style.display = 'flex';
-                }}
-              />
-            ) : null}
+            <LogoImg
+              src={headerConfig.logoUrl || headerConfig.logoImage || '/assets/aethelcarats-logo.png'}
+              alt="AethelCarats Fine Jewellery"
+              $width={typeof headerConfig.logoWidth === 'number' ? `${headerConfig.logoWidth}px` : (headerConfig.logoWidth || 'auto')}
+              onError={(e) => {
+                (e.currentTarget as HTMLElement).style.display = 'none';
+                const fallback = document.getElementById('header-text-logo-fallback');
+                if (fallback) fallback.style.display = 'flex';
+              }}
+            />
             <LogoBrandText
               id="header-text-logo-fallback"
-              style={{ display: (headerConfig.logoUrl || headerConfig.logoImage) ? 'none' : 'flex' }}
+              style={{ display: 'none' }}
             >
               <div className="brand-name">
                 AETHEL<span className="gold-accent">CARATS</span>
@@ -1177,7 +1180,7 @@ export const Header: React.FC = () => {
       {/* MOBILE / TABLET NAVIGATION DRAWER */}
       <MobileDrawer $isOpen={isMobileOpen}>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16, paddingBottom: 16, borderBottom: '1px solid rgba(140, 116, 75, 0.25)' }}>
-          <img src="/assets/gem-brand-logo.png" alt="AethelCarats Fine Jewellery" style={{ width: 125, height: 'auto', objectFit: 'contain' }} />
+          <img src="/assets/aethelcarats-logo.png" alt="AethelCarats Fine Jewellery" style={{ width: 140, height: 'auto', maxHeight: 46, objectFit: 'contain' }} />
           <IconButton onClick={() => setIsMobileOpen(false)} aria-label="Close mobile menu">
             <X size={22} />
           </IconButton>
