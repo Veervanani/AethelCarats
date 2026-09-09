@@ -203,13 +203,14 @@ const BottomBar = styled.div`
   }
 `;
 
-const FooterLogoImg = styled.img<{ $width?: string }>`
+const FooterLogoImg = styled.img<{ $width?: string; $height?: string }>`
   width: ${({ $width }) => $width || 'auto'};
-  max-width: 200px;
-  max-height: 52px;
+  height: ${({ $height }) => $height || 'auto'};
+  max-width: 260px;
+  max-height: ${({ $height }) => $height || '54px'};
   object-fit: contain;
   display: block;
-  transition: width 0.2s ease;
+  transition: width 0.2s ease, height 0.2s ease;
 `;
 
 const FooterBrandText = styled.div`
@@ -367,9 +368,14 @@ export const Footer: React.FC = () => {
           }
         }
 
+        const resolvedLogo = merged.logoUrl || merged.logoImage || res.storeLogo || '/assets/aethelcarats-logo.png';
         setFooterConfig((prev: any) => ({
           ...prev,
           ...merged,
+          logoUrl: resolvedLogo,
+          logoImage: resolvedLogo,
+          logoWidth: merged.logoWidth || prev.logoWidth || 180,
+          logoHeight: merged.logoHeight || prev.logoHeight || 52,
           brandName: merged.brandName || res.storeName || prev.brandName,
           copyrightText: merged.copyrightText || prev.copyrightText,
           contactEmail: merged.email || merged.contactEmail || res.contactEmail || prev.contactEmail,
@@ -562,8 +568,14 @@ export const Footer: React.FC = () => {
               src={footerConfig.logoUrl || footerConfig.logoImage || '/assets/aethelcarats-logo.png'}
               alt={footerConfig.brandName || 'AethelCarats Fine Jewellery Atelier'}
               $width={typeof footerConfig.logoWidth === 'number' ? `${footerConfig.logoWidth}px` : (footerConfig.logoWidth || '180px')}
+              $height={typeof footerConfig.logoHeight === 'number' ? `${footerConfig.logoHeight}px` : (footerConfig.logoHeight || '52px')}
               onError={(e) => {
-                (e.currentTarget as HTMLElement).style.display = 'none';
+                const target = e.currentTarget as HTMLImageElement;
+                if (!target.src.includes('/assets/aethelcarats-logo.png')) {
+                  target.src = '/assets/aethelcarats-logo.png';
+                  return;
+                }
+                target.style.display = 'none';
                 const fallback = document.getElementById('footer-text-logo-fallback');
                 if (fallback) fallback.style.display = 'flex';
               }}

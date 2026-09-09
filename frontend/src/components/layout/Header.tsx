@@ -452,17 +452,17 @@ const LogoLink = styled(Link)`
   }
 `;
 
-const LogoImg = styled.img<{ $width?: string }>`
+const LogoImg = styled.img<{ $width?: string; $height?: string }>`
   width: ${({ $width }) => $width || 'auto'};
-  max-width: 220px;
-  max-height: 56px;
+  max-width: ${({ $width }) => $width || '240px'};
+  max-height: ${({ $height }) => $height || '56px'};
   object-fit: contain;
   display: block;
   transition: width 0.2s ease, max-height 0.2s ease;
 
   @media (max-width: 576px) {
-    max-height: 44px;
-    max-width: 160px;
+    max-height: ${({ $height }) => ($height ? `min(${$height}, 46px)` : '44px')};
+    max-width: 170px;
   }
 `;
 
@@ -1012,8 +1012,14 @@ export const Header: React.FC = () => {
               src={headerConfig.logoUrl || headerConfig.logoImage || '/assets/aethelcarats-logo.png'}
               alt="AethelCarats Fine Jewellery"
               $width={typeof headerConfig.logoWidth === 'number' ? `${headerConfig.logoWidth}px` : (headerConfig.logoWidth || 'auto')}
+              $height={typeof headerConfig.logoHeight === 'number' ? `${headerConfig.logoHeight}px` : (headerConfig.logoHeight || '56px')}
               onError={(e) => {
-                (e.currentTarget as HTMLElement).style.display = 'none';
+                const target = e.currentTarget as HTMLImageElement;
+                if (!target.src.includes('/assets/aethelcarats-logo.png')) {
+                  target.src = '/assets/aethelcarats-logo.png';
+                  return;
+                }
+                target.style.display = 'none';
                 const fallback = document.getElementById('header-text-logo-fallback');
                 if (fallback) fallback.style.display = 'flex';
               }}
