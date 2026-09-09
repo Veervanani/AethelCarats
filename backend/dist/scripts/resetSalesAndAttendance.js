@@ -4,9 +4,9 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.resetDatabaseSafely = resetDatabaseSafely;
-const prisma_1 = __importDefault(require("../prisma"));
+const client_1 = require("@prisma/client");
 const bcryptjs_1 = __importDefault(require("bcryptjs"));
-const prisma = prisma_1.default;
+const prisma = new client_1.PrismaClient();
 async function resetDatabaseSafely() {
     console.log('================================================================');
     console.log('🔄 STARTING COMPLETE DATABASE RESET (PROTECTING MENU & MEDIA)');

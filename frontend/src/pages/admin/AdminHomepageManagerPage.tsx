@@ -554,9 +554,10 @@ export const AdminHomepageManagerPage: React.FC = () => {
     Promise.all([
       loadHeroBannersFromDb(),
       api.getSiteSettings('homepage_config').then((data) => {
-        if (data && data.homepage_config) {
+        const rawConfig = data?.homepage_config ?? (data?.categoriesConfig ? data : null);
+        if (rawConfig) {
           try {
-            const parsed = typeof data.homepage_config === 'string' ? JSON.parse(data.homepage_config) : data.homepage_config;
+            const parsed = typeof rawConfig === 'string' ? JSON.parse(rawConfig) : rawConfig;
             if (parsed.categoriesConfig) setCategoriesConfig(parsed.categoriesConfig);
             if (parsed.campaignBannerConfig) setCampaignBannerConfig(parsed.campaignBannerConfig);
             if (parsed.featuredCards) setFeaturedCards(parsed.featuredCards);
@@ -876,53 +877,55 @@ export const AdminHomepageManagerPage: React.FC = () => {
               </PrimaryBtn>
             </div>
           ) : (
-            <BannerTable>
-              <thead>
-                <tr>
-                  <th>Preview</th>
-                  <th>Product Type</th>
-                  <th>Title & Subtitle</th>
-                  <th>CTA Buttons</th>
-                  <th>Status</th>
-                  <th style={{ textAlign: 'right' }}>Actions</th>
-                </tr>
-              </thead>
-              <tbody>
-                {heroBanners.map((banner) => (
-                  <tr key={banner.id}>
-                    <td>
-                      <ThumbnailImg src={normalizeImageUrl(banner.imagePath)} alt={banner.title} />
-                    </td>
-                    <td>
-                      <strong>{banner.productType || 'Engagement Ring'}</strong>
-                    </td>
-                    <td>
-                      <div style={{ fontWeight: 600, color: '#1f1f1f' }}>{banner.title}</div>
-                      <div style={{ fontSize: '0.76rem', color: '#c9a45c' }}>{banner.subtitle}</div>
-                    </td>
-                    <td>
-                      <div style={{ fontSize: '0.8rem' }}>1: {banner.primaryCtaText || '-'}</div>
-                      <div style={{ fontSize: '0.8rem', color: '#777' }}>2: {banner.secondaryCtaText || '-'}</div>
-                    </td>
-                    <td>
-                      <span style={{ color: banner.isActive !== false ? '#2e7d32' : '#c62828', fontWeight: 600 }}>
-                        {banner.isActive !== false ? 'Active' : 'Inactive'}
-                      </span>
-                    </td>
-                    <td style={{ textAlign: 'right' }}>
-                      <div style={{ display: 'inline-flex', gap: 6 }}>
-                        <SmallBtn onClick={() => handleOpenEditHero(banner)}>
-                          <Edit2 size={13} /> Edit
-                        </SmallBtn>
-                        <DangerSmallBtn onClick={() => handleDeleteHero(banner.id, banner.title)}>
-                          <Trash2 size={13} />
-                        </DangerSmallBtn>
-                      </div>
-                    </td>
+            <div style={{ width: '100%', overflowX: 'auto', WebkitOverflowScrolling: 'touch' }}>
+              <BannerTable>
+                <thead>
+                  <tr>
+                    <th>Preview</th>
+                    <th>Product Type</th>
+                    <th>Title & Subtitle</th>
+                    <th>CTA Buttons</th>
+                    <th>Status</th>
+                    <th style={{ textAlign: 'right' }}>Actions</th>
                   </tr>
-                ))}
-              </tbody>
-            </BannerTable>
+                </thead>
+                <tbody>
+                  {heroBanners.map((banner) => (
+                    <tr key={banner.id}>
+                      <td>
+                        <ThumbnailImg src={normalizeImageUrl(banner.imagePath)} alt={banner.title} />
+                      </td>
+                      <td>
+                        <strong>{banner.productType || 'Engagement Ring'}</strong>
+                      </td>
+                      <td>
+                        <div style={{ fontWeight: 600, color: '#1f1f1f' }}>{banner.title}</div>
+                        <div style={{ fontSize: '0.76rem', color: '#c9a45c' }}>{banner.subtitle}</div>
+                      </td>
+                      <td>
+                        <div style={{ fontSize: '0.8rem' }}>1: {banner.primaryCtaText || '-'}</div>
+                        <div style={{ fontSize: '0.8rem', color: '#777' }}>2: {banner.secondaryCtaText || '-'}</div>
+                      </td>
+                      <td>
+                        <span style={{ color: banner.isActive !== false ? '#2e7d32' : '#c62828', fontWeight: 600 }}>
+                          {banner.isActive !== false ? 'Active' : 'Inactive'}
+                        </span>
+                      </td>
+                      <td style={{ textAlign: 'right' }}>
+                        <div style={{ display: 'inline-flex', gap: 6 }}>
+                          <SmallBtn onClick={() => handleOpenEditHero(banner)}>
+                            <Edit2 size={13} /> Edit
+                          </SmallBtn>
+                          <DangerSmallBtn onClick={() => handleDeleteHero(banner.id, banner.title)}>
+                            <Trash2 size={13} />
+                          </DangerSmallBtn>
+                        </div>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </BannerTable>
+            </div>
           )}
         </SectionCard>
       )}
@@ -940,7 +943,7 @@ export const AdminHomepageManagerPage: React.FC = () => {
                 onClick={() => {
                   setCategoriesConfig((prev) => ({
                     ...prev,
-                    items: [...prev.items, { title: 'NEW CATEGORY', url: '/rings', image: '/assets/gem_rings_cat.png' }],
+                    items: [...prev.items, { title: 'NEW CATEGORY', url: '/rings', image: '' }],
                   }));
                 }}
               >
@@ -981,7 +984,7 @@ export const AdminHomepageManagerPage: React.FC = () => {
               <input
                 type="text"
                 value={categoriesConfig.title}
-                onChange={(e) => setCategoriesConfig((prev) => ({ ...prev, titleColor: e.target.value }))}
+                onChange={(e) => setCategoriesConfig((prev) => ({ ...prev, title: e.target.value }))}
               />
             </div>
           </FormGrid>
@@ -1295,8 +1298,8 @@ export const AdminHomepageManagerPage: React.FC = () => {
                       eyebrow: 'NEW COLLECTION 2026',
                       title: 'The Solitaire Series',
                       link: '/rings',
-                      leftImage: '/assets/gem_rings_cat.png',
-                      rightImage: '/assets/gem_solitaire_ring_perfect_v2.png',
+                      leftImage: '',
+                      rightImage: '',
                     },
                   ]);
                 }}
@@ -1666,7 +1669,7 @@ export const AdminHomepageManagerPage: React.FC = () => {
                       id: `only-${Date.now()}`,
                       eyebrow: 'NEW ATELIER BENEFIT',
                       title: 'Exclusive bespoke concierge consultation',
-                      image: '/assets/aura_only_at_1.png',
+                      image: '',
                       url: '/custom-jewellery',
                     },
                   ]);

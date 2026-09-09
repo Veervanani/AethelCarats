@@ -6,10 +6,14 @@ import path from 'path';
 
 const getCandidateMediaDirs = () => [
   path.join(process.cwd(), 'uploads', 'media'),
+  path.join(process.cwd(), 'public_html', 'uploads', 'media'),
+  path.join(process.cwd(), 'dist', 'uploads', 'media'),
   path.join(process.cwd(), 'backend', 'uploads', 'media'),
   path.join(process.cwd(), 'frontend', 'public', 'uploads', 'media'),
   path.join(process.cwd(), 'frontend', 'dist', 'uploads', 'media'),
   path.join(__dirname, '..', '..', 'uploads', 'media'),
+  path.join(__dirname, '..', '..', 'public_html', 'uploads', 'media'),
+  path.join(__dirname, '..', '..', 'dist', 'uploads', 'media'),
   path.join(__dirname, '..', '..', 'frontend', 'dist', 'uploads', 'media'),
 ];
 

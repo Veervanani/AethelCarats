@@ -1614,9 +1614,10 @@ export const HomePage: React.FC = () => {
     }).catch(console.error);
 
     api.getSiteSettings('homepage_config').then((data) => {
-      if (data && data.homepage_config) {
+      const raw = data?.homepage_config ?? (data?.categoriesConfig ? data : null);
+      if (raw) {
         try {
-          const parsed = typeof data.homepage_config === 'string' ? JSON.parse(data.homepage_config) : data.homepage_config;
+          const parsed = typeof raw === 'string' ? JSON.parse(raw) : raw;
           setCmsConfig(parsed);
         } catch (e) {
           console.error('Failed to parse homepage_config:', e);

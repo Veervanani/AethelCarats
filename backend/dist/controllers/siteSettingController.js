@@ -154,8 +154,9 @@ const getSiteSettings = async (req, res) => {
         }
     });
     try {
-        const settings = await (0, asyncTimeout_1.withTimeout)(prisma_1.default.siteSetting.findMany(), 2000, []);
-        // Pass 1: Parse and store every setting as parsed JSON or string
+        const settings = await (0, asyncTimeout_1.withTimeout)(prisma_1.default.siteSetting.findMany(), 6000, []);
+        const dbMap = {};
+        // Pass 1: Parse and store every setting in dbMap
         settings.forEach((s) => {
             let parsed;
             try {
@@ -322,6 +323,7 @@ const updateSiteSetting = async (req, res) => {
                 consultEmailLabel: consultEmailLbl,
                 consultCloseLabel: consultCloseLbl,
             };
+            // Merge normalized values into cleanPayload
             cleanPayload.whatsappNumber = waNumber;
             cleanPayload.whatsappDisplayNumber = waDisplay;
             cleanPayload.whatsappDefaultMessage = waMessage;
@@ -335,12 +337,14 @@ const updateSiteSetting = async (req, res) => {
             cleanPayload.consultCloseLabel = consultCloseLbl;
             cleanPayload.enableConsultAtelierExpert = enableConsult;
             cleanPayload.consult_expert_config = consultConfig;
+            // Upsert the main site_settings row
             const stringifiedValue = JSON.stringify(cleanPayload);
             await prisma_1.default.siteSetting.upsert({
                 where: { key: 'site_settings' },
                 update: { value: stringifiedValue },
                 create: { key: 'site_settings', value: stringifiedValue },
             });
+            // Synchronize all individual and config rows
             await Promise.all([
                 prisma_1.default.siteSetting.upsert({ where: { key: 'whatsappNumber' }, update: { value: waNumber }, create: { key: 'whatsappNumber', value: waNumber } }),
                 prisma_1.default.siteSetting.upsert({ where: { key: 'whatsappDisplayNumber' }, update: { value: waDisplay }, create: { key: 'whatsappDisplayNumber', value: waDisplay } }),

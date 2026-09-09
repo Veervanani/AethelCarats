@@ -1,8 +1,10 @@
 "use strict";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.seedFilterConfigs = seedFilterConfigs;
-const prisma_1 = require("./prisma");
-const prisma = prisma_1.default || prisma_1.prisma;
+const prisma_1 = __importDefault(require("./prisma"));
 async function seedFilterConfigs() {
     console.log('--- SEEDING GLOBAL PRODUCT FILTER CONFIGURATIONS ---');
     const defaultFilters = [
@@ -296,21 +298,21 @@ async function seedFilterConfigs() {
     ];
     for (const fData of defaultFilters) {
         const { options, ...configData } = fData;
-        let existing = await prisma.productFilterConfig.findUnique({
+        let existing = await prisma_1.default.productFilterConfig.findUnique({
             where: { key: configData.key },
         });
         if (!existing) {
-            existing = await prisma.productFilterConfig.create({
+            existing = await prisma_1.default.productFilterConfig.create({
                 data: configData,
             });
         }
         if (existing?.id) {
             for (const opt of options) {
-                const optExist = await prisma.productFilterOption.findFirst({
+                const optExist = await prisma_1.default.productFilterOption.findFirst({
                     where: { filterId: existing.id, value: opt.value },
                 });
                 if (!optExist) {
-                    await prisma.productFilterOption.create({
+                    await prisma_1.default.productFilterOption.create({
                         data: {
                             filterId: existing.id,
                             label: opt.label,
@@ -331,11 +333,11 @@ async function seedFilterConfigs() {
 if (require.main === module) {
     seedFilterConfigs()
         .then(() => {
-        prisma.$disconnect();
+        prisma_1.default.$disconnect();
     })
         .catch((err) => {
         console.error(err);
-        prisma.$disconnect();
+        prisma_1.default.$disconnect();
         process.exit(1);
     });
 }

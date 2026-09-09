@@ -430,6 +430,18 @@ function handleGetSiteSettings(): void {
 
         $settings = array_merge($defaults, $settings);
 
+        if (!empty($_GET['keys'])) {
+            $keys = array_map('trim', explode(',', (string)$_GET['keys']));
+            $filtered = [];
+            foreach ($keys as $k) {
+                if (array_key_exists($k, $settings)) {
+                    $filtered[$k] = $settings[$k];
+                }
+            }
+            jsonResponse($filtered, 200);
+            return;
+        }
+
         jsonResponse($settings, 200);
 
     } catch (Throwable $e) {

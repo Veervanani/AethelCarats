@@ -554,7 +554,7 @@ export const AdminFullProductEditorPage: React.FC = () => {
     comparePrice: 3000,
     shortDescription: '',
     fullDescription: '',
-    mainImage: '/assets/gem_rings_cat.png',
+    mainImage: '',
     secondaryImage: '',
     images: [],
     enableMetalSelection: true,
@@ -1711,17 +1711,24 @@ export const AdminFullProductEditorPage: React.FC = () => {
                     productData.mainImage,
                     productData.secondaryImage,
                     ...rawImgs
-                  ].filter((u: string) => u && u !== '/assets/gem_rings_cat.png')));
+                  ].filter(Boolean)));
 
-                  const displayList = allUrls.length > 0 ? allUrls : ['/assets/gem_rings_cat.png'];
+                  if (allUrls.length === 0) {
+                    return (
+                      <div style={{ gridColumn: '1 / -1', padding: 24, textAlign: 'center', color: '#888', background: '#fff', borderRadius: 6, border: '1px dashed #d9d3c7' }}>
+                        No product images uploaded yet. Click "+ Add Product Images (PC Upload)" above to upload images.
+                      </div>
+                    );
+                  }
+
+                  const displayList = allUrls;
 
                   return displayList.map((url: any, idx: number) => (
                     <div
                       key={idx}
                       title={idx === 0 ? 'Primary Product Image' : 'Click to set as Primary Image'}
                       onClick={() => {
-                        if (url === '/assets/gem_rings_cat.png') return;
-                        const reordered = [url, ...displayList.filter((u: string) => u !== url && u !== '/assets/gem_rings_cat.png')];
+                        const reordered = [url, ...displayList.filter((u: string) => u !== url)];
                         const newImgObjs = reordered.map((u, pos) => ({ url: u, position: pos, imageType: pos === 0 ? 'hero' : 'gallery' }));
                         setProductData((prev: any) => ({
                           ...prev,
@@ -1736,28 +1743,26 @@ export const AdminFullProductEditorPage: React.FC = () => {
                       <span style={{ position: 'absolute', top: 4, left: 4, background: idx === 0 ? '#c9a45c' : idx === 1 ? '#19202a' : 'rgba(0,0,0,0.6)', color: '#fff', padding: '2px 6px', borderRadius: 3, fontSize: '0.65rem', fontWeight: 700 }}>
                         {idx === 0 ? 'PRIMARY' : idx === 1 ? 'HOVER' : `#${idx + 1}`}
                       </span>
-                      {url !== '/assets/gem_rings_cat.png' && (
-                        <button
-                          type="button"
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            if (url && url.startsWith('/uploads/')) {
-                              api.deleteUploadedFile(url).catch(console.warn);
-                            }
-                            const remaining = displayList.filter((u: any) => u !== url && u !== '/assets/gem_rings_cat.png');
-                            const newImgObjs = remaining.map((u, pos) => ({ url: u, position: pos, imageType: pos === 0 ? 'hero' : 'gallery' }));
-                            setProductData((prev: any) => ({
-                              ...prev,
-                              mainImage: remaining[0] || '/assets/gem_rings_cat.png',
-                              secondaryImage: remaining[1] || remaining[0] || null,
-                              images: newImgObjs,
-                            }));
-                          }}
-                          style={{ position: 'absolute', top: 4, right: 4, background: 'rgba(0,0,0,0.6)', color: '#fff', border: 'none', borderRadius: '50%', width: 20, height: 20, cursor: 'pointer', fontSize: '0.7rem' }}
-                        >
-                          ✕
-                        </button>
-                      )}
+                      <button
+                        type="button"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          if (url && url.startsWith('/uploads/')) {
+                            api.deleteUploadedFile(url).catch(console.warn);
+                          }
+                          const remaining = displayList.filter((u: any) => u !== url);
+                          const newImgObjs = remaining.map((u, pos) => ({ url: u, position: pos, imageType: pos === 0 ? 'hero' : 'gallery' }));
+                          setProductData((prev: any) => ({
+                            ...prev,
+                            mainImage: remaining[0] || '',
+                            secondaryImage: remaining[1] || remaining[0] || null,
+                            images: newImgObjs,
+                          }));
+                        }}
+                        style={{ position: 'absolute', top: 4, right: 4, background: 'rgba(0,0,0,0.6)', color: '#fff', border: 'none', borderRadius: '50%', width: 20, height: 20, cursor: 'pointer', fontSize: '0.7rem' }}
+                      >
+                        ✕
+                      </button>
                     </div>
                   ));
                 })()}

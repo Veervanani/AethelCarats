@@ -53,11 +53,14 @@ const fadeInDown = keyframes`
 const AdminWrapper = styled.div`
   min-height: 100vh;
   width: 100%;
+  max-width: 100vw;
+  overflow-x: hidden;
   display: flex;
   flex-direction: column;
   background-color: #faf8f5;
   font-family: -apple-system, BlinkMacSystemFont, 'Inter', 'Segoe UI', Roboto, sans-serif;
   color: #19202a;
+  box-sizing: border-box;
 `;
 
 const TopHeader = styled.header`
@@ -67,6 +70,9 @@ const TopHeader = styled.header`
   background-color: #11161b;
   border-bottom: 1px solid rgba(201, 164, 92, 0.28);
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.22);
+  width: 100%;
+  max-width: 100vw;
+  box-sizing: border-box;
 `;
 
 const HeaderMainRow = styled.div`
@@ -75,10 +81,18 @@ const HeaderMainRow = styled.div`
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 16px;
+  gap: 12px;
+  width: 100%;
+  max-width: 100%;
+  box-sizing: border-box;
+
+  @media (max-width: 1380px) {
+    padding: 0 14px;
+    gap: 8px;
+  }
 
   @media (max-width: 900px) {
-    padding: 0 16px;
+    padding: 0 12px;
     height: 58px;
   }
 `;
@@ -127,6 +141,18 @@ const BrandSection = styled(Link)`
     font-weight: 600;
     margin-top: 2px;
   }
+
+  @media (max-width: 1380px) {
+    .brand-sub {
+      display: none;
+    }
+  }
+
+  @media (max-width: 600px) {
+    .brand-texts {
+      display: none;
+    }
+  }
 `;
 
 const DesktopNav = styled.nav`
@@ -134,8 +160,13 @@ const DesktopNav = styled.nav`
   align-items: center;
   gap: 4px;
   height: 100%;
+  flex-shrink: 1;
 
-  @media (max-width: 1100px) {
+  @media (max-width: 1380px) {
+    gap: 2px;
+  }
+
+  @media (max-width: 1200px) {
     display: none;
   }
 `;
@@ -164,6 +195,12 @@ const NavButton = styled.button<{ $isActive?: boolean; $isOpen?: boolean }>`
   gap: 6px;
   transition: all 0.18s ease;
   white-space: nowrap;
+
+  @media (max-width: 1380px) {
+    padding: 6px 8px;
+    font-size: 0.77rem;
+    gap: 4px;
+  }
 
   &:hover {
     color: #ffffff;
@@ -208,6 +245,12 @@ const DirectNavLink = styled(Link)<{ $isActive?: boolean }>`
   text-decoration: none;
   transition: all 0.18s ease;
   white-space: nowrap;
+
+  @media (max-width: 1380px) {
+    padding: 6px 8px;
+    font-size: 0.77rem;
+    gap: 4px;
+  }
 
   &:hover {
     color: #ffffff;
@@ -333,7 +376,7 @@ const UserProfileBadge = styled.div`
     text-overflow: ellipsis;
     white-space: nowrap;
 
-    @media (max-width: 600px) {
+    @media (max-width: 1380px) {
       display: none;
     }
   }
@@ -422,7 +465,7 @@ const MobileMenuToggle = styled.button`
   align-items: center;
   justify-content: center;
 
-  @media (max-width: 1100px) {
+  @media (max-width: 1200px) {
     display: flex;
   }
 `;
@@ -487,6 +530,8 @@ const PageCanvas = styled.main`
   max-width: 1600px;
   margin: 0 auto;
   box-sizing: border-box;
+  overflow-x: hidden;
+  min-width: 0;
 
   @media (max-width: 768px) {
     padding: 16px;

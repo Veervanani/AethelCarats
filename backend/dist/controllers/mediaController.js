@@ -9,10 +9,14 @@ const fs_1 = __importDefault(require("fs"));
 const path_1 = __importDefault(require("path"));
 const getCandidateMediaDirs = () => [
     path_1.default.join(process.cwd(), 'uploads', 'media'),
+    path_1.default.join(process.cwd(), 'public_html', 'uploads', 'media'),
+    path_1.default.join(process.cwd(), 'dist', 'uploads', 'media'),
     path_1.default.join(process.cwd(), 'backend', 'uploads', 'media'),
     path_1.default.join(process.cwd(), 'frontend', 'public', 'uploads', 'media'),
     path_1.default.join(process.cwd(), 'frontend', 'dist', 'uploads', 'media'),
     path_1.default.join(__dirname, '..', '..', 'uploads', 'media'),
+    path_1.default.join(__dirname, '..', '..', 'public_html', 'uploads', 'media'),
+    path_1.default.join(__dirname, '..', '..', 'dist', 'uploads', 'media'),
     path_1.default.join(__dirname, '..', '..', 'frontend', 'dist', 'uploads', 'media'),
 ];
 const ensureMediaDirsExist = () => {

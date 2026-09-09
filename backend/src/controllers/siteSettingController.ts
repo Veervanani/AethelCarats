@@ -160,7 +160,7 @@ export const getSiteSettings = async (req: Request, res: Response) => {
   });
 
   try {
-    const settings = await withTimeout(prisma.siteSetting.findMany(), 2000, []);
+    const settings = await withTimeout(prisma.siteSetting.findMany(), 6000, []);
     const dbMap: Record<string, any> = {};
 
     // Pass 1: Parse and store every setting in dbMap

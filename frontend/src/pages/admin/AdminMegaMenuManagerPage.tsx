@@ -18,6 +18,7 @@ import {
   AdminInput,
   AdminSelect,
 } from '../../components/admin/AdminUI';
+import { SafeImage } from '../../components/ui/SafeImage';
 
 const StickyTopHeader = styled.div`
   position: sticky;
@@ -541,7 +542,7 @@ export const AdminMegaMenuManagerPage: React.FC = () => {
               {
                 title: 'NEW ARRIVALS',
                 subtitle: 'Fine Handcrafted Pieces',
-                desktopImage: '/assets/gem_rings_cat.png',
+                desktopImage: '',
                 url: '/shop',
                 enabled: true,
               },
@@ -690,7 +691,7 @@ export const AdminMegaMenuManagerPage: React.FC = () => {
     promos.push({
       title: 'FEATURED SPOTLIGHT',
       subtitle: 'Handcrafted Atelier Jewellery',
-      desktopImage: '/assets/gem_rings_cat.png',
+      desktopImage: '',
       url: '/rings',
       enabled: true,
     });
@@ -1231,8 +1232,8 @@ export const AdminMegaMenuManagerPage: React.FC = () => {
                           {currentPromos.filter((p: any) => p.enabled !== false).map((promo: any, pIdx: number) => (
                             <div key={pIdx} style={{ width: 190, display: 'flex', flexDirection: 'column' }}>
                               <div style={{ width: '100%', height: 140, borderRadius: 4, overflow: 'hidden', background: '#e8e3d9', marginBottom: 8 }}>
-                                <img
-                                  src={promo.desktopImage || promo.image || '/assets/gem_rings_cat.png'}
+                                <SafeImage
+                                  src={promo.desktopImage || promo.image || ''}
                                   alt={promo.title}
                                   style={{ width: '100%', height: '100%', objectFit: 'cover' }}
                                 />

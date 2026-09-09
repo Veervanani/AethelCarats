@@ -64,7 +64,7 @@ export const AdminCategoryManagerPage: React.FC = () => {
       name: '',
       slug: '',
       link: '/rings',
-      image: '/assets/gem_rings_cat.png',
+      image: '',
       description: '',
       sortOrder: (categories.length + 1),
       isActive: true,
@@ -170,7 +170,7 @@ export const AdminCategoryManagerPage: React.FC = () => {
                 <tr key={cat.id}>
                   <td>
                     <CardThumb>
-                      <SafeImage src={cat.image || '/assets/gem_rings_cat.png'} alt={cat.name} fallbackSrc="/assets/gem_rings_cat.png" />
+                      <SafeImage src={cat.image || ''} alt={cat.name} />
                     </CardThumb>
                   </td>
                   <td style={{ fontWeight: 600, color: '#1f1f1f' }}>{cat.name}</td>
