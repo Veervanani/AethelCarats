@@ -204,8 +204,8 @@ export const AdminHeaderManagerPage: React.FC = () => {
     announcementTextColor: '#fffdf9',
     logoImage: '',
     logoUrl: '',
-    logoWidth: 180,
-    logoHeight: 56,
+    logoWidth: 240,
+    logoHeight: 75,
     headerBg: '#ffffff',
     stickyHeader: true,
     showSearch: true,
@@ -225,8 +225,8 @@ export const AdminHeaderManagerPage: React.FC = () => {
   const [footerSettings, setFooterSettings] = useState<any>({
     logoImage: '',
     logoUrl: '',
-    logoWidth: 180,
-    logoHeight: 52,
+    logoWidth: 220,
+    logoHeight: 75,
   });
 
   useEffect(() => {
@@ -248,16 +248,16 @@ export const AdminHeaderManagerPage: React.FC = () => {
         const hLogo = headerMerged.logoImage || headerMerged.logoUrl || data.storeLogo || '/assets/aethelcarats-logo.png';
         let hWidth = headerMerged.logoWidth;
         if (typeof hWidth === 'string') {
-          hWidth = parseInt(hWidth.replace(/[^0-9]/g, ''), 10) || 180;
+          hWidth = parseInt(hWidth.replace(/[^0-9]/g, ''), 10) || 240;
         } else if (typeof hWidth !== 'number') {
-          hWidth = 180;
+          hWidth = 240;
         }
 
         let hHeight = headerMerged.logoHeight;
         if (typeof hHeight === 'string') {
-          hHeight = parseInt(hHeight.replace(/[^0-9]/g, ''), 10) || 56;
+          hHeight = parseInt(hHeight.replace(/[^0-9]/g, ''), 10) || 75;
         } else if (typeof hHeight !== 'number') {
-          hHeight = 56;
+          hHeight = 75;
         }
 
         setHeaderSettings((prev: any) => ({
@@ -280,16 +280,16 @@ export const AdminHeaderManagerPage: React.FC = () => {
         const fLogo = footerMerged.logoImage || footerMerged.logoUrl || data.storeLogo || '/assets/aethelcarats-logo.png';
         let fWidth = footerMerged.logoWidth;
         if (typeof fWidth === 'string') {
-          fWidth = parseInt(fWidth.replace(/[^0-9]/g, ''), 10) || 180;
+          fWidth = parseInt(fWidth.replace(/[^0-9]/g, ''), 10) || 220;
         } else if (typeof fWidth !== 'number') {
-          fWidth = 180;
+          fWidth = 220;
         }
 
         let fHeight = footerMerged.logoHeight;
         if (typeof fHeight === 'string') {
-          fHeight = parseInt(fHeight.replace(/[^0-9]/g, ''), 10) || 52;
+          fHeight = parseInt(fHeight.replace(/[^0-9]/g, ''), 10) || 75;
         } else if (typeof fHeight !== 'number') {
-          fHeight = 52;
+          fHeight = 75;
         }
 
         setFooterSettings((prev: any) => ({
@@ -309,13 +309,13 @@ export const AdminHeaderManagerPage: React.FC = () => {
   const handleSave = async () => {
     try {
       setSaving(true);
-      setSuccessMsg('');
       setErrorMsg('');
+      setSuccessMsg('');
 
       // Header payload
       const hLogo = headerSettings.logoImage || headerSettings.logoUrl || '';
-      const hWidthVal = `${headerSettings.logoWidth || 180}px`;
-      const hHeightVal = `${headerSettings.logoHeight || 56}px`;
+      const hWidthVal = `${headerSettings.logoWidth || 240}px`;
+      const hHeightVal = `${headerSettings.logoHeight || 75}px`;
 
       const headerPayload = {
         ...headerSettings,
@@ -341,8 +341,8 @@ export const AdminHeaderManagerPage: React.FC = () => {
       } catch (e) {}
 
       const fLogo = footerSettings.logoImage || footerSettings.logoUrl || '';
-      const fWidthVal = `${footerSettings.logoWidth || 180}px`;
-      const fHeightVal = `${footerSettings.logoHeight || 52}px`;
+      const fWidthVal = `${footerSettings.logoWidth || 220}px`;
+      const fHeightVal = `${footerSettings.logoHeight || 75}px`;
 
       const footerPayload = {
         ...currentFooterData,
@@ -373,21 +373,22 @@ export const AdminHeaderManagerPage: React.FC = () => {
       }));
 
       setSuccessMsg('✓ Both Header & Footer logos, dimensions, and configurations successfully saved to database!');
-      setTimeout(() => setSuccessMsg(''), 4500);
+      setTimeout(() => setSuccessMsg(''), 6000);
     } catch (err: any) {
-      setErrorMsg(err?.response?.data?.message || err?.message || 'Failed to save logo & header settings.');
+      console.error('Failed to save header settings:', err);
+      setErrorMsg(err.response?.data?.message || err.message || 'Failed to save settings.');
     } finally {
       setSaving(false);
     }
   };
 
-  const activeHeaderLogo = headerSettings.logoImage || headerSettings.logoUrl || '';
-  const currentHeaderWidth = Number(headerSettings.logoWidth) || 180;
-  const currentHeaderHeight = Number(headerSettings.logoHeight) || 56;
+  const currentHeaderWidth = Number(headerSettings.logoWidth) || 240;
+  const currentHeaderHeight = Number(headerSettings.logoHeight) || 75;
+  const activeHeaderLogo = headerSettings.logoImage || headerSettings.logoUrl;
 
-  const activeFooterLogo = footerSettings.logoImage || footerSettings.logoUrl || '';
-  const currentFooterWidth = Number(footerSettings.logoWidth) || 180;
-  const currentFooterHeight = Number(footerSettings.logoHeight) || 52;
+  const currentFooterWidth = Number(footerSettings.logoWidth) || 220;
+  const currentFooterHeight = Number(footerSettings.logoHeight) || 75;
+  const activeFooterLogo = footerSettings.logoImage || footerSettings.logoUrl;
 
   return (
     <div>
@@ -456,68 +457,76 @@ export const AdminHeaderManagerPage: React.FC = () => {
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
               <label style={{ fontWeight: 700, fontSize: '0.88rem', color: '#1f1f1f', display: 'flex', alignItems: 'center', gap: 6 }}>
                 <Sliders size={16} color="#c9a45c" />
-                Header Logo Width: <span style={{ color: '#c9a45c' }}>{currentHeaderWidth}px</span>
+                Header Logo Display Width: <span style={{ color: '#c9a45c' }}>{currentHeaderWidth}px</span>
               </label>
-              <span style={{ fontSize: '0.78rem', color: '#77736c' }}>Range: 60px – 400px</span>
+              <span style={{ fontSize: '0.78rem', color: '#77736c' }}>Range: 80px – 450px</span>
             </div>
 
             <SliderRow>
-              <span style={{ fontSize: '0.78rem', color: '#77736c', fontWeight: 600 }}>60px</span>
+              <span style={{ fontSize: '0.78rem', color: '#77736c', fontWeight: 600 }}>80px</span>
               <input
                 type="range"
-                min="60"
-                max="400"
+                min="80"
+                max="450"
                 step="2"
                 value={currentHeaderWidth}
-                onChange={(e) => setHeaderSettings({ ...headerSettings, logoWidth: Number(e.target.value) })}
+                onChange={(e) => {
+                  const w = Number(e.target.value);
+                  const h = Math.min(125, Math.max(35, Math.round(w / 2.6)));
+                  setHeaderSettings({ ...headerSettings, logoWidth: w, logoHeight: h });
+                }}
               />
-              <span style={{ fontSize: '0.78rem', color: '#77736c', fontWeight: 600 }}>400px</span>
+              <span style={{ fontSize: '0.78rem', color: '#77736c', fontWeight: 600 }}>450px</span>
               <AdminInput
                 type="number"
-                min="60"
+                min="80"
                 max="500"
                 className="px-input"
                 value={currentHeaderWidth}
-                onChange={(e) => setHeaderSettings({ ...headerSettings, logoWidth: Number(e.target.value) || 180 })}
+                onChange={(e) => {
+                  const w = Number(e.target.value) || 240;
+                  const h = Math.min(125, Math.max(35, Math.round(w / 2.6)));
+                  setHeaderSettings({ ...headerSettings, logoWidth: w, logoHeight: h });
+                }}
               />
             </SliderRow>
 
             <PresetPills>
-              <span className="label">Quick Presets:</span>
-              <button
-                type="button"
-                className={currentHeaderWidth === 120 ? 'active' : ''}
-                onClick={() => setHeaderSettings({ ...headerSettings, logoWidth: 120 })}
-              >
-                Compact (120px)
-              </button>
+              <span className="label">Width Presets:</span>
               <button
                 type="button"
                 className={currentHeaderWidth === 160 ? 'active' : ''}
-                onClick={() => setHeaderSettings({ ...headerSettings, logoWidth: 160 })}
+                onClick={() => setHeaderSettings({ ...headerSettings, logoWidth: 160, logoHeight: 60 })}
               >
-                Standard (160px)
+                Compact (160px)
               </button>
               <button
                 type="button"
-                className={currentHeaderWidth === 180 ? 'active' : ''}
-                onClick={() => setHeaderSettings({ ...headerSettings, logoWidth: 180 })}
+                className={currentHeaderWidth === 200 ? 'active' : ''}
+                onClick={() => setHeaderSettings({ ...headerSettings, logoWidth: 200, logoHeight: 70 })}
               >
-                Default (180px)
+                Standard (200px)
               </button>
               <button
                 type="button"
-                className={currentHeaderWidth === 220 ? 'active' : ''}
-                onClick={() => setHeaderSettings({ ...headerSettings, logoWidth: 220 })}
+                className={currentHeaderWidth === 240 ? 'active' : ''}
+                onClick={() => setHeaderSettings({ ...headerSettings, logoWidth: 240, logoHeight: 80 })}
               >
-                Prominent (220px)
+                Default (240px)
               </button>
               <button
                 type="button"
                 className={currentHeaderWidth === 280 ? 'active' : ''}
-                onClick={() => setHeaderSettings({ ...headerSettings, logoWidth: 280 })}
+                onClick={() => setHeaderSettings({ ...headerSettings, logoWidth: 280, logoHeight: 95 })}
               >
-                Large Atelier (280px)
+                Prominent (280px)
+              </button>
+              <button
+                type="button"
+                className={currentHeaderWidth === 340 ? 'active' : ''}
+                onClick={() => setHeaderSettings({ ...headerSettings, logoWidth: 340, logoHeight: 115 })}
+              >
+                Large Atelier (340px)
               </button>
             </PresetPills>
 
@@ -527,27 +536,27 @@ export const AdminHeaderManagerPage: React.FC = () => {
                 <Sliders size={16} color="#c9a45c" />
                 Header Logo Max Height: <span style={{ color: '#c9a45c' }}>{currentHeaderHeight}px</span>
               </label>
-              <span style={{ fontSize: '0.78rem', color: '#77736c' }}>Range: 24px – 100px</span>
+              <span style={{ fontSize: '0.78rem', color: '#77736c' }}>Range: 30px – 120px</span>
             </div>
 
             <SliderRow>
-              <span style={{ fontSize: '0.78rem', color: '#77736c', fontWeight: 600 }}>24px</span>
+              <span style={{ fontSize: '0.78rem', color: '#77736c', fontWeight: 600 }}>30px</span>
               <input
                 type="range"
-                min="24"
-                max="100"
+                min="30"
+                max="120"
                 step="2"
                 value={currentHeaderHeight}
                 onChange={(e) => setHeaderSettings({ ...headerSettings, logoHeight: Number(e.target.value) })}
               />
-              <span style={{ fontSize: '0.78rem', color: '#77736c', fontWeight: 600 }}>100px</span>
+              <span style={{ fontSize: '0.78rem', color: '#77736c', fontWeight: 600 }}>120px</span>
               <AdminInput
                 type="number"
-                min="24"
-                max="120"
+                min="30"
+                max="140"
                 className="px-input"
                 value={currentHeaderHeight}
-                onChange={(e) => setHeaderSettings({ ...headerSettings, logoHeight: Number(e.target.value) || 56 })}
+                onChange={(e) => setHeaderSettings({ ...headerSettings, logoHeight: Number(e.target.value) || 75 })}
               />
             </SliderRow>
 
@@ -555,38 +564,38 @@ export const AdminHeaderManagerPage: React.FC = () => {
               <span className="label">Height Presets:</span>
               <button
                 type="button"
-                className={currentHeaderHeight === 40 ? 'active' : ''}
-                onClick={() => setHeaderSettings({ ...headerSettings, logoHeight: 40 })}
-              >
-                Subtle (40px)
-              </button>
-              <button
-                type="button"
                 className={currentHeaderHeight === 48 ? 'active' : ''}
                 onClick={() => setHeaderSettings({ ...headerSettings, logoHeight: 48 })}
               >
-                Sleek (48px)
+                Subtle (48px)
               </button>
               <button
                 type="button"
-                className={currentHeaderHeight === 56 ? 'active' : ''}
-                onClick={() => setHeaderSettings({ ...headerSettings, logoHeight: 56 })}
+                className={currentHeaderHeight === 60 ? 'active' : ''}
+                onClick={() => setHeaderSettings({ ...headerSettings, logoHeight: 60 })}
               >
-                Standard (56px)
+                Standard (60px)
               </button>
               <button
                 type="button"
-                className={currentHeaderHeight === 68 ? 'active' : ''}
-                onClick={() => setHeaderSettings({ ...headerSettings, logoHeight: 68 })}
+                className={currentHeaderHeight === 75 ? 'active' : ''}
+                onClick={() => setHeaderSettings({ ...headerSettings, logoHeight: 75 })}
               >
-                Distinguished (68px)
+                Default (75px)
               </button>
               <button
                 type="button"
-                className={currentHeaderHeight === 80 ? 'active' : ''}
-                onClick={() => setHeaderSettings({ ...headerSettings, logoHeight: 80 })}
+                className={currentHeaderHeight === 90 ? 'active' : ''}
+                onClick={() => setHeaderSettings({ ...headerSettings, logoHeight: 90 })}
               >
-                Grand Atelier (80px)
+                Prominent (90px)
+              </button>
+              <button
+                type="button"
+                className={currentHeaderHeight === 110 ? 'active' : ''}
+                onClick={() => setHeaderSettings({ ...headerSettings, logoHeight: 110 })}
+              >
+                Grand Atelier (110px)
               </button>
             </PresetPills>
           </SizeControlBox>
@@ -638,68 +647,76 @@ export const AdminHeaderManagerPage: React.FC = () => {
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
               <label style={{ fontWeight: 700, fontSize: '0.88rem', color: '#1f1f1f', display: 'flex', alignItems: 'center', gap: 6 }}>
                 <Sliders size={16} color="#c9a45c" />
-                Footer Logo Width: <span style={{ color: '#c9a45c' }}>{currentFooterWidth}px</span>
+                Footer Logo Display Width: <span style={{ color: '#c9a45c' }}>{currentFooterWidth}px</span>
               </label>
-              <span style={{ fontSize: '0.78rem', color: '#77736c' }}>Range: 60px – 400px</span>
+              <span style={{ fontSize: '0.78rem', color: '#77736c' }}>Range: 80px – 450px</span>
             </div>
 
             <SliderRow>
-              <span style={{ fontSize: '0.78rem', color: '#77736c', fontWeight: 600 }}>60px</span>
+              <span style={{ fontSize: '0.78rem', color: '#77736c', fontWeight: 600 }}>80px</span>
               <input
                 type="range"
-                min="60"
-                max="400"
+                min="80"
+                max="450"
                 step="2"
                 value={currentFooterWidth}
-                onChange={(e) => setFooterSettings({ ...footerSettings, logoWidth: Number(e.target.value) })}
+                onChange={(e) => {
+                  const w = Number(e.target.value);
+                  const h = Math.min(125, Math.max(35, Math.round(w / 2.6)));
+                  setFooterSettings({ ...footerSettings, logoWidth: w, logoHeight: h });
+                }}
               />
-              <span style={{ fontSize: '0.78rem', color: '#77736c', fontWeight: 600 }}>400px</span>
+              <span style={{ fontSize: '0.78rem', color: '#77736c', fontWeight: 600 }}>450px</span>
               <AdminInput
                 type="number"
-                min="60"
+                min="80"
                 max="500"
                 className="px-input"
                 value={currentFooterWidth}
-                onChange={(e) => setFooterSettings({ ...footerSettings, logoWidth: Number(e.target.value) || 180 })}
+                onChange={(e) => {
+                  const w = Number(e.target.value) || 220;
+                  const h = Math.min(125, Math.max(35, Math.round(w / 2.6)));
+                  setFooterSettings({ ...footerSettings, logoWidth: w, logoHeight: h });
+                }}
               />
             </SliderRow>
 
             <PresetPills>
-              <span className="label">Quick Presets:</span>
+              <span className="label">Width Presets:</span>
               <button
                 type="button"
-                className={currentFooterWidth === 120 ? 'active' : ''}
-                onClick={() => setFooterSettings({ ...footerSettings, logoWidth: 120 })}
+                className={currentFooterWidth === 160 ? 'active' : ''}
+                onClick={() => setFooterSettings({ ...footerSettings, logoWidth: 160, logoHeight: 60 })}
               >
-                Compact (120px)
+                Compact (160px)
               </button>
               <button
                 type="button"
-                className={currentFooterWidth === 140 ? 'active' : ''}
-                onClick={() => setFooterSettings({ ...footerSettings, logoWidth: 140 })}
+                className={currentFooterWidth === 200 ? 'active' : ''}
+                onClick={() => setFooterSettings({ ...footerSettings, logoWidth: 200, logoHeight: 70 })}
               >
-                Standard (140px)
+                Standard (200px)
               </button>
               <button
                 type="button"
-                className={currentFooterWidth === 180 ? 'active' : ''}
-                onClick={() => setFooterSettings({ ...footerSettings, logoWidth: 180 })}
+                className={currentFooterWidth === 240 ? 'active' : ''}
+                onClick={() => setFooterSettings({ ...footerSettings, logoWidth: 240, logoHeight: 80 })}
               >
-                Default (180px)
+                Default (240px)
               </button>
               <button
                 type="button"
-                className={currentFooterWidth === 220 ? 'active' : ''}
-                onClick={() => setFooterSettings({ ...footerSettings, logoWidth: 220 })}
+                className={currentFooterWidth === 280 ? 'active' : ''}
+                onClick={() => setFooterSettings({ ...footerSettings, logoWidth: 280, logoHeight: 95 })}
               >
-                Prominent (220px)
+                Prominent (280px)
               </button>
               <button
                 type="button"
-                className={currentFooterWidth === 260 ? 'active' : ''}
-                onClick={() => setFooterSettings({ ...footerSettings, logoWidth: 260 })}
+                className={currentFooterWidth === 340 ? 'active' : ''}
+                onClick={() => setFooterSettings({ ...footerSettings, logoWidth: 340, logoHeight: 115 })}
               >
-                Large (260px)
+                Large Atelier (340px)
               </button>
             </PresetPills>
 
@@ -709,27 +726,27 @@ export const AdminHeaderManagerPage: React.FC = () => {
                 <Sliders size={16} color="#c9a45c" />
                 Footer Logo Max Height: <span style={{ color: '#c9a45c' }}>{currentFooterHeight}px</span>
               </label>
-              <span style={{ fontSize: '0.78rem', color: '#77736c' }}>Range: 24px – 100px</span>
+              <span style={{ fontSize: '0.78rem', color: '#77736c' }}>Range: 30px – 120px</span>
             </div>
 
             <SliderRow>
-              <span style={{ fontSize: '0.78rem', color: '#77736c', fontWeight: 600 }}>24px</span>
+              <span style={{ fontSize: '0.78rem', color: '#77736c', fontWeight: 600 }}>30px</span>
               <input
                 type="range"
-                min="24"
-                max="100"
+                min="30"
+                max="120"
                 step="2"
                 value={currentFooterHeight}
                 onChange={(e) => setFooterSettings({ ...footerSettings, logoHeight: Number(e.target.value) })}
               />
-              <span style={{ fontSize: '0.78rem', color: '#77736c', fontWeight: 600 }}>100px</span>
+              <span style={{ fontSize: '0.78rem', color: '#77736c', fontWeight: 600 }}>120px</span>
               <AdminInput
                 type="number"
-                min="24"
-                max="120"
+                min="30"
+                max="140"
                 className="px-input"
                 value={currentFooterHeight}
-                onChange={(e) => setFooterSettings({ ...footerSettings, logoHeight: Number(e.target.value) || 52 })}
+                onChange={(e) => setFooterSettings({ ...footerSettings, logoHeight: Number(e.target.value) || 75 })}
               />
             </SliderRow>
 
@@ -737,44 +754,44 @@ export const AdminHeaderManagerPage: React.FC = () => {
               <span className="label">Height Presets:</span>
               <button
                 type="button"
-                className={currentFooterHeight === 36 ? 'active' : ''}
-                onClick={() => setFooterSettings({ ...footerSettings, logoHeight: 36 })}
+                className={currentFooterHeight === 48 ? 'active' : ''}
+                onClick={() => setFooterSettings({ ...footerSettings, logoHeight: 48 })}
               >
-                Subtle (36px)
-              </button>
-              <button
-                type="button"
-                className={currentFooterHeight === 44 ? 'active' : ''}
-                onClick={() => setFooterSettings({ ...footerSettings, logoHeight: 44 })}
-              >
-                Compact (44px)
-              </button>
-              <button
-                type="button"
-                className={currentFooterHeight === 52 ? 'active' : ''}
-                onClick={() => setFooterSettings({ ...footerSettings, logoHeight: 52 })}
-              >
-                Default (52px)
+                Subtle (48px)
               </button>
               <button
                 type="button"
                 className={currentFooterHeight === 60 ? 'active' : ''}
                 onClick={() => setFooterSettings({ ...footerSettings, logoHeight: 60 })}
               >
-                Prominent (60px)
+                Standard (60px)
               </button>
               <button
                 type="button"
-                className={currentFooterHeight === 72 ? 'active' : ''}
-                onClick={() => setFooterSettings({ ...footerSettings, logoHeight: 72 })}
+                className={currentFooterHeight === 75 ? 'active' : ''}
+                onClick={() => setFooterSettings({ ...footerSettings, logoHeight: 75 })}
               >
-                Grand (72px)
+                Default (75px)
+              </button>
+              <button
+                type="button"
+                className={currentFooterHeight === 90 ? 'active' : ''}
+                onClick={() => setFooterSettings({ ...footerSettings, logoHeight: 90 })}
+              >
+                Prominent (90px)
+              </button>
+              <button
+                type="button"
+                className={currentFooterHeight === 110 ? 'active' : ''}
+                onClick={() => setFooterSettings({ ...footerSettings, logoHeight: 110 })}
+              >
+                Grand Atelier (110px)
               </button>
             </PresetPills>
           </SizeControlBox>
 
           {/* Live Footer Bottom Bar Preview */}
-          <div style={{ marginTop: 16, background: '#0b0f14', border: '1px solid rgba(255,255,255,0.1)', borderRadius: 6, padding: '16px 20px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: 14 }}>
+          <div style={{ marginTop: 16, background: '#0b0f14', border: '1px solid rgba(255,255,255,0.1)', borderRadius: 6, padding: '20px 24px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: 16 }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: 16 }}>
               {activeFooterLogo ? (
                 <img
@@ -783,6 +800,7 @@ export const AdminHeaderManagerPage: React.FC = () => {
                   style={{
                     width: `${currentFooterWidth}px`,
                     maxHeight: `${currentFooterHeight}px`,
+                    height: 'auto',
                     objectFit: 'contain',
                     display: 'block',
                   }}

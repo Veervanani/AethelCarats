@@ -205,12 +205,17 @@ const BottomBar = styled.div`
 
 const FooterLogoImg = styled.img<{ $width?: string; $height?: string }>`
   width: ${({ $width }) => $width || 'auto'};
-  height: ${({ $height }) => $height || 'auto'};
-  max-width: 260px;
-  max-height: ${({ $height }) => $height || '54px'};
+  height: auto;
+  max-width: ${({ $width }) => $width || '380px'};
+  max-height: ${({ $height }) => $height || '85px'};
   object-fit: contain;
   display: block;
-  transition: width 0.2s ease, height 0.2s ease;
+  transition: width 0.2s ease, max-height 0.2s ease;
+
+  @media (max-width: 576px) {
+    max-height: ${({ $height }) => ($height ? `min(${$height}, 65px)` : '55px')};
+    max-width: 220px;
+  }
 `;
 
 const FooterBrandText = styled.div`
@@ -288,7 +293,8 @@ export const Footer: React.FC = () => {
     brandName: 'AETHELCARATS FINE JEWELLERY ATELIER',
     logoImage: '',
     logoUrl: '',
-    logoWidth: '160px',
+    logoWidth: '220px',
+    logoHeight: '80px',
     copyrightText: `© ${new Date().getFullYear()} AethelCarats Fine Jewellery Atelier. All Rights Reserved.`,
     contactEmail: 'contact@aethelcarats.com',
     contactPhone: '+91 79902 78892',
@@ -564,22 +570,30 @@ export const Footer: React.FC = () => {
       <BottomBar>
         <BrandCopyright>
           <Link to="/" onClick={() => window.scrollTo(0, 0)} aria-label="AethelCarats Homepage" style={{ textDecoration: 'none' }}>
-            <FooterLogoImg
-              src={footerConfig.logoUrl || footerConfig.logoImage || '/assets/aethelcarats-logo.png'}
-              alt={footerConfig.brandName || 'AethelCarats Fine Jewellery Atelier'}
-              $width={typeof footerConfig.logoWidth === 'number' ? `${footerConfig.logoWidth}px` : (footerConfig.logoWidth || '180px')}
-              $height={typeof footerConfig.logoHeight === 'number' ? `${footerConfig.logoHeight}px` : (footerConfig.logoHeight || '52px')}
-              onError={(e) => {
-                const target = e.currentTarget as HTMLImageElement;
-                if (!target.src.includes('/assets/aethelcarats-logo.png')) {
-                  target.src = '/assets/aethelcarats-logo.png';
-                  return;
-                }
-                target.style.display = 'none';
-                const fallback = document.getElementById('footer-text-logo-fallback');
-                if (fallback) fallback.style.display = 'flex';
-              }}
-            />
+            {(() => {
+              const fWidthNum = parseInt(String(footerConfig.logoWidth || '220').replace(/[^0-9]/g, ''), 10) || 220;
+              const fHeightNum = parseInt(String(footerConfig.logoHeight || '0').replace(/[^0-9]/g, ''), 10);
+              const effectiveHeight = fHeightNum > 56 ? `${fHeightNum}px` : `${Math.min(105, Math.max(72, Math.round(fWidthNum / 2.5)))}px`;
+              const effectiveWidth = `${fWidthNum}px`;
+              return (
+                <FooterLogoImg
+                  src={footerConfig.logoUrl || footerConfig.logoImage || '/assets/aethelcarats-logo.png'}
+                  alt={footerConfig.brandName || 'AethelCarats Fine Jewellery Atelier'}
+                  $width={effectiveWidth}
+                  $height={effectiveHeight}
+                  onError={(e) => {
+                    const target = e.currentTarget as HTMLImageElement;
+                    if (!target.src.includes('/assets/aethelcarats-logo.png')) {
+                      target.src = '/assets/aethelcarats-logo.png';
+                      return;
+                    }
+                    target.style.display = 'none';
+                    const fallback = document.getElementById('footer-text-logo-fallback');
+                    if (fallback) fallback.style.display = 'flex';
+                  }}
+                />
+              );
+            })()}
             <FooterBrandText
               id="footer-text-logo-fallback"
               style={{ display: 'none' }}

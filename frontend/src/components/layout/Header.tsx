@@ -409,21 +409,22 @@ const HeaderInner = styled.div<{ $isScrolled?: boolean }>`
   max-width: 1440px;
   margin: 0 auto;
   padding: 0 40px;
-  height: ${({ $isScrolled }) => ($isScrolled ? '70px' : '84px')};
+  min-height: ${({ $isScrolled }) => ($isScrolled ? '70px' : '88px')};
+  height: auto;
   display: flex;
   align-items: center;
   justify-content: space-between;
   position: relative;
-  transition: height 0.35s cubic-bezier(0.22, 1, 0.36, 1);
+  transition: min-height 0.35s cubic-bezier(0.22, 1, 0.36, 1);
 
   @media (max-width: 1024px) {
     padding: 0 20px;
-    height: ${({ $isScrolled }) => ($isScrolled ? '62px' : '72px')};
+    min-height: ${({ $isScrolled }) => ($isScrolled ? '62px' : '74px')};
   }
 
   @media (max-width: 576px) {
     padding: 0 14px;
-    height: ${({ $isScrolled }) => ($isScrolled ? '56px' : '64px')};
+    min-height: ${({ $isScrolled }) => ($isScrolled ? '56px' : '66px')};
   }
 `;
 
@@ -454,15 +455,21 @@ const LogoLink = styled(Link)`
 
 const LogoImg = styled.img<{ $width?: string; $height?: string }>`
   width: ${({ $width }) => $width || 'auto'};
-  max-width: ${({ $width }) => $width || '240px'};
-  max-height: ${({ $height }) => $height || '56px'};
+  height: auto;
+  max-width: ${({ $width }) => $width || '360px'};
+  max-height: ${({ $height }) => $height || '85px'};
   object-fit: contain;
   display: block;
   transition: width 0.2s ease, max-height 0.2s ease;
 
+  @media (max-width: 1024px) {
+    max-height: ${({ $height }) => ($height ? `min(${$height}, 68px)` : '60px')};
+    max-width: 260px;
+  }
+
   @media (max-width: 576px) {
-    max-height: ${({ $height }) => ($height ? `min(${$height}, 46px)` : '44px')};
-    max-width: 170px;
+    max-height: ${({ $height }) => ($height ? `min(${$height}, 54px)` : '48px')};
+    max-width: 190px;
   }
 `;
 
@@ -864,7 +871,8 @@ export const Header: React.FC = () => {
   const [headerConfig, setHeaderConfig] = useState<any>({
     logoUrl: '',
     logoImage: '',
-    logoWidth: '180px',
+    logoWidth: '240px',
+    logoHeight: '80px',
     logoLink: '/',
     showSearch: true,
     showAccount: true,
@@ -1008,22 +1016,30 @@ export const Header: React.FC = () => {
           </MobileLeft>
 
           <LogoLink to="/" aria-label="AethelCarats Home" onClick={closeAllMenus} onMouseEnter={() => { handleNonNavMouseEnter(); setHoveredNavId(null); }}>
-            <LogoImg
-              src={headerConfig.logoUrl || headerConfig.logoImage || '/assets/aethelcarats-logo.png'}
-              alt="AethelCarats Fine Jewellery"
-              $width={typeof headerConfig.logoWidth === 'number' ? `${headerConfig.logoWidth}px` : (headerConfig.logoWidth || 'auto')}
-              $height={typeof headerConfig.logoHeight === 'number' ? `${headerConfig.logoHeight}px` : (headerConfig.logoHeight || '56px')}
-              onError={(e) => {
-                const target = e.currentTarget as HTMLImageElement;
-                if (!target.src.includes('/assets/aethelcarats-logo.png')) {
-                  target.src = '/assets/aethelcarats-logo.png';
-                  return;
-                }
-                target.style.display = 'none';
-                const fallback = document.getElementById('header-text-logo-fallback');
-                if (fallback) fallback.style.display = 'flex';
-              }}
-            />
+            {(() => {
+              const hWidthNum = parseInt(String(headerConfig.logoWidth || '240').replace(/[^0-9]/g, ''), 10) || 240;
+              const hHeightNum = parseInt(String(headerConfig.logoHeight || '0').replace(/[^0-9]/g, ''), 10);
+              const effectiveHeight = hHeightNum > 56 ? `${hHeightNum}px` : `${Math.min(95, Math.max(72, Math.round(hWidthNum / 2.6)))}px`;
+              const effectiveWidth = `${hWidthNum}px`;
+              return (
+                <LogoImg
+                  src={headerConfig.logoUrl || headerConfig.logoImage || '/assets/aethelcarats-logo.png'}
+                  alt="AethelCarats Fine Jewellery"
+                  $width={effectiveWidth}
+                  $height={effectiveHeight}
+                  onError={(e) => {
+                    const target = e.currentTarget as HTMLImageElement;
+                    if (!target.src.includes('/assets/aethelcarats-logo.png')) {
+                      target.src = '/assets/aethelcarats-logo.png';
+                      return;
+                    }
+                    target.style.display = 'none';
+                    const fallback = document.getElementById('header-text-logo-fallback');
+                    if (fallback) fallback.style.display = 'flex';
+                  }}
+                />
+              );
+            })()}
             <LogoBrandText
               id="header-text-logo-fallback"
               style={{ display: 'none' }}

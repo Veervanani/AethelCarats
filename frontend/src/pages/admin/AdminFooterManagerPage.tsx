@@ -217,8 +217,8 @@ const DEFAULT_FOOTER_STATE = {
     'AethelCarats Fine Jewellery crafts exquisite lab-grown and natural diamond jewelry with unmatched artistry, ethical sourcing, and timeless elegance.',
   logoImage: '',
   logoUrl: '',
-  logoWidth: 180,
-  logoHeight: 52,
+  logoWidth: 220,
+  logoHeight: 75,
   trustBadgeImage: '/assets/trust_badges.png',
 
   // Newsletter Section
@@ -356,16 +356,16 @@ export const AdminFooterManagerPage: React.FC = () => {
         const logo = merged.logoImage || merged.logoUrl || data.storeLogo || '';
         let width = merged.logoWidth;
         if (typeof width === 'string') {
-          width = parseInt(width.replace(/[^0-9]/g, ''), 10) || 180;
+          width = parseInt(width.replace(/[^0-9]/g, ''), 10) || 220;
         } else if (typeof width !== 'number') {
-          width = 180;
+          width = 220;
         }
 
         let height = merged.logoHeight;
         if (typeof height === 'string') {
-          height = parseInt(height.replace(/[^0-9]/g, ''), 10) || 52;
+          height = parseInt(height.replace(/[^0-9]/g, ''), 10) || 75;
         } else if (typeof height !== 'number') {
-          height = 52;
+          height = 75;
         }
 
         merged.logoImage = logo;
@@ -417,8 +417,8 @@ export const AdminFooterManagerPage: React.FC = () => {
       }));
 
       const logo = footerSettings.logoImage || footerSettings.logoUrl || '';
-      const widthVal = `${footerSettings.logoWidth || 180}px`;
-      const heightVal = `${footerSettings.logoHeight || 52}px`;
+      const widthVal = `${footerSettings.logoWidth || 220}px`;
+      const heightVal = `${footerSettings.logoHeight || 75}px`;
 
       const payload = {
         ...footerSettings,
@@ -712,68 +712,76 @@ export const AdminFooterManagerPage: React.FC = () => {
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                   <label style={{ fontWeight: 700, fontSize: '0.88rem', color: '#1f1f1f', display: 'flex', alignItems: 'center', gap: 6 }}>
                     <Sliders size={16} color="#c9a45c" />
-                    Footer Logo Display Width: <span style={{ color: '#c9a45c' }}>{footerSettings.logoWidth || 180}px</span>
+                    Footer Logo Display Width: <span style={{ color: '#c9a45c' }}>{footerSettings.logoWidth || 220}px</span>
                   </label>
-                  <span style={{ fontSize: '0.78rem', color: '#77736c' }}>Range: 60px – 400px</span>
+                  <span style={{ fontSize: '0.78rem', color: '#77736c' }}>Range: 80px – 450px</span>
                 </div>
 
                 <SliderRow>
-                  <span style={{ fontSize: '0.78rem', color: '#77736c', fontWeight: 600 }}>60px</span>
+                  <span style={{ fontSize: '0.78rem', color: '#77736c', fontWeight: 600 }}>80px</span>
                   <input
                     type="range"
-                    min="60"
-                    max="400"
+                    min="80"
+                    max="450"
                     step="2"
-                    value={Number(footerSettings.logoWidth) || 180}
-                    onChange={(e) => setFooterSettings({ ...footerSettings, logoWidth: Number(e.target.value) })}
+                    value={Number(footerSettings.logoWidth) || 220}
+                    onChange={(e) => {
+                      const w = Number(e.target.value);
+                      const h = Math.min(130, Math.max(35, Math.round(w / 2.6)));
+                      setFooterSettings({ ...footerSettings, logoWidth: w, logoHeight: h });
+                    }}
                   />
-                  <span style={{ fontSize: '0.78rem', color: '#77736c', fontWeight: 600 }}>400px</span>
+                  <span style={{ fontSize: '0.78rem', color: '#77736c', fontWeight: 600 }}>450px</span>
                   <AdminInput
                     type="number"
-                    min="60"
+                    min="80"
                     max="500"
                     className="px-input"
-                    value={Number(footerSettings.logoWidth) || 180}
-                    onChange={(e) => setFooterSettings({ ...footerSettings, logoWidth: Number(e.target.value) || 180 })}
+                    value={Number(footerSettings.logoWidth) || 220}
+                    onChange={(e) => {
+                      const w = Number(e.target.value) || 220;
+                      const h = Math.min(130, Math.max(35, Math.round(w / 2.6)));
+                      setFooterSettings({ ...footerSettings, logoWidth: w, logoHeight: h });
+                    }}
                   />
                 </SliderRow>
 
                 <PresetPills>
-                  <span className="label">Quick Presets:</span>
+                  <span className="label">Width Presets:</span>
                   <button
                     type="button"
-                    className={(footerSettings.logoWidth || 180) === 120 ? 'active' : ''}
-                    onClick={() => setFooterSettings({ ...footerSettings, logoWidth: 120 })}
+                    className={(footerSettings.logoWidth || 220) === 160 ? 'active' : ''}
+                    onClick={() => setFooterSettings({ ...footerSettings, logoWidth: 160, logoHeight: 60 })}
                   >
-                    Compact (120px)
+                    Compact (160px)
                   </button>
                   <button
                     type="button"
-                    className={(footerSettings.logoWidth || 180) === 140 ? 'active' : ''}
-                    onClick={() => setFooterSettings({ ...footerSettings, logoWidth: 140 })}
+                    className={(footerSettings.logoWidth || 220) === 200 ? 'active' : ''}
+                    onClick={() => setFooterSettings({ ...footerSettings, logoWidth: 200, logoHeight: 70 })}
                   >
-                    Standard (140px)
+                    Standard (200px)
                   </button>
                   <button
                     type="button"
-                    className={(footerSettings.logoWidth || 180) === 180 ? 'active' : ''}
-                    onClick={() => setFooterSettings({ ...footerSettings, logoWidth: 180 })}
+                    className={(footerSettings.logoWidth || 220) === 240 ? 'active' : ''}
+                    onClick={() => setFooterSettings({ ...footerSettings, logoWidth: 240, logoHeight: 80 })}
                   >
-                    Default (180px)
+                    Default (240px)
                   </button>
                   <button
                     type="button"
-                    className={(footerSettings.logoWidth || 180) === 220 ? 'active' : ''}
-                    onClick={() => setFooterSettings({ ...footerSettings, logoWidth: 220 })}
+                    className={(footerSettings.logoWidth || 220) === 280 ? 'active' : ''}
+                    onClick={() => setFooterSettings({ ...footerSettings, logoWidth: 280, logoHeight: 95 })}
                   >
-                    Prominent (220px)
+                    Prominent (280px)
                   </button>
                   <button
                     type="button"
-                    className={(footerSettings.logoWidth || 180) === 260 ? 'active' : ''}
-                    onClick={() => setFooterSettings({ ...footerSettings, logoWidth: 260 })}
+                    className={(footerSettings.logoWidth || 220) === 340 ? 'active' : ''}
+                    onClick={() => setFooterSettings({ ...footerSettings, logoWidth: 340, logoHeight: 115 })}
                   >
-                    Large (260px)
+                    Large Atelier (340px)
                   </button>
                 </PresetPills>
 
@@ -781,29 +789,29 @@ export const AdminFooterManagerPage: React.FC = () => {
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: 12 }}>
                   <label style={{ fontWeight: 700, fontSize: '0.88rem', color: '#1f1f1f', display: 'flex', alignItems: 'center', gap: 6 }}>
                     <Sliders size={16} color="#c9a45c" />
-                    Footer Logo Max Height: <span style={{ color: '#c9a45c' }}>{footerSettings.logoHeight || 52}px</span>
+                    Footer Logo Max Height: <span style={{ color: '#c9a45c' }}>{footerSettings.logoHeight || 75}px</span>
                   </label>
-                  <span style={{ fontSize: '0.78rem', color: '#77736c' }}>Range: 24px – 100px</span>
+                  <span style={{ fontSize: '0.78rem', color: '#77736c' }}>Range: 30px – 120px</span>
                 </div>
 
                 <SliderRow>
-                  <span style={{ fontSize: '0.78rem', color: '#77736c', fontWeight: 600 }}>24px</span>
+                  <span style={{ fontSize: '0.78rem', color: '#77736c', fontWeight: 600 }}>30px</span>
                   <input
                     type="range"
-                    min="24"
-                    max="100"
+                    min="30"
+                    max="120"
                     step="2"
-                    value={Number(footerSettings.logoHeight) || 52}
+                    value={Number(footerSettings.logoHeight) || 75}
                     onChange={(e) => setFooterSettings({ ...footerSettings, logoHeight: Number(e.target.value) })}
                   />
-                  <span style={{ fontSize: '0.78rem', color: '#77736c', fontWeight: 600 }}>100px</span>
+                  <span style={{ fontSize: '0.78rem', color: '#77736c', fontWeight: 600 }}>120px</span>
                   <AdminInput
                     type="number"
-                    min="24"
-                    max="120"
+                    min="30"
+                    max="140"
                     className="px-input"
-                    value={Number(footerSettings.logoHeight) || 52}
-                    onChange={(e) => setFooterSettings({ ...footerSettings, logoHeight: Number(e.target.value) || 52 })}
+                    value={Number(footerSettings.logoHeight) || 75}
+                    onChange={(e) => setFooterSettings({ ...footerSettings, logoHeight: Number(e.target.value) || 75 })}
                   />
                 </SliderRow>
 
@@ -811,52 +819,53 @@ export const AdminFooterManagerPage: React.FC = () => {
                   <span className="label">Height Presets:</span>
                   <button
                     type="button"
-                    className={(footerSettings.logoHeight || 52) === 36 ? 'active' : ''}
-                    onClick={() => setFooterSettings({ ...footerSettings, logoHeight: 36 })}
+                    className={(footerSettings.logoHeight || 75) === 48 ? 'active' : ''}
+                    onClick={() => setFooterSettings({ ...footerSettings, logoHeight: 48 })}
                   >
-                    Subtle (36px)
+                    Subtle (48px)
                   </button>
                   <button
                     type="button"
-                    className={(footerSettings.logoHeight || 52) === 44 ? 'active' : ''}
-                    onClick={() => setFooterSettings({ ...footerSettings, logoHeight: 44 })}
-                  >
-                    Compact (44px)
-                  </button>
-                  <button
-                    type="button"
-                    className={(footerSettings.logoHeight || 52) === 52 ? 'active' : ''}
-                    onClick={() => setFooterSettings({ ...footerSettings, logoHeight: 52 })}
-                  >
-                    Default (52px)
-                  </button>
-                  <button
-                    type="button"
-                    className={(footerSettings.logoHeight || 52) === 60 ? 'active' : ''}
+                    className={(footerSettings.logoHeight || 75) === 60 ? 'active' : ''}
                     onClick={() => setFooterSettings({ ...footerSettings, logoHeight: 60 })}
                   >
-                    Prominent (60px)
+                    Standard (60px)
                   </button>
                   <button
                     type="button"
-                    className={(footerSettings.logoHeight || 52) === 72 ? 'active' : ''}
-                    onClick={() => setFooterSettings({ ...footerSettings, logoHeight: 72 })}
+                    className={(footerSettings.logoHeight || 75) === 75 ? 'active' : ''}
+                    onClick={() => setFooterSettings({ ...footerSettings, logoHeight: 75 })}
                   >
-                    Grand (72px)
+                    Default (75px)
+                  </button>
+                  <button
+                    type="button"
+                    className={(footerSettings.logoHeight || 75) === 90 ? 'active' : ''}
+                    onClick={() => setFooterSettings({ ...footerSettings, logoHeight: 90 })}
+                  >
+                    Prominent (90px)
+                  </button>
+                  <button
+                    type="button"
+                    className={(footerSettings.logoHeight || 75) === 110 ? 'active' : ''}
+                    onClick={() => setFooterSettings({ ...footerSettings, logoHeight: 110 })}
+                  >
+                    Grand Atelier (110px)
                   </button>
                 </PresetPills>
               </SizeControlBox>
 
               {/* Live Preview Box for Footer Bottom Bar */}
-              <div style={{ marginTop: 16, background: '#0f141a', border: '1px solid rgba(255,255,255,0.1)', borderRadius: 6, padding: '16px 20px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: 14 }}>
-                <div style={{ display: 'flex', alignItems: 'center', gap: 14 }}>
+              <div style={{ marginTop: 16, background: '#0f141a', border: '1px solid rgba(255,255,255,0.1)', borderRadius: 6, padding: '20px 24px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: 16 }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: 16 }}>
                   {(footerSettings.logoImage || footerSettings.logoUrl) ? (
                     <img
                       src={footerSettings.logoImage || footerSettings.logoUrl}
                       alt="Footer Logo Preview"
                       style={{
-                        width: `${Number(footerSettings.logoWidth) || 180}px`,
-                        maxHeight: `${Number(footerSettings.logoHeight) || 52}px`,
+                        width: `${Number(footerSettings.logoWidth) || 220}px`,
+                        maxHeight: `${Number(footerSettings.logoHeight) || 75}px`,
+                        height: 'auto',
                         objectFit: 'contain',
                         display: 'block',
                       }}
@@ -1336,8 +1345,9 @@ export const AdminFooterManagerPage: React.FC = () => {
                       src={footerSettings.logoImage || footerSettings.logoUrl}
                       alt="Footer Logo"
                       style={{
-                        width: `${Number(footerSettings.logoWidth) || 180}px`,
-                        maxHeight: `${Number(footerSettings.logoHeight) || 52}px`,
+                        width: `${Number(footerSettings.logoWidth) || 220}px`,
+                        maxHeight: `${Number(footerSettings.logoHeight) || 75}px`,
+                        height: 'auto',
                         objectFit: 'contain',
                         display: 'block',
                       }}
