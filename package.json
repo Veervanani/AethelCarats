@@ -5,6 +5,10 @@
   "type": "module",
   "main": "server.js",
   "description": "AethelCarats Luxury Fine Jewellery & Diamond Vault Platform",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Veervanani/AethelCarats.git"
+  },
   "scripts": {
     "dev:backend": "cd backend && npm run dev",
     "dev:frontend": "cd frontend && npm run dev",
