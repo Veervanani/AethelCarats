@@ -178,11 +178,40 @@ export const getSiteSettings = async (req: Request, res: Response) => {
       result[s.key] = parsed;
     });
 
-    // 1. Merge site_settings if present, stripping any nested site_settings object
+    // 1. Merge site_settings if present, stripping any nested site_settings object or dedicated CMS configs
     if (dbMap.site_settings && typeof dbMap.site_settings === 'object') {
-      const { site_settings: _nested, ...restSiteSettings } = dbMap.site_settings;
+      const {
+        site_settings: _nested,
+        homepage_config: _hp,
+        header_config: _hdr,
+        header_settings: _hdrs,
+        footer_config: _ftr,
+        footer_settings: _ftrs,
+        global_theme_config: _gtc,
+        storefront_labels_config: _slc,
+        megamenu_config: _mmc,
+        categoriesConfig: _cc,
+        campaignBannerConfig: _cbc,
+        featuredCards: _fc,
+        collectionSlides: _cs,
+        essentialsConfig: _ec,
+        diamondShapesConfig: _dsc,
+        auraCards: _ac,
+        reviewsConfig: _rc,
+        sectionVisibility: _sv,
+        heroColors: _hc,
+        popular_searches: _ps,
+        ...restSiteSettings
+      } = dbMap.site_settings;
       Object.assign(result, restSiteSettings);
     }
+
+    // Pass 2: Re-apply dedicated database rows so dedicated settings ALWAYS have highest authority
+    settings.forEach((s) => {
+      if (s.key !== 'site_settings' && dbMap[s.key] !== undefined) {
+        result[s.key] = dbMap[s.key];
+      }
+    });
 
     // 2. WhatsApp Settings Synchronization
     if (dbMap.whatsapp_config && typeof dbMap.whatsapp_config === 'object') {
@@ -298,7 +327,31 @@ export const updateSiteSetting = async (req: AuthRequest, res: Response) => {
     // 1. When updating site_settings (the entire settings blob from AdminSettingsPage)
     if (key === 'site_settings' && typeof value === 'object' && value !== null) {
       const cleanPayload = { ...value };
-      delete cleanPayload.site_settings;
+      const cmsKeysToRemove = [
+        'site_settings',
+        'homepage_config',
+        'header_config',
+        'header_settings',
+        'footer_config',
+        'footer_settings',
+        'global_theme_config',
+        'storefront_labels_config',
+        'megamenu_config',
+        'diamond_shapes_config',
+        'categoriesConfig',
+        'campaignBannerConfig',
+        'featuredCards',
+        'collectionSlides',
+        'essentialsConfig',
+        'auraCards',
+        'reviewsConfig',
+        'sectionVisibility',
+        'heroColors',
+        'popular_searches',
+      ];
+      for (const k of cmsKeysToRemove) {
+        delete cleanPayload[k];
+      }
 
       const waNumber = (cleanPayload.whatsappNumber || cleanPayload.inquiryNumber || '+917990278892').toString().replace(/[^\d+]/g, '');
       const waDisplay = (cleanPayload.whatsappDisplayNumber || cleanPayload.displayNumber || waNumber || '+91 79902 78892').toString().trim();
@@ -400,6 +453,23 @@ export const updateSiteSetting = async (req: AuthRequest, res: Response) => {
       update: { value: stringifiedValue },
       create: { key, value: stringifiedValue },
     });
+
+    // Permanently purge this key from the legacy site_settings blob in the database
+    try {
+      const siteSettingRow = await prisma.siteSetting.findFirst({ where: { key: 'site_settings' } });
+      if (siteSettingRow && siteSettingRow.value) {
+        const parsedBlob = JSON.parse(siteSettingRow.value);
+        if (parsedBlob && typeof parsedBlob === 'object' && key in parsedBlob) {
+          delete parsedBlob[key];
+          await prisma.siteSetting.update({
+            where: { key: 'site_settings' },
+            data: { value: JSON.stringify(parsedBlob) },
+          });
+        }
+      }
+    } catch (cleanErr) {
+      console.warn('Notice: site_settings blob cleanup notice:', cleanErr);
+    }
 
     // When updating header_settings or header_config, keep both in sync
     if ((key === 'header_settings' || key === 'header_config') && typeof value === 'object' && value !== null) {

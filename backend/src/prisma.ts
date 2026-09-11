@@ -492,6 +492,45 @@ async function attachIncludes(parentTable: string, row: any, include: any) {
       const [cat]: any = await mysqlPool.query('SELECT * FROM `Category` WHERE `id` = ? LIMIT 1', [row.categoryId]);
       row.category = cat[0] || null;
     }
+    if (include.variants) {
+      const [vars]: any = await mysqlPool.query(
+        'SELECT * FROM `ProductVariant` WHERE `productId` = ? ORDER BY `id` ASC',
+        [row.id]
+      ).catch(() => [[]]);
+      row.variants = vars || [];
+    }
+    if (include.collection && row.collectionId) {
+      const [col]: any = await mysqlPool.query('SELECT * FROM `Collection` WHERE `id` = ? LIMIT 1', [row.collectionId]).catch(() => [[]]);
+      row.collection = col[0] || null;
+    }
+    if (include.detailSections) {
+      const secWhere = (include.detailSections.where?.isActive !== undefined) ? ' AND `isActive` = 1' : '';
+      const [secs]: any = await mysqlPool.query(
+        `SELECT * FROM \`ProductDetailSection\` WHERE \`productId\` = ?${secWhere} ORDER BY \`displayOrder\` ASC, \`id\` ASC`,
+        [row.id]
+      ).catch(() => [[]]);
+      const sectionsList = Array.isArray(secs) ? secs : [];
+      if (include.detailSections.include?.items) {
+        for (const sec of sectionsList) {
+          const itemWhere = (include.detailSections.include.items.where?.isActive !== undefined) ? ' AND `isActive` = 1' : '';
+          const [items]: any = await mysqlPool.query(
+            `SELECT * FROM \`ProductDetailItem\` WHERE \`sectionId\` = ?${itemWhere} ORDER BY \`displayOrder\` ASC, \`id\` ASC`,
+            [sec.id]
+          ).catch(() => [[]]);
+          sec.items = items || [];
+        }
+      }
+      row.detailSections = sectionsList;
+    }
+  } else if (parentTable === 'ProductDetailSection') {
+    if (include.items) {
+      const itemWhere = (include.items?.where?.isActive !== undefined) ? ' AND `isActive` = 1' : '';
+      const [items]: any = await mysqlPool.query(
+        `SELECT * FROM \`ProductDetailItem\` WHERE \`sectionId\` = ?${itemWhere} ORDER BY \`displayOrder\` ASC, \`id\` ASC`,
+        [row.id]
+      ).catch(() => [[]]);
+      row.items = items || [];
+    }
   } else if (parentTable === 'Menu') {
     if (include.items) {
       const [items]: any = await mysqlPool.query(

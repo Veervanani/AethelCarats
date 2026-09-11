@@ -428,6 +428,18 @@ function handleGetSiteSettings(): void {
             'enable_ecommerce_tracking' => 'true',
         ];
 
+        if (isset($settings['site_settings']) && is_array($settings['site_settings'])) {
+            $cmsKeysToRemove = [
+                'homepage_config', 'header_config', 'header_settings', 'footer_config', 'footer_settings',
+                'global_theme_config', 'storefront_labels_config', 'megamenu_config', 'diamond_shapes_config',
+                'categoriesConfig', 'campaignBannerConfig', 'featuredCards', 'collectionSlides',
+                'essentialsConfig', 'auraCards', 'reviewsConfig', 'sectionVisibility', 'heroColors', 'popular_searches'
+            ];
+            foreach ($cmsKeysToRemove as $ck) {
+                unset($settings['site_settings'][$ck]);
+            }
+        }
+
         $settings = array_merge($defaults, $settings);
 
         if (!empty($_GET['keys'])) {
@@ -731,8 +743,38 @@ function handleSaveSiteSettings(): void {
         if (isset($body['key']) && array_key_exists('value', $body)) {
             $k = (string) $body['key'];
             $v = $body['value'];
+
+            if ($k === 'site_settings' && is_array($v)) {
+                $cmsKeysToRemove = [
+                    'homepage_config', 'header_config', 'header_settings', 'footer_config', 'footer_settings',
+                    'global_theme_config', 'storefront_labels_config', 'megamenu_config', 'diamond_shapes_config',
+                    'categoriesConfig', 'campaignBannerConfig', 'featuredCards', 'collectionSlides',
+                    'essentialsConfig', 'auraCards', 'reviewsConfig', 'sectionVisibility', 'heroColors', 'popular_searches'
+                ];
+                foreach ($cmsKeysToRemove as $ck) {
+                    unset($v[$ck]);
+                }
+            }
+
             $valueStr = is_array($v) || is_object($v) ? json_encode($v) : (string) $v;
             $ins->execute([generateUuidV4Cms(), $k, $valueStr]);
+
+            // Permanently purge this key from the legacy site_settings blob in the database
+            if ($k !== 'site_settings') {
+                try {
+                    $ssStmt = $pdo->prepare("SELECT `value` FROM `SiteSetting` WHERE `key` = 'site_settings' LIMIT 1");
+                    $ssStmt->execute();
+                    $ssRow = $ssStmt->fetch();
+                    if ($ssRow && !empty($ssRow['value'])) {
+                        $ssData = json_decode($ssRow['value'], true);
+                        if (is_array($ssData) && array_key_exists($k, $ssData)) {
+                            unset($ssData[$k]);
+                            $updStmt = $pdo->prepare("UPDATE `SiteSetting` SET `value` = ?, `updatedAt` = NOW() WHERE `key` = 'site_settings'");
+                            $updStmt->execute([json_encode($ssData)]);
+                        }
+                    }
+                } catch (Throwable $ignore) {}
+            }
 
             if (is_array($v) && (!function_exists('array_is_list') || !array_is_list($v))) {
                 foreach ($v as $subK => $subV) {

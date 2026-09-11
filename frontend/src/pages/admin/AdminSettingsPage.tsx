@@ -276,7 +276,27 @@ export const AdminSettingsPage: React.FC = () => {
         enableConsultAtelierExpert: enableConsult,
         consult_expert_config: consultConfig,
       };
+
       delete (settingsPayload as any).site_settings;
+      delete (settingsPayload as any).homepage_config;
+      delete (settingsPayload as any).header_config;
+      delete (settingsPayload as any).header_settings;
+      delete (settingsPayload as any).footer_config;
+      delete (settingsPayload as any).footer_settings;
+      delete (settingsPayload as any).global_theme_config;
+      delete (settingsPayload as any).storefront_labels_config;
+      delete (settingsPayload as any).megamenu_config;
+      delete (settingsPayload as any).diamond_shapes_config;
+      delete (settingsPayload as any).categoriesConfig;
+      delete (settingsPayload as any).campaignBannerConfig;
+      delete (settingsPayload as any).featuredCards;
+      delete (settingsPayload as any).collectionSlides;
+      delete (settingsPayload as any).essentialsConfig;
+      delete (settingsPayload as any).auraCards;
+      delete (settingsPayload as any).reviewsConfig;
+      delete (settingsPayload as any).sectionVisibility;
+      delete (settingsPayload as any).heroColors;
+      delete (settingsPayload as any).popular_searches;
 
       // 1. Update the main site_settings dictionary
       await api.updateSiteSettings(settingsPayload);

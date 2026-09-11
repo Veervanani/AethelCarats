@@ -12,7 +12,8 @@ const DEFAULT_SETTINGS = {
         logoImage: '/assets/logo.svg',
         mobileLogoUrl: '/assets/logo-mobile.svg',
         logoLink: '/',
-        logoWidth: '180px',
+        logoWidth: '240px',
+        logoHeight: '80px',
         topbarText: 'FREE WORLDWIDE SHIPPING ✦',
         topbarLink: '/bespoke-service',
         topbarVisible: true,
@@ -24,7 +25,8 @@ const DEFAULT_SETTINGS = {
     header_settings: JSON.stringify({
         logoUrl: '/assets/logo.svg',
         logoImage: '/assets/logo.svg',
-        logoWidth: '180px',
+        logoWidth: '240px',
+        logoHeight: '80px',
         announcementText: 'FREE WORLDWIDE SHIPPING ✦',
         announcementEnabled: true,
         announcementBg: '#12161a',
@@ -39,7 +41,8 @@ const DEFAULT_SETTINGS = {
     footer_config: JSON.stringify({
         logoUrl: '/assets/logo.svg',
         logoImage: '/assets/logo.svg',
-        logoWidth: '160px',
+        logoWidth: '220px',
+        logoHeight: '80px',
         brandDescription: 'AethelCarats crafts exquisite lab-grown and natural diamond jewelry with unmatched artistry, ethical sourcing, and timeless elegance.',
         copyrightText: '© 2026 AETHELCARATS FINE JEWELLERY ATELIER. ALL RIGHTS RESERVED.',
         contactEmail: 'contact@aethelcarats.com',
@@ -168,11 +171,17 @@ const getSiteSettings = async (req, res) => {
             dbMap[s.key] = parsed;
             result[s.key] = parsed;
         });
-        // 1. Merge site_settings if present, stripping any nested site_settings object
+        // 1. Merge site_settings if present, stripping any nested site_settings object or dedicated CMS configs
         if (dbMap.site_settings && typeof dbMap.site_settings === 'object') {
-            const { site_settings: _nested, ...restSiteSettings } = dbMap.site_settings;
+            const { site_settings: _nested, homepage_config: _hp, header_config: _hdr, header_settings: _hdrs, footer_config: _ftr, footer_settings: _ftrs, global_theme_config: _gtc, storefront_labels_config: _slc, megamenu_config: _mmc, categoriesConfig: _cc, campaignBannerConfig: _cbc, featuredCards: _fc, collectionSlides: _cs, essentialsConfig: _ec, diamondShapesConfig: _dsc, auraCards: _ac, reviewsConfig: _rc, sectionVisibility: _sv, heroColors: _hc, popular_searches: _ps, ...restSiteSettings } = dbMap.site_settings;
             Object.assign(result, restSiteSettings);
         }
+        // Pass 2: Re-apply dedicated database rows so dedicated settings ALWAYS have highest authority
+        settings.forEach((s) => {
+            if (s.key !== 'site_settings' && dbMap[s.key] !== undefined) {
+                result[s.key] = dbMap[s.key];
+            }
+        });
         // 2. WhatsApp Settings Synchronization
         if (dbMap.whatsapp_config && typeof dbMap.whatsapp_config === 'object') {
             result.whatsapp_config = dbMap.whatsapp_config;
@@ -293,7 +302,31 @@ const updateSiteSetting = async (req, res) => {
         // 1. When updating site_settings (the entire settings blob from AdminSettingsPage)
         if (key === 'site_settings' && typeof value === 'object' && value !== null) {
             const cleanPayload = { ...value };
-            delete cleanPayload.site_settings;
+            const cmsKeysToRemove = [
+                'site_settings',
+                'homepage_config',
+                'header_config',
+                'header_settings',
+                'footer_config',
+                'footer_settings',
+                'global_theme_config',
+                'storefront_labels_config',
+                'megamenu_config',
+                'diamond_shapes_config',
+                'categoriesConfig',
+                'campaignBannerConfig',
+                'featuredCards',
+                'collectionSlides',
+                'essentialsConfig',
+                'auraCards',
+                'reviewsConfig',
+                'sectionVisibility',
+                'heroColors',
+                'popular_searches',
+            ];
+            for (const k of cmsKeysToRemove) {
+                delete cleanPayload[k];
+            }
             const waNumber = (cleanPayload.whatsappNumber || cleanPayload.inquiryNumber || '+917990278892').toString().replace(/[^\d+]/g, '');
             const waDisplay = (cleanPayload.whatsappDisplayNumber || cleanPayload.displayNumber || waNumber || '+91 79902 78892').toString().trim();
             const waMessage = (cleanPayload.whatsappDefaultMessage || cleanPayload.defaultMessage || 'Hello AethelCarats Atelier, I am interested in your fine jewellery collection.').toString().trim();
@@ -384,6 +417,23 @@ const updateSiteSetting = async (req, res) => {
             update: { value: stringifiedValue },
             create: { key, value: stringifiedValue },
         });
+        // Permanently purge this key from the legacy site_settings blob in the database
+        try {
+            const siteSettingRow = await prisma_1.default.siteSetting.findFirst({ where: { key: 'site_settings' } });
+            if (siteSettingRow && siteSettingRow.value) {
+                const parsedBlob = JSON.parse(siteSettingRow.value);
+                if (parsedBlob && typeof parsedBlob === 'object' && key in parsedBlob) {
+                    delete parsedBlob[key];
+                    await prisma_1.default.siteSetting.update({
+                        where: { key: 'site_settings' },
+                        data: { value: JSON.stringify(parsedBlob) },
+                    });
+                }
+            }
+        }
+        catch (cleanErr) {
+            console.warn('Notice: site_settings blob cleanup notice:', cleanErr);
+        }
         // When updating header_settings or header_config, keep both in sync
         if ((key === 'header_settings' || key === 'header_config') && typeof value === 'object' && value !== null) {
             const otherKey = key === 'header_settings' ? 'header_config' : 'header_settings';

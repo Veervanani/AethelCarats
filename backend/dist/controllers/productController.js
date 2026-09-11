@@ -534,80 +534,7 @@ const getProductBySlug = async (req, res) => {
         }
         if (product && (!product.detailSections || product.detailSections.length === 0)) {
             try {
-                const DEFAULT_PRODUCT_SECTIONS = [
-                    {
-                        type: 'EXPERIENCE',
-                        title: 'YOUR ATELIER EXPERIENCE',
-                        description: 'Every creation is handcrafted in our master atelier using certified conflict-free diamonds and 100% recycled precious metals.',
-                        displayOrder: 0,
-                        items: [
-                            { title: 'Expert Guidance', description: 'Consult directly with atelier diamond specialists for sizing and diamond guidance.', icon: 'UserCheck', displayOrder: 0 },
-                            { title: 'Bespoke Craftsmanship', description: 'Custom CAD 3D photorealistic rendering and master goldsmithing.', icon: 'Sparkles', displayOrder: 1 },
-                            { title: 'Quality Assurance', description: 'Independently certified by GIA / IGI with 40x microscopic quality control.', icon: 'ShieldCheck', displayOrder: 2 },
-                            { title: 'Lifetime Service', description: 'Includes complimentary annual prong checking, sizing, and professional cleaning.', icon: 'Award', displayOrder: 3 }
-                        ]
-                    },
-                    {
-                        type: 'SPECIFICATIONS',
-                        title: 'PRODUCT & DIAMOND SPECIFICATIONS',
-                        description: 'Technical diamond and metal specification breakdown.',
-                        displayOrder: 1,
-                        items: [
-                            { title: 'Product Type', value: product.jewelleryType || 'Solitaire Ring', displayOrder: 0 },
-                            { title: 'Metal & Purity', value: product.metal || '18K Yellow Gold', displayOrder: 1 },
-                            { title: 'Diamond Shape', value: product.shape || 'Round Brilliant', displayOrder: 2 },
-                            { title: 'Diamond Type', value: 'Lab-Grown / Natural', displayOrder: 3 },
-                            { title: 'Certification', value: 'IGI / GIA Certified', displayOrder: 4 },
-                            { title: 'Country of Origin', value: 'India (Surat Atelier)', displayOrder: 5 }
-                        ]
-                    },
-                    {
-                        type: 'CRAFTSMANSHIP',
-                        title: 'CRAFTSMANSHIP & SUSTAINABILITY',
-                        description: 'Hand-set under 40x microscopic precision with Kimberley process certified diamonds.',
-                        displayOrder: 2,
-                        items: [
-                            { title: '100% Recycled Precious Metals', description: 'Sustainably refined 18K gold and fine silver certified by RJC.', icon: 'Award', displayOrder: 0 },
-                            { title: 'Surat Goldsmith Heritage', description: 'Crafted individually by master jewelers with lifetime guarantee.', icon: 'Sparkles', displayOrder: 1 }
-                        ]
-                    },
-                    {
-                        type: 'SHIPPING',
-                        title: 'SHIPPING & DELIVERY',
-                        description: 'Dispatched via fully insured Priority Air in discreet unbranded security packaging.',
-                        displayOrder: 3,
-                        items: [
-                            { title: 'Free Insured Delivery', description: 'Dispatched via fully insured Priority Air in unbranded security packaging.', icon: 'Truck', displayOrder: 0 },
-                            { title: '30-Day Money Back Guarantee', description: 'Complimentary returns and size adjustments within 30 days of receipt.', icon: 'ShieldCheck', displayOrder: 1 }
-                        ]
-                    }
-                ];
-                for (let i = 0; i < DEFAULT_PRODUCT_SECTIONS.length; i++) {
-                    const sec = DEFAULT_PRODUCT_SECTIONS[i];
-                    const createdSec = await prisma_1.default.productDetailSection.create({
-                        data: {
-                            productId: product.id,
-                            title: sec.title,
-                            type: sec.type,
-                            description: sec.description,
-                            displayOrder: sec.displayOrder,
-                            isActive: true,
-                        }
-                    });
-                    if (sec.items && sec.items.length > 0) {
-                        const itemData = sec.items.map((item) => ({
-                            sectionId: createdSec.id,
-                            title: item.title || null,
-                            description: item.description || null,
-                            value: item.value || null,
-                            icon: item.icon || null,
-                            displayOrder: item.displayOrder,
-                            isActive: true,
-                        }));
-                        await prisma_1.default.productDetailItem.createMany({ data: itemData });
-                    }
-                }
-                product.detailSections = await prisma_1.default.productDetailSection.findMany({
+                const existingInDb = await prisma_1.default.productDetailSection.findMany({
                     where: { productId: product.id, isActive: true },
                     include: {
                         items: {
@@ -617,10 +544,111 @@ const getProductBySlug = async (req, res) => {
                     },
                     orderBy: { displayOrder: 'asc' }
                 });
+                if (existingInDb && existingInDb.length > 0) {
+                    product.detailSections = existingInDb;
+                }
+                else {
+                    const DEFAULT_PRODUCT_SECTIONS = [
+                        {
+                            type: 'EXPERIENCE',
+                            title: 'YOUR ATELIER EXPERIENCE',
+                            description: 'Every creation is handcrafted in our master atelier using certified conflict-free diamonds and 100% recycled precious metals.',
+                            displayOrder: 0,
+                            items: [
+                                { title: 'Expert Guidance', description: 'Consult directly with atelier diamond specialists for sizing and diamond guidance.', icon: 'UserCheck', displayOrder: 0 },
+                                { title: 'Bespoke Craftsmanship', description: 'Custom CAD 3D photorealistic rendering and master goldsmithing.', icon: 'Sparkles', displayOrder: 1 },
+                                { title: 'Quality Assurance', description: 'Independently certified by GIA / IGI with 40x microscopic quality control.', icon: 'ShieldCheck', displayOrder: 2 },
+                                { title: 'Lifetime Service', description: 'Includes complimentary annual prong checking, sizing, and professional cleaning.', icon: 'Award', displayOrder: 3 }
+                            ]
+                        },
+                        {
+                            type: 'SPECIFICATIONS',
+                            title: 'PRODUCT & DIAMOND SPECIFICATIONS',
+                            description: 'Technical diamond and metal specification breakdown.',
+                            displayOrder: 1,
+                            items: [
+                                { title: 'Product Type', value: product.jewelleryType || 'Solitaire Ring', displayOrder: 0 },
+                                { title: 'Metal & Purity', value: product.metal || '18K Yellow Gold', displayOrder: 1 },
+                                { title: 'Diamond Shape', value: product.shape || 'Round Brilliant', displayOrder: 2 },
+                                { title: 'Diamond Type', value: 'Lab-Grown / Natural', displayOrder: 3 },
+                                { title: 'Certification', value: 'IGI / GIA Certified', displayOrder: 4 },
+                                { title: 'Country of Origin', value: 'India (Surat Atelier)', displayOrder: 5 }
+                            ]
+                        },
+                        {
+                            type: 'CRAFTSMANSHIP',
+                            title: 'CRAFTSMANSHIP & SUSTAINABILITY',
+                            description: 'Hand-set under 40x microscopic precision with Kimberley process certified diamonds.',
+                            displayOrder: 2,
+                            items: [
+                                { title: '100% Recycled Precious Metals', description: 'Sustainably refined 18K gold and fine silver certified by RJC.', icon: 'Award', displayOrder: 0 },
+                                { title: 'Surat Goldsmith Heritage', description: 'Crafted individually by master jewelers with lifetime guarantee.', icon: 'Sparkles', displayOrder: 1 }
+                            ]
+                        },
+                        {
+                            type: 'SHIPPING',
+                            title: 'SHIPPING & DELIVERY',
+                            description: 'Dispatched via fully insured Priority Air in discreet unbranded security packaging.',
+                            displayOrder: 3,
+                            items: [
+                                { title: 'Free Insured Delivery', description: 'Dispatched via fully insured Priority Air in unbranded security packaging.', icon: 'Truck', displayOrder: 0 },
+                                { title: '30-Day Money Back Guarantee', description: 'Complimentary returns and size adjustments within 30 days of receipt.', icon: 'ShieldCheck', displayOrder: 1 }
+                            ]
+                        }
+                    ];
+                    for (let i = 0; i < DEFAULT_PRODUCT_SECTIONS.length; i++) {
+                        const sec = DEFAULT_PRODUCT_SECTIONS[i];
+                        const createdSec = await prisma_1.default.productDetailSection.create({
+                            data: {
+                                productId: product.id,
+                                title: sec.title,
+                                type: sec.type,
+                                description: sec.description,
+                                displayOrder: sec.displayOrder,
+                                isActive: true,
+                            }
+                        });
+                        if (sec.items && sec.items.length > 0) {
+                            const itemData = sec.items.map((item) => ({
+                                sectionId: createdSec.id,
+                                title: item.title || null,
+                                description: item.description || null,
+                                value: item.value || null,
+                                icon: item.icon || null,
+                                displayOrder: item.displayOrder,
+                                isActive: true,
+                            }));
+                            await prisma_1.default.productDetailItem.createMany({ data: itemData });
+                        }
+                    }
+                    product.detailSections = await prisma_1.default.productDetailSection.findMany({
+                        where: { productId: product.id, isActive: true },
+                        include: {
+                            items: {
+                                where: { isActive: true },
+                                orderBy: { displayOrder: 'asc' }
+                            }
+                        },
+                        orderBy: { displayOrder: 'asc' }
+                    });
+                }
             }
             catch (e) {
                 console.warn('Auto-seed detailSections error:', e);
             }
+        }
+        // Always deduplicate product.detailSections by type/title
+        if (product && product.detailSections && Array.isArray(product.detailSections)) {
+            const seenTypes = new Set();
+            product.detailSections = product.detailSections.filter((s) => {
+                const key = (s.type || s.title || '').trim().toUpperCase();
+                if (!key)
+                    return true;
+                if (seenTypes.has(key))
+                    return false;
+                seenTypes.add(key);
+                return true;
+            });
         }
         let customerPriceRecord = null;
         if (customerId) {

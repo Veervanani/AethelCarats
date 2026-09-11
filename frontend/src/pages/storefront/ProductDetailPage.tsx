@@ -1953,7 +1953,16 @@ export const ProductDetailPage: React.FC = () => {
     }
   }
 
-  const activeAccordionsList = parsedAccordions.filter((a: any) => a.isActive !== false && a.enabled !== false);
+  const seenAccKeys = new Set<string>();
+  const activeAccordionsList = parsedAccordions
+    .filter((a: any) => a.isActive !== false && a.enabled !== false)
+    .filter((a: any) => {
+      const key = (a.type || a.title || a.id || '').trim().toUpperCase();
+      if (!key) return true;
+      if (seenAccKeys.has(key)) return false;
+      seenAccKeys.add(key);
+      return true;
+    });
   const isRingSizeRequired = isRingProduct && (product.isRingSizeRequired !== false);
 
   const handleAddToCartClick = () => {
