@@ -199,14 +199,14 @@ const DEFAULT_MEGAMENU_STATE = [
             {
               title: 'SOLITAIRE RINGS',
               subtitle: '18K Basket & Peg Settings',
-              desktopImage: '/assets/gem_rings_cat.png',
+              desktopImage: '',
               url: '/rings?style=solitaire',
               enabled: true,
             },
             {
               title: 'WEDDING BANDS',
               subtitle: 'Handcrafted 18K Gold & Platinum',
-              desktopImage: '/assets/gem_solitaire_ring_perfect.png',
+              desktopImage: '',
               url: '/rings?category=womens-wedding',
               enabled: true,
             },
@@ -267,7 +267,7 @@ const DEFAULT_MEGAMENU_STATE = [
             {
               title: 'DIAMOND DROP EARRINGS',
               subtitle: 'Handcrafted Pear Cuts',
-              desktopImage: '/assets/gem_earrings_cat.png',
+              desktopImage: '',
               url: '/earrings?category=drop',
               enabled: true,
             },
@@ -327,7 +327,7 @@ const DEFAULT_MEGAMENU_STATE = [
             {
               title: 'RIVIÈRE NECKLACES',
               subtitle: 'Precision Hand-Set Diamonds',
-              desktopImage: '/assets/gem_necklaces_cat.png',
+              desktopImage: '',
               url: '/necklaces?category=tennis',
               enabled: true,
             },
@@ -375,7 +375,7 @@ const DEFAULT_MEGAMENU_STATE = [
             {
               title: 'TENNIS BRACELETS',
               subtitle: 'Iconic Four-Prong Brilliance',
-              desktopImage: '/assets/gem_bracelets_cat.png',
+              desktopImage: '',
               url: '/bracelets?category=tennis',
               enabled: true,
             },
@@ -423,7 +423,7 @@ const DEFAULT_MEGAMENU_STATE = [
             {
               title: 'SOLITAIRE PENDANTS',
               subtitle: 'Custom Diamond Settings',
-              desktopImage: '/assets/gem_pendants_cat.png',
+              desktopImage: '',
               url: '/pendants',
               enabled: true,
             },

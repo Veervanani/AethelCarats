@@ -307,7 +307,7 @@ export const WishlistPage: React.FC = () => {
                 <WishlistCard>
                   <Link to={`/product/${productSlug}`} className="img-box-link" title={`View ${item.name} details`}>
                     <img
-                      src={item.primaryImage || item.mainImage || (item.images && item.images[0] ? item.images[0].url : '/assets/gem_rings_cat.png')}
+                      src={item.primaryImage || item.mainImage || (item.images && item.images[0] ? item.images[0].url : '')}
                       alt={item.name}
                     />
                   </Link>

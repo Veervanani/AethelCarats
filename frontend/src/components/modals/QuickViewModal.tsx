@@ -453,7 +453,7 @@ export const QuickViewModal: React.FC = () => {
       if (url && !imagesList.includes(url)) imagesList.push(url);
     });
   }
-  if (imagesList.length === 0) imagesList.push('/assets/gem_rings_cat.png');
+  if (imagesList.length === 0) imagesList.push('');
 
   const currentPrice = product.salePrice && product.onSale ? product.salePrice : (product.price || 0);
   const comparePrice = product.comparePrice;

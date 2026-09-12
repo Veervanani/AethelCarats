@@ -416,7 +416,10 @@ const EditorialBannerContainer = styled.div<{
   width: 100%;
   min-height: ${({ $bannerHeightDesktop }) => $bannerHeightDesktop || '540px'};
   background-color: #0B0B0B;
-  background-image: ${({ $bgImage }) => `url("${encodeURI(normalizeImageUrl($bgImage) || '/assets/aura_editorial_banner_v3.png')}")`};
+  background-image: ${({ $bgImage }) => {
+    const img = normalizeImageUrl($bgImage);
+    return img ? `url("${encodeURI(img)}")` : 'none';
+  }};
   background-size: cover;
   background-position: right center;
   border-top: 1px solid rgba(140, 116, 75, 0.25);
@@ -429,14 +432,20 @@ const EditorialBannerContainer = styled.div<{
     padding: 48px 32px;
     min-height: ${({ $bannerHeightTablet }) => $bannerHeightTablet || '420px'};
     background-position: right center;
-    background-image: ${({ $tabletImage, $bgImage }) => `url("${encodeURI(normalizeImageUrl($tabletImage || $bgImage) || '/assets/aura_editorial_banner_v3.png')}")`};
+    background-image: ${({ $tabletImage, $bgImage }) => {
+      const img = normalizeImageUrl($tabletImage || $bgImage);
+      return img ? `url("${encodeURI(img)}")` : 'none';
+    }};
   }
 
   @media (max-width: 768px) {
     padding: 36px 20px;
     min-height: ${({ $bannerHeightMobile }) => $bannerHeightMobile || '380px'};
     background-position: right center;
-    background-image: ${({ $mobileImage, $tabletImage, $bgImage }) => `url("${encodeURI(normalizeImageUrl($mobileImage || $tabletImage || $bgImage) || '/assets/aura_editorial_banner_v3.png')}")`};
+    background-image: ${({ $mobileImage, $tabletImage, $bgImage }) => {
+      const img = normalizeImageUrl($mobileImage || $tabletImage || $bgImage);
+      return img ? `url("${encodeURI(img)}")` : 'none';
+    }};
   }
 `;
 
@@ -1473,32 +1482,32 @@ const VerifiedBadge = styled.span`
 const collectionSlides = [
   {
     id: 'slide-1',
-    leftImage: '/assets/aura_rings_cat_v2.png',
-    rightImage: '/assets/gem_solitaire_ring_perfect_v2.png',
+    leftImage: '',
+    rightImage: '',
     eyebrow: 'THE 2026 ANNIVERSARY COLLECTION',
     title: 'The Signature Solitaire Collection',
     link: '/collections/signature-collection',
   },
   {
     id: 'slide-2',
-    leftImage: '/assets/aura_necklaces_cat_v2.png',
-    rightImage: '/assets/aura_high_jewellery_v2.png',
+    leftImage: '',
+    rightImage: '',
     eyebrow: 'RIVIERE & TENNIS DESIGNS',
     title: 'The Haute Joaillerie Necklaces',
     link: '/necklaces',
   },
   {
     id: 'slide-3',
-    leftImage: '/assets/aura_earrings_cat_v2.png',
-    rightImage: '/assets/aura_editorial_banner_v2.png',
+    leftImage: '',
+    rightImage: '',
     eyebrow: 'FINE EARRINGS & CHANDELIERS',
     title: 'The Diamond Chandelier Collection',
     link: '/earrings',
   },
   {
     id: 'slide-4',
-    leftImage: '/assets/aura_bracelets_editorial_left_v2026.png',
-    rightImage: '/assets/gem_bracelets_editorial_right_new.png',
+    leftImage: '',
+    rightImage: '',
     eyebrow: 'EMERALD CUT TENNIS LINE',
     title: 'Bespoke Diamond Line Bracelets',
     link: '/bracelets',
@@ -1509,8 +1518,8 @@ const DEFAULT_HERO_SLIDES: HeroBanner[] = [
   {
     id: 'hero-slide-1',
     productType: 'Engagement Ring',
-    imagePath: '/assets/gem_rings_cat.png',
-    mobileImagePath: '/assets/gem_rings_cat.png',
+    imagePath: '',
+    mobileImagePath: '',
     subtitle: 'AETHELCARATS HAUTE JOAILLERIE',
     title: "TIMELESS BEAUTY.\nETERNAL BRILLIANCE.",
     description: "Discover jewellery crafted to become part of your story.",
@@ -1524,8 +1533,8 @@ const DEFAULT_HERO_SLIDES: HeroBanner[] = [
   {
     id: 'hero-slide-2',
     productType: 'Necklace',
-    imagePath: '/assets/gem_necklaces_cat.png',
-    mobileImagePath: '/assets/gem_necklaces_cat.png',
+    imagePath: '',
+    mobileImagePath: '',
     subtitle: 'THE ART OF HIGH DIAMOND CRAFT',
     title: "EXQUISITE RIVIÈRE &\nSOLITAIRE CREATIONS",
     description: "Handcrafted masterworks set in 18K gold and platinum with certified precision-cut diamonds.",
@@ -1539,8 +1548,8 @@ const DEFAULT_HERO_SLIDES: HeroBanner[] = [
   {
     id: 'hero-slide-3',
     productType: 'Earrings',
-    imagePath: '/assets/gem_earrings_cat.png',
-    mobileImagePath: '/assets/gem_earrings_cat.png',
+    imagePath: '',
+    mobileImagePath: '',
     subtitle: 'BESPOKE ATELIER SPOTLIGHT',
     title: "UNDERSTATED BRILLIANCE.\nUNCOMPROMISING LUXURY.",
     description: "Exceptional diamond earrings designed for radiant brilliance across every milestone.",
@@ -1554,8 +1563,8 @@ const DEFAULT_HERO_SLIDES: HeroBanner[] = [
   {
     id: 'hero-slide-4',
     productType: 'Bracelet',
-    imagePath: '/assets/gem_bracelets_cat.png',
-    mobileImagePath: '/assets/gem_bracelets_cat.png',
+    imagePath: '',
+    mobileImagePath: '',
     subtitle: 'ICONIC FOUR-PRONG TENNIS SUITES',
     title: "FLAWLESS PROPORTIONS.\nETERNAL ELEGANCE.",
     description: "Continuous rows of certified diamonds crafted with precision movement and seamless clasp engineering.",
@@ -1762,7 +1771,7 @@ export const HomePage: React.FC = () => {
   const campaignBannerSection = sections.find((s) => s.blockType === 'CAMPAIGN_BANNER' || String(s.id).toLowerCase().includes('campaign'));
   let campaignBannerContent: any = {
     enableBanner: true,
-    desktopImage: '/assets/GOLD-MARQUISE-DIAMOND-JEWELRY-SET.webp',
+    desktopImage: '',
     heading: 'A NEW EXPRESSION OF FINE JEWELLERY',
     description: 'Designed with intention. Crafted with precision. Made to be treasured for generations.',
     buttonText: 'EXPLORE THE COLLECTION',
@@ -1783,9 +1792,9 @@ export const HomePage: React.FC = () => {
         description: parsed.description !== undefined ? parsed.description : campaignBannerContent.description,
         buttonText: parsed.primaryBtnText || parsed.buttonText || campaignBannerContent.buttonText,
         buttonLink: parsed.primaryBtnLink || parsed.buttonLink || campaignBannerContent.buttonLink,
-        desktopImage: normalizeImageUrl(parsed.desktopImage || parsed.image) || campaignBannerContent.desktopImage,
-        tabletImage: normalizeImageUrl(parsed.tabletImage || parsed.desktopImage || parsed.image),
-        mobileImage: normalizeImageUrl(parsed.mobileImage || parsed.desktopImage || parsed.image),
+        desktopImage: normalizeImageUrl(parsed.desktopImage || parsed.image) || '',
+        tabletImage: normalizeImageUrl(parsed.tabletImage || parsed.desktopImage || parsed.image) || '',
+        mobileImage: normalizeImageUrl(parsed.mobileImage || parsed.desktopImage || parsed.image) || '',
         headingTextColor: parsed.titleColor || parsed.headingTextColor,
         descTextColor: parsed.descriptionColor || parsed.descTextColor,
         buttonColor: parsed.primaryBtnTextColor || parsed.buttonColor,
@@ -1815,7 +1824,7 @@ export const HomePage: React.FC = () => {
     eyebrow: 'AUTHENTICATED LOOSE DIAMONDS',
     heading: 'Discover Exceptional Diamond Shapes',
     description: 'Select your ideal cut from certified GIA & IGI diamonds, ethically sourced and precision-cut for maximum fire and brilliance.',
-    leftImage: '/assets/gem_diamonds_cat.png',
+    leftImage: '',
     buttonText: 'FIND YOUR DIAMOND',
     buttonLink: '/diamonds',
     shapes: [
@@ -1884,12 +1893,12 @@ export const HomePage: React.FC = () => {
   const activeCategories = cmsConfig?.categoriesConfig?.items && cmsConfig.categoriesConfig.items.length > 0
     ? cmsConfig.categoriesConfig.items
     : [
-        { title: 'RINGS', url: '/rings', image: '/assets/gem_rings_cat.png' },
-        { title: 'EARRINGS', url: '/earrings', image: '/assets/gem_earrings_cat.png' },
-        { title: 'NECKLACES', url: '/necklaces', image: '/assets/gem_necklaces_cat.png' },
-        { title: 'BRACELETS', url: '/bracelets', image: '/assets/gem_bracelets_cat.png' },
-        { title: 'PENDANTS', url: '/pendants', image: '/assets/aura_pendants_cat.png' },
-        { title: 'DIAMONDS', url: '/diamonds', image: '/assets/gem_diamonds_cat.png' },
+        { title: 'RINGS', url: '/rings', image: '' },
+        { title: 'EARRINGS', url: '/earrings', image: '' },
+        { title: 'NECKLACES', url: '/necklaces', image: '' },
+        { title: 'BRACELETS', url: '/bracelets', image: '' },
+        { title: 'PENDANTS', url: '/pendants', image: '' },
+        { title: 'DIAMONDS', url: '/diamonds', image: '' },
       ];
 
   // Section 5: Two-Panel Featured Cards
@@ -1897,14 +1906,14 @@ export const HomePage: React.FC = () => {
     {
       title: 'RIVIÈRE NECKLACES',
       subtitle: 'Solitaire & Tennis Necklaces',
-      imageUrl: '/assets/gem_necklaces_cat.png',
+      imageUrl: '',
       targetUrl: '/necklaces',
       buttonText: 'SHOP NOW →',
     },
     {
       title: 'HIGH JEWELLERY BRACELETS',
       subtitle: 'Emerald Cut Tennis Bracelets',
-      imageUrl: '/assets/gem_bracelets_cat.png',
+      imageUrl: '',
       targetUrl: '/bracelets',
       buttonText: 'SHOP NOW →',
     },
@@ -1913,11 +1922,11 @@ export const HomePage: React.FC = () => {
   // Section 7: Essentials Dual Promo
   const activeEssentials = cmsConfig?.essentialsConfig || {
     leftTitle: 'DIAMOND ESSENTIALS',
-    leftImageUrl: '/assets/gem_diamonds_cat.png',
+    leftImageUrl: '',
     leftTargetUrl: '/diamonds',
     leftButtonText: 'DIAMOND ESSENTIALS',
     rightTitle: 'GOLDEN HOUR IS HERE',
-    rightImageUrl: '/assets/gem_earrings_cat.png',
+    rightImageUrl: '',
     rightTargetUrl: '/collections/signature-collection',
     rightButtonText: 'SHOP THE EVENT',
   };
@@ -1932,28 +1941,28 @@ export const HomePage: React.FC = () => {
           eyebrowColor: craftsmanshipContent?.eyebrowColor,
           title: craftsmanshipContent?.title || 'Hand-finished custom CAD & precision diamond setting',
           titleColor: craftsmanshipContent?.titleColor,
-          image: normalizeImageUrl(craftsmanshipContent?.image || craftsmanshipContent?.desktopImage) || '/assets/aura_only_at_1.png',
+          image: normalizeImageUrl(craftsmanshipContent?.image || craftsmanshipContent?.desktopImage) || '',
           url: craftsmanshipContent?.primaryBtnLink || '/custom-jewellery',
         },
         {
           id: 'only-2',
           eyebrow: 'PRIVATE CONCIERGE CONSULTATION',
           title: 'Bespoke 1-on-1 atelier guidance & CAD preview',
-          image: '/assets/aura_only_at_2.png',
+          image: '',
           url: '/custom-jewellery',
         },
         {
           id: 'only-3',
           eyebrow: 'AUTHENTICATED CERTIFIED VAULT',
           title: '100% GIA & IGI verified natural & lab-grown stones',
-          image: '/assets/aura_only_at_3.png',
+          image: '',
           url: '/diamonds',
         },
         {
           id: 'only-4',
           eyebrow: 'SIGNATURE HERITAGE COLLECTIONS',
           title: 'Timeless solitaire & riviere high jewellery pieces',
-          image: '/assets/aura_only_at_4.png',
+          image: '',
           url: '/collections/signature-collection',
         },
       ];
@@ -2001,16 +2010,18 @@ export const HomePage: React.FC = () => {
                 return (
                   <SwiperSlide key={banner.id || idx}>
                     <HeroSection>
-                      <HeroImageColumn>
-                        <picture style={{ width: '100%', height: '100%', display: 'block' }}>
-                          <source media="(max-width: 768px)" srcSet={encodeURI(bannerMobileImg)} />
-                          <SafeImage
-                            src={bannerDesktopImg}
-                            alt={banner.title || 'AethelCarats High Jewellery'}
-                            style={{ width: '100%', height: '100%', objectFit: 'cover' }}
-                          />
-                        </picture>
-                      </HeroImageColumn>
+                      {Boolean(bannerDesktopImg) && (
+                        <HeroImageColumn>
+                          <picture style={{ width: '100%', height: '100%', display: 'block' }}>
+                            <source media="(max-width: 768px)" srcSet={encodeURI(bannerMobileImg)} />
+                            <SafeImage
+                              src={bannerDesktopImg}
+                              alt={banner.title || 'AethelCarats High Jewellery'}
+                              style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+                            />
+                          </picture>
+                        </HeroImageColumn>
+                      )}
 
                       <HeroOverlay>
                         <HeroTextColumn>
@@ -2133,7 +2144,7 @@ export const HomePage: React.FC = () => {
         <RevealContainer yOffset={35} duration={0.95} scaleInitial={0.99}>
           <EditorialBannerSection>
             <EditorialBannerContainer
-              $bgImage={campaignBannerContent.desktopImage || '/assets/aura_editorial_banner_v3.png'}
+              $bgImage={campaignBannerContent.desktopImage || ''}
               $tabletImage={campaignBannerContent.tabletImage}
               $mobileImage={campaignBannerContent.mobileImage}
               $objectPosition={campaignBannerContent.objectPosition || 'center 35%'}
@@ -2183,7 +2194,7 @@ export const HomePage: React.FC = () => {
             <StaticEditorialContainer>
               <RevealContainer delay={0.0} yOffset={25} scaleInitial={0.985} style={{ height: '100%' }}>
                 <StaticEditorialPanel to={activeFeaturedCards[0]?.targetUrl || '/necklaces'}>
-                  <SafeImage src={activeFeaturedCards[0]?.imageUrl || '/assets/gem_necklaces_cat.png'} alt={activeFeaturedCards[0]?.title || 'Riviere Necklaces'} />
+                  <SafeImage src={activeFeaturedCards[0]?.imageUrl || ''} alt={activeFeaturedCards[0]?.title || 'Riviere Necklaces'} />
                   <StaticEditorialPanelOverlay>
                     <span style={{ fontSize: '11.5px', fontWeight: 600, letterSpacing: '0.22em', textTransform: 'uppercase', color: activeFeaturedCards[0]?.titleColor || '#C9A96E', marginBottom: 8 }}>
                       {activeFeaturedCards[0]?.title || 'RIVIERE NECKLACES'}
@@ -2200,7 +2211,7 @@ export const HomePage: React.FC = () => {
 
               <RevealContainer delay={0.15} yOffset={25} scaleInitial={0.985} style={{ height: '100%' }}>
                 <StaticEditorialPanel to={activeFeaturedCards[1]?.targetUrl || '/bracelets'}>
-                  <SafeImage src={activeFeaturedCards[1]?.imageUrl || '/assets/gem_bracelets_cat.png'} alt={activeFeaturedCards[1]?.title || 'High Jewellery Bracelets'} />
+                  <SafeImage src={activeFeaturedCards[1]?.imageUrl || ''} alt={activeFeaturedCards[1]?.title || 'High Jewellery Bracelets'} />
                   <StaticEditorialPanelOverlay>
                     <span style={{ fontSize: '11.5px', fontWeight: 600, letterSpacing: '0.22em', textTransform: 'uppercase', color: activeFeaturedCards[1]?.titleColor || '#C9A96E', marginBottom: 8 }}>
                       {activeFeaturedCards[1]?.title || 'HIGH JEWELLERY BRACELETS'}
@@ -2289,7 +2300,7 @@ export const HomePage: React.FC = () => {
               <RevealContainer delay={0.0} yOffset={25} scaleInitial={0.985} style={{ height: '100%' }}>
                 <PromoPanel>
                   <SafeImage
-                    src={activeEssentials.leftImageUrl || '/assets/gem_diamonds_cat.png'}
+                    src={activeEssentials.leftImageUrl || ''}
                     alt={activeEssentials.leftTitle || 'Diamond Essentials'}
                   />
                   <PromoContent>
@@ -2306,7 +2317,7 @@ export const HomePage: React.FC = () => {
               <RevealContainer delay={0.15} yOffset={25} scaleInitial={0.985} style={{ height: '100%' }}>
                 <PromoPanel>
                   <SafeImage
-                    src={activeEssentials.rightImageUrl || '/assets/gem_earrings_cat.png'}
+                    src={activeEssentials.rightImageUrl || ''}
                     alt={activeEssentials.rightTitle || 'Golden Hour Collection'}
                   />
                   <PromoContent>
@@ -2333,11 +2344,9 @@ export const HomePage: React.FC = () => {
                 <DiamondShapesLeft>
                   <SafeImage
                     src={
-                      (diamondShapesContent.leftImage && !diamondShapesContent.leftImage.includes('gem_diamonds_cat'))
-                        ? diamondShapesContent.leftImage
-                        : (diamondShapesContent.desktopImage && !diamondShapesContent.desktopImage.includes('gem_diamonds_cat'))
-                        ? diamondShapesContent.desktopImage
-                        : '/assets/aethelcarats_diamonds_cat.png'
+                      diamondShapesContent.leftImage ||
+                      diamondShapesContent.desktopImage ||
+                      ''
                     }
                     alt="Diamond Vault Shapes"
                   />

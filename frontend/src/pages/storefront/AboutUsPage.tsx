@@ -278,7 +278,7 @@ export const AboutUsPage: React.FC = () => {
   }, []);
 
   const c = cmsPage?.parsedContent || {};
-  const heroImage = c.desktopImage || c.pageImages?.desktopImage || '/assets/why-aura/about-us-hero.jpg';
+  const heroImage = c.desktopImage || c.pageImages?.desktopImage || '';
 
   return (
     <PageWrapper>
@@ -322,9 +322,11 @@ export const AboutUsPage: React.FC = () => {
               DISCOVER THE COLLECTION
             </Link>
           </div>
-          <div className="image-side">
-            <SafeImage src={heroImage} alt={c.heading || 'Master Jeweller Setting Diamond in Atelier'} />
-          </div>
+          {Boolean(heroImage) && (
+            <div className="image-side">
+              <SafeImage src={heroImage} alt={c.heading || 'Master Jeweller Setting Diamond in Atelier'} />
+            </div>
+          )}
         </HeroSection>
       </RevealContainer>
 

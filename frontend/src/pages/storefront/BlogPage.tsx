@@ -26,7 +26,7 @@ const ARTICLES: BlogPost[] = [
     category: 'Diamond Education',
     date: 'August 2026',
     excerpt: 'Demystifying diamond grading reports. Discover how master gemmologists evaluate diamond brilliance, cut precision, and clarity inclusion grades.',
-    image: '/assets/why-aura/sustainability-hero.jpg',
+    image: '',
     featured: true,
   },
   {
@@ -36,7 +36,7 @@ const ARTICLES: BlogPost[] = [
     category: 'Buying Guide',
     date: 'July 2026',
     excerpt: 'Comparing chemical structures, environmental impact, certified GIA/IGI reports, and long-term value between earth-mined and lab-grown diamonds.',
-    image: '/assets/why-aura/price-match-hero.jpg',
+    image: '',
   },
   {
     id: 'b3',
@@ -45,7 +45,7 @@ const ARTICLES: BlogPost[] = [
     category: 'Design & Style',
     date: 'July 2026',
     excerpt: 'From classic four-prong solitaire settings to intricate vintage halos, explore how metal choices and claw designs highlight your diamond.',
-    image: '/assets/why-aura/returns-refunds-hero.jpg',
+    image: '',
   },
   {
     id: 'b4',
@@ -54,7 +54,7 @@ const ARTICLES: BlogPost[] = [
     category: 'Jewellery Care',
     date: 'June 2026',
     excerpt: 'Essential cleaning tips, safe storage advice, and annual inspection protocols to protect your gold and platinum diamond heirlooms.',
-    image: '/assets/why-aura/lifetime-warranty-hero.jpg',
+    image: '',
   },
 ];
 
@@ -395,7 +395,7 @@ export const BlogPage: React.FC = () => {
           category: 'Editorial',
           date: new Date(p.publishDate || p.createdAt).toLocaleDateString('en-US', { month: 'long', year: 'numeric' }),
           excerpt: p.excerpt || '',
-          image: p.featuredImage || '/assets/why-aura/sustainability-hero.jpg',
+          image: p.featuredImage || '',
         })));
       }
     }).catch(console.error);
@@ -437,7 +437,7 @@ export const BlogPage: React.FC = () => {
   const heroEyebrow = c.eyebrow || 'EDITORIAL INSIGHTS & EDUCATION';
   const heroTitle = c.heading || cmsPage?.title || 'The AethelCarats Journal';
   const heroSubtitle = c.subheading || c.introduction || 'Expert diamond guides, high-jewellery craftsmanship stories, and style inspiration curated by our master gemmologists and designers.';
-  const heroImage = c.desktopImage || c.pageImages?.desktopImage || '/assets/why-aura/blog-hero.jpg';
+  const heroImage = c.desktopImage || c.pageImages?.desktopImage || '';
 
   return (
     <PageWrapper>

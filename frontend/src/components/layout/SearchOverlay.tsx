@@ -622,7 +622,7 @@ export const SearchOverlay: React.FC<SearchOverlayProps> = ({ isOpen, onClose })
                     <ItemCard key={`prod-${product.id}`} onClick={() => handleProductClick(product)}>
                       <div className="img-wrapper">
                         <img
-                          src={product.primaryImage || (product.images && product.images[0] ? product.images[0].url : '/assets/gem_rings_cat.png')}
+                          src={product.primaryImage || (product.images && product.images[0] ? product.images[0].url : '')}
                           alt={product.name}
                         />
                       </div>
@@ -638,7 +638,7 @@ export const SearchOverlay: React.FC<SearchOverlayProps> = ({ isOpen, onClose })
                     <ItemCard key={`dia-${diamond.id}`} onClick={() => handleDiamondClick(diamond)}>
                       <div className="img-wrapper">
                         <img
-                          src="/assets/gem_diamonds_vault.png"
+                          src={diamond.imageUrl || `/assets/diamonds/${diamond.shape ? diamond.shape.charAt(0).toUpperCase() + diamond.shape.slice(1).toLowerCase() : 'Round'}.svg`}
                           alt={`${diamond.carat}ct ${diamond.shape} Diamond`}
                         />
                       </div>

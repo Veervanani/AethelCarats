@@ -173,15 +173,17 @@ export const AtelierExperienceBanner: React.FC<{ content?: any }> = ({ content }
 
   const heading = content?.packagingHeading || "We're committed to making your entire experience a pleasant one, from shopping to shipping.";
   const mainDesc = content?.packagingDescription || "Every item we send comes in our signature AethelCarats packaging. Engagement rings arrive in a deluxe velvet ring box within an elegant presentation box ready for your proposal. The presentation box also secures your appraisal certificate and GIA/IGI diamond grading report. Loose diamonds are presented in a velvet lined diamond case that securely holds the stone.";
-  const bgImg = "/assets/gem_ring_box.png";
+  const bgImg = content?.packagingImageUrl || '';
 
   return (
     <RevealContainer yOffset={35}>
       <BannerWrapper>
         <BannerContainer>
-          <PackagingImageCard>
-            <img src={bgImg} alt="AethelCarats Signature Packaging" />
-          </PackagingImageCard>
+          {Boolean(bgImg) && (
+            <PackagingImageCard>
+              <img src={bgImg} alt="AethelCarats Signature Packaging" />
+            </PackagingImageCard>
+          )}
 
           <BannerContent>
             <h2>{heading}</h2>

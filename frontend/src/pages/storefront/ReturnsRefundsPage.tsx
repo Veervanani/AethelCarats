@@ -320,7 +320,7 @@ export const ReturnsRefundsPage: React.FC = () => {
   }, []);
 
   const c = cmsPage?.parsedContent || {};
-  const heroImage = c.desktopImage || c.pageImages?.desktopImage || '/assets/why-aura/returns-refunds-hero.jpg';
+  const heroImage = c.desktopImage || c.pageImages?.desktopImage || '';
   const returnWindowStr = c.returnWindow || '15 Days';
   const returnWindowClean = returnWindowStr.replace(/\s*from\s+date\s+of\s+delivery/i, '').trim();
   const returnWindowHeading = returnWindowClean.toLowerCase().includes('day') ? `${returnWindowClean} Return Policy` : `${returnWindowClean}-Day Return Policy`;

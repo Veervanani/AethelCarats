@@ -82,14 +82,14 @@ const DEFAULT_MENU_ITEMS: IMenuItem[] = [
             {
               title: 'SOLITAIRE RINGS',
               subtitle: '18K Basket & Peg Settings',
-              desktopImage: '/assets/gem_rings_cat.png',
+              desktopImage: '',
               url: '/rings?style=solitaire',
               enabled: true
             },
             {
               title: 'WEDDING BANDS',
               subtitle: 'Handcrafted 18K Gold & Platinum',
-              desktopImage: '/assets/gem_solitaire_ring_perfect.png',
+              desktopImage: '',
               url: '/rings?category=womens-wedding',
               enabled: true
             }
@@ -149,7 +149,7 @@ const DEFAULT_MENU_ITEMS: IMenuItem[] = [
             {
               title: 'DIAMOND DROP EARRINGS',
               subtitle: 'Handcrafted Pear Cuts',
-              desktopImage: '/assets/gem_earrings_cat.png',
+              desktopImage: '',
               url: '/earrings?category=drop',
               enabled: true
             }
@@ -208,7 +208,7 @@ const DEFAULT_MENU_ITEMS: IMenuItem[] = [
             {
               title: 'DIAMOND TENNIS NECKLACE',
               subtitle: '18K Fine Gold Setting',
-              desktopImage: '/assets/gem_necklaces_cat.png',
+              desktopImage: '',
               url: '/necklaces?category=tennis',
               enabled: true
             }
@@ -267,7 +267,7 @@ const DEFAULT_MENU_ITEMS: IMenuItem[] = [
             {
               title: 'EMERALD TENNIS BRACELET',
               subtitle: 'Bezel & Prong Settings',
-              desktopImage: '/assets/gem_bracelets_cat.png',
+              desktopImage: '',
               url: '/bracelets?category=tennis',
               enabled: true
             }
@@ -327,7 +327,7 @@ const DEFAULT_MENU_ITEMS: IMenuItem[] = [
             {
               title: 'SOLITAIRE PENDANTS',
               subtitle: '18K Basket Settings',
-              desktopImage: '/assets/aura_pendants_cat.png',
+              desktopImage: '',
               url: '/pendants?category=solitaire',
               enabled: true
             }
@@ -380,7 +380,7 @@ const DEFAULT_MENU_ITEMS: IMenuItem[] = [
             {
               title: 'BESPOKE ATELIER CAD',
               subtitle: '3D Modeling & Master Craftsmanship',
-              desktopImage: '/assets/gem_bracelets_editorial_right_new.png',
+              desktopImage: '',
               url: '/customise',
               enabled: true
             }

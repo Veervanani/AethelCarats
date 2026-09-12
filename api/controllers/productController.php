@@ -812,14 +812,16 @@ function handleAdminProductPageContent(): void {
                     ['id' => 'craftsmanship', 'title' => 'CRAFTSMANSHIP & SUSTAINABILITY', 'content' => 'Handcrafted in our atelier using 100% recycled solid gold. Ethically created with 100% Kimberley Process certified, conflict-free lab-grown & natural diamonds.'],
                     ['id' => 'shipping', 'title' => 'SHIPPING & DELIVERY', 'content' => 'After order confirmation, your order will be dispatched within 7-10 working days. Once dispatched, delivery is estimated within an additional 7-10 working days. All shipments are sent via fully insured Priority Air for secure and reliable delivery.']
                 ]),
-                'packagingImageUrl' => '/assets/gem_ring_box.png'
+                'packagingImageUrl' => ''
             ];
             jsonResponse(['content' => $defaultContent, 'id' => $productId, 'productId' => $productId], 200);
             return;
         }
 
         // Dynamically sanitize stored content fields
-        $content['packagingImageUrl'] = '/assets/gem_ring_box.png';
+        if (empty($content['packagingImageUrl'])) {
+            $content['packagingImageUrl'] = '';
+        }
         if (isset($content['accordionsJson']) && is_string($content['accordionsJson'])) {
             $content['accordionsJson'] = str_replace('FedEx Priority Air', 'Priority Air', $content['accordionsJson']);
             $content['accordionsJson'] = str_replace('FedEx locations', 'express courier locations', $content['accordionsJson']);
@@ -2022,7 +2024,7 @@ function handleExecuteProductBulkUpload(): void {
                 if (!empty($p['mainImage'])) $extractedImages[] = $p['mainImage'];
             }
 
-            $mainImage = !empty($extractedImages[0]) ? $extractedImages[0] : '/assets/gem_rings_cat.png';
+            $mainImage = !empty($extractedImages[0]) ? $extractedImages[0] : null;
             $secImage = !empty($extractedImages[1]) ? $extractedImages[1] : null;
 
             // Find or create Category

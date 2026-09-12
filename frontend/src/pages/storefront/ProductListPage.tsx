@@ -306,13 +306,13 @@ const ClearFiltersBtn = styled.button`
 `;
 
 const DEFAULT_CATEGORIES: any[] = [
-  { id: 'rings', name: 'Rings', slug: 'rings', description: 'Discover AETHELCARATS engagement rings, diamond wedding bands, and bespoke solitaires.', image: '/assets/gem_rings_cat.png' },
-  { id: 'earrings', name: 'Earrings', slug: 'earrings', description: 'Discover AETHELCARATS solitaire studs, drop earrings, and diamond huggies.', image: '/assets/gem_earrings_cat.png' },
-  { id: 'necklaces', name: 'Necklaces', slug: 'necklaces', description: 'Discover AETHELCARATS diamond rivière necklaces, solitaire pendants, and statement colliers.', image: '/assets/gem_necklaces_cat.png' },
-  { id: 'bracelets', name: 'Bracelets', slug: 'bracelets', description: 'Explore AETHELCARATS diamond tennis bracelets, line cuffs, and high-jewellery bangles.', image: '/assets/gem_bracelets_cat.png' },
-  { id: 'pendants', name: 'Pendants', slug: 'pendants', description: 'Explore AETHELCARATS solitaire diamond pendants and custom halo medallion drops.', image: '/assets/aura_pendants_cat.png' },
-  { id: 'diamonds', name: 'Diamonds', slug: 'diamonds', description: 'Browse GIA & IGI authenticated loose diamonds across Round, Oval, Emerald, and Cushion cuts.', image: '/assets/gem_diamonds_cat.png' },
-  { id: 'collections', name: 'Collections', slug: 'collections', description: 'Explore the complete AETHELCARATS portfolio of handcrafted fine jewellery.', image: '/assets/GOLD-MARQUISE-DIAMOND-JEWELRY-SET.webp' },
+  { id: 'rings', name: 'Rings', slug: 'rings', description: 'Discover AETHELCARATS engagement rings, diamond wedding bands, and bespoke solitaires.', image: '' },
+  { id: 'earrings', name: 'Earrings', slug: 'earrings', description: 'Discover AETHELCARATS solitaire studs, drop earrings, and diamond huggies.', image: '' },
+  { id: 'necklaces', name: 'Necklaces', slug: 'necklaces', description: 'Discover AETHELCARATS diamond rivière necklaces, solitaire pendants, and statement colliers.', image: '' },
+  { id: 'bracelets', name: 'Bracelets', slug: 'bracelets', description: 'Explore AETHELCARATS diamond tennis bracelets, line cuffs, and high-jewellery bangles.', image: '' },
+  { id: 'pendants', name: 'Pendants', slug: 'pendants', description: 'Explore AETHELCARATS solitaire diamond pendants and custom halo medallion drops.', image: '' },
+  { id: 'diamonds', name: 'Diamonds', slug: 'diamonds', description: 'Browse GIA & IGI authenticated loose diamonds across Round, Oval, Emerald, and Cushion cuts.', image: '' },
+  { id: 'collections', name: 'Collections', slug: 'collections', description: 'Explore the complete AETHELCARATS portfolio of handcrafted fine jewellery.', image: '' },
 ];
 
 export const MEGA_MENU_TITLES: Record<string, { title: string; subtitle?: string }> = {
@@ -849,13 +849,13 @@ export const ProductListPage: React.FC = () => {
             >
               {(() => {
                 const defaultCategories = [
-                  { name: 'Rings', slug: 'rings', image: '/assets/gem_rings_cat.png' },
-                  { name: 'Earrings', slug: 'earrings', image: '/assets/gem_earrings_cat.png' },
-                  { name: 'Bracelets', slug: 'bracelets', image: '/assets/gem_bracelets_cat.png' },
-                  { name: 'Necklaces', slug: 'necklaces', image: '/assets/gem_necklaces_cat.png' },
-                  { name: 'Pendants', slug: 'pendants', image: '/assets/aura_pendants_cat.png' },
-                  { name: 'Diamonds', slug: 'diamonds', image: '/assets/gem_diamonds_cat.png' },
-                  { name: 'Collections', slug: 'collections', image: '/assets/GOLD-MARQUISE-DIAMOND-JEWELRY-SET.webp' },
+                  { name: 'Rings', slug: 'rings', image: '' },
+                  { name: 'Earrings', slug: 'earrings', image: '' },
+                  { name: 'Bracelets', slug: 'bracelets', image: '' },
+                  { name: 'Necklaces', slug: 'necklaces', image: '' },
+                  { name: 'Pendants', slug: 'pendants', image: '' },
+                  { name: 'Diamonds', slug: 'diamonds', image: '' },
+                  { name: 'Collections', slug: 'collections', image: '' },
                 ];
 
                 const list = categories.length > 0 ? categories : defaultCategories;
@@ -863,7 +863,7 @@ export const ProductListPage: React.FC = () => {
                 return list.map((cat: any) => {
                   const slugName = cat.slug || cat.name?.toLowerCase();
                   const isActive = slugName === categorySlug || (categorySlug === 'rings' && slugName === 'rings');
-                  const defaultImage = defaultCategories.find((d) => d.slug === slugName)?.image || '/assets/gem_rings_cat.png';
+                  const defaultImage = defaultCategories.find((d) => d.slug === slugName)?.image || '';
 
                   return (
                     <SwiperSlide key={cat.id || slugName}>

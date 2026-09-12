@@ -142,10 +142,10 @@ export const AdminSectionEditorPage: React.FC = () => {
         secondaryBtnText: 'Discover Diamonds',
         secondaryBtnTextColor: '#ffffff',
         secondaryBtnLink: '/diamonds',
-        desktopImage: '/assets/gem_hero_luxury.png',
-        tabletImage: '/assets/gem_hero_luxury.png',
+        desktopImage: '',
+        tabletImage: '',
         useDesktopTablet: true,
-        mobileImage: '/assets/gem_hero_luxury.png',
+        mobileImage: '',
         useDesktopMobile: true,
         alignment: 'center',
         overlayOpacity: 0.2,
@@ -167,7 +167,7 @@ export const AdminSectionEditorPage: React.FC = () => {
         primaryBtnText: 'View All Collections',
         primaryBtnTextColor: '#101418',
         primaryBtnLink: '/collections',
-        image: '/assets/gem_rings_cat.png',
+        image: '',
         textColor: '#1f1f1f',
       },
     },
@@ -184,7 +184,7 @@ export const AdminSectionEditorPage: React.FC = () => {
         primaryBtnText: 'EXPLORE THE COLLECTION',
         primaryBtnTextColor: '#fffdf9',
         primaryBtnLink: '/collections/signature-collection',
-        image: '/assets/GOLD-MARQUISE-DIAMOND-JEWELRY-SET.webp',
+        image: '',
         textColor: '#1f1f1f',
       },
     },
@@ -217,7 +217,7 @@ export const AdminSectionEditorPage: React.FC = () => {
         primaryBtnText: 'OUR CRAFT STORY',
         primaryBtnTextColor: '#ffffff',
         primaryBtnLink: '/about-us',
-        image: '/assets/gem_craftsmanship.jpg',
+        image: '',
         textColor: '#1f1f1f',
       },
     },
@@ -1020,7 +1020,7 @@ export const AdminSectionEditorPage: React.FC = () => {
             <div style={{ marginTop: 16 }}>
               <MediaUploader
                 label="Atelier Craftsmanship Image"
-                value={c.image || '/assets/gem_craftsmanship.jpg'}
+                value={c.image || ''}
                 onChange={(url) => handleContentChange('image', url)}
               />
             </div>

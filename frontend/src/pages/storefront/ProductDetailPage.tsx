@@ -1318,13 +1318,13 @@ const SafeImage: React.FC<{ src: string; alt: string; style?: React.CSSPropertie
 
   return (
     <img
-      src={imgSrc || '/assets/gem_rings_cat.png'}
+      src={imgSrc || ''}
       alt={alt}
       style={style}
       onLoad={onLoad}
       onError={() => {
-        if (imgSrc !== '/assets/gem_rings_cat.png') {
-          setImgSrc('/assets/gem_rings_cat.png');
+        if (imgSrc !== '') {
+          setImgSrc('');
         }
       }}
     />

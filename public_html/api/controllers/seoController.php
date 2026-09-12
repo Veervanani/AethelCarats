@@ -45,7 +45,7 @@ function handleGetSeoMetadata(): void {
                 'robots'          => 'index, follow',
                 'ogTitle'         => 'AURA DIAMOND ATELIER | International Luxury Fine Jewellery',
                 'ogDescription'   => 'Certified natural & lab-grown diamonds, engagement rings, bespoke craftsmanship.',
-                'ogImage'         => '/assets/gem_hero_desktop.png'
+                'ogImage'         => ''
             ], 200);
         }
 

@@ -155,8 +155,8 @@ const DEFAULT_SLIDES = [
         secondaryCtaText: 'THE DIAMOND VAULT →',
         secondaryCtaLink: '/diamonds',
         productType: 'Engagement Ring',
-        imagePath: '/uploads/media/img_1788886030804_trbi9_file_000000001bd482119e2764b12e244749.png',
-        mobileImagePath: '/uploads/media/img_1788886034483_e2ys8_file_000000001bd482119e2764b12e244749.png',
+        imagePath: '',
+        mobileImagePath: '',
         imageAlt: 'Handcrafted Solitaire Diamond Engagement Ring',
         isActive: true,
         displayOrder: 1,
@@ -171,8 +171,8 @@ const DEFAULT_SLIDES = [
         secondaryCtaText: 'VIEW COLLECTION →',
         secondaryCtaLink: '/collections/signature-collection',
         productType: 'Necklace',
-        imagePath: '/uploads/media/img_1788886042844_cfzx3_file_00000000c39482119fa98f211a932497.png',
-        mobileImagePath: '/uploads/media/img_1788886047183_k2jcg_file_00000000c39482119fa98f211a932497.png',
+        imagePath: '',
+        mobileImagePath: '',
         imageAlt: 'Haute Joaillerie Diamond Necklace',
         isActive: true,
         displayOrder: 2,
@@ -187,8 +187,8 @@ const DEFAULT_SLIDES = [
         secondaryCtaText: 'DISCOVER DIAMONDS →',
         secondaryCtaLink: '/diamonds',
         productType: 'Earrings',
-        imagePath: '/uploads/media/img_1788886055668_1hh6d_file_0000000012d88209b85476b65113440f.png',
-        mobileImagePath: '/uploads/media/img_1788886059422_761fx_file_0000000012d88209b85476b65113440f.png',
+        imagePath: '',
+        mobileImagePath: '',
         imageAlt: 'Brilliant Diamond Earrings',
         isActive: true,
         displayOrder: 3,
@@ -203,8 +203,8 @@ const DEFAULT_SLIDES = [
         secondaryCtaText: 'CREATE YOUR OWN →',
         secondaryCtaLink: '/custom-jewellery',
         productType: 'Bracelet',
-        imagePath: '/uploads/media/img_1788886079173_88cm9_file_00000000760c821182703c9aa52b464e.png',
-        mobileImagePath: '/uploads/media/img_1788886082540_2dfvi_file_00000000760c821182703c9aa52b464e.png',
+        imagePath: '',
+        mobileImagePath: '',
         imageAlt: 'Bespoke Diamond Bracelet',
         isActive: true,
         displayOrder: 4,
@@ -246,31 +246,15 @@ exports.ensureHeroBannerTableExists = ensureHeroBannerTableExists;
 const getPublicHeroBanners = async (req, res) => {
     try {
         await (0, exports.ensureHeroBannerTableExists)();
-        let banners = await prisma_1.default.heroBanner.findMany({
+        const banners = await prisma_1.default.heroBanner.findMany({
             where: { isActive: true },
             orderBy: { displayOrder: 'asc' },
         });
-        if (!banners || banners.length === 0) {
-            try {
-                for (const slide of DEFAULT_SLIDES) {
-                    const { id, ...data } = slide;
-                    await prisma_1.default.heroBanner.create({ data });
-                }
-                banners = await prisma_1.default.heroBanner.findMany({
-                    where: { isActive: true },
-                    orderBy: { displayOrder: 'asc' },
-                });
-            }
-            catch (seedErr) {
-                console.warn('Could not seed default slides into DB, returning fallback:', seedErr);
-                return res.json(DEFAULT_SLIDES);
-            }
-        }
-        return res.json(banners && banners.length > 0 ? banners : DEFAULT_SLIDES);
+        return res.json(banners || []);
     }
     catch (error) {
-        console.error('getPublicHeroBanners fallback to defaults:', error);
-        return res.json(DEFAULT_SLIDES);
+        console.error('getPublicHeroBanners error:', error);
+        return res.json([]);
     }
 };
 exports.getPublicHeroBanners = getPublicHeroBanners;
@@ -280,14 +264,11 @@ const getAdminHeroBanners = async (req, res) => {
         const banners = await prisma_1.default.heroBanner.findMany({
             orderBy: { displayOrder: 'asc' },
         });
-        if (!banners || banners.length === 0) {
-            return res.json(DEFAULT_SLIDES);
-        }
-        return res.json(banners);
+        return res.json(banners || []);
     }
     catch (error) {
-        console.error('getAdminHeroBanners fallback to defaults:', error);
-        return res.json(DEFAULT_SLIDES);
+        console.error('getAdminHeroBanners error:', error);
+        return res.json([]);
     }
 };
 exports.getAdminHeroBanners = getAdminHeroBanners;

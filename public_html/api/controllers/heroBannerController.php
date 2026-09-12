@@ -45,96 +45,13 @@ function handleGetPublicHeroBanners() {
         $stmt->execute();
         $banners = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
-        if (!empty($banners)) {
-            foreach ($banners as &$b) {
-                if (!empty($b['imagePath'])) {
-                    if (str_contains($b['imagePath'], 'Engagement Ring.png')) $b['imagePath'] = '/assets/gem_rings_cat.png';
-                    else if (str_contains($b['imagePath'], 'Necklace.png')) $b['imagePath'] = '/assets/gem_necklaces_cat.png';
-                    else if (str_contains($b['imagePath'], 'Earrings.png')) $b['imagePath'] = '/assets/gem_earrings_cat.png';
-                    else if (str_contains($b['imagePath'], 'Bracelet.png')) $b['imagePath'] = '/assets/gem_bracelets_cat.png';
-                }
-                if (!empty($b['mobileImagePath'])) {
-                    if (str_contains($b['mobileImagePath'], 'Ring Mobile.png')) $b['mobileImagePath'] = '/assets/gem_rings_cat.png';
-                    else if (str_contains($b['mobileImagePath'], 'Necklace Mobile.png')) $b['mobileImagePath'] = '/assets/gem_necklaces_cat.png';
-                    else if (str_contains($b['mobileImagePath'], 'Earrings Mobile.png')) $b['mobileImagePath'] = '/assets/gem_earrings_cat.png';
-                    else if (str_contains($b['mobileImagePath'], 'Bracelet Mobile.png')) $b['mobileImagePath'] = '/assets/gem_bracelets_cat.png';
-                }
-            }
-            sendJsonResponse(200, $banners);
-            return;
-        }
+        sendJsonResponse(200, $banners ?: []);
+        return;
     } catch (Throwable $e) {
         error_log("handleGetPublicHeroBanners error: " . $e->getMessage());
+        sendJsonResponse(200, []);
+        return;
     }
-
-    $defaultSlides = [
-        [
-            'id' => 'hero-slide-1',
-            'title' => "Handcrafted\nElegance &\nExceptional\nDiamonds",
-            'subtitle' => 'THE SIGNATURE COLLECTION 2026',
-            'description' => 'Immerse yourself in world-class craftsmanship, exceptional diamonds, and timeless bespoke creations.',
-            'primaryCtaText' => 'EXPLORE RINGS',
-            'primaryCtaLink' => '/rings',
-            'secondaryCtaText' => 'THE DIAMOND VAULT →',
-            'secondaryCtaLink' => '/diamonds',
-            'productType' => 'Engagement Ring',
-            'imagePath' => '/assets/gem_rings_cat.png',
-            'mobileImagePath' => '/assets/gem_rings_cat.png',
-            'imageAlt' => 'Handcrafted Solitaire Diamond Engagement Ring',
-            'isActive' => 1,
-            'displayOrder' => 1
-        ],
-        [
-            'id' => 'hero-slide-2',
-            'title' => "Timeless\nDiamonds,\nRefined\nForever",
-            'subtitle' => 'THE ART OF HIGH JEWELRY',
-            'description' => 'Discover exquisite diamond necklaces crafted with precision, elegance, and an uncompromising eye for detail.',
-            'primaryCtaText' => 'EXPLORE NECKLACES',
-            'primaryCtaLink' => '/necklaces',
-            'secondaryCtaText' => 'VIEW COLLECTION →',
-            'secondaryCtaLink' => '/collections/signature-collection',
-            'productType' => 'Necklace',
-            'imagePath' => '/assets/gem_necklaces_cat.png',
-            'mobileImagePath' => '/assets/gem_necklaces_cat.png',
-            'imageAlt' => 'Haute Joaillerie Diamond Necklace',
-            'isActive' => 1,
-            'displayOrder' => 2
-        ],
-        [
-            'id' => 'hero-slide-3',
-            'title' => "Brilliance\nDesigned to\nBe Remembered",
-            'subtitle' => 'THE SIGNATURE COLLECTION',
-            'description' => 'Exceptional diamond earrings, thoughtfully crafted to bring understated brilliance to every occasion.',
-            'primaryCtaText' => 'EXPLORE EARRINGS',
-            'primaryCtaLink' => '/earrings',
-            'secondaryCtaText' => 'DISCOVER DIAMONDS →',
-            'secondaryCtaLink' => '/diamonds',
-            'productType' => 'Earrings',
-            'imagePath' => '/assets/gem_earrings_cat.png',
-            'mobileImagePath' => '/assets/gem_earrings_cat.png',
-            'imageAlt' => 'Brilliant Diamond Earrings',
-            'isActive' => 1,
-            'displayOrder' => 3
-        ],
-        [
-            'id' => 'hero-slide-4',
-            'title' => "Exceptional\nCraftsmanship,\nWorn Forever",
-            'subtitle' => 'BESPOKE DIAMOND JEWELRY',
-            'description' => 'Discover refined diamond bracelets created with precision, timeless design, and exceptional craftsmanship.',
-            'primaryCtaText' => 'EXPLORE BRACELETS',
-            'primaryCtaLink' => '/bracelets',
-            'secondaryCtaText' => 'CREATE YOUR OWN →',
-            'secondaryCtaLink' => '/custom-jewellery',
-            'productType' => 'Bracelet',
-            'imagePath' => '/assets/gem_bracelets_cat.png',
-            'mobileImagePath' => '/assets/gem_bracelets_cat.png',
-            'imageAlt' => 'Bespoke Diamond Bracelet',
-            'isActive' => 1,
-            'displayOrder' => 4
-        ]
-    ];
-
-    sendJsonResponse(200, $defaultSlides);
 }
 
 function handleGetAdminHeroBanners() {

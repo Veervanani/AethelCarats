@@ -725,9 +725,8 @@ export const SearchModal: React.FC<SearchModalProps> = ({ isOpen, onClose, onOpe
 
                             <div className="img-box">
                               <img
-                                src={p.primaryImage || '/assets/gem_rings_cat.png'}
+                                src={p.primaryImage || ''}
                                 alt={p.name}
-                                onError={(e: any) => { e.target.src = '/assets/gem_rings_cat.png'; }}
                               />
                             </div>
                             <div className="name">{p.name}</div>
@@ -755,9 +754,8 @@ export const SearchModal: React.FC<SearchModalProps> = ({ isOpen, onClose, onOpe
 
                             <div className="img-box">
                               <img
-                                src={p.primaryImage || '/assets/gem_rings_cat.png'}
+                                src={p.primaryImage || ''}
                                 alt={p.name}
-                                onError={(e: any) => { e.target.src = '/assets/gem_rings_cat.png'; }}
                               />
                             </div>
                             <div className="name">{p.name}</div>

@@ -483,7 +483,7 @@ export const CartPage: React.FC = () => {
                   title={`View ${item.product?.name || 'Product'} details`}
                 >
                   <img
-                    src={item.product?.primaryImage || item.product?.mainImage || (item.product?.images && item.product.images[0] ? item.product.images[0].url : '/assets/gem_rings_cat.png')}
+                    src={item.product?.primaryImage || item.product?.mainImage || (item.product?.images && item.product.images[0] ? item.product.images[0].url : '')}
                     alt={item.product?.name || 'Product image'}
                   />
                 </Link>

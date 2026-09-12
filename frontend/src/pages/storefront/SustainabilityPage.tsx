@@ -278,7 +278,7 @@ export const SustainabilityPage: React.FC = () => {
   }, []);
 
   const c = cmsPage?.parsedContent || {};
-  const heroImage = c.desktopImage || c.pageImages?.desktopImage || '/assets/why-aura/sustainability-hero.jpg';
+  const heroImage = c.desktopImage || c.pageImages?.desktopImage || '';
 
   return (
     <PageWrapper>

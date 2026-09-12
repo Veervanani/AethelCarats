@@ -355,7 +355,7 @@ export const ProductCard: React.FC<{ product: Product }> = ({ product }) => {
   const primarySrc =
     cleanUniqueCustom[0] ||
     cleanUniqueAll[0] ||
-    '/assets/gem_rings_cat.png';
+    '';
 
   const secondarySrc =
     cleanUniqueCustom[1] ||

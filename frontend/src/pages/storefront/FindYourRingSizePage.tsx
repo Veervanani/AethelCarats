@@ -455,14 +455,14 @@ export const FindYourRingSizePage: React.FC = () => {
   const heroTitle = cmsData?.heroTitle || c.heading || 'How To Measure Your Ring Size';
   const heroSubtitle = cmsData?.heroSubtitle || c.subheading || 'Ring Sizer & Conversion Guide';
   const heroDesc = cmsData?.introParagraphs || c.introduction || 'Discovering your ideal ring size ensures maximum comfort and security for your bespoke AethelCarats creation. Follow our complimentary guide, printable sizer, and international conversion matrix.';
-  const heroImage = cmsData?.heroImage || c.desktopImage || c.pageImages?.desktopImage || '/assets/gem_solitaire_ring_perfect.png';
+  const heroImage = cmsData?.heroImage || c.desktopImage || c.pageImages?.desktopImage || '';
   const introHeading = cmsData?.introHeading || 'Finding Your Ring Size';
   const introDesc = cmsData?.introContent || cmsData?.introParagraphs || c.introduction || 'Finding the right ring size is one of the most essential steps when choosing an engagement ring or wedding band. AethelCarats provides complimentary resizing within 30 days for all non-custom creation orders.';
 
   const sizerHeading = cmsData?.sizerHeading || 'Complimentary Plastic Ring Sizer';
   const sizerDescription = cmsData?.sizerDescription || 'Receive a free AethelCarats belt-style plastic ring sizer delivered directly to your doorstep. It works like a belt around your finger for easy, accurate measurements at home.';
   const sizerBtnText = cmsData?.sizerButtonText || 'REQUEST FREE RING SIZER';
-  const sizerImage = cmsData?.sizerImage || '/assets/why-aura/craftsmanship-hero.jpg';
+  const sizerImage = cmsData?.sizerImage || '';
 
   const chartTitle = cmsData?.chartTitle || 'Printable Ring Size Chart';
   const chartDescription = cmsData?.chartDescription || 'Print our 1:1 scale ring size chart to measure an existing ring or match your finger diameter directly on paper. Ensure page scaling is set to 100% when printing.';
