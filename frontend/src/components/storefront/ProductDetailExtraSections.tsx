@@ -1009,37 +1009,56 @@ export const RecentlyViewedSection: React.FC<{ currentProductId?: string; conten
       if (raw) stored = JSON.parse(raw);
     } catch (e) {}
 
-    if (!Array.isArray(stored)) {
+    if (!Array.isArray(stored) || stored.length === 0) {
       setRecentProducts([]);
       return;
     }
 
-    const seenKeys = new Set<string>();
-    const getKeys = (p: any) => {
-      const keys: string[] = [];
-      if (p.id) keys.push(`id:${p.id}`);
-      if (p.slug) keys.push(`slug:${p.slug}`);
-      const titleName = (p.title || p.name || '').trim().toLowerCase();
-      if (titleName) keys.push(`name:${titleName}`);
-      return keys;
-    };
+    // Verify against live catalog so deleted/stale products are never displayed
+    api.getProducts({ status: 'ACTIVE', limit: 100 })
+      .then((res: any) => {
+        const liveProds: any[] = Array.isArray(res) ? res : res?.products || [];
+        const liveMap = new Map<string, any>();
+        liveProds.forEach((p: any) => {
+          if (p.id) liveMap.set(String(p.id), p);
+          if (p.slug) liveMap.set(String(p.slug).toLowerCase(), p);
+        });
 
-    if (currentProductId) {
-      seenKeys.add(`id:${currentProductId}`);
-    }
+        const seenKeys = new Set<string>();
+        if (currentProductId) {
+          seenKeys.add(String(currentProductId));
+        }
 
-    const uniqueStored: any[] = [];
-    for (const item of stored) {
-      if (!item) continue;
-      const keys = getKeys(item);
-      const isDup = keys.some((k) => seenKeys.has(k));
-      if (!isDup) {
-        uniqueStored.push(item);
-        keys.forEach((k) => seenKeys.add(k));
-      }
-    }
+        const validStored: any[] = [];
+        for (const item of stored) {
+          if (!item) continue;
+          const itemId = item.id ? String(item.id) : '';
+          const itemSlug = item.slug ? String(item.slug).toLowerCase() : '';
+          const liveMatch = (itemId && liveMap.get(itemId)) || (itemSlug && liveMap.get(itemSlug));
 
-    setRecentProducts(uniqueStored);
+          if (!liveMatch) continue; // Product does not exist in live DB!
+          if (seenKeys.has(liveMatch.id)) continue;
+
+          seenKeys.add(liveMatch.id);
+          validStored.push(liveMatch);
+        }
+
+        // Clean stale/deleted products from visitor's localStorage
+        try {
+          const sanitizedStorage = stored.filter((item: any) => {
+            if (!item) return false;
+            const id = item.id ? String(item.id) : '';
+            const slug = item.slug ? String(item.slug).toLowerCase() : '';
+            return (id && liveMap.has(id)) || (slug && liveMap.has(slug));
+          });
+          localStorage.setItem('app_recently_viewed', JSON.stringify(sanitizedStorage));
+        } catch (e) {}
+
+        setRecentProducts(validStored);
+      })
+      .catch(() => {
+        setRecentProducts([]);
+      });
   }, [currentProductId]);
 
   // Final rendering deduplication guard
