@@ -14,6 +14,10 @@ import {
   MoveDown,
   Tag,
   Share2,
+  FileText,
+  Sparkles,
+  Scissors,
+  ChevronUp,
 } from 'lucide-react';
 import { api } from '../../services/api';
 import { PRIVATE_ADMIN_PATH } from '../../App';
@@ -40,7 +44,7 @@ const StickyTopHeader = styled.div`
   align-items: center;
   flex-wrap: wrap;
   gap: 16px;
-  margin-bottom: 24px;
+  margin-bottom: 16px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.03);
 
   .title-area {
@@ -72,7 +76,134 @@ const StickyTopHeader = styled.div`
 
   .action-area {
     display: flex;
+    align-items: center;
     gap: 12px;
+  }
+`;
+
+const SectionNavTabs = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  overflow-x: auto;
+  padding: 8px 12px;
+  background: #ffffff;
+  border: 1px solid #e8e3d9;
+  border-radius: 8px;
+  margin-bottom: 24px;
+  scrollbar-width: thin;
+  position: sticky;
+  top: 12px;
+  z-index: 90;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.03);
+
+  button.nav-pill {
+    background: #f8f6f0;
+    border: 1px solid #e8e3d9;
+    border-radius: 20px;
+    padding: 6px 14px;
+    font-size: 0.78rem;
+    font-weight: 600;
+    color: #4b4844;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    white-space: nowrap;
+    transition: all 0.2s ease;
+
+    &:hover {
+      background: #faf2dc;
+      color: #19202a;
+      border-color: #c9a45c;
+    }
+
+    &.active {
+      background: #19202a;
+      color: #ffffff;
+      border-color: #19202a;
+    }
+  }
+`;
+
+const FloatingBottomDock = styled.div`
+  position: fixed;
+  bottom: 22px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 9999;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+  background: rgba(25, 32, 42, 0.95);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  border: 1px solid rgba(201, 164, 92, 0.4);
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.28), 0 0 0 1px rgba(255, 255, 255, 0.08);
+  border-radius: 40px;
+  padding: 8px 18px 8px 24px;
+  max-width: 92vw;
+  animation: slideUpDock 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+
+  @keyframes slideUpDock {
+    from {
+      opacity: 0;
+      transform: translate(-50%, 20px);
+    }
+    to {
+      opacity: 1;
+      transform: translate(-50%, 0);
+    }
+  }
+
+  .dock-info {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+
+    .dock-title {
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: #ffffff;
+      white-space: nowrap;
+      max-width: 260px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .dock-sku {
+      font-size: 0.74rem;
+      color: #c9a45c;
+      font-family: monospace;
+      background: rgba(201, 164, 92, 0.15);
+      padding: 2px 8px;
+      border-radius: 12px;
+      white-space: nowrap;
+    }
+
+    .dock-pill {
+      font-size: 0.72rem;
+      padding: 2px 8px;
+      border-radius: 10px;
+      font-weight: 600;
+      white-space: nowrap;
+    }
+  }
+
+  .dock-actions {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  @media (max-width: 768px) {
+    bottom: 12px;
+    padding: 8px 12px;
+    border-radius: 20px;
+    width: calc(100% - 24px);
+    .dock-info { display: none; }
+    .dock-actions { width: 100%; justify-content: space-between; }
   }
 `;
 
@@ -97,6 +228,9 @@ const StickySidebarCol = styled.div`
   display: flex;
   flex-direction: column;
   gap: 20px;
+  position: sticky;
+  top: 20px;
+  align-self: start;
 `;
 
 const ToggleRow = styled.div`
@@ -512,6 +646,82 @@ const DEFAULT_ACCORDIONS = [
   },
 ];
 
+const DESCRIPTION_TEMPLATES: Record<string, { label: string; text: (name: string) => string }> = {
+  solitaire: {
+    label: '💎 Solitaire Ring',
+    text: (name) => `${name || 'Exquisite Solitaire Ring'}
+
+A celebration of timeless elegance and optical brilliance, this handcrafted creation is designed for those who value extraordinary craftsmanship. Featuring a hand-selected center stone held securely in refined claw prongs, the ring is sculpted with ergonomic comfort-fit curves to glide effortlessly on the finger.
+
+💎 Craftsmanship & Highlights:
+• Certified conflict-free center diamond with optical precision cut
+• Solid precious metal setting cast for lifelong durability and daily wear
+• Micro-polished band with smooth inner comfort fit
+• Delivered in our signature luxury atelier presentation case with certification documents`
+  },
+  halo: {
+    label: '✨ Halo / Side-Stone',
+    text: (name) => `${name || 'Radiant Side Stone Ring'}
+
+Representing brilliance, elegance, and timeless commitment, this breathtaking design pairs a certified center gemstone with meticulously matched side stones. Each accent diamond is hand-selected to seamlessly harmonize in color, fire, and symmetry.
+
+💎 Craftsmanship & Highlights:
+• Master artisan prong setting engineered with micro-bead prongs
+• Accent diamonds hand-graded D-F color and VVS/VS clarity
+• Solid precious metal casting using 100% recycled gold
+• Accompanied by official laboratory certificate and lifetime craftsmanship warranty`
+  },
+  band: {
+    label: '💍 Eternity Band',
+    text: (name) => `${name || 'Diamond Eternity Band'}
+
+An unbroken circle of endless scintillation, this eternity band showcases calibrated diamonds set in seamless alignment. Designed to be worn as a striking standalone statement piece or stacked alongside an engagement ring.
+
+💎 Craftsmanship & Highlights:
+• Calibrated diamonds set edge-to-edge for maximum optical brilliance
+• Low-profile basket setting engineered for zero snagging and all-day comfort
+• Finished with a mirror-grade hand polish
+• Heirloom presentation packaging included`
+  },
+  necklace: {
+    label: '📿 Necklace / Pendant',
+    text: (name) => `${name || 'Fine Diamond Pendant Necklace'}
+
+An elegant centerpiece crafted to capture ambient light from every angle. Suspended from a delicate yet durable solid gold link chain, this pendant rests gracefully along the collarbone for effortless everyday sophistication.
+
+💎 Craftsmanship & Highlights:
+• Precision-set certified diamond pendant
+• Matching solid gold chain with reinforced lobster clasp and security jump rings
+• Hypoallergenic and nickel-free alloy composition
+• Signature atelier gift packaging included`
+  },
+  earrings: {
+    label: '👂 Diamond Earrings',
+    text: (name) => `${name || 'Classic Diamond Stud Earrings'}
+
+Exquisitely balanced and radiating brilliant fire, these diamond earrings are crafted for maximum security, comfort, and brilliance from every perspective.
+
+💎 Craftsmanship & Highlights:
+• Matched pair of certified diamonds with identical cut grade and optical symmetry
+• Secure locking backings engineered for all-day comfort and security
+• Solid precious metal basket designed to maximize light entering the stones
+• Packaged in our signature atelier presentation box`
+  }
+};
+
+const NAV_SECTIONS = [
+  { id: 'sec-basic', label: '1. Basic Info', icon: '📌' },
+  { id: 'sec-pricing', label: '2. Pricing & Sale', icon: '💰' },
+  { id: 'sec-descriptions', label: '3. Descriptions & Story', icon: '📝' },
+  { id: 'sec-media', label: '4. Media Gallery', icon: '🖼️' },
+  { id: 'sec-diamonds', label: '6. Diamond Specs', icon: '💎' },
+  { id: 'sec-custom', label: '7. Custom Options', icon: '🎨' },
+  { id: 'sec-variations', label: '8. Variations & Metals', icon: '⚙️' },
+  { id: 'sec-sizes', label: '9. Ring Sizes', icon: '💍' },
+  { id: 'sec-accordions', label: '10. Accordions', icon: '📑' },
+  { id: 'sec-seo', label: '12. SEO & Social', icon: '🔍' },
+];
+
 export const AdminFullProductEditorPage: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const isEditMode = Boolean(id && id !== 'new');
@@ -525,6 +735,12 @@ export const AdminFullProductEditorPage: React.FC = () => {
   const [categories, setCategories] = useState<any[]>([]);
   const [tagInput, setTagInput] = useState('');
   const [focusCbId, setFocusCbId] = useState<string | null>(null);
+
+  // New UI Navigation & Story State
+  const [descTab, setDescTab] = useState<'edit' | 'preview'>('edit');
+  const [activeNav, setActiveNav] = useState('sec-basic');
+  const [showBottomDock, setShowBottomDock] = useState(false);
+  const productDataRef = useRef<any>(null);
 
   // Canonical Shared Product Model State
   const [productData, setProductData] = useState<any>({
@@ -586,6 +802,41 @@ export const AdminFullProductEditorPage: React.FC = () => {
       canonicalUrl: '',
     },
   });
+
+  useEffect(() => {
+    productDataRef.current = productData;
+  }, [productData]);
+
+  // Keyboard shortcut: Ctrl+S / Cmd+S to save from anywhere
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 's') {
+        e.preventDefault();
+        handleSave(productDataRef.current?.status || 'ACTIVE');
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, []);
+
+  // Show floating save dock when scrolled down
+  useEffect(() => {
+    const handleScroll = () => {
+      setShowBottomDock(window.scrollY > 120);
+    };
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
+
+  const scrollToSection = (secId: string) => {
+    const el = document.getElementById(secId);
+    if (el) {
+      const yOffset = -75;
+      const y = el.getBoundingClientRect().top + window.pageYOffset + yOffset;
+      window.scrollTo({ top: y, behavior: 'smooth' });
+      setActiveNav(secId);
+    }
+  };
 
   const [variationGenMode, setVariationGenMode] = useState<'metalsOnly' | 'matrix'>('metalsOnly');
   const mediaFileInputRef = useRef<HTMLInputElement>(null);
@@ -1392,7 +1643,7 @@ export const AdminFullProductEditorPage: React.FC = () => {
   }
 
   return (
-    <div>
+    <div style={{ paddingBottom: 110 }}>
       {/* STICKY TOP HEADER */}
       <StickyTopHeader>
         <div className="title-area">
@@ -1402,6 +1653,9 @@ export const AdminFullProductEditorPage: React.FC = () => {
           <h1>{isEditMode ? `Edit Product: ${productData.title || productData.name || 'Product Details'}` : 'Add New Product'}</h1>
         </div>
         <div className="action-area">
+          <span style={{ fontSize: '0.74rem', color: '#888', marginRight: 4 }}>
+            ⌨️ <code>Ctrl+S</code> to save anytime
+          </span>
           <AdminButton $variant="secondary" onClick={() => handleSave('DRAFT')} $loading={saving}>
             Save Draft
           </AdminButton>
@@ -1413,6 +1667,20 @@ export const AdminFullProductEditorPage: React.FC = () => {
           </AdminButton>
         </div>
       </StickyTopHeader>
+
+      {/* QUICK JUMP SECTION TABS */}
+      <SectionNavTabs>
+        {NAV_SECTIONS.map((sec) => (
+          <button
+            key={sec.id}
+            type="button"
+            className={`nav-pill ${activeNav === sec.id ? 'active' : ''}`}
+            onClick={() => scrollToSection(sec.id)}
+          >
+            <span>{sec.icon}</span> {sec.label}
+          </button>
+        ))}
+      </SectionNavTabs>
 
       {successMsg && (
         <div style={{ background: '#e6f4ea', border: '1px solid #ceead6', color: '#137333', padding: '14px 18px', borderRadius: 6, marginBottom: 20, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
@@ -1440,7 +1708,7 @@ export const AdminFullProductEditorPage: React.FC = () => {
         {/* MAIN EDITOR COLUMN */}
         <MainEditorCol>
           {/* SECTION 1: PRODUCT INFORMATION */}
-          <AdminCard>
+          <AdminCard id="sec-basic">
             <AdminCardHeader>
               <h3>1. PRODUCT INFORMATION</h3>
             </AdminCardHeader>
@@ -1684,6 +1952,16 @@ export const AdminFullProductEditorPage: React.FC = () => {
               </div>
             </div>
 
+          </AdminCard>
+
+          {/* SECTION 2: PRICING & PROMOTIONS */}
+          <AdminCard id="sec-pricing">
+            <AdminCardHeader>
+              <h3>2. PRICING & PROMOTIONS</h3>
+              <span style={{ fontSize: '0.8rem', color: '#77736c', fontWeight: 600 }}>
+                Storefront Base: <strong style={{ color: '#19202a' }}>${productData.price || 0}</strong>
+              </span>
+            </AdminCardHeader>
             <AdminFormGrid $columns={3}>
               <AdminFormGroup>
                 <label>Base / Regular Price ($)</label>
@@ -1699,8 +1977,8 @@ export const AdminFullProductEditorPage: React.FC = () => {
               </AdminFormGroup>
             </AdminFormGrid>
 
-            <AdminFormGroup style={{ background: '#faf6ee', padding: '12px 16px', borderRadius: 6, border: '1px solid #e8e3d9', marginTop: 8, marginBottom: 16 }}>
-              <label style={{ display: 'flex', alignItems: 'center', gap: 10, cursor: 'pointer', margin: 0, fontWeight: 700, color: '#1a1a1a' }}>
+            <AdminFormGroup style={{ background: '#faf6ee', padding: '14px 18px', borderRadius: 6, border: '1px solid #e8e3d9', marginTop: 12 }}>
+              <label style={{ display: 'flex', alignItems: 'center', gap: 12, cursor: 'pointer', margin: 0, fontWeight: 700, color: '#1a1a1a', fontSize: '0.88rem' }}>
                 <input
                   type="checkbox"
                   checked={Boolean((productData as any).onSale)}
@@ -1710,22 +1988,222 @@ export const AdminFullProductEditorPage: React.FC = () => {
                 🏷️ Mark Product "ON SALE" (Displays ON SALE luxury badge & discount pricing on storefront)
               </label>
             </AdminFormGroup>
+          </AdminCard>
 
-            <AdminFormGroup>
-              <label>Short Description</label>
-              <AdminTextarea rows={2} value={productData.shortDescription || ''} onChange={(e) => handleFieldChange('shortDescription', e.target.value)} placeholder="Summary overview shown on product cards" />
+          {/* SECTION 3: DESCRIPTIONS & CRAFTSMANSHIP STORY */}
+          <AdminCard id="sec-descriptions">
+            <AdminCardHeader>
+              <h3>3. DESCRIPTIONS & CRAFTSMANSHIP STORY</h3>
+              <div style={{ display: 'flex', gap: 6, alignItems: 'center' }}>
+                <button
+                  type="button"
+                  onClick={() => setDescTab('edit')}
+                  style={{
+                    padding: '5px 12px',
+                    borderRadius: 4,
+                    fontSize: '0.78rem',
+                    fontWeight: 600,
+                    cursor: 'pointer',
+                    border: '1px solid',
+                    borderColor: descTab === 'edit' ? '#19202a' : '#d9d3c7',
+                    background: descTab === 'edit' ? '#19202a' : '#fff',
+                    color: descTab === 'edit' ? '#fff' : '#555',
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: 5
+                  }}
+                >
+                  <FileText size={13} /> Edit Story
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setDescTab('preview')}
+                  style={{
+                    padding: '5px 12px',
+                    borderRadius: 4,
+                    fontSize: '0.78rem',
+                    fontWeight: 600,
+                    cursor: 'pointer',
+                    border: '1px solid',
+                    borderColor: descTab === 'preview' ? '#c9a45c' : '#d9d3c7',
+                    background: descTab === 'preview' ? '#faf6ee' : '#fff',
+                    color: descTab === 'preview' ? '#8e6c27' : '#555',
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: 5
+                  }}
+                >
+                  <Eye size={13} /> Customer Preview
+                </button>
+              </div>
+            </AdminCardHeader>
+
+            <AdminFormGroup style={{ marginBottom: 22 }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 6 }}>
+                <label style={{ margin: 0, fontWeight: 700, fontSize: '0.88rem' }}>Short Description / Card Overview</label>
+                <span style={{ fontSize: '0.74rem', color: '#77736c' }}>
+                  {(productData.shortDescription || '').length} chars • Visible on product grid cards and quick previews
+                </span>
+              </div>
+              <AdminTextarea
+                rows={3}
+                value={productData.shortDescription || ''}
+                onChange={(e) => handleFieldChange('shortDescription', e.target.value)}
+                placeholder="Concise 1-2 sentence overview highlighting key center stone and craftsmanship..."
+                style={{ minHeight: 75, fontSize: '0.88rem', lineHeight: 1.5, padding: '10px 14px' }}
+              />
             </AdminFormGroup>
 
             <AdminFormGroup>
-              <label>Full Description & Craftsmanship Story</label>
-              <AdminTextarea rows={4} value={productData.fullDescription || ''} onChange={(e) => handleFieldChange('fullDescription', e.target.value)} placeholder="Detailed narrative, craftsmanship details, and materials specification" />
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 8 }}>
+                <label style={{ margin: 0, fontWeight: 700, fontSize: '0.88rem' }}>Full Narrative & Craftsmanship Story</label>
+              </div>
+
+              {/* Quick Story Templates Toolbar */}
+              <div style={{
+                background: '#faf8f5',
+                border: '1px solid #e8e3d9',
+                borderRadius: 6,
+                padding: '8px 12px',
+                marginBottom: 12,
+                display: 'flex',
+                alignItems: 'center',
+                gap: 8,
+                flexWrap: 'wrap'
+              }}>
+                <span style={{ fontSize: '0.74rem', fontWeight: 700, color: '#77736c', textTransform: 'uppercase', letterSpacing: '0.06em', marginRight: 4 }}>
+                  ⚡ Insert Quick Story:
+                </span>
+                {Object.entries(DESCRIPTION_TEMPLATES).map(([key, tpl]) => (
+                  <button
+                    key={key}
+                    type="button"
+                    onClick={() => {
+                      const currentTitle = productData.title || productData.name || '';
+                      const generated = tpl.text(currentTitle);
+                      handleFieldChange('fullDescription', generated);
+                    }}
+                    title={`Insert ${tpl.label}`}
+                    style={{
+                      background: '#ffffff',
+                      border: '1px solid #d9d3c7',
+                      borderRadius: 4,
+                      padding: '4px 10px',
+                      fontSize: '0.76rem',
+                      fontWeight: 600,
+                      color: '#19202a',
+                      cursor: 'pointer',
+                      transition: 'all 0.15s ease'
+                    }}
+                    onMouseEnter={(e) => (e.currentTarget.style.borderColor = '#c9a45c')}
+                    onMouseLeave={(e) => (e.currentTarget.style.borderColor = '#d9d3c7')}
+                  >
+                    {tpl.label}
+                  </button>
+                ))}
+                <button
+                  type="button"
+                  onClick={() => {
+                    const cleaned = (productData.fullDescription || '')
+                      .replace(/\n{3,}/g, '\n\n')
+                      .trim();
+                    handleFieldChange('fullDescription', cleaned);
+                  }}
+                  title="Clean extra empty lines"
+                  style={{
+                    background: '#ffffff',
+                    border: '1px solid #d9d3c7',
+                    borderRadius: 4,
+                    padding: '4px 8px',
+                    fontSize: '0.76rem',
+                    color: '#666',
+                    cursor: 'pointer',
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: 4
+                  }}
+                >
+                  <Scissors size={11} /> Clean Lines
+                </button>
+                {(productData.fullDescription || '').trim() && (
+                  <button
+                    type="button"
+                    onClick={() => {
+                      if (window.confirm('Clear the full craftsmanship story?')) {
+                        handleFieldChange('fullDescription', '');
+                      }
+                    }}
+                    title="Clear description"
+                    style={{
+                      background: '#fff0f0',
+                      border: '1px solid #feb2b2',
+                      borderRadius: 4,
+                      padding: '4px 8px',
+                      fontSize: '0.76rem',
+                      color: '#c53030',
+                      cursor: 'pointer'
+                    }}
+                  >
+                    Clear
+                  </button>
+                )}
+              </div>
+
+              {descTab === 'edit' ? (
+                <div>
+                  <AdminTextarea
+                    rows={10}
+                    value={productData.fullDescription || ''}
+                    onChange={(e) => handleFieldChange('fullDescription', e.target.value)}
+                    placeholder="Craft an exquisite story detailing center stone dimensions, carat weight, metal purity, prong architecture, ergonomics, and certification..."
+                    style={{
+                      minHeight: 260,
+                      fontSize: '0.92rem',
+                      lineHeight: 1.65,
+                      padding: '14px 16px',
+                      fontFamily: 'Inter, system-ui, sans-serif',
+                      background: '#ffffff',
+                      borderRadius: 6
+                    }}
+                  />
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: 8, fontSize: '0.76rem', color: '#77736c' }}>
+                    <span>
+                      📊 Words: <strong>{(productData.fullDescription || '').trim() ? (productData.fullDescription || '').trim().split(/\s+/).length : 0}</strong> • Characters: <strong>{(productData.fullDescription || '').length}</strong>
+                    </span>
+                    <span style={{ color: (productData.fullDescription || '').length > 150 ? '#2e7d32' : '#c9a45c', fontWeight: 600 }}>
+                      {(productData.fullDescription || '').length > 150 ? '✓ Excellent detailed story length' : '💡 Tip: 150-400 words gives best client conversion'}
+                    </span>
+                  </div>
+                </div>
+              ) : (
+                <div style={{
+                  background: '#ffffff',
+                  border: '1px solid #e8e3d9',
+                  borderRadius: 6,
+                  padding: 24,
+                  minHeight: 260
+                }}>
+                  <div style={{ fontSize: '0.74rem', fontWeight: 700, color: '#c9a45c', letterSpacing: '0.1em', textTransform: 'uppercase', marginBottom: 14 }}>
+                    Storefront Customer View Preview:
+                  </div>
+                  {productData.fullDescription ? (
+                    <div style={{ fontSize: '0.94rem', lineHeight: 1.75, color: '#2b2b2b', whiteSpace: 'pre-line', fontFamily: "'Inter', sans-serif" }}>
+                      {productData.fullDescription}
+                    </div>
+                  ) : (
+                    <div style={{ color: '#999', fontStyle: 'italic', textAlign: 'center', padding: '50px 20px' }}>
+                      No description entered yet. Switch to "Edit Story" or click a Quick Story Template above to insert one.
+                    </div>
+                  )}
+                </div>
+              )}
             </AdminFormGroup>
           </AdminCard>
 
-          {/* SECTION 2: PRODUCT MEDIA */}
-          <AdminCard>
+          {/* SECTION 4: PRODUCT MEDIA */}
+          <AdminCard id="sec-media">
             <AdminCardHeader>
-              <h3>2. PRODUCT MEDIA</h3>
+              <h3>4. PRODUCT MEDIA</h3>
               <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
                 {uploadProgress && (
                   <span style={{ fontSize: '0.78rem', color: '#c9a45c', fontWeight: 600, background: '#faf6ee', padding: '4px 10px', borderRadius: 4, border: '1px solid #e8e3d9' }}>
@@ -1809,10 +2287,10 @@ export const AdminFullProductEditorPage: React.FC = () => {
             </div>
           </AdminCard>
 
-          {/* SECTION 3: PRODUCT FEATURES */}
-          <AdminCard>
+          {/* SECTION 5: PRODUCT FEATURES */}
+          <AdminCard id="sec-features">
             <AdminCardHeader>
-              <h3>3. PRODUCT FEATURES</h3>
+              <h3>5. PRODUCT FEATURES</h3>
             </AdminCardHeader>
             <AdminFormGrid $columns={2}>
               <ToggleRow>
@@ -1826,10 +2304,10 @@ export const AdminFullProductEditorPage: React.FC = () => {
             </AdminFormGrid>
           </AdminCard>
 
-          {/* SECTION 4: DIAMOND DETAILS (DESCRIPTIVE SPECIFICATIONS ONLY) */}
-          <AdminCard>
+          {/* SECTION 6: DIAMOND DETAILS (DESCRIPTIVE SPECIFICATIONS ONLY) */}
+          <AdminCard id="sec-diamonds">
             <AdminCardHeader>
-              <h3>4. DIAMOND DETAILS</h3>
+              <h3>6. DIAMOND DETAILS</h3>
             </AdminCardHeader>
             <div style={{ fontSize: '0.82rem', color: '#77736c', marginBottom: 14 }}>
               Enter descriptive specifications of the diamond included with this creation. Customers cannot change the diamond.
@@ -1987,11 +2465,11 @@ export const AdminFullProductEditorPage: React.FC = () => {
             </AdminFormGrid>
           </AdminCard>
 
-          {/* SECTION 5: CUSTOM OPTIONS BUILDER */}
+          {/* SECTION 7: CUSTOM OPTIONS BUILDER */}
           {productData.enableCustomOptions && (
-            <AdminCard>
+            <AdminCard id="sec-custom">
               <AdminCardHeader>
-                <h3>5. CUSTOM OPTIONS</h3>
+                <h3>7. CUSTOM OPTIONS</h3>
                 <AdminButton $variant="gold" $size="sm" onClick={handleAddCustomOption} icon={<Plus size={13} />}>
                   + Add Custom Option
                 </AdminButton>
@@ -2265,10 +2743,10 @@ export const AdminFullProductEditorPage: React.FC = () => {
             </AdminCard>
           )}
 
-          {/* SECTION 6: PRODUCT VARIATIONS & PRICING */}
-          <AdminCard>
+          {/* SECTION 8: PRODUCT VARIATIONS & PRICING */}
+          <AdminCard id="sec-variations">
             <AdminCardHeader>
-              <h3>6. PRODUCT VARIATIONS & PRICING</h3>
+              <h3>8. PRODUCT VARIATIONS & PRICING</h3>
               <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
                 <div style={{ display: 'flex', background: '#f0ece3', padding: 3, borderRadius: 6, gap: 4 }}>
                   <button
@@ -2589,11 +3067,11 @@ export const AdminFullProductEditorPage: React.FC = () => {
             </AdminTableContainer>
           </AdminCard>
 
-          {/* SECTION 7: RING SIZE CONFIGURATION (RINGS ONLY!) */}
+          {/* SECTION 9: RING SIZE CONFIGURATION (RINGS ONLY!) */}
           {isRingProduct && (
-            <AdminCard>
+            <AdminCard id="sec-sizes">
               <AdminCardHeader>
-                <h3>7. RING SIZE CONFIGURATION</h3>
+                <h3>9. RING SIZE CONFIGURATION</h3>
               </AdminCardHeader>
               <div style={{ fontSize: '0.82rem', color: '#77736c', marginBottom: 14 }}>
                 Select available US ring sizes for storefront customer selection.
@@ -2654,10 +3132,10 @@ export const AdminFullProductEditorPage: React.FC = () => {
             </AdminCard>
           )}
 
-          {/* SECTION 8: PRODUCT INFORMATION ACCORDIONS */}
-          <AdminCard>
+          {/* SECTION 10: PRODUCT INFORMATION ACCORDIONS */}
+          <AdminCard id="sec-accordions">
             <AdminCardHeader>
-              <h3>8. PRODUCT INFORMATION ACCORDIONS</h3>
+              <h3>10. PRODUCT INFORMATION ACCORDIONS</h3>
             </AdminCardHeader>
             <div style={{ fontSize: '0.82rem', color: '#77736c', marginBottom: 16 }}>
               Edit and reorder the four storefront product information sections.
@@ -2729,10 +3207,10 @@ export const AdminFullProductEditorPage: React.FC = () => {
             </div>
           </AdminCard>
 
-          {/* SECTION 9: INTERNAL TAGS (CONNECTED TO FILTER MANAGEMENT) */}
-          <AdminCard>
+          {/* SECTION 11: INTERNAL TAGS (CONNECTED TO FILTER MANAGEMENT) */}
+          <AdminCard id="sec-tags">
             <AdminCardHeader>
-              <h3>9. INTERNAL TAGS</h3>
+              <h3>11. INTERNAL TAGS</h3>
             </AdminCardHeader>
             <div style={{ fontSize: '0.82rem', color: '#77736c', marginBottom: 14 }}>
               Select internal filter values used for product organization and storefront filtering. These values are never displayed directly to customers.
@@ -2859,10 +3337,10 @@ export const AdminFullProductEditorPage: React.FC = () => {
             </div>
           </AdminCard>
 
-          {/* SECTION 10: SEO & SOCIAL SETTINGS (ADMIN ONLY) */}
-          <AdminCard>
+          {/* SECTION 12: SEO & SOCIAL SETTINGS (ADMIN ONLY) */}
+          <AdminCard id="sec-seo">
             <AdminCardHeader>
-              <h3>10. SEO & SOCIAL SETTINGS</h3>
+              <h3>12. SEO & SOCIAL SETTINGS</h3>
             </AdminCardHeader>
             <div style={{ fontSize: '0.82rem', color: '#77736c', marginBottom: 14 }}>
               Technical metadata for search engines and social media sharing cards.
@@ -2954,10 +3432,10 @@ export const AdminFullProductEditorPage: React.FC = () => {
 
         {/* STICKY SIDEBAR COLUMN */}
         <StickySidebarCol>
-          {/* SECTION 11: PUBLISHING & BADGES */}
-          <AdminCard>
+          {/* SECTION: PUBLISHING & BADGES */}
+          <AdminCard id="sec-publishing">
             <AdminCardHeader>
-              <h3>11. PUBLISHING & BADGES</h3>
+              <h3>PUBLISHING & BADGES</h3>
             </AdminCardHeader>
             <div style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
               <ToggleRow>
@@ -3020,6 +3498,83 @@ export const AdminFullProductEditorPage: React.FC = () => {
           </AdminCard>
         </StickySidebarCol>
       </EditorGrid>
+
+      {/* FLOATING BOTTOM ACTION DOCK (PERSISTENT & ACCESSIBLE FROM ANYWHERE) */}
+      {showBottomDock && (
+        <FloatingBottomDock>
+          <div className="dock-info">
+            <div className="dock-title" title={productData.title || productData.name}>
+              {productData.title || productData.name || 'Untitled Product'}
+            </div>
+            {productData.sku && <span className="dock-sku">{productData.sku}</span>}
+            <span
+              className="dock-pill"
+              style={{
+                background: (productData.status || 'ACTIVE') === 'ACTIVE' ? 'rgba(76, 175, 80, 0.2)' : 'rgba(255, 193, 7, 0.2)',
+                color: (productData.status || 'ACTIVE') === 'ACTIVE' ? '#81c784' : '#ffd54f',
+              }}
+            >
+              ● {(productData.status || 'ACTIVE') === 'ACTIVE' ? 'Published' : 'Draft'}
+            </span>
+          </div>
+
+          <div className="dock-actions">
+            {productData.slug && (
+              <AdminButton
+                $variant="secondary"
+                $size="sm"
+                type="button"
+                onClick={() => window.open(`/product/${productData.slug}`, '_blank')}
+                icon={<Eye size={13} />}
+                style={{ background: 'rgba(255,255,255,0.1)', color: '#ffffff', borderColor: 'rgba(255,255,255,0.2)' }}
+              >
+                Live Preview
+              </AdminButton>
+            )}
+            <AdminButton
+              $variant="secondary"
+              $size="sm"
+              type="button"
+              onClick={() => handleSave('DRAFT')}
+              $loading={saving}
+              style={{ background: 'rgba(255,255,255,0.1)', color: '#ffffff', borderColor: 'rgba(255,255,255,0.2)' }}
+            >
+              Save Draft
+            </AdminButton>
+            <AdminButton
+              $variant="gold"
+              $size="sm"
+              type="button"
+              onClick={() => handleSave('ACTIVE')}
+              $loading={saving}
+              icon={<Check size={14} />}
+            >
+              Save & Publish
+            </AdminButton>
+            <button
+              type="button"
+              onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
+              title="Scroll to Top"
+              style={{
+                background: 'rgba(255,255,255,0.08)',
+                border: '1px solid rgba(255,255,255,0.18)',
+                color: '#c9a45c',
+                borderRadius: '50%',
+                width: 32,
+                height: 32,
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                cursor: 'pointer',
+                padding: 0,
+                marginLeft: 4,
+              }}
+            >
+              <ChevronUp size={16} />
+            </button>
+          </div>
+        </FloatingBottomDock>
+      )}
     </div>
   );
 };
