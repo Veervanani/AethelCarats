@@ -23,11 +23,9 @@ const mapProductResponse = (product, customerPriceRecord) => {
         : [];
     const primaryImage = (sortedImages.find((img) => img.imageType === 'primary' || img.imageType === 'hero')?.url) ||
         (sortedImages.length > 0 ? sortedImages[0].url : null) ||
-        (product.mainImage && product.mainImage !== '/assets/gem_rings_cat.png' ? product.mainImage : null) ||
         product.mainImage ||
-        '/assets/gem_rings_cat.png';
+        '';
     const secondaryImage = (sortedImages.length > 1 ? sortedImages[1].url : null) ||
-        (product.secondaryImage && product.secondaryImage !== '/assets/gem_rings_cat_2.png' ? product.secondaryImage : null) ||
         product.secondaryImage ||
         null;
     const availableRingSizes = safeJsonParse(product.availableRingSizes, [
@@ -779,7 +777,7 @@ const createProduct = async (req, res) => {
         const data = req.body;
         const prodTitle = data.title || data.name || 'Untitled Product';
         const slug = data.slug || prodTitle.toLowerCase().replace(/[^a-z0-9]+/g, '-');
-        const mainImage = data.mainImage || data.primaryImage || '/assets/gem_rings_cat.png';
+        const mainImage = data.mainImage || data.primaryImage || '';
         const secondaryImage = data.secondaryImage || null;
         const product = await prisma_1.default.product.create({
             data: {
