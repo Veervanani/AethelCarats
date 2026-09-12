@@ -251,7 +251,7 @@ function createModelHandler(tableName: string) {
       const keys = Object.keys(rawData).filter((k) => rawData[k] !== undefined && (cols.size === 0 || cols.has(k)));
       const values = keys.map((k) => {
         const v = rawData[k];
-        if (v !== null && typeof v === 'object' && !(v instanceof Date)) {
+        if (v !== null && typeof v === 'object' && !(v instanceof Date) && !Buffer.isBuffer(v)) {
           return JSON.stringify(v);
         }
         return v;
@@ -281,7 +281,7 @@ function createModelHandler(tableName: string) {
 
       const values = keys.map((k) => {
         const v = rawData[k];
-        if (v !== null && typeof v === 'object' && !(v instanceof Date)) {
+        if (v !== null && typeof v === 'object' && !(v instanceof Date) && !Buffer.isBuffer(v)) {
           return JSON.stringify(v);
         }
         return v;

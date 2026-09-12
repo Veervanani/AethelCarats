@@ -1,6 +1,6 @@
 import { Request, Response } from 'express';
 import { AuthRequest } from '../middleware/auth';
-import prisma from '../prisma';
+import prisma, { mysqlPool } from '../prisma';
 import fs from 'fs';
 import path from 'path';
 
@@ -47,7 +47,24 @@ const saveUploadedFile = (file: Express.Multer.File, prefix: string = 'hero'): s
     } catch (e) {}
   }
 
-  return `/uploads/hero-banners/${safeName}`;
+  const fileUrl = `/uploads/hero-banners/${safeName}`;
+
+  // Persist to MySQL Media table with LONGBLOB data for multi-device sync
+  prisma.media.create({
+    data: {
+      name: file.originalname,
+      url: fileUrl,
+      fileType: file.mimetype || 'image/jpeg',
+      fileSize: file.size || file.buffer?.length || 0,
+      altText: path.basename(file.originalname, ext),
+      dimensions: '1920x1080',
+      data: file.buffer,
+    } as any,
+  }).catch((err) => console.warn('Hero media db save notice:', err));
+
+  mysqlPool.query('UPDATE `Media` SET `data` = ? WHERE `url` = ?', [file.buffer, fileUrl]).catch(() => {});
+
+  return fileUrl;
 };
 
 const extractFile = (req: AuthRequest, fieldName: string, altFieldNames: string[] = []): Express.Multer.File | undefined => {

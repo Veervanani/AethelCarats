@@ -1,6 +1,6 @@
 import { Request, Response } from 'express';
 import { AuthRequest } from '../middleware/auth';
-import prisma from '../prisma';
+import prisma, { mysqlPool } from '../prisma';
 import fs from 'fs';
 import path from 'path';
 
@@ -85,7 +85,7 @@ export const uploadMediaFiles = async (req: AuthRequest, res: Response) => {
 
         const fileUrl = `/uploads/media/${safeName}`;
 
-        // Save entry into MySQL database Media table
+        // Save entry into MySQL database Media table with permanent LONGBLOB storage
         try {
           await prisma.media.create({
             data: {
@@ -95,8 +95,11 @@ export const uploadMediaFiles = async (req: AuthRequest, res: Response) => {
               fileSize: file.size || file.buffer.length,
               altText: cleanName.replace(/_/g, ' '),
               dimensions: '1200x1200',
-            },
+              data: file.buffer,
+            } as any,
           });
+          // Redundant direct pool update to guarantee BLOB persistence across all DB drivers
+          await mysqlPool.query('UPDATE `Media` SET `data` = ? WHERE `url` = ?', [file.buffer, fileUrl]).catch(() => {});
         } catch (dbErr) {
           console.warn('Notice: Media record entry error:', dbErr);
         }

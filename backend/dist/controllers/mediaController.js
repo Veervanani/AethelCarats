@@ -1,10 +1,43 @@
 "use strict";
+var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    var desc = Object.getOwnPropertyDescriptor(m, k);
+    if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
+      desc = { enumerable: true, get: function() { return m[k]; } };
+    }
+    Object.defineProperty(o, k2, desc);
+}) : (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    o[k2] = m[k];
+}));
+var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
+    Object.defineProperty(o, "default", { enumerable: true, value: v });
+}) : function(o, v) {
+    o["default"] = v;
+});
+var __importStar = (this && this.__importStar) || (function () {
+    var ownKeys = function(o) {
+        ownKeys = Object.getOwnPropertyNames || function (o) {
+            var ar = [];
+            for (var k in o) if (Object.prototype.hasOwnProperty.call(o, k)) ar[ar.length] = k;
+            return ar;
+        };
+        return ownKeys(o);
+    };
+    return function (mod) {
+        if (mod && mod.__esModule) return mod;
+        var result = {};
+        if (mod != null) for (var k = ownKeys(mod), i = 0; i < k.length; i++) if (k[i] !== "default") __createBinding(result, mod, k[i]);
+        __setModuleDefault(result, mod);
+        return result;
+    };
+})();
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.deleteMedia = exports.deleteUploadedMediaFile = exports.uploadMedia = exports.uploadMediaFiles = exports.getAllMedia = void 0;
-const prisma_1 = __importDefault(require("../prisma"));
+const prisma_1 = __importStar(require("../prisma"));
 const fs_1 = __importDefault(require("fs"));
 const path_1 = __importDefault(require("path"));
 const getCandidateMediaDirs = () => [
@@ -53,9 +86,19 @@ exports.getAllMedia = getAllMedia;
 const uploadMediaFiles = async (req, res) => {
     try {
         ensureMediaDirsExist();
-        const files = req.files || (req.file ? [req.file] : []);
-        if (!files || files.length === 0) {
+        const rawFiles = req.files || (req.file ? [req.file] : []);
+        if (!rawFiles || rawFiles.length === 0) {
             return res.status(400).json({ message: 'No media files were selected.' });
+        }
+        // Deduplicate any repeated file streams in the same request
+        const files = [];
+        const seen = new Set();
+        for (const f of rawFiles) {
+            const key = `${f.originalname}_${f.size || f.buffer?.length || 0}`;
+            if (!seen.has(key)) {
+                seen.add(key);
+                files.push(f);
+            }
         }
         const savedMedia = await Promise.all(files.map(async (file) => {
             const ext = path_1.default.extname(file.originalname).toLowerCase() || '.jpg';
@@ -71,7 +114,7 @@ const uploadMediaFiles = async (req, res) => {
                 catch (e) { }
             }
             const fileUrl = `/uploads/media/${safeName}`;
-            // Save entry into MySQL database Media table
+            // Save entry into MySQL database Media table with permanent LONGBLOB storage
             try {
                 await prisma_1.default.media.create({
                     data: {
@@ -81,8 +124,11 @@ const uploadMediaFiles = async (req, res) => {
                         fileSize: file.size || file.buffer.length,
                         altText: cleanName.replace(/_/g, ' '),
                         dimensions: '1200x1200',
+                        data: file.buffer,
                     },
                 });
+                // Redundant direct pool update to guarantee BLOB persistence across all DB drivers
+                await prisma_1.mysqlPool.query('UPDATE `Media` SET `data` = ? WHERE `url` = ?', [file.buffer, fileUrl]).catch(() => { });
             }
             catch (dbErr) {
                 console.warn('Notice: Media record entry error:', dbErr);

@@ -617,6 +617,11 @@ export const AdminProductManagerPage: React.FC = () => {
                         <img
                           src={img}
                           alt={p.title || p.name}
+                          onError={(e) => {
+                            e.currentTarget.style.display = 'none';
+                            const fallback = e.currentTarget.parentElement?.querySelector('.product-thumb-fallback') as HTMLElement;
+                            if (fallback) fallback.style.display = 'flex';
+                          }}
                           style={{
                             width: 48,
                             height: 48,
@@ -625,11 +630,13 @@ export const AdminProductManagerPage: React.FC = () => {
                             border: '1px solid #e8e3d9',
                           }}
                         />
-                      ) : (
-                        <ThumbnailFallback>
-                          <Sparkles size={20} />
-                        </ThumbnailFallback>
-                      )}
+                      ) : null}
+                      <ThumbnailFallback
+                        className="product-thumb-fallback"
+                        style={{ display: img ? 'none' : 'flex' }}
+                      >
+                        <Sparkles size={20} />
+                      </ThumbnailFallback>
                     </td>
                     <td style={{ fontWeight: 600, color: '#1f1f1f' }}>
                       {p.title || p.name}

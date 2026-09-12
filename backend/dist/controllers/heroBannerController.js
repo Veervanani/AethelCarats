@@ -1,10 +1,43 @@
 "use strict";
+var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    var desc = Object.getOwnPropertyDescriptor(m, k);
+    if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
+      desc = { enumerable: true, get: function() { return m[k]; } };
+    }
+    Object.defineProperty(o, k2, desc);
+}) : (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    o[k2] = m[k];
+}));
+var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
+    Object.defineProperty(o, "default", { enumerable: true, value: v });
+}) : function(o, v) {
+    o["default"] = v;
+});
+var __importStar = (this && this.__importStar) || (function () {
+    var ownKeys = function(o) {
+        ownKeys = Object.getOwnPropertyNames || function (o) {
+            var ar = [];
+            for (var k in o) if (Object.prototype.hasOwnProperty.call(o, k)) ar[ar.length] = k;
+            return ar;
+        };
+        return ownKeys(o);
+    };
+    return function (mod) {
+        if (mod && mod.__esModule) return mod;
+        var result = {};
+        if (mod != null) for (var k = ownKeys(mod), i = 0; i < k.length; i++) if (k[i] !== "default") __createBinding(result, mod, k[i]);
+        __setModuleDefault(result, mod);
+        return result;
+    };
+})();
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.uploadHeroBannerImage = exports.reorderHeroBanners = exports.deleteHeroBanner = exports.updateHeroBanner = exports.createHeroBanner = exports.getAdminHeroBanners = exports.getPublicHeroBanners = exports.ensureHeroBannerTableExists = void 0;
-const prisma_1 = __importDefault(require("../prisma"));
+const prisma_1 = __importStar(require("../prisma"));
 const fs_1 = __importDefault(require("fs"));
 const path_1 = __importDefault(require("path"));
 const getCandidateHeroDirs = () => [
@@ -46,7 +79,21 @@ const saveUploadedFile = (file, prefix = 'hero') => {
         }
         catch (e) { }
     }
-    return `/uploads/hero-banners/${safeName}`;
+    const fileUrl = `/uploads/hero-banners/${safeName}`;
+    // Persist to MySQL Media table with LONGBLOB data for multi-device sync
+    prisma_1.default.media.create({
+        data: {
+            name: file.originalname,
+            url: fileUrl,
+            fileType: file.mimetype || 'image/jpeg',
+            fileSize: file.size || file.buffer?.length || 0,
+            altText: path_1.default.basename(file.originalname, ext),
+            dimensions: '1920x1080',
+            data: file.buffer,
+        },
+    }).catch((err) => console.warn('Hero media db save notice:', err));
+    prisma_1.mysqlPool.query('UPDATE `Media` SET `data` = ? WHERE `url` = ?', [file.buffer, fileUrl]).catch(() => { });
+    return fileUrl;
 };
 const extractFile = (req, fieldName, altFieldNames = []) => {
     if (req.file && (req.file.fieldname === fieldName || altFieldNames.includes(req.file.fieldname))) {
