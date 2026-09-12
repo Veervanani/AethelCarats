@@ -199,7 +199,6 @@ export const MediaUploader: React.FC<MediaUploaderProps> = ({
         const formData = new FormData();
         for (const file of chunk) {
           formData.append('files', file);
-          formData.append('file', file);
         }
 
         const res = await api.post('/admin/media/upload', formData);

@@ -497,7 +497,6 @@ export const AdminFilterManagerPage: React.FC = () => {
     try {
       const formData = new FormData();
       formData.append('files', file);
-      formData.append('file', file);
 
       const res = await api.post('/admin/media/upload', formData);
       const data = res.data;

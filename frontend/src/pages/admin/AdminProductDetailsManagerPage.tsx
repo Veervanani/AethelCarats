@@ -34,9 +34,6 @@ import {
 } from '../../components/admin/AdminUI';
 
 const StickyTopBar = styled.div`
-  position: sticky;
-  top: 64px;
-  z-index: 90;
   background: #ffffff;
   border: 1px solid #e8e3d9;
   border-radius: 8px;
@@ -47,11 +44,7 @@ const StickyTopBar = styled.div`
   flex-wrap: wrap;
   gap: 16px;
   margin-bottom: 24px;
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.03);
-
-  @media (max-width: 900px) {
-    top: 58px;
-  }
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.03);
 
   @media (max-width: 1024px) {
     flex-direction: column;
@@ -184,7 +177,7 @@ const DEFAULT_SECTIONS = [
     isActive: true,
     displayOrder: 0,
     items: [
-      { title: 'Product Description', description: 'A luxury Aura Diamond Atelier creation handcrafted in Surat, India.', isActive: true, displayOrder: 0 },
+      { title: 'Product Description', description: 'A luxury AethelCarats creation handcrafted in Surat, India.', isActive: true, displayOrder: 0 },
       { title: 'Craftsmanship Description', description: 'Hand-set under 40x microscopic precision by master artisans.', isActive: true, displayOrder: 1 },
       { title: 'Diamond & Gemstone Description', description: 'Certified conflict-free diamonds with Kimberley Process compliance.', isActive: true, displayOrder: 2 },
       { title: 'Customization Options', description: 'Customizable with 7 precious metal selections and bespoke engraving.', isActive: true, displayOrder: 3 }
@@ -192,12 +185,12 @@ const DEFAULT_SECTIONS = [
   },
   {
     type: 'EXPERIENCE',
-    title: 'YOUR AURA DIAMOND ATELIER EXPERIENCE',
+    title: 'YOUR AETHELCARATS EXPERIENCE',
     description: 'Luxury atelier benefits and white-glove experience assurances.',
     isActive: true,
     displayOrder: 1,
     items: [
-      { title: 'Expert Guidance', description: 'Consult directly with Aura Diamond Atelier specialists for sizing and diamond guidance.', icon: 'UserCheck', isActive: true, displayOrder: 0 },
+      { title: 'Expert Guidance', description: 'Consult directly with AethelCarats specialists for sizing and diamond guidance.', icon: 'UserCheck', isActive: true, displayOrder: 0 },
       { title: 'Bespoke Craftsmanship', description: 'Custom CAD 3D photorealistic rendering and master goldsmithing.', icon: 'Sparkles', isActive: true, displayOrder: 1 },
       { title: 'Quality Assurance', description: 'Independently certified by GIA / IGI with 40x microscopic quality control.', icon: 'ShieldCheck', isActive: true, displayOrder: 2 },
       { title: 'Lifetime Service', description: 'Includes complimentary annual prong checking, sizing, and professional cleaning.', icon: 'Award', isActive: true, displayOrder: 3 }
@@ -451,7 +444,6 @@ export const AdminProductDetailsManagerPage: React.FC = () => {
       setUploadingItemIdx({ secIdx, itemIdx });
       const formData = new FormData();
       formData.append('files', e.target.files[0]);
-      formData.append('file', e.target.files[0]);
 
       const res = await api.post('/admin/media/upload', formData);
       const data = res.data;

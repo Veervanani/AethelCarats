@@ -39,9 +39,6 @@ import {
 } from '../../components/admin/AdminUI';
 
 const StickyTopHeader = styled.div`
-  position: sticky;
-  top: 64px;
-  z-index: 80;
   background: #ffffff;
   border: 1px solid #e8e3d9;
   border-radius: 8px;
@@ -52,11 +49,7 @@ const StickyTopHeader = styled.div`
   flex-wrap: wrap;
   gap: 16px;
   margin-bottom: 24px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03);
-
-  @media (max-width: 900px) {
-    top: 58px;
-  }
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.03);
 
   h1 {
     font-family: 'Cormorant Garamond', Georgia, serif;

@@ -55,9 +55,6 @@ const PageContainer = styled.div`
 `;
 
 const StickyHeaderBar = styled.div`
-  position: sticky;
-  top: 64px;
-  z-index: 100;
   background: #11161b;
   color: #fffdf9;
   padding: 16px 20px;
@@ -72,10 +69,6 @@ const StickyHeaderBar = styled.div`
   box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
   box-sizing: border-box;
   width: 100%;
-
-  @media (max-width: 900px) {
-    top: 58px;
-  }
 
   .left-side {
     display: flex;

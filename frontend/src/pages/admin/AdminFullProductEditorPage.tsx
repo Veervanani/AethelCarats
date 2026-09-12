@@ -31,9 +31,6 @@ import {
 } from '../../components/admin/AdminUI';
 
 const StickyTopHeader = styled.div`
-  position: sticky;
-  top: 64px;
-  z-index: 80;
   background: #ffffff;
   border: 1px solid #e8e3d9;
   border-radius: 8px;
@@ -44,11 +41,7 @@ const StickyTopHeader = styled.div`
   flex-wrap: wrap;
   gap: 16px;
   margin-bottom: 24px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03);
-
-  @media (max-width: 900px) {
-    top: 58px;
-  }
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.03);
 
   .title-area {
     display: flex;
@@ -101,8 +94,6 @@ const MainEditorCol = styled.div`
 `;
 
 const StickySidebarCol = styled.div`
-  position: sticky;
-  top: 90px;
   display: flex;
   flex-direction: column;
   gap: 20px;
@@ -493,7 +484,7 @@ const ALL_RING_SIZES = [
 const DEFAULT_ACCORDIONS = [
   {
     id: 'exp',
-    title: 'YOUR AURA DIAMOND ATELIER EXPERIENCE',
+    title: 'YOUR AETHELCARATS EXPERIENCE',
     content: 'Every creation is handcrafted in our Surat atelier using certified conflict-free materials and 100% recycled precious metals.',
     enabled: true,
     defaultOpen: true,
@@ -622,6 +613,37 @@ export const AdminFullProductEditorPage: React.FC = () => {
     };
     fetchCategoryFilters();
   }, [currentCategory]);
+
+  // Dynamically extract style options for current jewellery type from Filter Management configs
+  const dynamicStyleFilter = (filterConfigs || []).find(
+    (f: any) =>
+      f.filterKey?.toLowerCase() === 'style' ||
+      f.filterKey?.toLowerCase() === 'ringstyle' ||
+      f.name?.toLowerCase().includes('style') ||
+      f.customerLabel?.toLowerCase().includes('style')
+  );
+
+  const dynamicStyleOptions: string[] = dynamicStyleFilter?.options?.length
+    ? dynamicStyleFilter.options.map((opt: any) => opt.label || opt.value).filter(Boolean)
+    : [];
+
+  const defaultStyles = JEWELRY_TYPE_STYLES[productData.jewelleryType || 'Rings'] || JEWELRY_TYPE_STYLES.Rings || [];
+
+  const availableStyles: string[] = Array.from(
+    new Set([...dynamicStyleOptions, ...defaultStyles])
+  );
+
+  const availableJewelleryTypes: string[] = Array.from(
+    new Set([
+      ...categories.map((c: any) => c.name).filter(Boolean),
+      'Rings',
+      'Earrings',
+      'Necklaces',
+      'Bracelets',
+      'Pendants',
+      'Other',
+    ])
+  );
 
   useEffect(() => {
     const handleClickOutside = (e: MouseEvent) => {
@@ -991,7 +1013,6 @@ export const AdminFullProductEditorPage: React.FC = () => {
         for (const file of chunk) {
           const compressed = await compressImageFile(file);
           formData.append('files', compressed);
-          formData.append('file', compressed);
         }
 
         const res = await api.post('/admin/media/upload', formData);
@@ -1335,8 +1356,9 @@ export const AdminFullProductEditorPage: React.FC = () => {
         await api.put(`/api/v1/admin/products/${id}`, payload);
       } else {
         const createRes = await api.post('/api/v1/admin/products', payload);
-        if (createRes.data?.id) {
-          navigate(`${PRIVATE_ADMIN_PATH}/products/${createRes.data.id}/edit`, { replace: true });
+        const createdId = createRes.data?.id || createRes.data?.product?.id || createRes.data?.productId;
+        if (createdId) {
+          navigate(`${PRIVATE_ADMIN_PATH}/products/${createdId}/edit`, { replace: true });
         }
       }
 
@@ -1440,7 +1462,22 @@ export const AdminFullProductEditorPage: React.FC = () => {
               </AdminFormGroup>
               <AdminFormGroup>
                 <label>Category</label>
-                <AdminSelect value={productData.categoryId || ''} onChange={(e) => handleFieldChange('categoryId', e.target.value)}>
+                <AdminSelect
+                  value={productData.categoryId || ''}
+                  onChange={(e) => {
+                    const catId = e.target.value;
+                    handleFieldChange('categoryId', catId);
+                    const selCat = categories.find((c: any) => c.id === catId);
+                    if (selCat?.name) {
+                      const matchedType = availableJewelleryTypes.find(
+                        (t) => t.toLowerCase() === selCat.name.toLowerCase()
+                      );
+                      if (matchedType) {
+                        handleFieldChange('jewelleryType', matchedType);
+                      }
+                    }
+                  }}
+                >
                   <option value="">-- Select Category --</option>
                   {categories.map((cat) => (
                     <option key={cat.id} value={cat.id}>
@@ -1458,21 +1495,20 @@ export const AdminFullProductEditorPage: React.FC = () => {
                   value={productData.jewelleryType || 'Rings'}
                   onChange={(e) => {
                     const newType = e.target.value;
-                    const availableStyles = JEWELRY_TYPE_STYLES[newType] || JEWELRY_TYPE_STYLES.Rings;
+                    const nextStyles = (JEWELRY_TYPE_STYLES[newType] || JEWELRY_TYPE_STYLES.Rings || []);
                     setProductData((prev: any) => ({
                       ...prev,
                       jewelleryType: newType,
-                      style: availableStyles.includes(prev.style) ? prev.style : availableStyles[0],
-                      ringStyle: availableStyles.includes(prev.style) ? prev.style : availableStyles[0],
+                      style: nextStyles.includes(prev.style) ? prev.style : nextStyles[0],
+                      ringStyle: nextStyles.includes(prev.style) ? prev.style : nextStyles[0],
                     }));
                   }}
                 >
-                  <option value="Rings">Rings</option>
-                  <option value="Earrings">Earrings</option>
-                  <option value="Necklaces">Necklaces</option>
-                  <option value="Bracelets">Bracelets</option>
-                  <option value="Pendants">Pendants</option>
-                  <option value="Other">Other</option>
+                  {availableJewelleryTypes.map((type) => (
+                    <option key={type} value={type}>
+                      {type}
+                    </option>
+                  ))}
                 </AdminSelect>
               </AdminFormGroup>
 
@@ -1487,11 +1523,14 @@ export const AdminFullProductEditorPage: React.FC = () => {
                   }}
                 >
                   <option value="">-- Select Style --</option>
-                  {(JEWELRY_TYPE_STYLES[productData.jewelleryType || 'Rings'] || JEWELRY_TYPE_STYLES.Rings).map((st) => (
+                  {availableStyles.map((st) => (
                     <option key={st} value={st}>
                       {st}
                     </option>
                   ))}
+                  {productData.style && !availableStyles.includes(productData.style) && (
+                    <option value={productData.style}>{productData.style}</option>
+                  )}
                 </AdminSelect>
               </AdminFormGroup>
 

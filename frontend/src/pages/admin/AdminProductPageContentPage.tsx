@@ -752,7 +752,6 @@ export const AdminProductPageContentPage: React.FC = () => {
 
     try {
       showToast('Uploading image to persistent storage...', 'info');
-      formData.append('file', file);
       const res = await api.post('/admin/media/upload', formData);
 
       if (res.data && res.data.urls && res.data.urls.length > 0) {

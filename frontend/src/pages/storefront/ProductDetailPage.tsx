@@ -1419,38 +1419,11 @@ const SaleCountdownTimer: React.FC<{ saleEndsAt: string }> = ({ saleEndsAt }) =>
 };
 
 const getCleanFullDescription = (text: string | undefined, title: string | undefined): string => {
-  let dbFull = (text || '').trim();
-  const standardSuffix = "\n\n💎 Handcrafted & Made to Order\nEvery piece we make is done to order right here in our Surat workshop. We never grab pre-made items off a shelf. Our team casts the metal and sets your stones one by one, which means your jewelry gets a proper, secure setting that can handle everyday life. If you need an engagement ring or just want a new piece for yourself, we put it together the right way.\n━━━━━━━━━━━━━━━━━━\n🎨 Customize Your Design\nWe handle both loose diamond sourcing and finished custom jewelry in-house, so changing up a design is no problem at all.\n✔️ Want a bigger center stone?\n✔️ Need a different prong style?\n✔️ Looking for a matching band?\n✔️ Need help sourcing a specific stone?\n✔️ Want a totally new custom design?\nSend over a message and we can work out the details.\n━━━━━━━━━━━━━━━━━━\n🚚 Production & Delivery\n⏱️ Crafting Time: Give us 7 to 12 business days to make it.\n🌐 Delivery: Secure shipping anywhere in the world.\n🎁 Packaging: Arrives packed and ready to gift.\n━━━━━━━━━━━━━━━━━━\n📋 Cancellations & Returns\n* Canceled within 3 hours: 10% fee applies.\n* Canceled after 6 hours: 20% fee applies.\n* Returns: Let us know within 7 days of delivery. Keep in mind that anything custom-made, personalized, or engraved is a final sale.\n━━━━━━━━━━━━━━━━━━\n❤️ About AethelCarats Fine Jewellery Atelier\nAethelCarats Fine Jewellery Atelier is an actual manufacturing workshop based in Surat. We do not use middlemen. We source the loose lab-grown and natural diamonds ourselves, and we cast and polish the final custom jewelry right here. That means you get the piece straight from the source.\n📩 Reach out if you need advice on picking a stone or want to start a custom build!";
-
-  if (dbFull.length > 500 && (dbFull.includes('AethelCarats') || dbFull.includes('Aura Diamond Atelier')) && dbFull.includes('Surat')) {
+  const dbFull = (text || '').trim();
+  if (dbFull) {
     return dbFull;
   }
-
-  const truncatedMarkers = [
-    'Every piece we make',
-    'Every piece we make is done to order right here in ou',
-    'Every piece we make is done to order right here inour S',
-    'Every piece we make is done to order right here in',
-    'Handcrafted & Made to Order',
-    'ðŸ’Ž Handcrafted & Made to Order',
-    '🔹 Handcrafted & Made to Order',
-    '💎 Handcrafted & Made to Order'
-  ];
-
-  let cleanBase = dbFull;
-  for (const marker of truncatedMarkers) {
-    const pos = cleanBase.lastIndexOf(marker);
-    if (pos > 20) {
-      cleanBase = cleanBase.substring(0, pos).trim();
-      break;
-    }
-  }
-
-  if (!cleanBase) {
-    cleanBase = title || 'AethelCarats Fine Jewellery Atelier Fine Jewelry Piece';
-  }
-
-  return cleanBase + standardSuffix;
+  return (title || '').trim() || 'AethelCarats Fine Jewellery Creation';
 };
 
 // ==========================================

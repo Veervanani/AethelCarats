@@ -53,9 +53,20 @@ export const getAllMedia = async (req: Request, res: Response) => {
 export const uploadMediaFiles = async (req: AuthRequest, res: Response) => {
   try {
     ensureMediaDirsExist();
-    const files = (req.files as Express.Multer.File[]) || (req.file ? [req.file] : []);
-    if (!files || files.length === 0) {
+    const rawFiles = (req.files as Express.Multer.File[]) || (req.file ? [req.file] : []);
+    if (!rawFiles || rawFiles.length === 0) {
       return res.status(400).json({ message: 'No media files were selected.' });
+    }
+
+    // Deduplicate any repeated file streams in the same request
+    const files: Express.Multer.File[] = [];
+    const seen = new Set<string>();
+    for (const f of rawFiles) {
+      const key = `${f.originalname}_${f.size || f.buffer?.length || 0}`;
+      if (!seen.has(key)) {
+        seen.add(key);
+        files.push(f);
+      }
     }
 
     const savedMedia = await Promise.all(

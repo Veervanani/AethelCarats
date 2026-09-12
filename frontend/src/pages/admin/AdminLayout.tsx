@@ -54,7 +54,7 @@ const AdminWrapper = styled.div`
   min-height: 100vh;
   width: 100%;
   max-width: 100vw;
-  overflow-x: hidden;
+  overflow-x: clip;
   display: flex;
   flex-direction: column;
   background-color: #faf8f5;
@@ -534,7 +534,7 @@ const PageCanvas = styled.main`
   max-width: 1600px;
   margin: 0 auto;
   box-sizing: border-box;
-  overflow-x: hidden;
+  overflow-x: clip;
   min-width: 0;
 
   @media (max-width: 768px) {

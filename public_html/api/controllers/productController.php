@@ -68,23 +68,21 @@ if (!function_exists('getFullDescriptionForProduct')) {
         ensureDescriptionSchemaFix();
         $dbFull = trim($product['fullDescription'] ?? ($product['description'] ?? ''));
 
-        $standardSuffix = "\n\n💎 Handcrafted & Made to Order\nEvery piece we make is done to order right here in our workshop. We never grab pre-made items off a shelf. Our master jewelers cast the metal and set your stones one by one, which means your jewelry gets a proper, secure setting that can handle everyday life. If you need an engagement ring or just want a new bespoke piece, we create it to perfection.\n━━━━━━━━━━━━━━━━━━\n🎨 Customize Your Design\nWe handle both loose diamond sourcing and finished custom jewelry in-house, so changing up a design is no problem at all.\n✔️ Want a bigger center stone?\n✔️ Need a different prong style?\n✔️ Looking for a matching band?\n✔️ Need help sourcing a specific stone?\n✔️ Want a totally new custom design?\nSend over a message and we can work out the details.\n━━━━━━━━━━━━━━━━━━\n🚚 Production & Delivery\n⏱️ Crafting Time: Give us 7 to 12 business days to make it.\n🌐 Delivery: Secure insured shipping anywhere in the world.\n🎁 Packaging: Arrives packed in luxury presentation box, ready to gift.\n━━━━━━━━━━━━━━━━━━\n📋 Cancellations & Returns\n* Canceled within 3 hours: 10% fee applies.\n* Canceled after 6 hours: 20% fee applies.\n* Returns: Let us know within 7 days of delivery. Keep in mind that anything custom-made, personalized, or engraved is a final sale.\n━━━━━━━━━━━━━━━━━━\n❤️ About Aura Diamond Atelier\nAura Diamond Atelier is a premier fine jewellery atelier. We source certified loose lab-grown and natural diamonds directly, and we cast and hand-finish every piece of fine jewellery in-house.\n📩 Reach out if you need advice on picking a stone or want to start a custom build!";
-
-        // If dbFull is already complete (> 600 chars and has section headers), return it
-        if (!empty($dbFull) && strlen($dbFull) > 600 && str_contains($dbFull, 'Handcrafted') && str_contains($dbFull, 'Aura Diamond Atelier')) {
+        // If a description exists in the database, always return it!
+        if (!empty($dbFull)) {
             return $dbFull;
         }
 
-        // Try lookup in Etsy CSV map
+        // Only fallback to Etsy CSV or defaults if database has no description
         $title = $product['title'] ?? ($product['name'] ?? '');
         if (!empty($title)) {
             $map = getEtsyDescriptionMap();
             $norm = strtolower(preg_replace('/[^a-z0-9]/i', '', $title));
-            if (isset($map[$norm]) && strlen($map[$norm]) > 600) {
+            if (isset($map[$norm]) && strlen($map[$norm]) > 0) {
                 return $map[$norm];
             }
             foreach ($map as $normKey => $fullText) {
-                if (!empty($normKey) && strlen($fullText) > 600) {
+                if (!empty($normKey) && strlen($fullText) > 0) {
                     if (str_contains($normKey, substr($norm, 0, 15)) || str_contains($norm, substr($normKey, 0, 15))) {
                         return $fullText;
                     }
@@ -92,31 +90,7 @@ if (!function_exists('getFullDescriptionForProduct')) {
             }
         }
 
-        // Clean truncated end markers if present
-        $cleanBase = $dbFull;
-        $truncatedMarkers = [
-            'Every piece we make',
-            'Every piece we make is done to order right here in ou',
-            'Every piece we make is done to order right here in our S',
-            'Every piece we make is done to order right here in',
-            'Handcrafted & Made to Order',
-            'ðŸ’Ž Handcrafted & Made to Order',
-            '💎 Handcrafted & Made to Order'
-        ];
-
-        foreach ($truncatedMarkers as $marker) {
-            $pos = strrpos($cleanBase, $marker);
-            if ($pos !== false && $pos > 20) {
-                $cleanBase = trim(substr($cleanBase, 0, $pos));
-                break;
-            }
-        }
-
-        if (empty($cleanBase)) {
-            $cleanBase = !empty($title) ? $title : 'Aura Atelier Fine Jewellery Piece';
-        }
-
-        return $cleanBase . $standardSuffix;
+        return !empty($title) ? $title : 'AethelCarats Fine Jewellery Creation';
     }
 }
 
@@ -172,10 +146,14 @@ if (!function_exists('mapProductResponse')) {
             ['label' => '18K Rose Gold', 'code' => '18k', 'circleColor' => '#E4A8A5', 'priceAdjustment' => 350],
         ]);
 
-        $metalsConfig = array_values(array_filter($rawMetals, function($m) {
-            $lbl = strtolower($m['label'] ?? '');
-            return !str_contains($lbl, '9k') && !str_contains($lbl, '10k') && !str_contains($lbl, 'platinum') && !str_contains($lbl, 'silver') && !str_contains($lbl, 'ag');
-        }));
+        $metalsConfig = (is_array($rawMetals) && count($rawMetals) > 0) ? $rawMetals : [
+            ['label' => '14K Yellow Gold', 'code' => '14k', 'circleColor' => '#E8C872', 'priceAdjustment' => 0],
+            ['label' => '14K White Gold', 'code' => '14k', 'circleColor' => '#CBD5E1', 'priceAdjustment' => 0],
+            ['label' => '14K Rose Gold', 'code' => '14k', 'circleColor' => '#E4A8A5', 'priceAdjustment' => 0],
+            ['label' => '18K Yellow Gold', 'code' => '18k', 'circleColor' => '#E8C872', 'priceAdjustment' => 250],
+            ['label' => '18K White Gold', 'code' => '18k', 'circleColor' => '#CBD5E1', 'priceAdjustment' => 350],
+            ['label' => '18K Rose Gold', 'code' => '18k', 'circleColor' => '#E4A8A5', 'priceAdjustment' => 350],
+        ];
 
         $benefitsConfig = safeJsonParse($product['benefitsConfig'] ?? null, [
             ['icon' => 'Truck', 'title' => 'Free Insured Delivery'],
@@ -207,10 +185,7 @@ if (!function_exists('mapProductResponse')) {
 
         $pricingMatrix = safeJsonParse($product['pricingMatrix'] ?? null, new stdClass());
         $rawVariations = safeJsonParse($product['variationsJson'] ?? null, []);
-        $variationsConfig = array_values(array_filter($rawVariations, function($v) {
-            $metalStr = strtolower($v['metal'] ?? '');
-            return !str_contains($metalStr, '9k') && !str_contains($metalStr, '10k') && !str_contains($metalStr, 'silver') && !str_contains($metalStr, 'ag') && !str_contains($metalStr, 'platinum');
-        }));
+        $variationsConfig = is_array($rawVariations) ? $rawVariations : [];
 
         $customOptionsConfig = safeJsonParse($product['customOptionsJson'] ?? null, []);
         $shippingInfoConfig  = safeJsonParse($product['shippingInfoJson'] ?? null, [
@@ -292,7 +267,7 @@ if (!function_exists('mapProductResponse')) {
         $res['name']                    = $title;
         $res['primaryImage']            = $primaryImage;
         $res['secondaryImage']          = $secondaryImage;
-        $res['originalPublicPrice']     = $rawPrice;
+        $res['originalPublicPrice']     = $price;
         $res['hasCustomerSpecialPrice'] = $customerPriceRecord !== null;
         $res['pricingMode']             = $product['pricingMode'] ?? 'BASE';
         $res['enableMetalSelection']    = isset($product['enableMetalSelection']) ? (bool) $product['enableMetalSelection'] : true;
@@ -1449,6 +1424,21 @@ function handleSaveProduct(): void {
         $shortDesc    = isset($body['shortDescription']) ? $body['shortDescription'] : ($existing['shortDescription'] ?? '');
         $fullDesc     = isset($body['fullDescription']) ? $body['fullDescription'] : (isset($body['description']) ? $body['description'] : ($existing['fullDescription'] ?? ''));
 
+        $style        = isset($body['style']) ? trim($body['style']) : (isset($body['ringStyle']) ? trim($body['ringStyle']) : ($existing['style'] ?? ($existing['ringStyle'] ?? null)));
+        $ringStyle    = isset($body['ringStyle']) ? trim($body['ringStyle']) : (isset($body['style']) ? trim($body['style']) : ($existing['ringStyle'] ?? ($existing['style'] ?? null)));
+        $gender       = isset($body['gender']) ? trim($body['gender']) : ($existing['gender'] ?? 'Unisex');
+
+        $diamondDetRaw = isset($body['diamondDetails']) ? $body['diamondDetails'] : (isset($body['diamondDetailsJson']) ? $body['diamondDetailsJson'] : null);
+        $diamondDet    = is_array($diamondDetRaw) ? $diamondDetRaw : (is_string($diamondDetRaw) ? (safeJsonParse($diamondDetRaw, []) ?: []) : []);
+        $shape         = $diamondDet['shape'] ?? ($body['shape'] ?? ($existing['shape'] ?? null));
+        $carat         = isset($diamondDet['caratWeight']) ? (float)$diamondDet['caratWeight'] : (isset($body['carat']) ? (float)$body['carat'] : (isset($existing['carat']) ? (float)$existing['carat'] : null));
+        $color         = $diamondDet['color'] ?? ($body['color'] ?? ($existing['color'] ?? null));
+        $clarity       = $diamondDet['clarity'] ?? ($body['clarity'] ?? ($existing['clarity'] ?? null));
+        $cut           = $diamondDet['cut'] ?? ($body['cut'] ?? ($existing['cut'] ?? null));
+        $certification = $diamondDet['certification'] ?? ($body['certification'] ?? ($existing['certification'] ?? null));
+        $certificateNo = $diamondDet['certificateNumber'] ?? ($body['certificateNo'] ?? ($existing['certificateNo'] ?? null));
+        $diamondType   = isset($diamondDet['origin']) ? (strtolower($diamondDet['origin']) === 'natural' ? 'NATURAL' : 'LAB_GROWN') : ($body['diamondType'] ?? ($existing['diamondType'] ?? null));
+
         $master14k    = isset($body['masterPrice14k']) ? (float) $body['masterPrice14k'] : (isset($existing['masterPrice14k']) ? (float)$existing['masterPrice14k'] : $price);
         $master18k    = isset($body['masterPrice18k']) ? (float) $body['masterPrice18k'] : (isset($existing['masterPrice18k']) ? (float)$existing['masterPrice18k'] : ($price + 250));
         $masterAg     = isset($body['masterPriceSilver']) ? (float) $body['masterPriceSilver'] : (isset($existing['masterPriceSilver']) ? (float)$existing['masterPriceSilver'] : max(0, $price - 500));
@@ -1462,13 +1452,7 @@ function handleSaveProduct(): void {
         $isBestseller         = isset($body['isBestseller']) ? ($body['isBestseller'] ? 1 : 0) : ($existing['isBestseller'] ?? 0);
 
         $rawMetalsInput = isset($body['metalsConfig']) ? $body['metalsConfig'] : (isset($existing['metalsConfig']) ? safeJsonParse($existing['metalsConfig'], []) : []);
-        if (is_array($rawMetalsInput)) {
-            $rawMetalsInput = array_values(array_filter($rawMetalsInput, function($m) {
-                $lbl = strtolower(is_array($m) ? ($m['label'] ?? '') : (string)$m);
-                return !str_contains($lbl, 'silver') && !str_contains($lbl, 'ag');
-            }));
-        }
-        $metalsCfgJson = json_encode($rawMetalsInput);
+        $metalsCfgJson = json_encode(is_array($rawMetalsInput) ? array_values($rawMetalsInput) : []);
 
         $customOptsJson   = isset($body['customOptions']) ? json_encode($body['customOptions']) : (isset($body['customOptionsJson']) ? json_encode($body['customOptionsJson']) : ($existing['customOptionsJson'] ?? null));
         $accordionsJson   = isset($body['accordionsConfig']) ? json_encode($body['accordionsConfig']) : ($existing['accordionsConfig'] ?? null);
@@ -1478,29 +1462,27 @@ function handleSaveProduct(): void {
         $diamondDetJson   = isset($body['diamondDetails']) ? json_encode($body['diamondDetails']) : (isset($body['diamondDetailsJson']) ? json_encode($body['diamondDetailsJson']) : ($existing['diamondDetailsJson'] ?? null));
 
         $rawVarsInput = isset($body['variations']) ? $body['variations'] : (isset($body['variationsJson']) ? (is_array($body['variationsJson']) ? $body['variationsJson'] : safeJsonParse($body['variationsJson'], [])) : (isset($existing['variationsJson']) ? safeJsonParse($existing['variationsJson'], []) : []));
-        if (is_array($rawVarsInput)) {
-            $rawVarsInput = array_values(array_filter($rawVarsInput, function($v) {
-                $m = strtolower(is_array($v) ? ($v['metal'] ?? '') : '');
-                return !str_contains($m, 'silver') && !str_contains($m, 'ag');
-            }));
-        }
-        $variationsJson = json_encode($rawVarsInput);
+        $variationsJson = json_encode(is_array($rawVarsInput) ? array_values($rawVarsInput) : []);
 
         $pdo->beginTransaction();
 
         if ($existing) {
-            $uStmt = $pdo->prepare("UPDATE `Product` SET `title` = ?, `name` = ?, `slug` = ?, `sku` = ?, `price` = ?, `comparePrice` = ?, `status` = ?, `categoryId` = ?, `jewelleryType` = ?, `mainImage` = ?, `secondaryImage` = ?, `shortDescription` = ?, `fullDescription` = ?, `masterPrice14k` = ?, `masterPrice18k` = ?, `masterPriceSilver` = ?, `metalsConfig` = ?, `customOptionsJson` = ?, `accordionsConfig` = ?, `benefitsConfig` = ?, `internalTagsJson` = ?, `seoSocialJson` = ?, `diamondDetailsJson` = ?, `variationsJson` = ?, `enableMetalSelection` = ?, `enableCustomOptions` = ?, `enableRingSize` = ?, `isRingSizeRequired` = ?, `isFeatured` = ?, `isNewArrival` = ?, `isBestseller` = ?, `updatedAt` = NOW() WHERE `id` = ?");
+            $uStmt = $pdo->prepare("UPDATE `Product` SET `title` = ?, `name` = ?, `slug` = ?, `sku` = ?, `price` = ?, `comparePrice` = ?, `status` = ?, `categoryId` = ?, `jewelleryType` = ?, `style` = ?, `ringStyle` = ?, `gender` = ?, `shape` = ?, `carat` = ?, `color` = ?, `clarity` = ?, `cut` = ?, `certification` = ?, `certificateNo` = ?, `diamondType` = ?, `mainImage` = ?, `secondaryImage` = ?, `shortDescription` = ?, `fullDescription` = ?, `masterPrice14k` = ?, `masterPrice18k` = ?, `masterPriceSilver` = ?, `metalsConfig` = ?, `customOptionsJson` = ?, `accordionsConfig` = ?, `benefitsConfig` = ?, `internalTagsJson` = ?, `seoSocialJson` = ?, `diamondDetailsJson` = ?, `variationsJson` = ?, `enableMetalSelection` = ?, `enableCustomOptions` = ?, `enableRingSize` = ?, `isRingSizeRequired` = ?, `isFeatured` = ?, `isNewArrival` = ?, `isBestseller` = ?, `updatedAt` = NOW() WHERE `id` = ?");
             $uStmt->execute([
-                $title, $title, $slug, $sku, $price, $compare, $status, $catId, $jewelleryType, $mainImage, $secondImage, $shortDesc, $fullDesc,
+                $title, $title, $slug, $sku, $price, $compare, $status, $catId, $jewelleryType, $style, $ringStyle, $gender,
+                $shape, $carat, $color, $clarity, $cut, $certification, $certificateNo, $diamondType,
+                $mainImage, $secondImage, $shortDesc, $fullDesc,
                 $master14k, $master18k, $masterAg, $metalsCfgJson, $customOptsJson, $accordionsJson, $benefitsJson, $internalTagsJson, $seoSocialJson, $diamondDetJson, $variationsJson,
                 $enableMetalSelection, $enableCustomOptions, $enableRingSize, $isRingSizeRequired, $isFeatured, $isNewArrival, $isBestseller,
                 $existing['id']
             ]);
             $productId = $existing['id'];
         } else {
-            $iStmt = $pdo->prepare("INSERT INTO `Product` (`id`, `title`, `name`, `slug`, `sku`, `price`, `comparePrice`, `status`, `categoryId`, `jewelleryType`, `mainImage`, `secondaryImage`, `shortDescription`, `fullDescription`, `masterPrice14k`, `masterPrice18k`, `masterPriceSilver`, `metalsConfig`, `customOptionsJson`, `accordionsConfig`, `benefitsConfig`, `internalTagsJson`, `seoSocialJson`, `diamondDetailsJson`, `variationsJson`, `enableMetalSelection`, `enableCustomOptions`, `enableRingSize`, `isRingSizeRequired`, `isFeatured`, `isNewArrival`, `isBestseller`, `createdAt`, `updatedAt`) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, NOW(), NOW())");
+            $iStmt = $pdo->prepare("INSERT INTO `Product` (`id`, `title`, `name`, `slug`, `sku`, `price`, `comparePrice`, `status`, `categoryId`, `jewelleryType`, `style`, `ringStyle`, `gender`, `shape`, `carat`, `color`, `clarity`, `cut`, `certification`, `certificateNo`, `diamondType`, `mainImage`, `secondaryImage`, `shortDescription`, `fullDescription`, `masterPrice14k`, `masterPrice18k`, `masterPriceSilver`, `metalsConfig`, `customOptionsJson`, `accordionsConfig`, `benefitsConfig`, `internalTagsJson`, `seoSocialJson`, `diamondDetailsJson`, `variationsJson`, `enableMetalSelection`, `enableCustomOptions`, `enableRingSize`, `isRingSizeRequired`, `isFeatured`, `isNewArrival`, `isBestseller`, `createdAt`, `updatedAt`) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, NOW(), NOW())");
             $iStmt->execute([
-                $id, $title, $title, $slug, $sku, $price, $compare, $status, $catId, $jewelleryType, $mainImage, $secondImage, $shortDesc, $fullDesc,
+                $id, $title, $title, $slug, $sku, $price, $compare, $status, $catId, $jewelleryType, $style, $ringStyle, $gender,
+                $shape, $carat, $color, $clarity, $cut, $certification, $certificateNo, $diamondType,
+                $mainImage, $secondImage, $shortDesc, $fullDesc,
                 $master14k, $master18k, $masterAg, $metalsCfgJson, $customOptsJson, $accordionsJson, $benefitsJson, $internalTagsJson, $seoSocialJson, $diamondDetJson, $variationsJson,
                 $enableMetalSelection, $enableCustomOptions, $enableRingSize, $isRingSizeRequired, $isFeatured, $isNewArrival, $isBestseller
             ]);
@@ -1527,6 +1509,7 @@ function handleSaveProduct(): void {
         $savedProduct = $rStmt->fetch();
 
         jsonResponse([
+            'id'      => $productId,
             'message' => 'Product saved successfully',
             'product' => mapProductResponse($savedProduct)
         ], 200);

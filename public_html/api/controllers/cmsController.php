@@ -632,6 +632,18 @@ function handleUploadMedia(): void {
                 $fileList[] = $f;
             }
 
+            // Deduplicate files in case client sends duplicate fields
+            $uniqueList = [];
+            $seenKeys = [];
+            foreach ($fileList as $item) {
+                $key = ($item['name'] ?? '') . '_' . ($item['size'] ?? 0);
+                if (!isset($seenKeys[$key])) {
+                    $seenKeys[$key] = true;
+                    $uniqueList[] = $item;
+                }
+            }
+            $fileList = $uniqueList;
+
             foreach ($fileList as $item) {
                 $ext = strtolower(pathinfo($item['name'], PATHINFO_EXTENSION)) ?: 'png';
                 $filename = 'media_' . time() . '_' . bin2hex(random_bytes(4)) . '.' . $ext;

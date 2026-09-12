@@ -878,7 +878,6 @@ export const api = {
   uploadHeroBannerImage: async (file: File) => {
     const formData = new FormData();
     formData.append('file', file);
-    formData.append('files', file);
     const res = await API.post<{ url: string; path: string }>('/admin/hero-banners/upload-image', formData);
     return res.data;
   },
