@@ -2582,7 +2582,12 @@ export const ProductDetailPage: React.FC = () => {
       </PageWrapper>
 
       {/* EXTRA STOREFRONT SECTIONS */}
-      <SimilarItemsSection items={related} currentProductId={product.id} content={pContent} />
+      <SimilarItemsSection 
+        items={related} 
+        currentProductId={product.id} 
+        category={(product as any).jewelleryType || (product as any).category?.name || (typeof (product as any).category === 'string' ? (product as any).category : '')} 
+        content={pContent} 
+      />
       <AtelierExperienceBanner content={pContent} />
       <ItemReviewsSection productName={product.name || product.title} content={pContent} productId={product.id} reviews={(product as any).reviews} />
       <RecentlyViewedSection currentProductId={product.id} content={pContent} />

@@ -874,58 +874,7 @@ const SimilarHeader = styled.h2`
   margin-bottom: 28px;
 `;
 
-const DEMO_FALLBACK_PRODUCTS = [
-  {
-    id: 'demo_sim_1',
-    name: 'Classic Four Prong Solitaire Engagement Ring in 14K Yellow Gold',
-    title: 'Classic Four Prong Solitaire Engagement Ring in 14K Yellow Gold',
-    slug: 'aura-signature-solitaire-ring',
-    mainImage: '/assets/gem_rings_cat.png',
-    secondaryImage: '/assets/gem_rings_cat_2.png',
-    price: 870,
-    basePrice: 870,
-    metal: '14K Yellow Gold',
-    category: 'Rings',
-  },
-  {
-    id: 'demo_sim_2',
-    name: 'Petite Micropavé Hidden Halo Engagement Ring in 14K White Gold',
-    title: 'Petite Micropavé Hidden Halo Engagement Ring in 14K White Gold',
-    slug: 'aura-signature-solitaire-ring',
-    mainImage: '/assets/gem_rings_cat_2.png',
-    secondaryImage: '/assets/gem_rings_cat.png',
-    price: 1645,
-    basePrice: 1645,
-    metal: '14K White Gold',
-    category: 'Rings',
-  },
-  {
-    id: 'demo_sim_3',
-    name: 'Chain-Set Initial N Necklace With Lab-Grown Diamonds In 14K White Gold',
-    title: 'Chain-Set Initial N Necklace With Lab-Grown Diamonds In 14K White Gold',
-    slug: 'aura-signature-solitaire-ring',
-    mainImage: '/assets/gem_rings_cat.png',
-    secondaryImage: '/assets/gem_rings_cat_2.png',
-    price: 1140,
-    basePrice: 1140,
-    metal: '14K White Gold',
-    category: 'Necklaces',
-  },
-  {
-    id: 'demo_sim_4',
-    name: '7" Four Prong Diamond Tennis Bracelet In 14K White Gold',
-    title: '7" Four Prong Diamond Tennis Bracelet In 14K White Gold',
-    slug: 'aura-signature-solitaire-ring',
-    mainImage: '/assets/gem_rings_cat_2.png',
-    secondaryImage: '/assets/gem_rings_cat.png',
-    price: 3730,
-    basePrice: 3730,
-    metal: '14K White Gold',
-    category: 'Bracelets',
-  },
-];
-
-export const SimilarItemsSection: React.FC<{ items?: any[]; currentProductId?: string; content?: any }> = ({ items = [], currentProductId, content }) => {
+export const SimilarItemsSection: React.FC<{ items?: any[]; currentProductId?: string; category?: string; content?: any }> = ({ items = [], currentProductId, category, content }) => {
   const [displayItems, setDisplayItems] = useState<any[]>([]);
   const scrollRef = React.useRef<HTMLDivElement>(null);
 
@@ -938,24 +887,32 @@ export const SimilarItemsSection: React.FC<{ items?: any[]; currentProductId?: s
   useEffect(() => {
     let list = Array.isArray(items) ? items.filter((p: any) => p && p.id !== currentProductId) : [];
 
-    api.getProducts({ limit: 16, status: 'ACTIVE' })
+    if (list.length > 0) {
+      setDisplayItems(list);
+      return;
+    }
+
+    const queryParams: any = { limit: 16, status: 'ACTIVE' };
+    if (category) {
+      queryParams.jewelleryType = category;
+    }
+
+    api.getProducts(queryParams)
       .then((res: any) => {
         const prods = Array.isArray(res) ? res : res?.products || [];
         const filtered = prods.filter((p: any) => p && p.id !== currentProductId);
-        const combined = Array.from(new Set([...list, ...filtered]));
-
-        if (combined.length > 0) {
-          setDisplayItems(combined);
-        } else {
-          setDisplayItems(DEMO_FALLBACK_PRODUCTS);
-        }
+        setDisplayItems(filtered);
       })
       .catch(() => {
-        setDisplayItems(list.length > 0 ? list : DEMO_FALLBACK_PRODUCTS);
+        setDisplayItems(list);
       });
-  }, [items, currentProductId]);
+  }, [items, currentProductId, category]);
 
-  const cardsToRender = displayItems.length > 0 ? displayItems : DEMO_FALLBACK_PRODUCTS;
+  const cardsToRender = displayItems.filter((p: any) => p && p.id !== currentProductId);
+
+  if (cardsToRender.length === 0) {
+    return null;
+  }
 
   const handleScroll = (dir: 'left' | 'right') => {
     if (scrollRef.current) {
@@ -1052,6 +1009,11 @@ export const RecentlyViewedSection: React.FC<{ currentProductId?: string; conten
       if (raw) stored = JSON.parse(raw);
     } catch (e) {}
 
+    if (!Array.isArray(stored)) {
+      setRecentProducts([]);
+      return;
+    }
+
     const seenKeys = new Set<string>();
     const getKeys = (p: any) => {
       const keys: string[] = [];
@@ -1077,34 +1039,14 @@ export const RecentlyViewedSection: React.FC<{ currentProductId?: string; conten
       }
     }
 
-    api.getProducts({ limit: 16, status: 'ACTIVE' })
-      .then((res: any) => {
-        const catalogProds = Array.isArray(res) ? res : res?.products || [];
-        const combined: any[] = [...uniqueStored];
-
-        for (const item of catalogProds) {
-          if (!item) continue;
-          const keys = getKeys(item);
-          const isDup = keys.some((k) => seenKeys.has(k));
-          if (!isDup) {
-            combined.push(item);
-            keys.forEach((k) => seenKeys.add(k));
-          }
-        }
-
-        setRecentProducts(combined.length > 0 ? combined : DEMO_FALLBACK_PRODUCTS);
-      })
-      .catch(() => {
-        setRecentProducts(uniqueStored.length > 0 ? uniqueStored : DEMO_FALLBACK_PRODUCTS);
-      });
+    setRecentProducts(uniqueStored);
   }, [currentProductId]);
-
-  const rawCards = recentProducts.length > 0 ? recentProducts : DEMO_FALLBACK_PRODUCTS;
 
   // Final rendering deduplication guard
   const renderSeen = new Set<string>();
-  const cardsToRender = rawCards.filter((product) => {
+  const cardsToRender = recentProducts.filter((product) => {
     if (!product) return false;
+    if (currentProductId && product.id === currentProductId) return false;
     const idKey = product.id ? `id:${product.id}` : null;
     const slugKey = product.slug ? `slug:${product.slug}` : null;
     const nameStr = (product.title || product.name || '').trim().toLowerCase();
@@ -1119,6 +1061,10 @@ export const RecentlyViewedSection: React.FC<{ currentProductId?: string; conten
     if (nameKey) renderSeen.add(nameKey);
     return true;
   });
+
+  if (cardsToRender.length === 0) {
+    return null;
+  }
 
   const handleScroll = (dir: 'left' | 'right') => {
     if (scrollRef.current) {

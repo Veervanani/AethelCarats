@@ -115,22 +115,22 @@ if (!function_exists('mapProductResponse')) {
         if (!$primaryImage && count($images) > 0) {
             $primaryImage = $images[0]['url'];
         }
-        if (!$primaryImage && !empty($product['mainImage']) && $product['mainImage'] !== '/assets/gem_rings_cat.png') {
+        if (!$primaryImage && !empty($product['mainImage'])) {
             $primaryImage = $product['mainImage'];
         }
         if (!$primaryImage) {
-            $primaryImage = $product['mainImage'] ?? '/assets/gem_rings_cat.png';
+            $primaryImage = null;
         }
 
         $secondaryImage = null;
         if (count($images) > 1) {
             $secondaryImage = $images[1]['url'];
         }
-        if (!$secondaryImage && !empty($product['secondaryImage']) && $product['secondaryImage'] !== '/assets/gem_rings_cat.png') {
+        if (!$secondaryImage && !empty($product['secondaryImage'])) {
             $secondaryImage = $product['secondaryImage'];
         }
         if (!$secondaryImage) {
-            $secondaryImage = $product['secondaryImage'] ?? null;
+            $secondaryImage = null;
         }
 
         $availableRingSizes = safeJsonParse($product['availableRingSizes'] ?? null, [
@@ -715,10 +715,51 @@ function handleGetProductBySlug(string $slug): void {
         $imgStmt->execute([$product['id']]);
         $product['images'] = $imgStmt->fetchAll();
 
-        // Fetch related products
-        $relStmt = $pdo->prepare("SELECT * FROM `Product` WHERE `categoryId` = ? AND `id` != ? AND `status` = 'ACTIVE' LIMIT 4");
-        $relStmt->execute([$product['categoryId'], $product['id']]);
-        $relatedRaw = $relStmt->fetchAll();
+        // Fetch related products belonging to the same category or jewelleryType
+        $catId = !empty($product['categoryId']) ? $product['categoryId'] : null;
+        $jewelleryType = !empty($product['jewelleryType']) ? $product['jewelleryType'] : null;
+
+        $relatedRaw = [];
+        if ($catId || $jewelleryType) {
+            $conditions = [];
+            $params = [];
+            if ($catId) {
+                $conditions[] = "`p`.`categoryId` = ?";
+                $params[] = $catId;
+            }
+            if ($jewelleryType) {
+                $conditions[] = "`p`.`jewelleryType` = ?";
+                $params[] = $jewelleryType;
+            }
+            $whereCat = '(' . implode(' OR ', $conditions) . ')';
+            $params[] = $product['id'];
+
+            $relStmt = $pdo->prepare("SELECT `p`.*, `c`.`name` as `category_name`, `c`.`slug` as `category_slug` 
+                                      FROM `Product` `p` 
+                                      LEFT JOIN `Category` `c` ON `p`.`categoryId` = `c`.`id` 
+                                      WHERE $whereCat AND `p`.`id` != ? AND `p`.`status` = 'ACTIVE' 
+                                      LIMIT 8");
+            $relStmt->execute($params);
+            $relatedRaw = $relStmt->fetchAll();
+
+            // Fetch images for each related product so primary and secondary images are loaded dynamically
+            if (!empty($relatedRaw)) {
+                $relIds = array_column($relatedRaw, 'id');
+                $placeholders = implode(',', array_fill(0, count($relIds), '?'));
+                $imgRelStmt = $pdo->prepare("SELECT * FROM `ProductImage` WHERE `productId` IN ($placeholders) ORDER BY `position` ASC");
+                $imgRelStmt->execute($relIds);
+                $allImages = $imgRelStmt->fetchAll();
+
+                $imagesByProduct = [];
+                foreach ($allImages as $img) {
+                    $imagesByProduct[$img['productId']][] = $img;
+                }
+                foreach ($relatedRaw as &$rp) {
+                    $rp['images'] = $imagesByProduct[$rp['id']] ?? [];
+                }
+                unset($rp);
+            }
+        }
         $relatedMapped = array_map(fn($rp) => mapProductResponse($rp), $relatedRaw);
 
         jsonResponse([
