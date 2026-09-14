@@ -1866,62 +1866,57 @@ export const ProductDetailPage: React.FC = () => {
     }
   }
 
-  const availableMetals = useMemo(() => {
-    const rawList = (!Array.isArray(parsedMetalsList) || parsedMetalsList.length === 0)
-      ? [
-          { label: '925 Sterling Silver', code: 'silver', priceAdjustment: -1000 },
-          { label: '9K Yellow Gold', code: '9k', priceAdjustment: -600 },
-          { label: '9K White Gold', code: '9k', priceAdjustment: -600 },
-          { label: '9K Rose Gold', code: '9k', priceAdjustment: -600 },
-          { label: '10K Yellow Gold', code: '10k', priceAdjustment: -400 },
-          { label: '10K White Gold', code: '10k', priceAdjustment: -400 },
-          { label: '10K Rose Gold', code: '10k', priceAdjustment: -400 },
-          { label: '14K Yellow Gold', code: '14k', priceAdjustment: 0 },
-          { label: '14K White Gold', code: '14k', priceAdjustment: 0 },
-          { label: '14K Rose Gold', code: '14k', priceAdjustment: 0 },
-          { label: '18K Yellow Gold', code: '18k', priceAdjustment: 250 },
-          { label: '18K White Gold', code: '18k', priceAdjustment: 350 },
-          { label: '18K Rose Gold', code: '18k', priceAdjustment: 350 },
-          { label: 'Platinum', code: 'platinum', priceAdjustment: 600 },
-        ]
-      : parsedMetalsList.map((m: any) => {
-          if (typeof m === 'string') {
-            const s = m.toLowerCase();
-            const code = s.includes('18k') ? '18k' : s.includes('10k') ? '10k' : s.includes('9k') ? '9k' : s.includes('silver') ? 'silver' : s.includes('platinum') ? 'platinum' : '14k';
-            return {
-              label: m,
-              code,
-              priceAdjustment: 0,
-            };
-          }
-          const lbl = m.label || m.name || String(m);
-          const s = String(lbl).toLowerCase();
-          const code = m.code || (s.includes('18k') ? '18k' : s.includes('10k') ? '10k' : s.includes('9k') ? '9k' : s.includes('silver') ? 'silver' : s.includes('platinum') ? 'platinum' : '14k');
+  const rawList = (!Array.isArray(parsedMetalsList) || parsedMetalsList.length === 0)
+    ? [
+        { label: '925 Sterling Silver', code: 'silver', priceAdjustment: -1000 },
+        { label: '9K Yellow Gold', code: '9k', priceAdjustment: -600 },
+        { label: '9K White Gold', code: '9k', priceAdjustment: -600 },
+        { label: '9K Rose Gold', code: '9k', priceAdjustment: -600 },
+        { label: '10K Yellow Gold', code: '10k', priceAdjustment: -400 },
+        { label: '10K White Gold', code: '10k', priceAdjustment: -400 },
+        { label: '10K Rose Gold', code: '10k', priceAdjustment: -400 },
+        { label: '14K Yellow Gold', code: '14k', priceAdjustment: 0 },
+        { label: '14K White Gold', code: '14k', priceAdjustment: 0 },
+        { label: '14K Rose Gold', code: '14k', priceAdjustment: 0 },
+        { label: '18K Yellow Gold', code: '18k', priceAdjustment: 250 },
+        { label: '18K White Gold', code: '18k', priceAdjustment: 350 },
+        { label: '18K Rose Gold', code: '18k', priceAdjustment: 350 },
+        { label: 'Platinum', code: 'platinum', priceAdjustment: 600 },
+      ]
+    : parsedMetalsList.map((m: any) => {
+        if (typeof m === 'string') {
+          const s = m.toLowerCase();
+          const code = s.includes('18k') ? '18k' : s.includes('10k') ? '10k' : s.includes('9k') ? '9k' : s.includes('silver') ? 'silver' : s.includes('platinum') ? 'platinum' : '14k';
           return {
-            label: lbl,
+            label: m,
             code,
-            priceAdjustment: typeof m.priceAdjustment === 'number' ? m.priceAdjustment : 0,
-            circleColor: m.circleColor,
+            priceAdjustment: 0,
           };
-        });
+        }
+        const lbl = m.label || m.name || String(m);
+        const s = String(lbl).toLowerCase();
+        const code = m.code || (s.includes('18k') ? '18k' : s.includes('10k') ? '10k' : s.includes('9k') ? '9k' : s.includes('silver') ? 'silver' : s.includes('platinum') ? 'platinum' : '14k');
+        return {
+          label: lbl,
+          code,
+          priceAdjustment: typeof m.priceAdjustment === 'number' ? m.priceAdjustment : 0,
+          circleColor: m.circleColor,
+        };
+      });
 
-    return [...rawList].sort((a, b) => getMetalSortRank(a.label) - getMetalSortRank(b.label));
-  }, [parsedMetalsList]);
+  const availableMetals = [...rawList].sort((a, b) => getMetalSortRank(a.label) - getMetalSortRank(b.label));
 
-  const metalGroups = useMemo(() => {
-    const groups: { key: string; items: any[] }[] = [];
-    const map: Record<string, any[]> = {};
+  const metalGroups: { key: string; items: any[] }[] = [];
+  const metalGroupMap: Record<string, any[]> = {};
 
-    for (const m of availableMetals) {
-      const fam = getMetalFamily(m.label);
-      if (!map[fam]) {
-        map[fam] = [];
-        groups.push({ key: fam, items: map[fam] });
-      }
-      map[fam].push(m);
+  for (const m of availableMetals) {
+    const fam = getMetalFamily(m.label);
+    if (!metalGroupMap[fam]) {
+      metalGroupMap[fam] = [];
+      metalGroups.push({ key: fam, items: metalGroupMap[fam] });
     }
-    return groups;
-  }, [availableMetals]);
+    metalGroupMap[fam].push(m);
+  }
 
   const matchingVariation = (product.variations || []).find((v: any) => {
     const matchMetal = v.metal ? v.metal.toLowerCase() === selectedMetal.toLowerCase() : true;
