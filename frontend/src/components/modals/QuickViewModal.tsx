@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import styled from 'styled-components';
 import { X, Heart, ShoppingBag, Eye, Check, ArrowRight, Minus, Plus } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
@@ -6,6 +6,7 @@ import { useQuickView } from '../../context/QuickViewContext';
 import { useCart } from '../../context/CartContext';
 import { useWishlist } from '../../context/WishlistContext';
 import { useToast } from '../../context/ToastContext';
+import { sortMetalsList, getMetalFamily } from '../../utils/metalUtils';
 
 const Overlay = styled.div<{ $isOpen: boolean }>`
   position: fixed;
@@ -250,21 +251,35 @@ const OptionGroup = styled.div`
   }
 `;
 
-const MetalsGrid = styled.div`
+const MetalsContainer = styled.div`
   display: flex;
-  flex-wrap: wrap;
-  gap: 8px;
+  flex-direction: column;
+  gap: 6px;
+`;
+
+const MetalsGrid = MetalsContainer;
+
+const MetalsFamilyRow = styled.div<{ $count: number }>`
+  display: grid;
+  grid-template-columns: ${({ $count }) => ($count === 3 ? 'repeat(3, 1fr)' : $count === 2 ? 'repeat(2, 1fr)' : 'repeat(auto-fit, minmax(110px, 1fr))')};
+  gap: 6px;
 `;
 
 const MetalPill = styled.button<{ $active: boolean }>`
-  padding: 7px 12px;
-  font-size: 0.78rem;
+  width: 100%;
+  padding: 8px 6px;
+  font-size: 0.76rem;
   font-weight: 600;
   background-color: ${({ $active }) => ($active ? '#C9A96E' : '#111111')};
   color: ${({ $active }) => ($active ? '#0B0B0B' : '#D8D2C5')};
   border: 1px solid ${({ $active }) => ($active ? '#C9A96E' : 'rgba(140, 116, 75, 0.25)')};
   border-radius: 4px;
   cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  white-space: nowrap;
   transition: all 0.2s ease;
 
   &:hover {
@@ -387,12 +402,20 @@ const ActionButtonsGroup = styled.div`
   }
 `;
 
-const METAL_OPTIONS = [
+const DEFAULT_QUICKVIEW_METALS = [
+  '925 Sterling Silver',
+  '9K Yellow Gold',
+  '9K White Gold',
+  '9K Rose Gold',
+  '10K Yellow Gold',
+  '10K White Gold',
+  '10K Rose Gold',
   '14K Yellow Gold',
   '14K White Gold',
   '14K Rose Gold',
   '18K Yellow Gold',
   '18K White Gold',
+  '18K Rose Gold',
   'Platinum',
 ];
 
@@ -415,15 +438,47 @@ export const QuickViewModal: React.FC = () => {
   const [quantity, setQuantity] = useState(1);
   const [addedToast, setAddedToast] = useState(false);
 
+  const availableMetals = useMemo(() => {
+    if (!product) return DEFAULT_QUICKVIEW_METALS;
+    let list = product.metalsConfig;
+    if (typeof list === 'string') {
+      try { list = JSON.parse(list); } catch (e) { list = []; }
+    }
+    if (Array.isArray(list) && list.length > 0) {
+      const sorted = sortMetalsList(list);
+      return sorted.map((m: any) => typeof m === 'string' ? m : (m.label || m.name || String(m)));
+    }
+    return DEFAULT_QUICKVIEW_METALS;
+  }, [product]);
+
+  const metalGroups = useMemo(() => {
+    const groups: { key: string; items: string[] }[] = [];
+    const map: Record<string, string[]> = {};
+
+    for (const m of availableMetals) {
+      const fam = getMetalFamily(m);
+      if (!map[fam]) {
+        map[fam] = [];
+        groups.push({ key: fam, items: map[fam] });
+      }
+      map[fam].push(m);
+    }
+    return groups;
+  }, [availableMetals]);
+
   useEffect(() => {
     if (product) {
       setActiveImgIdx(0);
-      setSelectedMetal(product.metal || '14K Yellow Gold');
+      let init = product.metal;
+      if (!init && availableMetals.length > 0) {
+        init = availableMetals.find((m: string) => m.toLowerCase().includes('14k') && m.toLowerCase().includes('yellow')) || availableMetals[0];
+      }
+      setSelectedMetal(init || '14K Yellow Gold');
       setSelectedSize('US 6.5');
       setQuantity(1);
       setAddedToast(false);
     }
-  }, [product]);
+  }, [product, availableMetals]);
 
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
@@ -528,17 +583,21 @@ export const QuickViewModal: React.FC = () => {
                 <label>
                   Metal Type: <span>{selectedMetal}</span>
                 </label>
-                <MetalsGrid>
-                  {METAL_OPTIONS.map((m) => (
-                    <MetalPill
-                      key={m}
-                      $active={selectedMetal === m}
-                      onClick={() => setSelectedMetal(m)}
-                    >
-                      {m}
-                    </MetalPill>
+                <MetalsContainer>
+                  {metalGroups.map((group) => (
+                    <MetalsFamilyRow key={group.key} $count={group.items.length}>
+                      {group.items.map((m) => (
+                        <MetalPill
+                          key={m}
+                          $active={selectedMetal === m}
+                          onClick={() => setSelectedMetal(m)}
+                        >
+                          {m}
+                        </MetalPill>
+                      ))}
+                    </MetalsFamilyRow>
                   ))}
-                </MetalsGrid>
+                </MetalsContainer>
               </OptionGroup>
 
               <OptionGroup>

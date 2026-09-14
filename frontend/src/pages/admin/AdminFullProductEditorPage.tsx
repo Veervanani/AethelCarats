@@ -21,6 +21,7 @@ import {
 } from 'lucide-react';
 import { api } from '../../services/api';
 import { PRIVATE_ADMIN_PATH } from '../../App';
+import { sortMetalsList } from '../../utils/metalUtils';
 import {
   AdminCard,
   AdminCardHeader,
@@ -350,6 +351,7 @@ const TagsOptionGrid = styled.div`
 `;
 
 const APPROVED_METALS = [
+  { label: '925 Sterling Silver', code: 'silver', circleColor: '#D1D5DB', priceAdjustment: -1000 },
   { label: '9K Yellow Gold', code: '9k', circleColor: '#E8C872', priceAdjustment: -600 },
   { label: '9K White Gold', code: '9k', circleColor: '#CBD5E1', priceAdjustment: -600 },
   { label: '9K Rose Gold', code: '9k', circleColor: '#E4A8A5', priceAdjustment: -600 },
@@ -362,7 +364,6 @@ const APPROVED_METALS = [
   { label: '18K Yellow Gold', code: '18k', circleColor: '#E8C872', priceAdjustment: 250 },
   { label: '18K White Gold', code: '18k', circleColor: '#CBD5E1', priceAdjustment: 350 },
   { label: '18K Rose Gold', code: '18k', circleColor: '#E4A8A5', priceAdjustment: 350 },
-  { label: '925 Sterling Silver', code: 'silver', circleColor: '#D1D5DB', priceAdjustment: -1000 },
   { label: 'Platinum', code: 'platinum', circleColor: '#E2E8F0', priceAdjustment: 600 },
 ];
 
@@ -1075,7 +1076,7 @@ export const AdminFullProductEditorPage: React.FC = () => {
           accordionsConfig: loadedAccordions.length > 0 ? loadedAccordions : prev.accordionsConfig,
           internalTags: iTags,
           seoSocial: sSocial,
-          metalsConfig: (fetched.metalsConfig && fetched.metalsConfig.length > 0) ? fetched.metalsConfig : prev.metalsConfig,
+          metalsConfig: (fetched.metalsConfig && fetched.metalsConfig.length > 0) ? sortMetalsList(fetched.metalsConfig) : prev.metalsConfig,
           variations: vars,
         }));
       } else {
@@ -2901,7 +2902,7 @@ export const AdminFullProductEditorPage: React.FC = () => {
                     type="button"
                     onClick={() => {
                       const gold14and18 = APPROVED_METALS.filter((m) => m.label.startsWith('14K') || m.label.startsWith('18K'));
-                      handleFieldChange('metalsConfig', gold14and18);
+                      handleFieldChange('metalsConfig', sortMetalsList(gold14and18));
                     }}
                     style={{ fontSize: '0.72rem', color: '#8c7647', background: '#fff', border: '1px solid #e8e3d9', padding: '3px 8px', borderRadius: 4, cursor: 'pointer', fontWeight: 600 }}
                   >
@@ -2911,7 +2912,7 @@ export const AdminFullProductEditorPage: React.FC = () => {
                     type="button"
                     onClick={() => {
                       const allGold = APPROVED_METALS.filter((m) => !m.label.toLowerCase().includes('silver') && !m.label.toLowerCase().includes('platinum'));
-                      handleFieldChange('metalsConfig', allGold);
+                      handleFieldChange('metalsConfig', sortMetalsList(allGold));
                     }}
                     style={{ fontSize: '0.72rem', color: '#8c7647', background: '#fff', border: '1px solid #e8e3d9', padding: '3px 8px', borderRadius: 4, cursor: 'pointer', fontWeight: 600 }}
                   >
@@ -2921,7 +2922,7 @@ export const AdminFullProductEditorPage: React.FC = () => {
                     type="button"
                     onClick={() => {
                       const popular = APPROVED_METALS.filter((m) => m.label.startsWith('14K') || m.label.startsWith('18K') || m.label.toLowerCase().includes('platinum'));
-                      handleFieldChange('metalsConfig', popular);
+                      handleFieldChange('metalsConfig', sortMetalsList(popular));
                     }}
                     style={{ fontSize: '0.72rem', color: '#8c7647', background: '#fff', border: '1px solid #e8e3d9', padding: '3px 8px', borderRadius: 4, cursor: 'pointer', fontWeight: 600 }}
                   >
@@ -2963,7 +2964,8 @@ export const AdminFullProductEditorPage: React.FC = () => {
                           } else {
                             updated = updated.filter((m: any) => (typeof m === 'string' ? m : m.label)?.toLowerCase() !== mObj.label.toLowerCase());
                           }
-                          handleFieldChange('metalsConfig', updated);
+                          const sorted = sortMetalsList(updated);
+                          handleFieldChange('metalsConfig', sorted);
                         }}
                         style={{ accentColor: '#c9a45c', width: 16, height: 16 }}
                       />

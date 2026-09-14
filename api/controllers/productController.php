@@ -94,6 +94,43 @@ if (!function_exists('getFullDescriptionForProduct')) {
     }
 }
 
+if (!function_exists('getMetalSortRankPhp')) {
+    function getMetalSortRankPhp($label): int {
+        $s = strtolower(trim($label ?? ''));
+        if (strpos($s, 'silver') !== false || strpos($s, '925') !== false || $s === 'ag') {
+            return 10;
+        }
+        if (strpos($s, '9k') !== false || strpos($s, '9 k') !== false || strpos($s, '9ct') !== false) {
+            if (strpos($s, 'yellow') !== false) return 21;
+            if (strpos($s, 'white') !== false) return 22;
+            if (strpos($s, 'rose') !== false) return 23;
+            return 24;
+        }
+        if (strpos($s, '10k') !== false || strpos($s, '10 k') !== false || strpos($s, '10ct') !== false) {
+            if (strpos($s, 'yellow') !== false) return 31;
+            if (strpos($s, 'white') !== false) return 32;
+            if (strpos($s, 'rose') !== false) return 33;
+            return 34;
+        }
+        if (strpos($s, '14k') !== false || strpos($s, '14 k') !== false || strpos($s, '14ct') !== false) {
+            if (strpos($s, 'yellow') !== false) return 41;
+            if (strpos($s, 'white') !== false) return 42;
+            if (strpos($s, 'rose') !== false) return 43;
+            return 44;
+        }
+        if (strpos($s, '18k') !== false || strpos($s, '18 k') !== false || strpos($s, '18ct') !== false) {
+            if (strpos($s, 'yellow') !== false) return 51;
+            if (strpos($s, 'white') !== false) return 52;
+            if (strpos($s, 'rose') !== false) return 53;
+            return 54;
+        }
+        if (strpos($s, 'platinum') !== false || strpos($s, 'plat') === 0 || $s === 'pt') {
+            return 60;
+        }
+        return 100;
+    }
+}
+
 if (!function_exists('mapProductResponse')) {
     function mapProductResponse(array $product, ?array $customerPriceRecord = null): array {
         $images = $product['images'] ?? [];
@@ -155,6 +192,14 @@ if (!function_exists('mapProductResponse')) {
             ['label' => '18K Rose Gold', 'code' => '18k', 'circleColor' => '#E4A8A5', 'priceAdjustment' => 350],
         ];
 
+        if (is_array($metalsConfig)) {
+            usort($metalsConfig, function($a, $b) {
+                $lblA = is_array($a) ? ($a['label'] ?? $a['name'] ?? '') : (is_object($a) ? ($a->label ?? '') : (string)$a);
+                $lblB = is_array($b) ? ($b['label'] ?? $b['name'] ?? '') : (is_object($b) ? ($b->label ?? '') : (string)$b);
+                return getMetalSortRankPhp($lblA) - getMetalSortRankPhp($lblB);
+            });
+        }
+
         $benefitsConfig = safeJsonParse($product['benefitsConfig'] ?? null, [
             ['icon' => 'Truck', 'title' => 'Free Insured Delivery'],
             ['icon' => 'ShieldCheck', 'title' => 'Lifetime Service Warranty'],
@@ -186,6 +231,13 @@ if (!function_exists('mapProductResponse')) {
         $pricingMatrix = safeJsonParse($product['pricingMatrix'] ?? null, new stdClass());
         $rawVariations = safeJsonParse($product['variationsJson'] ?? null, []);
         $variationsConfig = is_array($rawVariations) ? $rawVariations : [];
+        if (is_array($variationsConfig) && count($variationsConfig) > 0) {
+            usort($variationsConfig, function($a, $b) {
+                $lblA = is_array($a) ? ($a['metal'] ?? '') : (is_object($a) ? ($a->metal ?? '') : '');
+                $lblB = is_array($b) ? ($b['metal'] ?? '') : (is_object($b) ? ($b->metal ?? '') : '');
+                return getMetalSortRankPhp($lblA) - getMetalSortRankPhp($lblB);
+            });
+        }
 
         $customOptionsConfig = safeJsonParse($product['customOptionsJson'] ?? null, []);
         $shippingInfoConfig  = safeJsonParse($product['shippingInfoJson'] ?? null, [

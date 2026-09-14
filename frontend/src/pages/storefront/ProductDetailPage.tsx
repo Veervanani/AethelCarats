@@ -32,6 +32,7 @@ import {
   SimilarItemsSection,
   RecentlyViewedSection,
 } from '../../components/storefront/ProductDetailExtraSections';
+import { getMetalSortRank, getMetalFamily, sortMetalsList } from '../../utils/metalUtils';
 
 // ==========================================
 // STYLED COMPONENTS - LAYOUT & CONTAINERS
@@ -421,32 +422,57 @@ const MetalHeaderTitle = styled.div`
   }
 `;
 
-const MetalTilesRow = styled.div`
+const MetalTilesContainer = styled.div`
   display: flex;
-  gap: 10px;
-  flex-wrap: wrap;
+  flex-direction: column;
+  gap: 8px;
+`;
+
+const MetalTilesRow = MetalTilesContainer;
+
+const MetalTilesGroupRow = styled.div<{ $count: number }>`
+  display: grid;
+  grid-template-columns: ${({ $count }) => {
+    if ($count === 3) return 'repeat(3, 1fr)';
+    if ($count === 2) return 'repeat(2, 1fr)';
+    return 'repeat(auto-fit, minmax(130px, 1fr))';
+  }};
+  gap: 8px;
+
+  @media (max-width: 480px) {
+    grid-template-columns: ${({ $count }) => ($count >= 3 ? 'repeat(3, 1fr)' : 'repeat(auto-fit, minmax(105px, 1fr))')};
+    gap: 6px;
+  }
 `;
 
 const MetalPillButton = styled.button<{ $isSelected: boolean }>`
-  padding: 8px 16px;
-  background: ${({ $isSelected }) => ($isSelected ? 'rgba(201, 169, 110, 0.12)' : '#151515')};
+  width: 100%;
+  padding: 9px 8px;
+  background: ${({ $isSelected }) => ($isSelected ? 'rgba(201, 169, 110, 0.14)' : '#141414')};
   border: 1.5px solid ${({ $isSelected }) => ($isSelected ? '#C9A96E' : 'rgba(140, 116, 75, 0.25)')};
   border-radius: 4px;
   cursor: pointer;
-  display: inline-flex;
+  display: flex;
   align-items: center;
   justify-content: center;
+  text-align: center;
   font-family: inherit;
-  font-size: 0.84rem;
+  font-size: 0.82rem;
   font-weight: 600;
   color: ${({ $isSelected }) => ($isSelected ? '#F5F1E8' : '#D8D2C5')};
   transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
   letter-spacing: 0.02em;
+  line-height: 1.25;
 
   &:hover {
     border-color: #C9A96E;
     color: #F5F1E8;
-    background: ${({ $isSelected }) => ($isSelected ? 'rgba(201, 169, 110, 0.18)' : '#1c1c1c')};
+    background: ${({ $isSelected }) => ($isSelected ? 'rgba(201, 169, 110, 0.2)' : '#1c1c1c')};
+  }
+
+  @media (max-width: 480px) {
+    font-size: 0.74rem;
+    padding: 7px 4px;
   }
 `;
 
@@ -1570,20 +1596,27 @@ export const ProductDetailPage: React.FC = () => {
             } catch (e) {}
 
             if (fetchedProduct.metal) {
-              const initMetal = fetchedProduct.metal.includes('Silver') ? '14K White Gold' : fetchedProduct.metal;
+              const initMetal = fetchedProduct.metal;
               setSelectedMetal(initMetal);
-              setSelectedMetalCode(initMetal.includes('18K') ? '18k' : '14k');
+              const s = initMetal.toLowerCase();
+              setSelectedMetalCode(s.includes('18k') ? '18k' : s.includes('10k') ? '10k' : s.includes('9k') ? '9k' : s.includes('silver') ? 'silver' : s.includes('platinum') ? 'platinum' : '14k');
             } else if (fetchedProduct.metalsConfig) {
               let mList = fetchedProduct.metalsConfig;
               if (typeof mList === 'string') {
                 try { mList = JSON.parse(mList); } catch (e) {}
               }
               if (Array.isArray(mList) && mList.length > 0) {
-                const first = mList[0];
-                const firstLabel = typeof first === 'string' ? first : (first.label || first.name);
-                if (firstLabel) {
-                  setSelectedMetal(firstLabel);
-                  setSelectedMetalCode(String(firstLabel).includes('18K') ? '18k' : '14k');
+                const sorted = sortMetalsList(mList);
+                const default14k = sorted.find((m: any) => {
+                  const lbl = typeof m === 'string' ? m : (m.label || m.name || '');
+                  return lbl.toLowerCase().includes('14k') && lbl.toLowerCase().includes('yellow');
+                });
+                const chosen = default14k || sorted[0];
+                const chosenLabel = typeof chosen === 'string' ? chosen : (chosen.label || chosen.name);
+                if (chosenLabel) {
+                  setSelectedMetal(chosenLabel);
+                  const s = String(chosenLabel).toLowerCase();
+                  setSelectedMetalCode(s.includes('18k') ? '18k' : s.includes('10k') ? '10k' : s.includes('9k') ? '9k' : s.includes('silver') ? 'silver' : s.includes('platinum') ? 'platinum' : '14k');
                 }
               }
             }
@@ -1833,29 +1866,62 @@ export const ProductDetailPage: React.FC = () => {
     }
   }
 
-  const availableMetals = (!Array.isArray(parsedMetalsList) || parsedMetalsList.length === 0)
-    ? [
-        { label: '14K Yellow Gold', code: '14k', priceAdjustment: 0 },
-        { label: '14K White Gold', code: '14k', priceAdjustment: 0 },
-        { label: '14K Rose Gold', code: '14k', priceAdjustment: 0 },
-        { label: '18K Yellow Gold', code: '18k', priceAdjustment: 250 },
-        { label: '18K White Gold', code: '18k', priceAdjustment: 350 },
-        { label: '18K Rose Gold', code: '18k', priceAdjustment: 350 },
-      ]
-    : parsedMetalsList.map((m: any) => {
-        if (typeof m === 'string') {
+  const availableMetals = useMemo(() => {
+    const rawList = (!Array.isArray(parsedMetalsList) || parsedMetalsList.length === 0)
+      ? [
+          { label: '925 Sterling Silver', code: 'silver', priceAdjustment: -1000 },
+          { label: '9K Yellow Gold', code: '9k', priceAdjustment: -600 },
+          { label: '9K White Gold', code: '9k', priceAdjustment: -600 },
+          { label: '9K Rose Gold', code: '9k', priceAdjustment: -600 },
+          { label: '10K Yellow Gold', code: '10k', priceAdjustment: -400 },
+          { label: '10K White Gold', code: '10k', priceAdjustment: -400 },
+          { label: '10K Rose Gold', code: '10k', priceAdjustment: -400 },
+          { label: '14K Yellow Gold', code: '14k', priceAdjustment: 0 },
+          { label: '14K White Gold', code: '14k', priceAdjustment: 0 },
+          { label: '14K Rose Gold', code: '14k', priceAdjustment: 0 },
+          { label: '18K Yellow Gold', code: '18k', priceAdjustment: 250 },
+          { label: '18K White Gold', code: '18k', priceAdjustment: 350 },
+          { label: '18K Rose Gold', code: '18k', priceAdjustment: 350 },
+          { label: 'Platinum', code: 'platinum', priceAdjustment: 600 },
+        ]
+      : parsedMetalsList.map((m: any) => {
+          if (typeof m === 'string') {
+            const s = m.toLowerCase();
+            const code = s.includes('18k') ? '18k' : s.includes('10k') ? '10k' : s.includes('9k') ? '9k' : s.includes('silver') ? 'silver' : s.includes('platinum') ? 'platinum' : '14k';
+            return {
+              label: m,
+              code,
+              priceAdjustment: 0,
+            };
+          }
+          const lbl = m.label || m.name || String(m);
+          const s = String(lbl).toLowerCase();
+          const code = m.code || (s.includes('18k') ? '18k' : s.includes('10k') ? '10k' : s.includes('9k') ? '9k' : s.includes('silver') ? 'silver' : s.includes('platinum') ? 'platinum' : '14k');
           return {
-            label: m,
-            code: m.toLowerCase().includes('18k') ? '18k' : '14k',
-            priceAdjustment: 0,
+            label: lbl,
+            code,
+            priceAdjustment: typeof m.priceAdjustment === 'number' ? m.priceAdjustment : 0,
+            circleColor: m.circleColor,
           };
-        }
-        return {
-          label: m.label || m.name || String(m),
-          code: m.code || (String(m.label || '').toLowerCase().includes('18k') ? '18k' : '14k'),
-          priceAdjustment: typeof m.priceAdjustment === 'number' ? m.priceAdjustment : 0,
-        };
-      });
+        });
+
+    return [...rawList].sort((a, b) => getMetalSortRank(a.label) - getMetalSortRank(b.label));
+  }, [parsedMetalsList]);
+
+  const metalGroups = useMemo(() => {
+    const groups: { key: string; items: any[] }[] = [];
+    const map: Record<string, any[]> = {};
+
+    for (const m of availableMetals) {
+      const fam = getMetalFamily(m.label);
+      if (!map[fam]) {
+        map[fam] = [];
+        groups.push({ key: fam, items: map[fam] });
+      }
+      map[fam].push(m);
+    }
+    return groups;
+  }, [availableMetals]);
 
   const matchingVariation = (product.variations || []).find((v: any) => {
     const matchMetal = v.metal ? v.metal.toLowerCase() === selectedMetal.toLowerCase() : true;
@@ -2150,22 +2216,26 @@ export const ProductDetailPage: React.FC = () => {
                   <span className="label">Metal Type:</span>
                   <span className="value">{selectedMetal}</span>
                 </MetalHeaderTitle>
-                <MetalTilesRow>
-                  {availableMetals.map((m: any, i: number) => (
-                    <MetalPillButton
-                      key={i}
-                      type="button"
-                      $isSelected={selectedMetal.toLowerCase() === m.label.toLowerCase()}
-                      onClick={() => {
-                        setSelectedMetal(m.label);
-                        setSelectedMetalCode(m.code);
-                      }}
-                      title={m.label}
-                    >
-                      {m.label}
-                    </MetalPillButton>
+                <MetalTilesContainer>
+                  {metalGroups.map((group) => (
+                    <MetalTilesGroupRow key={group.key} $count={group.items.length}>
+                      {group.items.map((m: any, i: number) => (
+                        <MetalPillButton
+                          key={m.label || i}
+                          type="button"
+                          $isSelected={selectedMetal.toLowerCase() === m.label.toLowerCase()}
+                          onClick={() => {
+                            setSelectedMetal(m.label);
+                            setSelectedMetalCode(m.code);
+                          }}
+                          title={m.label}
+                        >
+                          {m.label}
+                        </MetalPillButton>
+                      ))}
+                    </MetalTilesGroupRow>
                   ))}
-                </MetalTilesRow>
+                </MetalTilesContainer>
               </SectionDividerBlock>
             )}
 

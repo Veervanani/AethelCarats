@@ -17,6 +17,50 @@ const safeJsonParse = (val, fallback) => {
         return fallback;
     }
 };
+const getMetalSortRankNode = (label) => {
+    const s = (label || '').toLowerCase().trim();
+    if (s.includes('silver') || s.includes('925') || s === 'ag')
+        return 10;
+    if (s.includes('9k') || s.includes('9 k') || s.includes('9ct')) {
+        if (s.includes('yellow'))
+            return 21;
+        if (s.includes('white'))
+            return 22;
+        if (s.includes('rose'))
+            return 23;
+        return 24;
+    }
+    if (s.includes('10k') || s.includes('10 k') || s.includes('10ct')) {
+        if (s.includes('yellow'))
+            return 31;
+        if (s.includes('white'))
+            return 32;
+        if (s.includes('rose'))
+            return 33;
+        return 34;
+    }
+    if (s.includes('14k') || s.includes('14 k') || s.includes('14ct')) {
+        if (s.includes('yellow'))
+            return 41;
+        if (s.includes('white'))
+            return 42;
+        if (s.includes('rose'))
+            return 43;
+        return 44;
+    }
+    if (s.includes('18k') || s.includes('18 k') || s.includes('18ct')) {
+        if (s.includes('yellow'))
+            return 51;
+        if (s.includes('white'))
+            return 52;
+        if (s.includes('rose'))
+            return 53;
+        return 54;
+    }
+    if (s.includes('platinum') || s.startsWith('plat') || s === 'pt')
+        return 60;
+    return 100;
+};
 const mapProductResponse = (product, customerPriceRecord) => {
     const sortedImages = (product.images && Array.isArray(product.images) && product.images.length > 0)
         ? [...product.images].sort((a, b) => (a.position ?? 0) - (b.position ?? 0))
@@ -32,23 +76,44 @@ const mapProductResponse = (product, customerPriceRecord) => {
         'US 4', 'US 4.5', 'US 5', 'US 5.5', 'US 6', 'US 6.5', 'US 7', 'US 7.5', 'US 8', 'US 8.5', 'US 9', 'US 9.5', 'US 10', 'US 10.5', 'US 11', 'US 11.5', 'US 12'
     ]);
     const rawMetals = safeJsonParse(product.metalsConfig, [
+        { label: '925 Sterling Silver', code: 'silver', circleColor: '#D1D5DB', priceAdjustment: -1000 },
+        { label: '9K Yellow Gold', code: '9k', circleColor: '#E8C872', priceAdjustment: -600 },
+        { label: '9K White Gold', code: '9k', circleColor: '#CBD5E1', priceAdjustment: -600 },
+        { label: '9K Rose Gold', code: '9k', circleColor: '#E4A8A5', priceAdjustment: -600 },
+        { label: '10K Yellow Gold', code: '10k', circleColor: '#E8C872', priceAdjustment: -400 },
+        { label: '10K White Gold', code: '10k', circleColor: '#CBD5E1', priceAdjustment: -400 },
+        { label: '10K Rose Gold', code: '10k', circleColor: '#E4A8A5', priceAdjustment: -400 },
         { label: '14K Yellow Gold', code: '14k', circleColor: '#E8C872', priceAdjustment: 0 },
         { label: '14K White Gold', code: '14k', circleColor: '#CBD5E1', priceAdjustment: 0 },
         { label: '14K Rose Gold', code: '14k', circleColor: '#E4A8A5', priceAdjustment: 0 },
         { label: '18K Yellow Gold', code: '18k', circleColor: '#E8C872', priceAdjustment: 250 },
         { label: '18K White Gold', code: '18k', circleColor: '#CBD5E1', priceAdjustment: 350 },
         { label: '18K Rose Gold', code: '18k', circleColor: '#E4A8A5', priceAdjustment: 350 },
-        { label: 'Silver', code: 'Ag', circleColor: '#E2E8F0', priceAdjustment: 0 },
+        { label: 'Platinum', code: 'platinum', circleColor: '#E2E8F0', priceAdjustment: 600 },
     ]);
-    const metalsConfig = (Array.isArray(rawMetals) && rawMetals.length > 0) ? rawMetals : [
+    let metalsConfig = (Array.isArray(rawMetals) && rawMetals.length > 0) ? rawMetals : [
+        { label: '925 Sterling Silver', code: 'silver', circleColor: '#D1D5DB', priceAdjustment: -1000 },
+        { label: '9K Yellow Gold', code: '9k', circleColor: '#E8C872', priceAdjustment: -600 },
+        { label: '9K White Gold', code: '9k', circleColor: '#CBD5E1', priceAdjustment: -600 },
+        { label: '9K Rose Gold', code: '9k', circleColor: '#E4A8A5', priceAdjustment: -600 },
+        { label: '10K Yellow Gold', code: '10k', circleColor: '#E8C872', priceAdjustment: -400 },
+        { label: '10K White Gold', code: '10k', circleColor: '#CBD5E1', priceAdjustment: -400 },
+        { label: '10K Rose Gold', code: '10k', circleColor: '#E4A8A5', priceAdjustment: -400 },
         { label: '14K Yellow Gold', code: '14k', circleColor: '#E8C872', priceAdjustment: 0 },
         { label: '14K White Gold', code: '14k', circleColor: '#CBD5E1', priceAdjustment: 0 },
         { label: '14K Rose Gold', code: '14k', circleColor: '#E4A8A5', priceAdjustment: 0 },
         { label: '18K Yellow Gold', code: '18k', circleColor: '#E8C872', priceAdjustment: 250 },
         { label: '18K White Gold', code: '18k', circleColor: '#CBD5E1', priceAdjustment: 350 },
         { label: '18K Rose Gold', code: '18k', circleColor: '#E4A8A5', priceAdjustment: 350 },
-        { label: 'Silver', code: 'Ag', circleColor: '#E2E8F0', priceAdjustment: 0 },
+        { label: 'Platinum', code: 'platinum', circleColor: '#E2E8F0', priceAdjustment: 600 },
     ];
+    if (Array.isArray(metalsConfig)) {
+        metalsConfig = [...metalsConfig].sort((a, b) => {
+            const lblA = a?.label || a?.name || String(a);
+            const lblB = b?.label || b?.name || String(b);
+            return getMetalSortRankNode(lblA) - getMetalSortRankNode(lblB);
+        });
+    }
     const diamondsConfig = safeJsonParse(product.diamondsConfig, []);
     const benefitsConfig = safeJsonParse(product.benefitsConfig, [
         { icon: 'Truck', title: 'Free Insured Delivery' },
@@ -79,7 +144,14 @@ const mapProductResponse = (product, customerPriceRecord) => {
     ]);
     const pricingMatrix = safeJsonParse(product.pricingMatrix, {});
     const rawVariations = safeJsonParse(product.variationsJson, []);
-    const variationsConfig = rawVariations;
+    let variationsConfig = Array.isArray(rawVariations) ? [...rawVariations] : [];
+    if (variationsConfig.length > 0) {
+        variationsConfig.sort((a, b) => {
+            const lblA = a?.metal || '';
+            const lblB = b?.metal || '';
+            return getMetalSortRankNode(lblA) - getMetalSortRankNode(lblB);
+        });
+    }
     const customOptionsConfig = safeJsonParse(product.customOptionsJson, []);
     const shippingInfoConfig = safeJsonParse(product.shippingInfoJson, {
         title: 'Shipping & Delivery',

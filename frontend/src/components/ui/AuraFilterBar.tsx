@@ -44,6 +44,7 @@ const DEFAULT_SORT_OPTIONS: FilterOption[] = [
 
 export const DEFAULT_METALS_LIST: FilterOption[] = [
   { label: 'All Metals', value: 'All' },
+  { label: '925 Sterling Silver', value: 'silver', colorHex: '#D1D5DB' },
   { label: '9K Yellow Gold', value: '9k-yellow-gold', colorHex: '#E8C872' },
   { label: '9K White Gold', value: '9k-white-gold', colorHex: '#CBD5E1' },
   { label: '9K Rose Gold', value: '9k-rose-gold', colorHex: '#E4A8A5' },
@@ -56,7 +57,6 @@ export const DEFAULT_METALS_LIST: FilterOption[] = [
   { label: '18K Yellow Gold', value: '18k-yellow-gold', colorHex: '#E8C872' },
   { label: '18K White Gold', value: '18k-white-gold', colorHex: '#CBD5E1' },
   { label: '18K Rose Gold', value: '18k-rose-gold', colorHex: '#E4A8A5' },
-  { label: '925 Sterling Silver', value: 'silver', colorHex: '#D1D5DB' },
   { label: 'Platinum', value: 'platinum', colorHex: '#E2E8F0' },
 ];
 
