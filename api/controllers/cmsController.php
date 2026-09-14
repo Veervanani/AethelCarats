@@ -533,15 +533,44 @@ function handleGetMegaMenuCards(): void {
 function handleGetReviews(): void {
     try {
         $pdo = getDatabaseConnection();
-        $productId = trim($_GET['productId'] ?? ($_GET['productId'] ?? ''));
+        $productId = trim($_GET['productId'] ?? '');
 
         if ($productId) {
-            $stmt = $pdo->prepare("SELECT r.*, p.name as productName FROM `Review` r LEFT JOIN `Product` p ON r.productId = p.id WHERE (r.productId = ? OR r.productId = (SELECT id FROM product WHERE sku = ? LIMIT 1) OR r.productId = (SELECT id FROM product WHERE slug = ? LIMIT 1)) ORDER BY r.createdAt DESC");
-            $stmt->execute([$productId, $productId, $productId]);
+            $stmt = $pdo->prepare("SELECT r.*, p.name as productName FROM `Review` r LEFT JOIN `Product` p ON (r.productId = p.id OR r.productId = p.sku OR r.productId = p.slug) WHERE (r.productId = ? OR r.productId = (SELECT id FROM `Product` WHERE sku = ? LIMIT 1) OR r.productId = (SELECT id FROM `Product` WHERE slug = ? LIMIT 1) OR p.id = ? OR p.slug = ? OR p.sku = ?) ORDER BY r.createdAt DESC");
+            $stmt->execute([$productId, $productId, $productId, $productId, $productId, $productId]);
+            $rawReviews = $stmt ? $stmt->fetchAll() : [];
         } else {
             $stmt = $pdo->query("SELECT r.*, p.name as productName FROM `Review` r LEFT JOIN `Product` p ON r.productId = p.id ORDER BY r.createdAt DESC LIMIT 100");
+            $rawReviews = $stmt ? $stmt->fetchAll() : [];
+            if (empty($rawReviews)) {
+                $hpStmt = $pdo->query("SELECT * FROM `HomepageReview` WHERE `isActive` = 1 ORDER BY `sortOrder` ASC LIMIT 20");
+                $hpRows = $hpStmt ? $hpStmt->fetchAll() : [];
+                if (!empty($hpRows)) {
+                    $formatted = array_map(function($r) {
+                        return [
+                            'id' => $r['id'],
+                            'name' => $r['customerName'],
+                            'author' => $r['customerName'],
+                            'authorName' => $r['customerName'],
+                            'customerName' => $r['customerName'],
+                            'rating' => (int) ($r['rating'] ?? 5),
+                            'title' => 'Exceeded Every Expectation!',
+                            'text' => $r['reviewText'],
+                            'content' => $r['reviewText'],
+                            'comment' => $r['reviewText'],
+                            'reviewText' => $r['reviewText'],
+                            'verified' => true,
+                            'date' => $r['reviewDate'] ?? date('m/d/y'),
+                            'createdAt' => $r['createdAt'] ?? date('Y-m-d H:i:s'),
+                            'productReviewed' => 'AethelCarats Creation',
+                            'response' => null
+                        ];
+                    }, $hpRows);
+                    jsonResponse($formatted, 200);
+                    return;
+                }
+            }
         }
-        $rawReviews = $stmt ? $stmt->fetchAll() : [];
 
         $formatted = array_map(function($r) {
             $comment = $r['comment'] ?? ($r['content'] ?? '');
@@ -939,16 +968,20 @@ function handleGetAdminReviews(): void {
  * POST /api/v1/admin/reviews
  */
 function handleSaveReview(): void {
-    requireRole(['CONTENT_MANAGER', 'ADMIN', 'SUPER_ADMIN']);
+    $uri = $_SERVER['REQUEST_URI'] ?? '';
+    if (str_contains($uri, '/admin/')) {
+        requireRole(['CONTENT_MANAGER', 'ADMIN', 'SUPER_ADMIN']);
+    }
+
     try {
         $raw = file_get_contents('php://input');
         $body = json_decode($raw, true) ?? $_POST;
 
         $id = trim($body['id'] ?? '');
         $productId = trim($body['productId'] ?? '');
-        $author = trim($body['author'] ?? ($body['authorName'] ?? 'Verified Buyer'));
+        $author = trim($body['author'] ?? ($body['customerName'] ?? ($body['authorName'] ?? 'Verified Buyer')));
         $rating = intval($body['rating'] ?? 5);
-        $comment = trim($body['comment'] ?? ($body['content'] ?? ''));
+        $comment = trim($body['comment'] ?? ($body['reviewText'] ?? ($body['content'] ?? '')));
         $title = trim($body['title'] ?? '');
         if ($title && !str_contains($comment, $title)) {
             $comment = "{$title}\n\n{$comment}";
@@ -956,17 +989,35 @@ function handleSaveReview(): void {
         $isApproved = !empty($body['isApproved']) ? 1 : 1;
         $isFeatured = !empty($body['isFeatured']) ? 1 : 0;
 
+        $pdo = getDatabaseConnection();
+
+        if ($productId) {
+            $pStmt = $pdo->prepare("SELECT `id` FROM `Product` WHERE `id` = ? OR `slug` = ? OR `sku` = ? LIMIT 1");
+            $pStmt->execute([$productId, $productId, $productId]);
+            $realP = $pStmt->fetch(PDO::FETCH_ASSOC);
+            if ($realP) {
+                $productId = $realP['id'];
+            }
+        }
+
         if (!$productId) {
+            // If customer submitted without product, check if homepage review is intended
+            if (!empty($author) && !empty($comment)) {
+                $newHpId = 'hp_' . bin2hex(random_bytes(8));
+                $insHp = $pdo->prepare("INSERT INTO `HomepageReview` (`id`, `customerName`, `rating`, `reviewText`, `sortOrder`, `isActive`, `createdAt`, `updatedAt`) VALUES (?, ?, ?, ?, 0, 1, NOW(), NOW())");
+                $insHp->execute([$newHpId, $author, $rating, $comment]);
+                jsonResponse(['success' => true, 'message' => 'Review saved successfully', 'id' => $newHpId], 200);
+                return;
+            }
             jsonError('Product selection is required for customer review.', 400);
         }
 
-        $pdo = getDatabaseConnection();
         if ($id) {
             $u = $pdo->prepare("UPDATE `Review` SET `author` = ?, `rating` = ?, `comment` = ?, `isApproved` = ?, `isFeatured` = ? WHERE `id` = ?");
             $u->execute([$author, $rating, $comment, $isApproved, $isFeatured, $id]);
         } else {
             $newId = 'rev_' . bin2hex(random_bytes(8));
-            $ins = $pdo->prepare("INSERT INTO `Review` (`id`, `productId`, `author`, `email`, `rating`, `comment`, `isApproved`, `isFeatured`, `createdAt`) VALUES (?, ?, ?, 'customer@auroradiamonds.com', ?, ?, ?, ?, NOW())");
+            $ins = $pdo->prepare("INSERT INTO `Review` (`id`, `productId`, `author`, `email`, `rating`, `comment`, `isApproved`, `isFeatured`, `createdAt`) VALUES (?, ?, ?, 'customer@aethelcarats.com', ?, ?, ?, ?, NOW())");
             $ins->execute([$newId, $productId, $author, $rating, $comment, $isApproved, $isFeatured]);
             $id = $newId;
         }
@@ -986,6 +1037,7 @@ function handleDeleteReview(string $id): void {
     try {
         $pdo = getDatabaseConnection();
         $pdo->prepare("DELETE FROM `Review` WHERE `id` = ?")->execute([$id]);
+        $pdo->prepare("DELETE FROM `HomepageReview` WHERE `id` = ?")->execute([$id]);
         jsonResponse(['success' => true, 'message' => 'Review deleted successfully'], 200);
     } catch (Throwable $e) {
         error_log("handleDeleteReview error: " . $e->getMessage());

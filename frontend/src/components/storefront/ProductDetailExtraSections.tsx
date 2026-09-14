@@ -570,7 +570,7 @@ export const ItemReviewsSection: React.FC<{ productName?: string; content?: any;
     return () => { isMounted = false; };
   }, [productId, initialReviews, productName]);
 
-  const handleSubmitReview = (e: React.FormEvent) => {
+  const handleSubmitReview = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!reviewerName || !reviewTitle || !reviewBody) {
       alert('Please fill in all required fields.');
@@ -580,17 +580,33 @@ export const ItemReviewsSection: React.FC<{ productName?: string; content?: any;
     const newRev = {
       id: `rev_${Date.now()}`,
       name: reviewerName,
+      author: reviewerName,
       verified: true,
       rating: newRating,
       title: reviewTitle,
       date: new Date().toLocaleDateString('en-US'),
       text: reviewBody,
+      comment: `${reviewTitle}\n\n${reviewBody}`,
       productReviewed: productName,
       response: 'Thank you for sharing your experience with AethelCarats!',
     };
 
     setReviewsList([newRev, ...reviewsList]);
     setShowModal(false);
+
+    try {
+      await api.post('/reviews', {
+        productId,
+        author: reviewerName,
+        rating: newRating,
+        title: reviewTitle,
+        comment: reviewBody,
+        isApproved: true,
+      });
+    } catch (apiErr) {
+      console.warn('Review API submission notice:', apiErr);
+    }
+
     setReviewerName('');
     setReviewTitle('');
     setReviewBody('');
@@ -603,7 +619,7 @@ export const ItemReviewsSection: React.FC<{ productName?: string; content?: any;
 
   const avgRatingNum = reviewsList.length > 0
     ? (reviewsList.reduce((sum, r) => sum + (Number(r.rating) || 5), 0) / reviewsList.length).toFixed(1)
-    : '5.0';
+    : '0.0';
 
   return (
     <ReviewsWrapper>
@@ -615,10 +631,14 @@ export const ItemReviewsSection: React.FC<{ productName?: string; content?: any;
           <div className="stars-col">
             <div className="stars-row">
               {[...Array(5)].map((_, i) => (
-                <Star key={i} size={18} fill={i < Math.round(Number(avgRatingNum)) ? THEME.gold : 'none'} color={THEME.gold} />
+                <Star key={i} size={18} fill={reviewsList.length > 0 && i < Math.round(Number(avgRatingNum)) ? THEME.gold : 'none'} color={THEME.gold} />
               ))}
             </div>
-            <div className="rev-count">{reviewsList.length} Verified {reviewsList.length === 1 ? 'Review' : 'Reviews'}</div>
+            <div className="rev-count">
+              {reviewsList.length > 0
+                ? `${reviewsList.length} Verified ${reviewsList.length === 1 ? 'Review' : 'Reviews'}`
+                : 'No customer reviews yet'}
+            </div>
           </div>
         </ScoreLeft>
 
@@ -627,74 +647,86 @@ export const ItemReviewsSection: React.FC<{ productName?: string; content?: any;
         )}
       </ScoreSummaryBox>
 
-      <FiltersBar>
-        <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap' }}>
-          <FilterPill>
-            <input type="checkbox" id="withMedia" defaultChecked style={{ accentColor: THEME.gold }} />
-            <label htmlFor="withMedia">With media</label>
-          </FilterPill>
-          <FilterPill>
-            <select defaultValue="all">
-              <option value="all">Recommendation (All)</option>
-              <option value="yes">Recommends Product</option>
-            </select>
-          </FilterPill>
-          <FilterPill>
-            <select defaultValue="exceeds">
-              <option value="exceeds">Expectations (Exceeds)</option>
-              <option value="met">Met Expectations</option>
-            </select>
-          </FilterPill>
-        </div>
+      {reviewsList.length > 0 && (
+        <FiltersBar>
+          <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap' }}>
+            <FilterPill>
+              <input type="checkbox" id="withMedia" defaultChecked style={{ accentColor: THEME.gold }} />
+              <label htmlFor="withMedia">With media</label>
+            </FilterPill>
+            <FilterPill>
+              <select defaultValue="all">
+                <option value="all">Recommendation (All)</option>
+                <option value="yes">Recommends Product</option>
+              </select>
+            </FilterPill>
+            <FilterPill>
+              <select defaultValue="exceeds">
+                <option value="exceeds">Expectations (Exceeds)</option>
+                <option value="met">Met Expectations</option>
+              </select>
+            </FilterPill>
+          </div>
 
-        <FilterPill>
-          <span>Sort by:</span>
-          <select defaultValue="relevant">
-            <option value="relevant">Most relevant</option>
-            <option value="newest">Newest first</option>
-            <option value="highest">Highest rated</option>
-          </select>
-        </FilterPill>
-      </FiltersBar>
+          <FilterPill>
+            <span>Sort by:</span>
+            <select defaultValue="relevant">
+              <option value="relevant">Most relevant</option>
+              <option value="newest">Newest first</option>
+              <option value="highest">Highest rated</option>
+            </select>
+          </FilterPill>
+        </FiltersBar>
+      )}
 
       <div>
-        {reviewsList.map((rev) => (
-          <ReviewCard key={rev.id}>
-            <UserAvatarCol>
-              <div className="avatar-circle">{rev.name.charAt(0)}</div>
-              <div className="user-name">{rev.name}</div>
-              {rev.verified && (
-                <div className="verified-badge">
-                  <CheckCircle size={12} color={THEME.darkGold} /> Verified Buyer
-                </div>
-              )}
-            </UserAvatarCol>
-
-            <ReviewContentCol>
-              <div className="review-header">
-                <div className="rating-and-title">
-                  <div className="stars">
-                    {[...Array(rev.rating)].map((_, i) => (
-                      <Star key={i} size={14} fill={THEME.gold} color={THEME.gold} />
-                    ))}
+        {reviewsList.length === 0 ? (
+          <div style={{ textAlign: 'center', padding: '48px 24px', color: '#666', background: '#FDFBF7', borderRadius: '4px', border: '1px dashed #E5DFD5' }}>
+            <p style={{ fontFamily: 'Cinzel, serif', fontSize: '1.05rem', color: '#1A1815', marginBottom: '8px' }}>No Customer Reviews Yet</p>
+            <p style={{ fontSize: '0.88rem', color: '#777', marginBottom: '16px' }}>Be the first to share your experience with this bespoke creation.</p>
+            {allowSubmission && (
+              <WriteReviewBtn onClick={() => setShowModal(true)}>Write The First Review</WriteReviewBtn>
+            )}
+          </div>
+        ) : (
+          reviewsList.map((rev) => (
+            <ReviewCard key={rev.id}>
+              <UserAvatarCol>
+                <div className="avatar-circle">{rev.name.charAt(0)}</div>
+                <div className="user-name">{rev.name}</div>
+                {rev.verified && (
+                  <div className="verified-badge">
+                    <CheckCircle size={12} color={THEME.darkGold} /> Verified Buyer
                   </div>
-                  <div className="title">{rev.title}</div>
-                </div>
-                <div className="date">{rev.date}</div>
-              </div>
+                )}
+              </UserAvatarCol>
 
-              <div className="body-text">{rev.text}</div>
-              <div className="product-reviewed">Product reviewed: {rev.productReviewed}</div>
-
-              {rev.response && (
-                <div className="atelier-response">
-                  <div className="resp-title">AethelCarats Atelier Team</div>
-                  <div className="resp-body">{rev.response}</div>
+              <ReviewContentCol>
+                <div className="review-header">
+                  <div className="rating-and-title">
+                    <div className="stars">
+                      {[...Array(rev.rating)].map((_, i) => (
+                        <Star key={i} size={14} fill={THEME.gold} color={THEME.gold} />
+                      ))}
+                    </div>
+                    <div className="title">{rev.title}</div>
+                  </div>
+                  <div className="date">{rev.date}</div>
                 </div>
-              )}
-            </ReviewContentCol>
-          </ReviewCard>
-        ))}
+
+                <div className="body-text">{rev.text}</div>
+                <div className="product-reviewed">Product reviewed: {rev.productReviewed}</div>
+
+                {rev.response && (
+                  <div className="atelier-response">
+                    <div className="resp-title">AethelCarats Atelier Team</div>
+                    <div className="resp-body">{rev.response}</div>
+                  </div>
+                )}
+              </ReviewContentCol>
+            </ReviewCard>
+          ))
+        )}
       </div>
 
       {showModal && (

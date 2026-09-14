@@ -42,10 +42,15 @@ const mapProductResponse = (product: any, customerPriceRecord?: any) => {
     { label: 'Silver', code: 'Ag', circleColor: '#E2E8F0', priceAdjustment: 0 },
   ]);
 
-  const metalsConfig = rawMetals.filter((m: any) => {
-    const lbl = String(m.label || '').toLowerCase();
-    return !lbl.includes('9k') && !lbl.includes('10k') && !lbl.includes('platinum');
-  });
+  const metalsConfig = (Array.isArray(rawMetals) && rawMetals.length > 0) ? rawMetals : [
+    { label: '14K Yellow Gold', code: '14k', circleColor: '#E8C872', priceAdjustment: 0 },
+    { label: '14K White Gold', code: '14k', circleColor: '#CBD5E1', priceAdjustment: 0 },
+    { label: '14K Rose Gold', code: '14k', circleColor: '#E4A8A5', priceAdjustment: 0 },
+    { label: '18K Yellow Gold', code: '18k', circleColor: '#E8C872', priceAdjustment: 250 },
+    { label: '18K White Gold', code: '18k', circleColor: '#CBD5E1', priceAdjustment: 350 },
+    { label: '18K Rose Gold', code: '18k', circleColor: '#E4A8A5', priceAdjustment: 350 },
+    { label: 'Silver', code: 'Ag', circleColor: '#E2E8F0', priceAdjustment: 0 },
+  ];
 
   const diamondsConfig = safeJsonParse(product.diamondsConfig, []);
 
@@ -163,6 +168,9 @@ const mapProductResponse = (product: any, customerPriceRecord?: any) => {
     diamondDetails,
     internalTags,
     seoSocial,
+    reviews: Array.isArray(product.reviews) ? product.reviews : [],
+    reviewCount: Array.isArray(product.reviews) ? product.reviews.length : (product.reviewCount ?? 0),
+    avgRating: product.avgRating ?? (Array.isArray(product.reviews) && product.reviews.length > 0 ? Math.round((product.reviews.reduce((s: number, r: any) => s + (r.rating || 5), 0) / product.reviews.length) * 10) / 10 : 0),
   };
 };
 

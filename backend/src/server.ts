@@ -431,6 +431,7 @@ import {
   createReview,
   updateReview,
   deleteReview,
+  deleteAllReviews,
 } from './controllers/reviewController';
 import { getStoreStatus, getHolidayModeSettings, updateHolidayModeSettings } from './controllers/holidayModeController';
 
@@ -635,8 +636,10 @@ app.delete('/api/v1/admin/diamond-filter-options/:id', authenticateToken, requir
 
 // Public & Admin Reviews Management Routes
 app.get('/api/v1/reviews', getPublicReviews);
+app.post('/api/v1/reviews', createReview);
 app.get('/api/v1/admin/reviews', authenticateToken, getAdminReviews);
 app.post('/api/v1/admin/reviews', authenticateToken, requireRole(['CONTENT_MANAGER', 'ADMIN']), createReview);
+app.post('/api/v1/admin/reviews/delete-all', authenticateToken, requireRole(['CONTENT_MANAGER', 'ADMIN']), deleteAllReviews);
 app.put('/api/v1/admin/reviews/:id', authenticateToken, requireRole(['CONTENT_MANAGER', 'ADMIN']), updateReview);
 app.delete('/api/v1/admin/reviews/:id', authenticateToken, requireRole(['CONTENT_MANAGER', 'ADMIN']), deleteReview);
 

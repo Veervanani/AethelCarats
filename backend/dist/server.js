@@ -425,8 +425,10 @@ app.put('/api/v1/admin/diamond-filter-options/:id', auth_1.authenticateToken, (0
 app.delete('/api/v1/admin/diamond-filter-options/:id', auth_1.authenticateToken, (0, auth_1.requireRole)(['PRODUCT_MANAGER', 'ADMIN']), diamondFilterController_1.deleteDiamondFilterOption);
 // Public & Admin Reviews Management Routes
 app.get('/api/v1/reviews', reviewController_1.getPublicReviews);
+app.post('/api/v1/reviews', reviewController_1.createReview);
 app.get('/api/v1/admin/reviews', auth_1.authenticateToken, reviewController_1.getAdminReviews);
 app.post('/api/v1/admin/reviews', auth_1.authenticateToken, (0, auth_1.requireRole)(['CONTENT_MANAGER', 'ADMIN']), reviewController_1.createReview);
+app.post('/api/v1/admin/reviews/delete-all', auth_1.authenticateToken, (0, auth_1.requireRole)(['CONTENT_MANAGER', 'ADMIN']), reviewController_1.deleteAllReviews);
 app.put('/api/v1/admin/reviews/:id', auth_1.authenticateToken, (0, auth_1.requireRole)(['CONTENT_MANAGER', 'ADMIN']), reviewController_1.updateReview);
 app.delete('/api/v1/admin/reviews/:id', auth_1.authenticateToken, (0, auth_1.requireRole)(['CONTENT_MANAGER', 'ADMIN']), reviewController_1.deleteReview);
 // Public & Admin Mega Menu Cards Routes

@@ -1968,18 +1968,27 @@ export const HomePage: React.FC = () => {
       ];
 
   // Section 10: Reviews
-  const activeReviews = cmsConfig?.customReviews && cmsConfig.customReviews.length > 0
-    ? cmsConfig.customReviews
-    : (dbReviews.length > 0
-      ? dbReviews
-      : [
-          { id: 'rev-1', text: 'Amazing selection at incredible prices!', author: 'Ryan K.', rating: 5 },
-          { id: 'rev-2', text: 'Our wedding bands are perfect. Simple. High quality. Easy. Comfortable.', author: 'Melissa S.', rating: 5 },
-          { id: 'rev-3', text: 'Beautiful and great price', author: 'Carolyn M.', rating: 5 },
-          { id: 'rev-4', text: 'Exactly as depicted. Beautiful ring, Excellent service.', author: 'Scott C.', rating: 5 },
-          { id: 'rev-5', text: 'The custom CAD process was effortless. Exceptional craftsmanship!', author: 'David H.', rating: 5 },
-          { id: 'rev-6', text: 'Superb diamond quality and fast insured delivery.', author: 'Elena P.', rating: 5 },
-        ]);
+  const activeReviews = (cmsConfig?.reviewsConfig?.customReviews && Array.isArray(cmsConfig.reviewsConfig.customReviews) && cmsConfig.reviewsConfig.customReviews.length > 0)
+    ? cmsConfig.reviewsConfig.customReviews
+    : (cmsConfig?.customReviews && Array.isArray(cmsConfig.customReviews) && cmsConfig.customReviews.length > 0)
+      ? cmsConfig.customReviews
+      : (testimonialsContent?.testimonials && Array.isArray(testimonialsContent.testimonials) && testimonialsContent.testimonials.length > 0)
+        ? testimonialsContent.testimonials.map((t: any, i: number) => ({
+            id: `testi-${i}`,
+            author: t.author || 'Verified Client',
+            text: t.quote || t.text || '',
+            rating: Number(t.rating) || 5,
+            textColor: t.textColor,
+            authorColor: t.authorColor,
+          }))
+        : (dbReviews.length > 0
+          ? dbReviews
+          : [
+              { id: 'rev-1', text: 'Amazing selection at incredible prices!', author: 'Ryan K.', rating: 5 },
+              { id: 'rev-2', text: 'Our wedding bands are perfect. Simple. High quality. Easy. Comfortable.', author: 'Melissa S.', rating: 5 },
+              { id: 'rev-3', text: 'Beautiful and great price', author: 'Carolyn M.', rating: 5 },
+              { id: 'rev-4', text: 'Exactly as depicted. Beautiful ring, Excellent service.', author: 'Scott C.', rating: 5 },
+            ]);
   return (
     <>
       {/* 1. DYNAMIC DATABASE-DRIVEN HERO SLIDER / BANNER SYSTEM */}
@@ -2460,11 +2469,11 @@ export const HomePage: React.FC = () => {
           <ReviewsSection id="reviews">
             <ReviewsHeaderRow>
               <div className="header-titles">
-                <ReviewsEyebrow style={{ color: testimonialsContent?.eyebrowColor || cmsConfig?.reviewsConfig?.eyebrowColor || undefined }}>
-                  {testimonialsContent?.eyebrow || cmsConfig?.reviewsConfig?.eyebrow || 'AUTHENTICATED CLIENT TESTIMONIALS'}
+                <ReviewsEyebrow style={{ color: cmsConfig?.reviewsConfig?.eyebrowColor || testimonialsContent?.eyebrowColor || undefined }}>
+                  {cmsConfig?.reviewsConfig?.eyebrow || testimonialsContent?.eyebrow || 'AUTHENTICATED CLIENT TESTIMONIALS'}
                 </ReviewsEyebrow>
-                <ReviewsTitle style={{ color: testimonialsContent?.titleColor || cmsConfig?.reviewsConfig?.titleColor || undefined }}>
-                  {testimonialsContent?.title || cmsConfig?.reviewsConfig?.title || 'VOICES OF ELEGANCE'}
+                <ReviewsTitle style={{ color: cmsConfig?.reviewsConfig?.titleColor || testimonialsContent?.titleColor || undefined }}>
+                  {cmsConfig?.reviewsConfig?.title || testimonialsContent?.title || 'VOICES OF ELEGANCE'}
                 </ReviewsTitle>
               </div>
               <ReviewsNavGroup>

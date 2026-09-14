@@ -594,7 +594,7 @@ export const AdminHomepageManagerPage: React.FC = () => {
 
       await api.updateSiteSetting('homepage_config', JSON.stringify(payload));
 
-      // Also sync campaignBannerConfig directly into the CAMPAIGN_BANNER PageSection for dual persistence
+      // Also sync campaignBannerConfig and reviewsConfig directly into PageSection for dual persistence
       try {
         const homePage = await api.getPageBySlug('home');
         if (homePage && Array.isArray(homePage.sections)) {
@@ -613,6 +613,26 @@ export const AdminHomepageManagerPage: React.FC = () => {
                   desktopImage: campaignBannerConfig.desktopImage,
                   mobileImage: campaignBannerConfig.mobileImage,
                   image: campaignBannerConfig.desktopImage,
+                }),
+              };
+            }
+            if (s.blockType === 'TESTIMONIALS' || String(s.id).toLowerCase().includes('testimonial')) {
+              return {
+                ...s,
+                content: JSON.stringify({
+                  heading: reviewsConfig.title,
+                  title: reviewsConfig.title,
+                  eyebrow: reviewsConfig.eyebrow,
+                  eyebrowColor: (reviewsConfig as any).eyebrowColor,
+                  titleColor: (reviewsConfig as any).titleColor,
+                  testimonials: reviewsConfig.customReviews.map((r: any) => ({
+                    quote: r.text,
+                    text: r.text,
+                    author: r.author,
+                    rating: r.rating || 5,
+                    textColor: r.textColor,
+                    authorColor: r.authorColor,
+                  })),
                 }),
               };
             }

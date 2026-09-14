@@ -1642,7 +1642,7 @@ export const ProductDetailPage: React.FC = () => {
   useEffect(() => {
     if (product) {
       const initCount = (product as any).reviewCount ?? ((product as any).reviews?.length || 0);
-      const initRating = (product as any).avgRating ?? 5;
+      const initRating = initCount > 0 ? ((product as any).avgRating ?? 5) : 0;
       setLiveReviewCount(initCount);
       setLiveAvgRating(initRating);
 
@@ -1655,6 +1655,9 @@ export const ProductDetailPage: React.FC = () => {
             setLiveReviewCount(list.length);
             const sum = list.reduce((acc: number, item: any) => acc + (Number(item.rating) || 5), 0);
             setLiveAvgRating(Math.round((sum / list.length) * 10) / 10);
+          } else {
+            setLiveReviewCount(0);
+            setLiveAvgRating(0);
           }
         })
         .catch(console.error);
@@ -2102,15 +2105,14 @@ export const ProductDetailPage: React.FC = () => {
                 <h1>{product.title || product.name}</h1>
                 <RatingRow>
                   <span className="stars">
-                    {'★'.repeat(Math.round(liveAvgRating ?? (product as any).avgRating ?? 5))}
-                    {'☆'.repeat(5 - Math.round(liveAvgRating ?? (product as any).avgRating ?? 5))}
+                    {liveReviewCount && liveReviewCount > 0
+                      ? '★'.repeat(Math.round(liveAvgRating || 5)) + '☆'.repeat(5 - Math.round(liveAvgRating || 5))
+                      : '☆☆☆☆☆'}
                   </span>
                   <span>
                     {(liveReviewCount !== null && liveReviewCount > 0)
                       ? `(${liveReviewCount} ${liveReviewCount === 1 ? 'review' : 'reviews'})`
-                      : ((product as any).reviewCount !== undefined && (product as any).reviewCount > 0)
-                        ? `(${(product as any).reviewCount} ${(product as any).reviewCount === 1 ? 'review' : 'reviews'})`
-                        : '(No reviews yet)'}
+                      : '(No reviews yet)'}
                   </span>
                 </RatingRow>
               </div>

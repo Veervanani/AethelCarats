@@ -326,8 +326,14 @@ if (!function_exists('mapProductResponse')) {
 
         // Fetch customer reviews for this product from the database
         $reviewCount = 0;
-        $avgRating = 5.0;
+        $avgRating = 0.0;
         $reviewsList = [];
+
+        try {
+            $pdo = getDatabaseConnection();
+        } catch (Throwable $ignore) {
+            $pdo = null;
+        }
 
         if ($pdo && !empty($product['id'])) {
             $pId = $product['id'];
